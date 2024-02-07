@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+.custom-tooltip {
+    position: absolute;
+    cursor: pointer;
+}
+
+.custom-tooltip::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 30px;
+    font-size: 13px;
+    font-weight: normal;
+    width: fit-content;
+    height: fit-content;
+    white-space: nowrap;
+    background-color: #333;
+    color: #eee;
+    padding: 10px;
+    border-radius: 3px;
+    display: none;
+    z-index: 5;
+}
+
+.custom-tooltip:hover::before {
+    display: block;
+}
+
+
+.tooltipForActions {
+    position: relative;
+    cursor: pointer;
+}
+
+.tooltipForActions::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 30px;
+    bottom: 40px;
+    font-size: 13px;
+    font-weight: normal;
+    width: fit-content;
+    height: fit-content;
+    white-space: nowrap;
+    background-color: #333;
+    color: #eee;
+    padding: 10px;
+    border-radius: 3px;
+    display: none;
+    z-index: 50;
+}
+
+.tooltipForActions:hover::before {
+    display: block;
+}
