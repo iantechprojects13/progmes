@@ -4,7 +4,7 @@
         Dashboard
     </div>
     <div class="w-full">
-        Dashboard data
+        This system must be finished within the month of February 2024.
     </div>
     <div v-if="this.$page.props.flash.success">
         {{ this.$page.props.flash.success }}
