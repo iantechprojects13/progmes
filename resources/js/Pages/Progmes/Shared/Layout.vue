@@ -2,35 +2,35 @@
     <Head title="Login" />
     <!-- Header -->
     <div
-        class="md:hidden sticky top-0 bg-stone-700 text-white flex justify-between text-center h-12 items-center shadow-md z-30 px-4">
+        class="md:hidden sticky top-0 bg-blue-900 text-white flex justify-between text-center h-16 items-center shadow-md z-30 px-4">
         <div class="cursor-pointer" @click="toggleSideBar">
             <i class="fas fa-bars text-xl"></i>
         </div>
-        <div class="text-blue-200 font-bold">ProgMES | CHEDRO-XI</div>
+        <div class="text-white font-bold">ProgMES | CHED RO XI</div>
         <div>
             <img :src="this.$page.props.auth.user.avatar" width="35" class="rounded-full">
         </div>
     </div>
 
     <!-- Body -->
-    <div class="flex flex-col md:flex-row h-full">
+    <div class="flex flex-col md:flex-row h-full bg-gray-200">
 
         <!-- Navigation -->
         <div class="fixed z-40 top-0 w-full h-full bg-black bg-opacity-70 md:hidden" :class="{ 'hidden': closeSideBar }"
             @click="toggleSideBar()">
         </div>
-        <div class="h-full absolute top-0 left-0 md:relative z-50 transition-all duration-200 bg-gray-900 bg-opacity-70"
-            :class="{
-                'md:w-1 -translate-x-64 md:sticky md:top-0': closeSideBar
-            }" @click.self="toggleSideBar()">
-            <div class="md:block md:w-64 bg-slate-400">
-                <div
-                    class="flex-col h-screen w-64 bg-neutral-900 md:w-64 pt-1 pb-3 px-4 text-gray-200 md:block top-0 left-0 fixed">
+        <div class="h-full absolute top-0 w-64 left-0 md:relative z-50 transition-all duration-200 bg-opacity-20" :class="{
+            'md:w-0 -translate-x-64 md:sticky md:top-0': closeSideBar
+        }" @click.self="toggleSideBar()">
+            <div class="md:block md:w-64">
+                <div class=" flex-col h-screen w-64 bg-neutral-900 md:w-64 pt-1 pb-3 px-4 text-gray-200 md:block top-0
+                left-0 fixed">
                     <div class="flex flex-col justify-between h-full md:sticky md:top-0">
                         <div class="flex-shrink-0">
 
                             <div class="md:hidden w-full text-right pt-2">
-                                <button @click="toggleSideBar"><i class="fas fa-times"></i></button>
+                                <button @click="toggleSideBar" class="border px-2.5 py-0.5 hover:bg-stone-800"><i
+                                        class="fas fa-angle-left"></i></button>
                             </div>
 
                             <!-- App Name -->
@@ -45,8 +45,8 @@
                             <div class="bg-gray-700 mt-0 mb-5 h-10 rounded-md relative">
                                 <form class="h-full">
                                     <span
-                                        class="w-1/6 h-full text-sm p-1 absolute left-1 bg-inherit rounded flex justify-center items-center">
-                                        <i class="fas fa-search"></i>
+                                        class="w-1/6 h-full text-gray-400 p-1 absolute left-1 bg-inherit rounded flex justify-center items-center">
+                                        <i class="fas fa-search ye"></i>
                                     </span>
                                     <input type="text" class="inline-block w-full h-full bg-inherit border-none rounded-md placeholder-gray-400
                                 text-sm indent-10" name="search" placeholder="Search">
@@ -115,12 +115,12 @@
                         <div class="absolute top-1/2 -right-4 text-black hidden md:block text-md"
                             :class="{ 'fixed top-0 bg-slate-700': !closeSideBar }">
                             <div v-if="!closeSideBar"
-                                class="sticky top-0 w-8 flex items-center justify-center font-bold cursor-pointer custom-tooltip hover:text-xl transition-all duration-150"
+                                class="sticky top-0 w-8 flex items-center justify-center font-bold cursor-pointer custom-tooltip hover:text-xl transition-all duration-200"
                                 data-tooltip="Close sidebar" @click="toggleSideBar(); autoHideSideBar(false)">
                                 <i class="fas fa-angle-left"></i>
                             </div>
                             <div v-else
-                                class="absolute top-0 w-8 flex items-center justify-center font-bold cursor-pointer custom-tooltip hover:text-xl transition-all duration-150"
+                                class="absolute top-0 w-8 flex items-center justify-center font-bold cursor-pointer custom-tooltip hover:text-xl transition-all duration-200"
                                 data-tooltip="Open sidebar" @click="toggleSideBar(); autoHideSideBar(true)">
                                 <i class="fas fa-angle-right"></i>
                             </div>
@@ -131,7 +131,7 @@
         </div>
 
         <!-- Page Content -->
-        <div class="w-full h-full md:px-8 md:pr-4 py-5 px-4 relative">
+        <div class="w-full h-full relative bg-white overflow-x-auto">
             <slot />
         </div>
     </div>

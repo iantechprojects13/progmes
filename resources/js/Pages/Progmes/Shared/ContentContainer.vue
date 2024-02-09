@@ -1,11 +1,11 @@
 <template>
-    <div class="h-auto relative rounded-t">
-        <div class="w-full flex flex-row justify-between text-sm items-center py-2 px-3 rounded-t-lg z-30 bg-white">
-            <div class="flex items-center justify-between w-full pr-1 md:flex" :class="{ 'hidden': !hideSearch }">
-                <div class="flex items-center my-2">
+    <div class="h-auto rounded-t my-3 mx-3 md:mx-8 text-sm sticky top-0">
+        <div class="w-full flex flex-row justify-between items-center py-2 z-30">
+            <div class="flex items-center justify-between w-full" :class="{ 'hidden': !hideSearch }">
+                <div class="flex">
                     <slot name="channel"></slot>
                 </div>
-                <div>
+                <div class="pr-2 flex">
                     <slot name="actions"></slot>
                 </div>
             </div>
@@ -13,13 +13,15 @@
                 <div class="relative md:block w-full" :class="{ 'hidden': hideSearch }">
                     <form>
                         <input type="search" id="content-search" :placeholder="placeholder"
-                            class="rounded text-sm border w-full border-gray-400 pr-10" :class="{ '': !hideSearch }">
-                        <button class="rounded-full hover:bg-gray-200 absolute top-0 right-0 h-full px-3">
+                            class="rounded border w-full border-gray-400 pr-11 h-10 md:bg-white bg-blue-100 text-sm"
+                            :class="{ '': !hideSearch }">
+                        <button
+                            class="rounded-full hover:bg-blue-300 active:bg-blue-600 active:text-white absolute top-0 right-0 h-10 w-10">
                             <i class="fas fa-search"></i>
                         </button>
                     </form>
                 </div>
-                <button class="hover:bg-gray-200 w-10 p-2 px-3 rounded border border-gray-400 md:hidden"
+                <button class="hover:bg-gray-200 rounded border h-10 w-10 border-gray-400 md:hidden"
                     :class="{ 'ml-1': !hideSearch }" @click="toggleSearch">
                     <i :class="[{ 'fas fa-search': hideSearch }, { 'fas fa-close': !hideSearch }]"></i>
                 </button>
@@ -54,7 +56,17 @@ export default {
     methods: {
         toggleSearch() {
             this.hideSearch = !this.hideSearch;
-        }
+        },
+
+        handleResize() {
+            if (window.innerWidth > 768) {
+                this.hideSearch = true;
+            }
+        },
+    },
+
+    mounted() {
+        window.addEventListener('resize', this.handleResize);
     },
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full px-3 text-sm">
+    <div class="w-full px-0 bg-white text-sm">
         <table class="w-full text-left whitespace-nowrap overflow-auto">
             <thead class="uppercase w-full bg-white sticky top-0 z-20">
                 <tr>

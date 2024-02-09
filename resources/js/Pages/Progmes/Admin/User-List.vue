@@ -3,20 +3,29 @@
     <AdminPanel />
     <content-container placeholder="Search User" :data_list="user_list">
         <template v-slot:channel>
-            <button class="text-blue-500 font-bold underline mr-5">Active</button>
-            <Link :href="route('admin.users.request')">
-            <button class="text-gray-500 hover:text-gray-800">Request</button>
-            </Link>
+            <div class="relative" @click.prevent="open = !open" @mouseleave="open = false">
+                <button class="px-3 border rounded h-10 border-gray-400 text-gray-500"><b>Active users </b><i
+                        class="fas fa-chevron-down ml-2"></i></button>
+                <div v-show="open"
+                    class="flex flex-col items-start absolute top-10 left-0 drop-shadow bg-white rounded px-3 py-3 right-0 z-70 w-40"
+                    @mouseover.prevent="open = true">
+                    <button class="py-2 w-full px-2 text-left text-gray-500" disabled>Active
+                        users</button>
+                    <Link :href="route('admin.users.request')" class="py-2 w-full px-2 text-left hover:bg-gray-300 rounded">
+                    User request</Link>
+                </div>
+            </div>
         </template>
         <template v-slot:content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="scope-col p-3 pl-0">Name</th>
-                    <th class="scope-col p-3">Account Type</th>
-                    <th class="scope-col p-3">Role</th>
+                    <th class="scope-col px-3 py-2 bg-gray-300">Name</th>
+                    <th class="scope-col px-3 py-2 bg-gray-300">Account Type</th>
+                    <th class="scope-col px-3 py-2 bg-gray-300">Role</th>
                 </template>
                 <template v-slot:table-body>
-                    <tr v-for="user in user_list.data" :key="user.id" class="border-b border-gray-300 hover:bg-stone-100">
+                    <tr v-for="(user, index) in user_list.data" :key="user.id"
+                        class="border-b border-gray-300 hover:bg-stone-100" :class="{ 'bg-gray-200': index % 2 == 1 }">
                         <th scope="row" class="px-2 py-2 whitespace-nowrap flex items-center pr-10">
                             <img v-if="user.avatar" :src="user.avatar" width="35" class="rounded-full mr-3">
                             <img v-else src="/assets/user.png" width="35" class="rounded-full mr-3">
@@ -44,5 +53,17 @@ const props = defineProps([
 import Layout from '../Shared/Layout.vue';
 export default {
     layout: Layout,
+    data() {
+        return {
+            open: false,
+        }
+    },
+
+    methods: {
+        selectOption(option) {
+            this.selectedOption = option;
+            this.isOpen = false;
+        },
+    }
 }
 </script>
