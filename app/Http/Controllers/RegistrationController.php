@@ -199,11 +199,11 @@ class RegistrationController extends Controller
         $acceptedUser->update(['isVerified'=> 1, 'isActive' => 1]);
         $acceptedUser->save();
 
-        try {
-            Mail::to($acceptedUser->email)->send(new NotificationEmail($acceptedUser->name));
-        } catch (\Exception $e) {
-            Log::error('Email sending failed: ' . $e->getMessage());
-        }
+        // try {
+        //     Mail::to($acceptedUser->email)->send(new NotificationEmail($acceptedUser->name));
+        // } catch (\Exception $e) {
+        //     Log::error('Email sending failed: ' . $e->getMessage());
+        // }
         
 
         return redirect()->back()->with('success', $acceptedUser->name .'\'s registration has been approved.');

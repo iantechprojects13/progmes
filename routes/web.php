@@ -67,7 +67,6 @@ Route::get('/admin/higher-education-institutions', [InstitutionController::class
 Route::get('/admin/higher-education-institutions/create', [InstitutionController::class, 'create'])->middleware(['auth'])->name('admin.hei.create');
 Route::get('/admin/higher-education-institutions/{institution}/view', [InstitutionController::class, 'view'])->middleware(['auth'])->name('admin.hei.show');
 Route::get('admin/CMOs', [CMOController::class, 'index'])->middleware('auth', 'type.ched')->name('admin.cmo.list');
-Route::get('admin/CMOs/create', [CMOController::class, 'create'])->middleware('auth', 'type.ched')->name('admin.cmo.create');
 Route::get('admin/CMOs/{cmo}/view', [CMOController::class, 'view'])->middleware('auth', 'type.ched')->name('admin.cmo.show');
 Route::match(['post', 'get'], 'admin/form', [InstitutionProgramController::class, 'index'])->middleware('auth')->name('admin.form.list');
 Route::post('admin/form/create', [EvaluationFormController::class, 'create'])->middleware('auth')->name('admin.form.create');
@@ -101,7 +100,7 @@ Route::get('/register/{user}/reject', [RegistrationController::class, 'reject'])
 
 
 
-Route::match(['post', 'get'], '/admin/CMOs/upload', [ExcelController::class, 'importExcel']);
+Route::match(['post', 'get'], '/admin/CMOs/create/import', [ExcelController::class, 'importExcel']);
 Route::post('/admin/CMOs/store', [CMOController::class, 'store'])->name('admin.cmo.store');
 
 Route::get('/chart', function () {

@@ -8,6 +8,7 @@ use App\Models\CMOModel;
 use App\Models\CriteriaModel;
 use App\Models\DisciplineModel;
 use App\Models\ProgramModel;
+use App\Http\Requests\CMORequest;
 
 class CMOController extends Controller
 {
@@ -29,13 +30,18 @@ class CMOController extends Controller
         return Inertia::render('Progmes/Admin/CMO-Create');
     }
 
-    public function store(Request $request) {
+    public function store(CMORequest $request) {
+
+        $validatedData = $request->validated();
+
+        dd($request);
+
         $cmoCreated = CMOModel::create([
-            'disciplineId' => $request->discipline,
-            'programId' => $request->program,
-            'number' => $request->number,
-            'series' => $request->series,
-            'version' => $request->version,
+            'disciplineId' => $validatedData->discipline,
+            'programId' => $validatedData->program,
+            'number' => $validatedData->number,
+            'series' => $validatedData->series,
+            'version' => $validatedData->version,
         ]);
 
         $id = $cmoCreated->id;

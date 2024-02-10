@@ -59,7 +59,6 @@ defineProps([
 
 </script>
 
-    
 <script>
 import Layout from '../Shared/Layout.vue'
 export default {
