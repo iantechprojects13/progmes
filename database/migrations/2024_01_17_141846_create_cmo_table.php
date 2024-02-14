@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('number')->nullable();
             $table->string('series')->nullable();
             $table->string('version')->nullable();
+            $table->string('status')->nullable();
+            $table->boolean('isActive')->nullable();
             $table->timestamps();
         });
     }

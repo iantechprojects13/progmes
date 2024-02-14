@@ -9,56 +9,33 @@ use App\Models\CriteriaModel;
 use App\Models\DisciplineModel;
 use App\Models\ProgramModel;
 use App\Http\Requests\CMORequest;
+use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class CMOController extends Controller
 {
-    public function index() {
+    public function index($list = 'published') {
+
         return Inertia::render('Progmes/Admin/CMO',[
-            'cmo_list' => CMOModel::paginate(50)
-                ->through(fn($cmo) => [
-                    'id' => $cmo->id,
-                    'number' => $cmo->number,
-                    'series' => $cmo->series,
-                    'version' => $cmo->version,
-                    'discipline' => DisciplineModel::where('id', $cmo->disciplineId)->value('discipline'),
-                    'program' => ProgramModel::where('id', $cmo->programId)->value('program'),
-                ]),
-            ]);
+        'cmo_list' => CMOModel::where('status', $list)
+            ->paginate(50)
+            ->through(fn($cmo) => [
+                'id' => $cmo->id,
+                'number' => $cmo->number,
+                'series' => $cmo->series,
+                'version' => $cmo->version,
+                'status' => $cmo->status,
+                'active' => $cmo->isActive,
+                'modified' => Carbon::parse($cmo->updated_at)->format('M d, Y'),
+                'discipline' => DisciplineModel::where('id', $cmo->disciplineId)->value('discipline'),
+                'program' => ProgramModel::where('id', $cmo->programId)->value('program'),
+            ]),
+        'listItems' => $list,
+        ]);
     }
 
     public function create() {
         return Inertia::render('Progmes/Admin/CMO-Create');
-    }
-
-    public function store(CMORequest $request) {
-
-        $validatedData = $request->validated();
-
-        dd($request);
-
-        $cmoCreated = CMOModel::create([
-            'disciplineId' => $validatedData->discipline,
-            'programId' => $validatedData->program,
-            'number' => $validatedData->number,
-            'series' => $validatedData->series,
-            'version' => $validatedData->version,
-        ]);
-
-        $id = $cmoCreated->id;
-        
-        foreach ($request->area as $index => $item) {
-            if($index !=0) {
-                CriteriaModel::create([
-                    'cmoId' => $id,
-                    'itemNo' => $index,
-                    'area' => $request->area[$index],
-                    'minimumRequirement' => $request->minReq[$index],
-                ]);
-            }
-        }
-
-        return redirect()->route('admin.cmo.list');
-
     }
 
     public function view(CMOModel $cmo) {
@@ -72,5 +49,37 @@ class CMOController extends Controller
                 ]),
             'cmo' => 'CMO No.'.$cmo->number.' Series of '.$cmo->series,
             ]);
+    }
+
+    public function edit(Request $request) {
+        return Inertia::render('Progmes/Admin/CMO-Edit', [
+            'cmo' => CMOModel::where('id', $request->id)->with('criteria')->first(),
+            'discipline_list' => DisciplineModel::all(),
+            'program_list' => ProgramModel::all(),
+        ]);
+    }
+
+    public function update(CMORequest $request) {
+
+        CMOModel::where('id', $request->id)->update([
+            'disciplineId' => $request->discipline,
+            'programId' => $request->program,
+            'number' => $request->number,
+            'series' => $request->series,
+            'version' => $request->version,
+        ]);
+        
+        foreach ($request->area as $index => $item) {
+            if($index !=0) {
+                CriteriaModel::where('cmoId', $request->id)->update([
+                    'itemNo' => $index,
+                    'area' => $request->area[$index],
+                    'minimumRequirement' => $request->minReq[$index],
+                ]);
+            }
+        }
+
+        return redirect()->route('admin.cmo.list', ['list' => 'draft'])->with('success', 'Successfully saved.');
+
     }
 }

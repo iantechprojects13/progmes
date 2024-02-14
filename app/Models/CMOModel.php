@@ -17,8 +17,10 @@ class CMOModel extends Model
         'number',
         'series',
         'version',
+        'status',
+        'isActive',
     ];
-
+    
     protected $hidden = [
         'created_at',
         'updated_at',
@@ -36,6 +38,6 @@ class CMOModel extends Model
 
     public function criteria()
     {
-        return $this->hasMany(CriteriaModel::class, 'id', 'cmoId');
+        return $this->hasMany(CriteriaModel::class, 'cmoId', 'id');
     }
 }

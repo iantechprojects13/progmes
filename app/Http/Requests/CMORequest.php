@@ -23,8 +23,8 @@ class CMORequest extends FormRequest
     {
         return [
             'number' => 'required',
-            'series' => 'required',
-            'version' => 'required',
+            // 'series' => 'required',
+            // 'version' => 'required',
         ];
     }
 

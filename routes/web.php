@@ -66,7 +66,7 @@ Route::get('/admin/users/request', [UserController::class, 'request'])->middlewa
 Route::get('/admin/higher-education-institutions', [InstitutionController::class, 'index'])->middleware(['auth'])->name('admin.hei.list');
 Route::get('/admin/higher-education-institutions/create', [InstitutionController::class, 'create'])->middleware(['auth'])->name('admin.hei.create');
 Route::get('/admin/higher-education-institutions/{institution}/view', [InstitutionController::class, 'view'])->middleware(['auth'])->name('admin.hei.show');
-Route::get('admin/CMOs', [CMOController::class, 'index'])->middleware('auth', 'type.ched')->name('admin.cmo.list');
+Route::get('admin/CMOs/{list?}', [CMOController::class, 'index'])->middleware('auth', 'type.ched')->name('admin.cmo.list');
 Route::get('admin/CMOs/{cmo}/view', [CMOController::class, 'view'])->middleware('auth', 'type.ched')->name('admin.cmo.show');
 Route::match(['post', 'get'], 'admin/form', [InstitutionProgramController::class, 'index'])->middleware('auth')->name('admin.form.list');
 Route::post('admin/form/create', [EvaluationFormController::class, 'create'])->middleware('auth')->name('admin.form.create');
@@ -100,8 +100,12 @@ Route::get('/register/{user}/reject', [RegistrationController::class, 'reject'])
 
 
 
-Route::match(['post', 'get'], '/admin/CMOs/create/import', [ExcelController::class, 'importExcel']);
-Route::post('/admin/CMOs/store', [CMOController::class, 'store'])->name('admin.cmo.store');
+Route::post('/admin/CMOs/create/import', [ExcelController::class, 'importExcel'])->name('admin.cmo.import');
+
+Route::get('/admin/CMOs/{id}/edit', [CMOController::class, 'edit'])->name('admin.cmo.edit');
+
+Route::post('/admin/CMOs/store', [CMOController::class, 'store'])->middleware('auth')->name('admin.cmo.store');
+Route::post('/admin/CMOs/save', [CMOController::class, 'update'])->middleware('auth')->name('admin.cmo.save');
 
 Route::get('/chart', function () {
     return Inertia::render('Progmes/Shared/Charts/DoughnutChart');

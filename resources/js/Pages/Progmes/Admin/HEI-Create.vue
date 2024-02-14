@@ -1,19 +1,16 @@
 <template>
     <Head title="HEI List" />
     <AdminPanel />
-    <content-container placeholder="Search HEI">
+    <content-container>
         <template v-slot:channel>
             <Link :href="route('admin.hei.list')">
-            <button class="text-gray-500 hover:text-gray-800 mr-5">List</button>
+            <button class="h-10 px-4 border border-gray-400 rounded-full hover:bg-gray-300"><i
+                    class="fas fa-arrow-left mr-2"></i> Higher Education Institution Registration Form</button>
             </Link>
-            <button class="text-blue-500 font-bold underline">Create</button>
         </template>
         <template v-slot:content>
             <div class="p-4 w-full">
                 <form @submit.prevent="submit" class="text-sm">
-                    <div class="font-bold mb-4 text-gray-600 text-base">
-                        Higher Education Institution Registration Form
-                    </div>
                     <div class="flex lg:flex-row flex-col border border-gray-400 h-auto">
                         <div class="lg:w-1/2 lg:p-3 p-5">
                             <div class="p-3 text-base font-bold text-gray-600">

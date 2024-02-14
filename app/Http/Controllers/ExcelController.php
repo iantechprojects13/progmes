@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\DisciplineModel;
 use App\Models\ProgramModel;
+use App\Models\CriteriaModel;
+use App\Models\CMOModel;
 
 class ExcelController extends Controller
 {
@@ -28,17 +30,29 @@ class ExcelController extends Controller
             $fileName = request()->file('cmo_file')->getClientOriginalName();
         } else {
             $excelContent = null;
+            return redirect()->route('admin.cmo.list')->with('failed', 'Import failed!');
         }
 
-        if (!$excelContent) {
-            return redirect()->route('admin.cmo.create')->with('failed', 'Import failed!');
-        } else {
-            return Inertia::render('Progmes/Admin/CMO-Upload', [
-                'file' => $excelContent,
-                'discipline_list' => DisciplineModel::all(),
-                'program_list' => ProgramModel::all(),
-                'file_name' => $fileName,
+        $newCMO = CMOModel::create([
+            'status' => 'draft',
+            'isActive' => 0,
+        ]);
+        
+        foreach ($excelContent[0] as $index => $data) {
+
+            if ($index === 0) {
+                continue;
+            }
+
+            CriteriaModel::create([
+                'cmoId' => $newCMO->id,
+                'itemNo' => $index,
+                'area' => $data[0],
+                'minimumRequirement' => $data[1],
             ]);
+            
         }
+
+        return redirect()->route('admin.cmo.edit', ['id' => $newCMO]);
     }
 }

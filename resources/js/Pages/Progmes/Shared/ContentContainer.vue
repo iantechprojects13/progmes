@@ -2,7 +2,7 @@
     <div
         class="h-auto rounded-t mb-5 mt-7 mx-3 md:mx-10 text-sm border pt-0 shadow shadow-gray-300 border-gray-400 rounded-lg">
         <div
-            class="w-full flex flex-row justify-between items-center py-1 border-b border-gray-400 z-30 px-3 bg-white rounded-t-lg">
+            class="w-full flex flex-row justify-between items-center py-3 border-b border-gray-400 z-30 px-3 bg-white rounded-t-lg">
             <div class="flex items-center justify-between w-full" :class="{ 'hidden': !hideSearch }">
                 <div class="flex">
                     <slot name="channel"></slot>
@@ -11,7 +11,7 @@
                     <slot name="actions"></slot>
                 </div>
             </div>
-            <div class="flex my-2 md:w-80" :class="{ ' justify-end w-full relative': !hideSearch }">
+            <div v-show="placeholder" class="flex md:w-80" :class="{ ' justify-end w-full relative': !hideSearch }">
                 <div class="relative md:block w-full" :class="{ 'hidden': hideSearch }">
                     <form>
                         <input type="search" id="content-search" :placeholder="placeholder"
@@ -23,7 +23,7 @@
                     </form>
                 </div>
                 <button class="hover:bg-gray-200 rounded border h-10 w-12 border-gray-400 md:hidden"
-                    :class="{ 'ml-1 w-14': !hideSearch }" @click="toggleSearch">
+                    :class="{ 'ml-1': !hideSearch }" @click="toggleSearch">
                     <i :class="[{ 'fas fa-search': hideSearch }, { 'fas fa-close': !hideSearch }]"></i>
                 </button>
             </div>

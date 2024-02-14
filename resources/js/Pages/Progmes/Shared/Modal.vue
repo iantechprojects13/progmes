@@ -1,5 +1,5 @@
 <template>
-    <div class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-70 z-50 p-2 flex items-center overflow-y-auto text-sm"
+    <div class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-70 z-100 p-2 flex items-center overflow-y-auto text-sm"
         @click.self="bgClicked">
         <div class="text-sm bg-white w-full mx-auto max-w-lg bg-opacity-100 rounded-md shadow-md shadow-gray-500 md:mb-48"
             ref="modalContainer">

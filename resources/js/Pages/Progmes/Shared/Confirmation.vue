@@ -1,5 +1,5 @@
 <template>
-    <div class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-70 z-50 p-2 flex items-center overflow-y-auto"
+    <div class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-70 z-100 p-2 flex items-center overflow-y-auto"
         @click.self="bgClicked">
         <div class="bg-white w-full mx-auto max-w-lg bg-opacity-100 rounded-md shadow-md text-sm shadow-gray-500 md:mb-48 border border-gray-300"
             ref="confirmationModalContainer">

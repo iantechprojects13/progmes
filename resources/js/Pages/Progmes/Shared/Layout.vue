@@ -2,7 +2,7 @@
     <Head title="Login" />
     <!-- Header -->
     <div
-        class="md:hidden sticky top-0 bg-blue-900 text-white flex justify-between text-center h-16 items-center shadow-md z-30 px-4">
+        class="md:hidden sticky top-0 bg-blue-900 text-white flex justify-between text-center h-16 items-center shadow-md z-90 px-4">
         <div class="cursor-pointer" @click="toggleSideBar">
             <i class="fas fa-bars text-xl"></i>
         </div>
@@ -16,10 +16,10 @@
     <div class="flex flex-col md:flex-row h-full bg-gray-200">
 
         <!-- Navigation -->
-        <div class="fixed z-40 top-0 w-full h-full bg-black bg-opacity-70 md:hidden" :class="{ 'hidden': closeSideBar }"
+        <div class="fixed z-80 top-0 w-full h-full bg-black bg-opacity-70 md:hidden" :class="{ 'hidden': closeSideBar }"
             @click="toggleSideBar()">
         </div>
-        <div class="h-full absolute top-0 w-64 left-0 md:relative z-50 transition-all duration-200 bg-opacity-20" :class="{
+        <div class="h-full absolute top-0 w-64 left-0 md:relative z-90 transition-all duration-200 bg-opacity-20" :class="{
             'md:w-0 -translate-x-64 md:sticky md:top-0': closeSideBar
         }" @click.self="toggleSideBar()">
             <div class="md:block md:w-64">

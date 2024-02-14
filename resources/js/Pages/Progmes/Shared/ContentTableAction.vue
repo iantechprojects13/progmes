@@ -3,7 +3,7 @@
         <button class="py-2 px-4 rounded-full hover:bg-gray-300" @click="showActionPanel">
             <i class="fas fa-ellipsis-v cursor-pointer"></i>
         </button>
-        <div class="w-72 text-gray-600 absolute right-0 bg-white  shadow-2xl z-10 rounded border border-gray-400 py-2 text-start text-base"
+        <div class="w-72 text-gray-600 absolute right-5 bg-white  shadow-2xl z-10 rounded border border-gray-400 py-2 text-start text-base"
             v-if="showOptions">
             {{ ev }}
             <div class=" flex flex-col py-2 border-gray-400" :class="{ 'border-b': !canCreate }">

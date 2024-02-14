@@ -8,16 +8,16 @@
                     @click.prevent="openSelectPageDropdown = !openSelectPageDropdown"><b>Active users </b><i
                         class="fas fa-caret-down ml-2"></i></button>
                 <div v-show="openSelectPageDropdown"
-                    class="flex flex-col items-start absolute top-10 left-0 shadow border border-gray-300 bg-white rounded px-3 py-3 z-30 w-48"
+                    class="flex flex-col items-start absolute top-10 left-0 shadow border border-gray-300 bg-white rounded py-3 z-30 w-48"
                     @mouseover.prevent="openSelectPageDropdown = true">
-                    <button class="flex flex-row py-2 w-full px-2 text-left text-gray-500" disabled>
+                    <button class="flex flex-row py-2 w-full px-2 text-left text-gray-500 pl-4" disabled>
                         <div class="w-6">
                             <i class="fas fa-check"></i>
                         </div>
                         <div>Active users</div>
                     </button>
                     <Link :href="route('admin.users.request')"
-                        class="py-2 w-full px-2 text-left hover:bg-gray-200 rounded flex flex-row">
+                        class="py-2 w-full px-2 text-left hover:bg-gray-200 rounded flex flex-row pl-4">
                     <div class="w-6">
                     </div>
                     <div>User request</div>
@@ -34,11 +34,12 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-for="(user, index) in user_list.data" :key="user.id"
-                        class="border-b border-gray-300 hover:bg-stone-100" :class="{ 'bg-gray-200': index % 2 == 0 }">
-                        <th scope="row" class="px-2 py-2 whitespace-nowrap flex items-center pr-10">
+                        class="border-b border-gray-300 hover:bg-stone-100 text-gray-700"
+                        :class="{ 'bg-gray-200': index % 2 == 0 }">
+                        <th scope="row" class="p-3 whitespace-nowrap flex items-center pr-10">
                             <img v-if="user.avatar" :src="user.avatar" width="35" class="rounded-full mr-3">
                             <img v-else src="/assets/user.png" width="35" class="rounded-full mr-3">
-                            <div class="text-gray-600 items-center">
+                            <div class="items-center">
                                 <span class="text-left block">{{ user.name }}</span>
                                 <span class="font-normal">{{ user.email }}</span>
                             </div>

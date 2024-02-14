@@ -10,9 +10,7 @@
                         <button class="hover:bg-gray-500 p-2 rounded bg-gray-600 text-white w-20">List</button>
                     </div>
                     <div class="mr-0.5 flex">
-                        <Link :href="route('admin.cmo.create')">
                         <button class="hover:bg-gray-200 p-2 rounded border w-20">Create</button>
-                        </Link>
                     </div>
                 </div>
             </div>
