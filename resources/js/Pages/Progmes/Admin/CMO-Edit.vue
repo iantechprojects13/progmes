@@ -9,12 +9,11 @@
                     <i class=" fas fa-caret-down ml-2"></i> </button>
                 <div v-show="openSaveOption"
                     class="absolute top-10 left-0 border border-gray-300 bg-white drop-shadow-xl w-44 rounded py-2">
-                    <button class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
-                        @click.prevent="form.saveAs = 'draft'; submit();">
+                    <button class="py-1.5 hover:bg-gray-200 w-full text-left indent-7" @click.prevent="saveAsDraft">
                         Save as draft
                     </button>
                     <button class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
-                        @click.prevent="form.saveAs = 'publish'; submit();">Publish</button>
+                        @click.prevent="publish">Publish</button>
                 </div>
             </div>
             <div v-else>
@@ -41,41 +40,49 @@
                             <label for="discipline" class="font-bold text-gray-600">Discipline</label>
                             <select id="discipline" v-model="form.discipline"
                                 class="py-1 px-3 h-10 text-sm border border-gray-400 rounded m-1"
-                                @change="form.program = ''">
-                                <option value="">Select discipline</option>
+                                :class="{ 'border-red-500 bg-red-50': this.$page.props.errors.discipline }"
+                                @change="form.program = null">
+                                <option :value="null">Select discipline</option>
                                 <option v-for="discipline in discipline_list" :key="discipline.id" :value="discipline.id">
                                     {{ discipline.discipline }}
                                 </option>
                             </select>
+                            <FormErrorMessage :message="this.$page.props.errors.discipline" />
                         </div>
                         <div class="w-full flex flex-col mt-2">
                             <label for="program" class="font-bold text-gray-600">Program</label>
                             <select id="program" v-model="form.program"
-                                class="py-1 px-3 h-10 text-sm border border-gray-400 rounded m-1 "
+                                class="py-1 px-3 h-10 text-sm border border-gray-400 rounded m-1"
+                                :class="{ 'border-red-500 bg-red-50': this.$page.props.errors.program }"
                                 :disabled="!form.discipline">
-                                <option value="">Select program</option>
+                                <option :value="null">Select program</option>
                                 <option v-for="program in program_list" :key="program.id" :value="program.id"
                                     v-show="program.disciplineId == form.discipline">
                                     {{ program.program }}
                                 </option>
                             </select>
+                            <FormErrorMessage :message="this.$page.props.errors.program" />
                         </div>
                         <div class="w-full flex flex-col mt-2">
                             <label for="number" class="font-bold text-gray-600">CMO No.</label>
                             <input id="number" type="number" placeholder="CMO No." v-model="form.number"
-                                class="h-10 m-1 rounded text-sm border border-gray-400">
+                                class="h-10 m-1 rounded text-sm border border-gray-400"
+                                :class="{ 'border-red-500 bg-red-50': this.$page.props.errors.number }">
                             <FormErrorMessage :message="this.$page.props.errors.number" />
-
                         </div>
                         <div class="w-full flex flex-col mt-2">
                             <label for="series" class="font-bold text-gray-600">Series</label>
                             <input id="series" type="number" placeholder="Series" v-model="form.series"
-                                class="h-10 m-1 rounded text-sm border border-gray-400">
+                                class="h-10 m-1 rounded text-sm border border-gray-400"
+                                :class="{ 'border-red-500 bg-red-50': this.$page.props.errors.series }">
+                            <FormErrorMessage :message="this.$page.props.errors.series" />
                         </div>
                         <div class="w-full flex flex-col mt-2">
                             <label for="version" class="font-bold text-gray-600">Version</label>
                             <input id="version" type="number" placeholder="Version" v-model="form.version"
-                                class="h-10 m-1 rounded text-sm border border-gray-400">
+                                class="h-10 m-1 rounded text-sm border border-gray-400"
+                                :class="{ 'border-red-500 bg-red-50': this.$page.props.errors.version }">
+                            <FormErrorMessage :message="this.$page.props.errors.version" />
                         </div>
                     </div>
                 </div>
@@ -139,10 +146,9 @@ const minReqArray = computed(() => {
 });
 
 const form = useForm({
-    saveAs: null,
     id: ref(props.cmo.id),
-    discipline: ref(props.cmo.disciplineId),
-    program: ref(props.cmo.programId),
+    discipline: ref(props.cmo.disciplineId) !== null ? ref(props.cmo.disciplineId) : null,
+    program: ref(props.cmo.programId) !== null ? ref(props.cmo.programId) : null,
     number: ref(props.cmo.number),
     series: ref(props.cmo.series),
     version: ref(props.cmo.version),
@@ -150,8 +156,12 @@ const form = useForm({
     minReq: minReqArray,
 });
 
-function submit() {
-    form.post('/admin/CMOs/save', form);
+function publish() {
+    form.post('/admin/CMOs/save-and-publish', form);
+}
+
+function saveAsDraft() {
+    form.post('/admin/CMOs/save-as-draft', form);
 }
 
 </script>

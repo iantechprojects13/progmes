@@ -34,7 +34,7 @@ Route::get('/', function () {
     return redirect()->route('login');
 })->name('homepage');
 
-Route::get('/error401', function () {
+Route::get('/unauthorized', function () {
     return Inertia::render('Progmes/Others/Unauthorized');
 })->middleware('auth', 'registered')->name('unauthorized');
 
@@ -48,16 +48,16 @@ Route::controller(App\Http\Controllers\Auth\GoogleAuthController::class)->group(
 
 //dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth', 'user.verified')->name('dashboard');
-Route::get('/CHED/dashboard', [DashboardController::class, 'dashboardForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('dashboard.ched');
-Route::get('/HEI/dashboard', [DashboardController::class, 'dashboardForHEI'])->middleware(['auth', 'type.hei'])->name('dashboard.hei');
+Route::get('/CHED/dashboard', [DashboardController::class, 'dashboardForCHED'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.ched');
+Route::get('/HEI/dashboard', [DashboardController::class, 'dashboardForHEI'])->middleware(['auth', 'type.hei', 'user.verified'])->name('dashboard.hei');
 
 
 //evaluation
 Route::get('/evaluation', [EvaluationController::class, 'index'])->middleware('auth', 'user.verified')->name('evaluation');
 Route::get('/ched/evaluation', [EvaluationController::class, 'evaluationForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('evaluation.ched');
 Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForHEI'])->middleware('type.hei')->name('evaluation.hei');
+Route::get('/admin/evaluation', [EvaluationController::class, 'evaluationForAdmin'])->middleware('type.ched')->name('evaluation.admin');
 Route::get('/hei/evaluation/{form}', [HEIFormController::class, 'edit'])->middleware('type.hei')->name('form.hei.edit');
-
 Route::post('/hei/evaluation/update', [HEIFormController::class, 'update'])->name('form.hei.update');
 
 //admin-panel
@@ -102,10 +102,16 @@ Route::get('/register/{user}/reject', [RegistrationController::class, 'reject'])
 
 Route::post('/admin/CMOs/create/import', [ExcelController::class, 'importExcel'])->name('admin.cmo.import');
 
-Route::get('/admin/CMOs/{id}/edit', [CMOController::class, 'edit'])->name('admin.cmo.edit');
+Route::get('/admin/CMOs/draft/{id}/edit', [CMOController::class, 'edit'])->name('admin.cmo.edit');
 
 Route::post('/admin/CMOs/store', [CMOController::class, 'store'])->middleware('auth')->name('admin.cmo.store');
-Route::post('/admin/CMOs/save', [CMOController::class, 'update'])->middleware('auth')->name('admin.cmo.save');
+Route::post('/admin/CMOs/save-and-publish', [CMOController::class, 'saveAndPublish'])->middleware('auth')->name('admin.cmo.save.publish');
+Route::post('/admin/CMOs/save-as-draft', [CMOController::class, 'saveAsDraft'])->middleware('auth')->name('admin.cmo.save.draft');
+Route::get('/admin/CMOs/publish/{cmo}', [CMOController::class, 'publish'])->middleware('auth')->name('admin.cmo.publish');
+
+Route::get('/admin/CMOs/delete/{id?}', [CMOController::class, 'destroy'])->middleware('auth')->name('admin.cmo.delete');
+Route::get('/admin/CMOs/activate/{id?}', [CMOController::class, 'activate'])->middleware('auth')->name('admin.cmo.activate');
+Route::get('/admin/CMOs/deactivate/{id?}', [CMOController::class, 'deactivate'])->middleware('auth')->name('admin.cmo.deactivate');
 
 Route::get('/chart', function () {
     return Inertia::render('Progmes/Shared/Charts/DoughnutChart');

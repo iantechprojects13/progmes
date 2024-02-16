@@ -22,17 +22,27 @@ class CMORequest extends FormRequest
     public function rules(): array
     {
         return [
-            'number' => 'required',
-            // 'series' => 'required',
-            // 'version' => 'required',
+            'discipline' => 'required',
+            'program' => 'required',
+            'number' => 'required|integer',
+            'series' => 'required|integer|between:2000,2100',
+            'version' => 'required|integer|between:1,100',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'number.required' => 'The number field is required.',
-            'number.numeric' => 'Must be a number',
+            'discipline.required' => 'The discipline field is required.',
+            'program.required' => 'The program field is required.',
+            'number.required' => 'The CMO no. field is required.',
+            'number.integer' => 'The number field must be an integer.',
+            'series.required' => 'The series field is required.',
+            'series.integer' => 'The series field must be an integer.',
+            'series.between' => 'The series field must be in the range of 2000 to 2100.',
+            'version.required' => 'The version field is required.',
+            'version.integer' => 'The version field must be an integer.',
+            'version.between' => 'The version field must be in the range of 1 to 100.',
         ];
     }
 }

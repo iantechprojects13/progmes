@@ -4,7 +4,9 @@
         Dashboard
     </div>
     <div class="w-full">
-        This system must be finished within the month of February 2024.
+        <pre>
+            {{ this.$page.props.auth }}
+        </pre>
     </div>
     <div v-if="this.$page.props.flash.success">
         {{ this.$page.props.flash.success }}

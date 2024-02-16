@@ -196,7 +196,11 @@ class RegistrationController extends Controller
 
         $acceptedUser = User::where('id', $user->id)->first();
 
-        $acceptedUser->update(['isVerified'=> 1, 'isActive' => 1]);
+        $acceptedUser->update([
+            'isVerified'=> 1,
+            'isActive' => 1
+        ]);
+
         $acceptedUser->save();
 
         // try {

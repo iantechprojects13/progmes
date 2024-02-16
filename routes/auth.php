@@ -59,9 +59,5 @@ Route::middleware('auth')->group(function () {
                 ->name('logout');
 });
 
-// Route::middleware(['auth', 'register'])->group(function () {
-//     Route::get('/register/commission-on-higher-education', [RegistrationController::class, 'accountCHED'])->name('register.ched');
-// });
-
 
 

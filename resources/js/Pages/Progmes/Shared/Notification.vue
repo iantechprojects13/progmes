@@ -7,7 +7,10 @@
                     {{ message }}
                 </div>
                 <div>
-                    <button class="ml-5 hover:underline text-sm" @click="closeNotification"> OK </button>
+                    <button class="ml-5 hover:underline text-sm" @click="closeNotification">
+                        <!-- <i class="fas fa-close"></i> -->
+                        OK
+                    </button>
                 </div>
             </div>
         </div>

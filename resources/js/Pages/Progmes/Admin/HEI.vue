@@ -22,14 +22,18 @@
                 <template v-slot:table-body>
                     <tr v-for="(institution, index) in institution_list" :key="institution"
                         class="border-b border-gray-300 cursor-pointer text-gray-700 hover:text-black hover:bg-gray-300"
-                        :class="{ 'bg-gray-200': index % 2 == 0 }" @click="view(institution.id)">
+                        :class="{ 'bg-gray-200': index % 2 == 0 }">
                         <th scope="row" class="p-3">
                             <i class="fas fa-university mr-2 text-base"></i>
                             {{ institution.name }}
                         </th>
                         <td class="p-3">{{ institution.address }}, {{ institution.cityOrMunicipality }}</td>
                         <td>
-                            action
+                            <button @click="view(institution.id)"
+                                class="text-gray-500 hover:text-gray-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
+                                data-tooltip="View">
+                                <i class="text-lg fas fa-eye"></i>
+                            </button>
                         </td>
                     </tr>
                 </template>

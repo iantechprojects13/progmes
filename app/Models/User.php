@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'google_id',
         'password',
+        'role',
         'isVerified',
         'isActive',
         'type',
@@ -50,4 +51,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+
+    public function userRole()
+    {
+        return $this->hasMany(RoleModel::class, 'userId', 'id');
+    }
 }

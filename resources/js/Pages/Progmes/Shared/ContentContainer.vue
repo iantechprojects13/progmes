@@ -1,6 +1,6 @@
 <template>
     <div
-        class="h-auto rounded-t mb-5 mt-7 mx-3 md:mx-10 text-sm border pt-0 shadow shadow-gray-300 border-gray-400 rounded-lg">
+        class="h-auto rounded-t mb-5 mt-7 mx-3 md:mx-8 text-sm border pt-0 shadow shadow-gray-300 border-gray-400 rounded-lg">
         <div
             class="w-full flex flex-row justify-between items-center py-3 border-b border-gray-400 z-30 px-3 bg-white rounded-t-lg">
             <div class="flex items-center justify-between w-full" :class="{ 'hidden': !hideSearch }">

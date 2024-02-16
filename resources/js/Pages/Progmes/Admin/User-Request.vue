@@ -46,14 +46,24 @@
                         </th>
                         <td class="p-3">{{ user.type }}</td>
                         <td class="p-3">{{ user.role }}</td>
-                        <td class="p-3 text-right">
-                            <button @click="toggleModal(user, 'reject', 'Reject User')"
+                        <td class="p-3 text-right text-gray-500">
+                            <!-- <button @click="toggleModal(user, 'reject', 'Reject User')"
                                 class="text-sm h-7 w-16 hover:bg-red-500 hover:text-white border border-gray-400 rounded mr-1">
                                 Reject
                             </button>
                             <button @click="toggleModal(user, 'accept', 'Accept User')"
                                 class="text-sm h-7 w-16 bg-blue-500 hover:bg-blue-600 text-white rounded mr-1">
                                 Accept
+                            </button> -->
+                            <button @click="toggleModal(user, 'reject', 'Reject User')"
+                                class="hover:text-red-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
+                                data-tooltip="Reject">
+                                <i class="text-lg fas fa-times"></i>
+                            </button>
+                            <button @click="toggleModal(user, 'accept', 'Accept User')"
+                                class="hover:text-blue-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
+                                data-tooltip="Accept">
+                                <i class="text-lg fas fa-check"></i>
                             </button>
                         </td>
                     </tr>

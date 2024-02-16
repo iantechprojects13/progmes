@@ -12,12 +12,38 @@ use Auth;
 class EvaluationController extends Controller
 {
     public function index() {
-        $userType = Auth::user()->type;
+
+        $userRole = RoleModel::where('userId', Auth::user()->id)->value('role');
+
+        if (
+            $userRole == 'Super Admin' ||
+            $userRole == 'Regional Director' ||
+            $userRole == 'Chief Education Program Specialist' ||
+            $userRole == 'Supervising Education Program Specialist'
+        ) {
+            return redirect()->route('evaluation.admin');
+        } else if ($userRole == 'Education Supervisor') {
+            return redirect()->route('evaluation.ched');
+        } else {
+            return redirect()->route('evaluation.hei');
+        }
+
+
+
+
         if ($userType == 'CHED') {
             return redirect()->route('evaluation.ched');
         } else {
             return redirect()->route('evaluation.hei');
         }
+    }
+
+    public function EvaluationForAdmin() {
+        $role = RoleModel::where('userId', Auth::user()->id)->value('role');
+
+        return Inertia::render('Progmes/Evaluation/Evaluation-Admin', [
+            'role' => $role,
+        ]);
     }
 
     public function EvaluationForCHED() {

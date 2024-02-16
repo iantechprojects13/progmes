@@ -1,7 +1,7 @@
 <template>
     <Head title="CHED Memorandum Order List" />
     <AdminPanel />
-    <content-container placeholder="Search CMO" :data_list="cmo_list">
+    <content-container placeholder="Search CMO" :data_list="cmo_list" :key="componentKey">
         <template v-slot:channel>
             <div class="relative z-30" @mouseleave="openListOption = false">
                 <button class="bg-green-700 rounded h-10 text-white px-3" @click="openListOption = !openListOption">
@@ -50,7 +50,7 @@
                     <button class="flex flex-row py-2 indent-2 w-full text-left hover:bg-gray-200 hover:text-black"
                         @click="openUploadModal">
                         <div class="w-8">
-                            <i class="fas fa-upload"></i>
+                            <i class="fas fa-file-import"></i>
                         </div>
                         <div>Import file</div>
                     </button>
@@ -61,10 +61,9 @@
             <content-table>
                 <template v-slot:table-head>
                     <th class="scope-col p-3">CHED Memorandum Order</th>
-                    <th class="scope-col p-3">Version</th>
                     <th class="scope-col p-3">Discipline</th>
                     <th class="scope-col p-3">Program</th>
-                    <th v-show="listItems == 'published'" class="scope-col p-3">Active Status</th>
+                    <!-- <th v-show="listItems == 'published'" class="scope-col p-3">Active Status</th> -->
                     <th v-show="listItems == 'draft'" class="scope-col p-3">Last Modified</th>
                     <th class="scope-col p-3 text-right">Action</th>
                 </template>
@@ -73,39 +72,57 @@
                         class="border-b border-gray-300 text-gray-700 hover:bg-gray-300 hover:text-black cursor-pointer"
                         :class="{ 'bg-gray-200': index % 2 == 0 }">
                         <th scope="row" class="p-3">
-                            <i class="fas fa-file text-base mr-2"></i>
+                            <i class="fas fa-file text-lg mr-2 text-stone-600"></i>
                             <span v-if="item.number && item.series">
-                                No.{{ item.number }} Series of {{
-                                    item.series
-                                }}
+                                No. {{ item.number }} -
+                                Series of {{ item.series }} -
+                                Version {{ item.version }}
                             </span>
                             <span v-else>
                                 -
                             </span>
                         </th>
-                        <td class="p-3">{{ item.version }}</td>
                         <td class="p-3">{{ item.discipline }}</td>
                         <td class="p-3">{{ item.program }}</td>
-                        <td v-show="listItems == 'published'" class="p-3">
+                        <!-- <td v-show="listItems == 'published'" class="p-3">
                             <div v-if="item.active" class="text-white text-xs p-0.5 px-1 bg-green-700 w-fit rounded">Active
                             </div>
                             <div v-else class="text-white text-xs p-0.5 px-1 bg-red-500 w-fit rounded">Inactive</div>
-                        </td>
+                        </td> -->
                         <td v-show="listItems == 'draft'" class="p-3">
                             {{ item.modified }}
                         </td>
-                        <td class="text-right p-3 w-20 relative">
-                            <button class="w-8 h-8 hover:bg-gray-400" @click="handleClick(index)">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <div ref="optionmodal"
-                                class="absolute right-10 top-10  invisible z-50 w-44 h-44 text-left bg-white focus:bg-gray-600">
-                                <button>Click Me</button>
+                        <td class="text-right p-3 w-20 relative text-gray-500">
+                            <div v-show="listItems == 'published'">
+                                <button
+                                    @click="item.active ? toggleConfirmationModal(item.id, 'deactivate', 'Deactivate CMO') : toggleConfirmationModal(item, 'activate', 'Activate CMO')"
+                                    class="hover:text-blue-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
+                                    :class="{ 'text-blue-500': item.active }"
+                                    :data-tooltip="!item.active ? 'Set as Active' : 'Remove activation'">
+                                    <i class="text-lg fas fa-star"></i>
+                                </button>
+                            </div>
+                            <div v-show="listItems == 'draft'">
+                                <button @click="toggleConfirmationModal(item.id, 'publish', 'Publish draft')"
+                                    class="text-blue-500 hover:text-blue-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
+                                    data-tooltip="Publish">
+                                    <i class="text-lg fas fa-paper-plane"></i>
+                                </button>
+                                <button @click="edit(item.id)"
+                                    class="text-orange-500 hover:text-orange-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
+                                    data-tooltip="Edit">
+                                    <i class="text-lg fas fa-edit"></i>
+                                </button>
+                                <button @click="toggleConfirmationModal(item.id, 'delete', 'Delete draft')"
+                                    class="text-red-500 hover:text-red-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
+                                    data-tooltip="Delete">
+                                    <i class="text-lg fas fa-trash"></i>
+                                </button>
                             </div>
                         </td>
                     </tr>
                     <tr v-show="cmo_list.data.length === 0">
-                        <td colspan="4" class="h-24 text-center">No data</td>
+                        <td colspan="6" class="h-24 text-center">Empty</td>
                     </tr>
                 </template>
             </content-table>
@@ -130,14 +147,22 @@
             </div>
         </form>
     </modal>
+    <div v-if="confirmationModal">
+        <Confirmation @close="toggleConfirmationModal" :title="title" :modaltype="modaltype" :selected="selectedCMO" />
+    </div>
     <div v-show="$page.props.flash.success">
         <Notification :message="$page.props.flash.success" />
+    </div>
+    <div v-show="$page.props.flash.failed">
+        <Notification :message="$page.props.flash.failed" />
     </div>
 </template>
 
 <script setup>
-
-import { useForm, router } from '@inertiajs/vue3';
+import {
+    useForm,
+    router
+} from '@inertiajs/vue3';
 
 const form = useForm({
     cmo_file: null,
@@ -148,7 +173,11 @@ function upload() {
 }
 
 function edit(id) {
-    router.get('/admin/CMOs/' + id + '/edit');
+    router.get('/admin/CMOs/draft/' + id + '/edit');
+}
+
+function deleteCMO(id) {
+    router.delete('/admin/CMOs/delete/' + id);
 }
 
 defineProps([
@@ -157,14 +186,20 @@ defineProps([
 ]);
 </script>
 
+
 <script>
 import Layout from '../Shared/Layout.vue'
 export default {
     data() {
         return {
+            componentKey: 0,
             openCreateDropdown: false,
             openListOption: false,
             uploadModal: false,
+            confirmationModal: false,
+            selectedCMO: '',
+            modaltype: '',
+            title: '',
         }
     },
 
@@ -173,21 +208,14 @@ export default {
             this.uploadModal = !this.uploadModal;
         },
 
-        handleClick(index) {
-            let option = this.$refs.optionmodal[index];
-            option.focus();
-            if (option.classList.contains('invisible')) {
-                option.classList.remove('invisible');
-            } else {
-                option.classList.add('invisible');
-            }
-
-
+        toggleConfirmationModal(id, type, title) {
+            this.confirmationModal = !this.confirmationModal;
+            this.selectedCMO = id;
+            this.modaltype = type;
+            this.title = title;
         },
-
     },
+
     layout: Layout,
 }
 </script>
-
-

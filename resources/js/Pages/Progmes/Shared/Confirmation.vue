@@ -13,12 +13,27 @@
                     </button>
                 </div>
             </div>
-            <div class="py-4 pb-7 px-5 text-gray-700">
-                <div v-if="modaltype == 'reject'">
-                    Are you sure you want to reject <b>{{ selected.name }}</b>?
+            <div class="py-4 pb-7 px-7 text-black text-base">
+                <div v-show="modaltype == 'reject'">
+                    Are you sure you want to reject <b>{{ selected.name }} </b>'s registration?
                 </div>
-                <div v-else-if="modaltype == 'accept'">
-                    Are you sure you want to accept <b>{{ selected.name }}</b>?
+                <div v-show="modaltype == 'accept'">
+                    Are you sure you want to accept <b>{{ selected.name }} </b>'s registration?
+                </div>
+                <div v-show="modaltype == 'delete'">
+                    Are you sure you want to delete this draft? This action can't be undone.
+                </div>
+                <div v-show="modaltype == 'publish'">
+                    Are you sure you want to publish this draft? Once published, the document cannot be edited further.
+                </div>
+                <div v-show="modaltype == 'activate'">
+                    Are you sure you want to make
+                    <b>CMO No.{{ selected.number }} - Series of {{ selected.series }} - Version {{
+                        selected.version }}</b>
+                    as active CMO for <b>{{ selected.program }}</b> programs?
+                </div>
+                <div v-show="modaltype == 'deactivate'">
+                    Are you sure you want to remove the activation from this CMO?
                 </div>
                 <slot></slot>
             </div>
@@ -28,15 +43,36 @@
                     @click="closeModal">
                     Cancel
                 </button>
-                <Link v-if="modaltype == 'accept'" @click="handleSubmit" :href="route('register.accept', [selected])"
-                    class=" text-gray-100 bg-green-500 hover:text-white hover:bg-green-600 p-2.5 px-3 rounded border"
+                <Link v-if="modaltype == 'accept'" :href="route('register.accept', [selected])"
+                    class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border"
                     preserve-scroll>
                 Accept
                 </Link>
-                <Link v-if="modaltype == 'reject'" @click="handleSubmit" :href="route('register.reject', [selected])"
+                <Link v-if="modaltype == 'reject'" :href="route('register.reject', [selected])"
                     class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border"
                     preserve-scroll>
                 Reject
+                </Link>
+                <Link method="get" v-if="modaltype == 'delete'" @click="handleSubmit"
+                    :href="'/admin/CMOs/delete/' + selected"
+                    class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border cursor-pointer"
+                    preserve-scroll>
+                Delete
+                </Link>
+                <Link method="get" v-if="modaltype == 'publish'" :href="'/admin/CMOs/publish/' + selected"
+                    class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border cursor-pointer"
+                    preserve-scroll>
+                Publish
+                </Link>
+                <Link method="get" v-if="modaltype == 'activate'" :href="'/admin/CMOs/activate/' + selected.id"
+                    class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border cursor-pointer"
+                    preserve-scroll>
+                Confirm
+                </Link>
+                <Link method="get" v-if="modaltype == 'deactivate'" :href="'/admin/CMOs/deactivate/' + selected"
+                    class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border cursor-pointer"
+                    preserve-scroll>
+                Confirm
                 </Link>
             </div>
         </div>

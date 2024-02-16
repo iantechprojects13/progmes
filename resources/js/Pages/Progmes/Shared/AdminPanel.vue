@@ -39,14 +39,14 @@
                     </button>
                     </Link>
                     <Link href="/admin/higher-education-institutions">
-                    <button
+                    <button v-show="$page.props.auth.user.role == 'Super Admin'"
                         class="h-12 md:w-auto md:px-5 w-full md:hover:bg-stone-200 hover:bg-stone-600 md:hover:text-black rounded"
                         :class="{ 'text-blue-500 md:border-b-blue-500 md:border-b-4 rounded-none md:hover:bg-white md:hover:text-blue-500': highlight('institution') }">
                         HEI
                     </button>
                     </Link>
                     <Link href="/admin/program">
-                    <button
+                    <button v-show="$page.props.auth.user.role == 'Super Admin'"
                         class="h-12 md:w-auto md:px-5 w-full md:hover:bg-stone-200 hover:bg-stone-600 md:hover:text-black rounded"
                         :class="{ 'text-blue-500 md:border-b-blue-500 md:border-b-4 rounded-none md:hover:bg-white md:hover:text-blue-500': highlight('program') }">
                         Program

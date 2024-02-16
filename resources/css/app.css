@@ -39,7 +39,7 @@
 .tooltipForActions::before {
     content: attr(data-tooltip);
     position: absolute;
-    left: 30px;
+    right: 0px;
     bottom: 40px;
     font-size: 13px;
     font-weight: normal;

@@ -5,7 +5,6 @@
         </button>
         <div class="w-72 text-gray-600 absolute right-5 bg-white  shadow-2xl z-10 rounded border border-gray-400 py-2 text-start text-base"
             v-if="showOptions">
-            {{ ev }}
             <div class=" flex flex-col py-2 border-gray-400" :class="{ 'border-b': !canCreate }">
                 <Link :href="'/admin/form/' + item.evaluation.id + '/view'" v-if="canView"
                     class="pl-5 py-1 px-3 hover:bg-gray-300 active:bg-gray-400">
