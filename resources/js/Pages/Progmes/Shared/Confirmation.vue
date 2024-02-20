@@ -35,6 +35,9 @@
                 <div v-show="modaltype == 'deactivate'">
                     Are you sure you want to remove the activation from this CMO?
                 </div>
+                <div v-show="modaltype == 'deleteHEI'">
+                    Are you sure you want to delete <b>{{ selected.name }}</b>? This action can't be undone.
+                </div>
                 <slot></slot>
             </div>
             <div class="py-4 px-5 border-t-2 border-gray-100 text-right">
@@ -54,6 +57,12 @@
                 Reject
                 </Link>
                 <Link method="get" v-if="modaltype == 'delete'" @click="handleSubmit"
+                    :href="'/admin/CMOs/delete/' + selected"
+                    class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border cursor-pointer"
+                    preserve-scroll>
+                Delete
+                </Link>
+                <Link method="get" v-if="modaltype == 'deleteHEI'" @click="handleSubmit"
                     :href="'/admin/CMOs/delete/' + selected"
                     class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border cursor-pointer"
                     preserve-scroll>

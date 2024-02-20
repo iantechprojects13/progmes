@@ -22,10 +22,6 @@
                     @click="closeModal">
                     Cancel
                 </button>
-                <!-- <button v-if="type == 'add'" @click="handleSubmit"
-                    class=" text-gray-100 bg-blue-600 hover:text-white hover:bg-blue-700 py-2.5 px-3 rounded-lg border">
-                    Add to List
-                </button> -->
                 <button v-if="type == 'upload'" @click="upload"
                     class="text-white bg-blue-600 hover:bg-blue-700 py-2 px-3 rounded border">
                     Upload

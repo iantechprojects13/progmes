@@ -15,9 +15,13 @@ class UserController extends Controller
 {
     public function index() {
         return Inertia::render('Progmes/Admin/User-List',[
-            'user_list' => User::where('isVerified', 1)
-                ->where('isActive', 1)
-                ->orderBy('name', 'asc')->paginate(40)
+            'user_list' => User::
+                where([
+                    'isVerified' => 1,
+                    'isActive' => 1,
+                ])
+                ->orderBy('name', 'asc')
+                ->paginate(40)
                 ->through(fn($account) => [
                     'id' => $account->id,
                     'name' => $account->name,

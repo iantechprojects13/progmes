@@ -1,7 +1,7 @@
 <template>
     <Head title="CHED Memorandum Order List" />
     <AdminPanel />
-    <content-container placeholder="Search CMO" :data_list="cmo_list" :key="componentKey">
+    <content-container placeholder="Search CMO" :data_list="cmo_list">
         <template v-slot:channel>
             <div class="relative z-30" @mouseleave="openListOption = false">
                 <button class="bg-green-700 rounded h-10 text-white px-3" @click="openListOption = !openListOption">
@@ -34,7 +34,7 @@
         </template>
         <template v-slot:actions>
             <div class="relative text-gray-600" @mouseleave="openCreateDropdown = false">
-                <button class="px-3 border rounded h-10 text-white bg-blue-500 hover:bg-blue-600"
+                <button class="px-3 border rounded h-10 border-gray-400 hover:border-black text-gray-500 hover:text-black"
                     @click.prevent="openCreateDropdown = !openCreateDropdown">
                     <i class="fas fa-plus"></i>
                     <i class="fas fa-caret-down ml-3"></i></button>
@@ -60,12 +60,12 @@
         <template v-slot:content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="scope-col p-3">CHED Memorandum Order</th>
-                    <th class="scope-col p-3">Discipline</th>
-                    <th class="scope-col p-3">Program</th>
-                    <!-- <th v-show="listItems == 'published'" class="scope-col p-3">Active Status</th> -->
-                    <th v-show="listItems == 'draft'" class="scope-col p-3">Last Modified</th>
-                    <th class="scope-col p-3 text-right">Action</th>
+                    <th class="p-3">CHED Memorandum Order</th>
+                    <th class="p-3">Discipline</th>
+                    <th class="p-3">Program</th>
+                    <th v-show="listItems == 'published'" class="p-3">CMO Status</th>
+                    <th v-show="listItems == 'draft'" class="p-3">Last Modified</th>
+                    <th class="p-3 text-right">Action</th>
                 </template>
                 <template v-slot:table-body>
                     <tr v-for="( item, index ) in  cmo_list.data " :key="item.id"
@@ -84,11 +84,11 @@
                         </th>
                         <td class="p-3">{{ item.discipline }}</td>
                         <td class="p-3">{{ item.program }}</td>
-                        <!-- <td v-show="listItems == 'published'" class="p-3">
-                            <div v-if="item.active" class="text-white text-xs p-0.5 px-1 bg-green-700 w-fit rounded">Active
+                        <td v-show="listItems == 'published'" class="p-3">
+                            <div v-if="item.active" class="py-0.5 px-1 text-xs rounded text-white bg-green-600 w-fit">Active
                             </div>
-                            <div v-else class="text-white text-xs p-0.5 px-1 bg-red-500 w-fit rounded">Inactive</div>
-                        </td> -->
+                            <div v-else class="py-0.5 px-1 text-xs rounded text-white bg-red-600 w-fit">Not active</div>
+                        </td>
                         <td v-show="listItems == 'draft'" class="p-3">
                             {{ item.modified }}
                         </td>
@@ -97,10 +97,17 @@
                                 <button
                                     @click="item.active ? toggleConfirmationModal(item.id, 'deactivate', 'Deactivate CMO') : toggleConfirmationModal(item, 'activate', 'Activate CMO')"
                                     class="hover:text-blue-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
-                                    :class="{ 'text-blue-500': item.active }"
                                     :data-tooltip="!item.active ? 'Set as Active' : 'Remove activation'">
                                     <i class="text-lg fas fa-star"></i>
                                 </button>
+                                <Link :href="'/admin/CMOs/' + item.id + '/view'">
+                                <button
+                                    class="hover:text-blue-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
+                                    data-tooltip="View">
+                                    <i class="text-lg fas fa-eye"></i>
+                                </button>
+                                </Link>
+
                             </div>
                             <div v-show="listItems == 'draft'">
                                 <button @click="toggleConfirmationModal(item.id, 'publish', 'Publish draft')"
@@ -122,13 +129,14 @@
                         </td>
                     </tr>
                     <tr v-show="cmo_list.data.length === 0">
-                        <td colspan="6" class="h-24 text-center">Empty</td>
+                        <td v-if="listItems == 'published'" colspan="7" class="h-24 text-center">Empty</td>
+                        <td v-else colspan="6" class="h-24 text-center">Empty</td>
                     </tr>
                 </template>
             </content-table>
         </template>
     </content-container>
-    <modal v-if="uploadModal" title="Import excel file" @close="openUploadModal" @upload="upload" type="import">
+    <modal v-if="uploadModal" title="Import excel file" @close="closeModal" @upload="upload" type="import">
         <form @submit.prevent="upload">
             <div class="text-center pt-5">
                 <input ref="uploadfile" hidden type="file" @change="form.cmo_file = $event.target.files[0]" id="excel">
@@ -148,7 +156,7 @@
         </form>
     </modal>
     <div v-if="confirmationModal">
-        <Confirmation @close="toggleConfirmationModal" :title="title" :modaltype="modaltype" :selected="selectedCMO" />
+        <Confirmation @close="closeModal" :title="title" :modaltype="modaltype" :selected="selectedCMO" />
     </div>
     <div v-show="$page.props.flash.success">
         <Notification :message="$page.props.flash.success" />
@@ -176,9 +184,6 @@ function edit(id) {
     router.get('/admin/CMOs/draft/' + id + '/edit');
 }
 
-function deleteCMO(id) {
-    router.delete('/admin/CMOs/delete/' + id);
-}
 
 defineProps([
     'cmo_list',
@@ -192,7 +197,6 @@ import Layout from '../Shared/Layout.vue'
 export default {
     data() {
         return {
-            componentKey: 0,
             openCreateDropdown: false,
             openListOption: false,
             uploadModal: false,
@@ -214,6 +218,11 @@ export default {
             this.modaltype = type;
             this.title = title;
         },
+
+        closeModal() {
+            this.confirmationModal = false;
+            this.uploadModal = false;
+        }
     },
 
     layout: Layout,

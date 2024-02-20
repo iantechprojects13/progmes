@@ -1,5 +1,5 @@
 <template>
-    <Head title="New Program" />
+    <Head title="Edit Program" />
     <AdminPanel />
     <content-container placeholder="Search program">
         <template v-slot:channel>
@@ -39,7 +39,7 @@
         </template>
         <template v-slot:content>
             <div class="p-3 px-5 font-bold text-base">
-                New Program
+                Update Program
             </div>
             <div class="p-5 w-full md:max-w-md md:shadow md:shadow-gray-600 rounded mx-auto md:my-10">
                 <div>
@@ -66,8 +66,8 @@
                         class="rounded text-sm border-gray-400 w-full my-0.5 placeholder-gray-500" placeholder="Major">
                 </div>
                 <div class="text-right mt-5">
-                    <button @click="submit"
-                        class="rounded text-white bg-blue-500 hover:bg-blue-600 py-2 px-4">Create</button>
+                    <button @click="update"
+                        class="rounded text-white bg-blue-500 hover:bg-blue-600 py-2 px-4">Update</button>
                 </div>
             </div>
         </template>
@@ -76,15 +76,23 @@
 
 <script setup>
 import { useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
+const props = defineProps([
+    'program',
+    'discipline_list',
+]);
+
 
 const form = useForm({
-    discipline: null,
-    program: null,
-    major: null,
+    id: ref(props.program.id),
+    discipline: ref(props.program.disciplineId) ? ref(props.program.disciplineId) : null,
+    program: ref(props.program.program) ? ref(props.program.program) : null,
+    major: ref(props.program.major) ? ref(props.program.major) : null,
 })
 
-function submit() {
-    form.post('/admin/program/store', form);
+function update() {
+    form.post('/admin/program/update', form);
 }
 
 </script>
@@ -103,8 +111,5 @@ export default {
     components: {
         FormErrorMessage,
     },
-    props: {
-        discipline_list: Array,
-    }
 }
 </script>

@@ -1,9 +1,10 @@
 <template>
     <Head title="CHED Registration" />
-    <div class="w-full bg-white flex justify-center mt-20">
-        <div class="mx-auto md:w-4/5 md:shadow-lg md:border md:rounded-2xl max-w-xl px-10 pb-10">
+    <div class="w-full bg-white flex justify-center mt-10 md:mt-20 select-none">
+        <div
+            class="mx-auto md:w-4/5 md:shadow md:shadow-gray-400 md:border md:rounded max-w-xl px-10 pb-10 md:border-gray-400">
             <!-- header -->
-            <div class="text-center md:p-3 md:flex items-center justify-start">
+            <div class="text-center md:p-3 md:mb-0 mb-10 md:flex items-center justify-start">
                 <img src="/assets/ched-logo.png" alt="CHED Logo" width="75" class="mx-auto">
                 <h2 class="text-xl md:text-2xl font-bold w-3/4 mx-auto m-5">Commission on Higher Education Registration</h2>
             </div>
@@ -14,7 +15,7 @@
                     <div>
                         <label for="role" class="block font-medium text-gray-900 dark:text-white">Role</label>
                         <select id="role" v-model="form.role"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2">
+                            class="border border-gray-400 text-gray-700 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2">
                             <option value="">Select role</option>
                             <option value="Regional Director">Regional Director</option>
                             <option value="Chief Education Program Specialist">Chief Education Program Specialist</option>
@@ -32,10 +33,10 @@
                     <div class="mt-5" v-if="checkRole()">
                         <div>
                             <label for="discipline"
-                                class="mb-2 font-medium text-gray-900 dark:text-white">Discipline(s)</label>
+                                class="mb-2 font-medium text-gray-700 dark:text-white">Discipline(s)</label>
                         </div>
                         <select id="discipline" v-model="form.discipline"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
+                            class="border border-gray-400 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
                             :class="{ 'border-red-500': $page.props.errors.discipline || $page.props.errors.other_discipline }">
                             <option value="">Select discipline</option>
                             <option v-for="discipline in discipline_list" :key="discipline.id" :value="discipline.id">{{
@@ -51,7 +52,7 @@
                         <div v-for="(discipline, index) in form.other_discipline" :key="index" class="flex mt-2">
                             <div class="w-full">
                                 <select v-model="form.other_discipline[index]"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    class="border border-gray-400 text-gray-700 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     :class="{ 'border-red-500': $page.props.errors.other_discipline }">
                                     <option value="">Select discipline</option>
                                     <option v-for="discipline in discipline_list" :key="discipline.id"
@@ -66,9 +67,9 @@
                         <input type="button" @click="addField" class="text-sm cursor-pointer text-blue-400 mt-2"
                             value="+ Add discipline">
                     </div>
-                    <div class="text-right mt-7">
+                    <div class="text-center mt-7">
                         <input type="submit"
-                            class=" bg-blue-600 hover:bg-blue-800 text-white p-2 px-5 rounded-lg w-full cursor-pointer"
+                            class=" bg-blue-600 hover:bg-blue-800 text-white p-2 px-5 max-w-16 rounded w-full cursor-pointer"
                             value="REGISTER">
                     </div>
                 </form>

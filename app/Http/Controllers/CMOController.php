@@ -44,16 +44,10 @@ class CMOController extends Controller
     }
 
     public function view(CMOModel $cmo) {
+        $cmoModel = CMOModel::where('id', $cmo->id)->with('discipline', 'program', 'criteria')->first();
         return Inertia::render('Progmes/Admin/CMO-View',[
-            'criteria' => CriteriaModel::where('cmoId', $cmo->id)
-                ->get()
-                ->map(fn($cmo) => [
-                    'id' => $cmo->id,
-                    'area' => $cmo->area,
-                    'minimumRequirement' => $cmo->minimumRequirement,
-                ]),
-            'cmo' => 'CMO No.'.$cmo->number.' Series of '.$cmo->series,
-            ]);
+            'cmo' => $cmoModel,
+        ]);
     }
 
     public function edit(Request $request) {

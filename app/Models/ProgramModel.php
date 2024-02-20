@@ -13,7 +13,8 @@ class ProgramModel extends Model
 
     protected $fillable = [
         'disciplineId',
-        'name',
+        'program',
+        'major',
     ];
 
     protected $hidden = [

@@ -75,7 +75,7 @@
         <Notification :message="$page.props.flash.success" />
     </div>
     <div v-if="modal">
-        <Confirmation @close="toggleModal" :title="title" :modaltype="modaltype" :selected="selectedUser" />
+        <Confirmation @close="closeModal" :title="title" :modaltype="modaltype" :selected="selectedUser" />
     </div>
 </template>
 
@@ -105,6 +105,10 @@ export default {
             this.selectedUser = id;
             this.modaltype = type;
             this.title = title;
+        },
+
+        closeModal() {
+            this.modal = false;
         }
     },
 }

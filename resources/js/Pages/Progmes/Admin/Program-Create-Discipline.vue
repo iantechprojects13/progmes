@@ -1,5 +1,5 @@
 <template>
-    <Head title="New Program" />
+    <Head title="New Discipline" />
     <AdminPanel />
     <content-container placeholder="Search program">
         <template v-slot:channel>
@@ -39,31 +39,14 @@
         </template>
         <template v-slot:content>
             <div class="p-3 px-5 font-bold text-base">
-                New Program
+                New Discipline
             </div>
             <div class="p-5 w-full md:max-w-md md:shadow md:shadow-gray-600 rounded mx-auto md:my-10">
                 <div>
-                    <label for="discipline" class="font-bold text-gray-600">Discipline</label>
-                    <select v-model="form.discipline" type="text" id="discipline"
-                        class="rounded text-sm border-gray-400 w-full my-0.5"
-                        :class="[{ 'text-gray-500': form.discipline == null }, { 'text-gray-700': form.discipline }]">
-                        <option :value="null">Select discipline</option>
-                        <option v-for="item in discipline_list" :value="item.id" class="text-black">
-                            {{ item.discipline }}
-                        </option>
-                    </select>
+                    <label for="discipline" class="font-black">Discipline</label>
+                    <input v-model="form.discipline" type="text" id="discipline"
+                        class="rounded text-sm border-gray-400 w-full my-0.5 placeholder-gray-500" placeholder="Discipline">
                     <FormErrorMessage :message="$page.props.errors.discipline" theme="dark" />
-                </div>
-                <div class="mt-3">
-                    <label for="program" class="font-bold text-gray-600">Program</label>
-                    <input v-model="form.program" type="text" id="program"
-                        class="rounded text-sm border-gray-400 w-full my-0.5 placeholder-gray-500" placeholder="Program">
-                    <FormErrorMessage :message="$page.props.errors.program" theme="dark" />
-                </div>
-                <div class="mt-3">
-                    <label for="major" class="font-bold text-gray-600">Major</label>
-                    <input v-model="form.major" type="text" id="major"
-                        class="rounded text-sm border-gray-400 w-full my-0.5 placeholder-gray-500" placeholder="Major">
                 </div>
                 <div class="text-right mt-5">
                     <button @click="submit"
@@ -72,6 +55,9 @@
             </div>
         </template>
     </content-container>
+    <div v-if="$page.props.flash.success">
+        <Notification :message="$page.props.flash.success" />
+    </div>
 </template>
 
 <script setup>
@@ -79,12 +65,10 @@ import { useForm } from '@inertiajs/vue3';
 
 const form = useForm({
     discipline: null,
-    program: null,
-    major: null,
 })
 
 function submit() {
-    form.post('/admin/program/store', form);
+    form.post('/admin/program/discipline/store', form);
 }
 
 </script>
@@ -103,8 +87,5 @@ export default {
     components: {
         FormErrorMessage,
     },
-    props: {
-        discipline_list: Array,
-    }
 }
 </script>

@@ -31,7 +31,7 @@ class InstitutionController extends Controller
     public function store(InstitutionValidationRequest $request)
     {   
         $validatedData = $request->validated();
-        $programs = $request->programs;
+        $programs = $validatedData['programs'];
 
         if ($validatedData) {
             $institution = InstitutionModel::create([
@@ -40,7 +40,7 @@ class InstitutionController extends Controller
                 'address' => $validatedData['address'],
                 'cityOrMunicipality' => $validatedData['cityOrMunicipality'],
                 'cityOrProvince' => $validatedData['cityOrProvince'],
-                'zipCode' => $validatedData['zip'],
+                'zipCode' => $validatedData['zipCode'],
             ]);
         }
         if ($programs) {
@@ -57,13 +57,23 @@ class InstitutionController extends Controller
 
     public function view(InstitutionModel $institution)
     {
-        $row = InstitutionModel::where('id', $institution->id)->first();
+        $row = InstitutionModel::where('id', $institution->id)->with('institutionProgram.program')->first();
 
         return Inertia::render('Progmes/Admin/HEI-View', [
             'institution' => $row,
-            'canEdit' => false,
         ]);
         
+    }
+
+    public function edit(InstitutionModel $institution) {
+        return Inertia::render('Progmes/Admin/HEI-Edit', [
+            'institution' => InstitutionModel::where('id', $institution->id)->with('institutionProgram.program')->first(),
+            'program_list' => ProgramModel::all(),
+        ]);
+    }
+
+    public function update(InstitutionValidationRequest $request) {
+        $validatedData = $request->validated();
     }
 
     

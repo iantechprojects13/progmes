@@ -1,6 +1,6 @@
 <template>
     <Head title="Login" />
-    <div class="w-full flex h-screen">
+    <div class="w-full flex h-screen select-none">
         <div class="w-full h-screen flex text-center items-center justify-center" id="background-pic">
             <div>
                 <div class="w-full text-white">

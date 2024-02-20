@@ -19,4 +19,14 @@ class InstitutionModel extends Model
         'cityOrProvince',
         'zipCode',
     ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
+    public function institutionProgram()
+    {
+        return $this->hasMany(InstitutionProgramModel::class, 'institutionId', 'id');
+    }
 }

@@ -1,5 +1,6 @@
 <template>
-    <div v-if="message" class="text-sm text-red-500 ml-3">
+    <div v-if="message" class="text-sm ml-1"
+        :class="[{ 'text-red-200': theme == 'light' }, { 'text-red-500': theme == 'dark' }]">
         {{ message }}
     </div>
 </template>
@@ -8,6 +9,7 @@
 
 defineProps([
     'message',
+    'theme',
 ]);
 
 </script>

@@ -131,7 +131,7 @@
         </div>
 
         <!-- Page Content -->
-        <div class="w-full h-full relative bg-white overflow-x-auto">
+        <div class="w-full h-screen relative bg-white overflow-x-auto">
             <slot />
         </div>
     </div>
@@ -149,14 +149,14 @@ export default {
                 adminpanel: [
                     'Progmes/Admin/User-List', 'Progmes/Admin/User-Request', 'Progmes/Admin/HEI',
                     'Progmes/Admin/HEI-Create', 'Progmes/Admin/HEI-View',
-                    'Progmes/Admin/CMO', 'Progmes/Admin/CMO-Create', 'Progmes/Admin/CMO-Upload',
+                    'Progmes/Admin/CMO', 'Progmes/Admin/CMO-Edit', 'Progmes/Admin/CMO-Upload',
                     'Progmes/Admin/Settings', 'Progmes/Admin/EvaluationForm',
                     'Progmes/Admin/Program', 'Progmes/Admin/Program-Create',
                 ],
                 evaluation: [
                     'Progmes/Evaluation/Evaluation-CHED', 'Progmes/Evaluation/Evaluation-HEI',
-                    'Progmes/Evaluation/Evaluation-HEI-Edit'
-                ]
+                    'Progmes/Evaluation/Evaluation-HEI-Edit', 'Progmes/Evaluation/Evaluation-Admin',
+                ],
             },
             closeSideBar: false,
             autoHide: true,

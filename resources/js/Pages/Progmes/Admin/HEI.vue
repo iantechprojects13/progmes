@@ -28,11 +28,16 @@
                             {{ institution.name }}
                         </th>
                         <td class="p-3">{{ institution.address }}, {{ institution.cityOrMunicipality }}</td>
-                        <td>
+                        <td class="p-3 text-right">
                             <button @click="view(institution.id)"
                                 class="text-gray-500 hover:text-gray-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
                                 data-tooltip="View">
                                 <i class="text-lg fas fa-eye"></i>
+                            </button>
+                            <button @click="toggleModal(institution, 'deleteHEI', 'Delete HEI')"
+                                class="text-red-500 hover:text-red-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
+                                data-tooltip="Delete">
+                                <i class="text-lg fas fa-trash"></i>
                             </button>
                         </td>
                     </tr>
@@ -40,6 +45,7 @@
             </content-table>
         </template>
     </content-container>
+    <Confirmation v-show="openModal" @close="closeModal" :selected="selected" :title="title" :modaltype="modaltype" />
     <div v-if="$page.props.flash.success">
         <Notification :message="this.$page.props.flash.success" />
     </div>
@@ -62,6 +68,27 @@ function view(id) {
 <script>
 import Layout from '../Shared/Layout.vue';
 export default {
+    data() {
+        return {
+            openModal: false,
+            title: '',
+            modaltype: '',
+            selected: '',
+        }
+    },
     layout: Layout,
+
+    methods: {
+        toggleModal(item, type, title) {
+            this.openModal = !this.openModal;
+            this.selected = item;
+            this.modaltype = type;
+            this.title = title;
+        },
+
+        closeModal() {
+            this.openModal = false;
+        }
+    }
 }
 </script>

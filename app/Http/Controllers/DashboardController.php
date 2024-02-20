@@ -29,31 +29,33 @@ class DashboardController extends Controller
 
     public function DashboardForHEI() {
 
-        $role = $this->getHEIRole(Auth::user()->id);
+        return Inertia::render('Progmes/Dashboard/Dashboard-HEI');
 
-        if($role->institutionId && $role->programId) {
-            $evaluationForm = $this->getEvaluationForm($role->institutionId, $role->programId);
+        // $role = $this->getHEIRole(Auth::user()->id);
 
-            if($evaluationForm) {
+        // if($role->institutionId && $role->programId) {
+        //     $evaluationForm = $this->getEvaluationForm($role->institutionId, $role->programId);
 
-                $complied = $evaluationForm->item->where('selfEvaluationStatus', 'Complied');
-                $notComplied = $evaluationForm->item->where('selfEvaluationStatus', 'Not complied');
+        //     if($evaluationForm) {
 
-                $compliedPercentage = $this->getPercentage($complied->count(), $evaluationForm->item->count());
-                $notCompliedPercentage = $this->getPercentage($notComplied->count(), $evaluationForm->item->count());
+        //         $complied = $evaluationForm->item->where('selfEvaluationStatus', 'Complied');
+        //         $notComplied = $evaluationForm->item->where('selfEvaluationStatus', 'Not complied');
 
-                return Inertia::render('Progmes/Dashboard/Dashboard-HEI', [
-                    'complied' => [$complied->count(), $notComplied->count()],
-                    'compliedPercentage' => $compliedPercentage,
-                    'notComplied' => [$notComplied->count(), $complied->count()],
-                    'notCompliedPercentage' => $notCompliedPercentage,
-                    'totalItem' => $evaluationForm->item->count(),
-                ]);
+        //         $compliedPercentage = $this->getPercentage($complied->count(), $evaluationForm->item->count());
+        //         $notCompliedPercentage = $this->getPercentage($notComplied->count(), $evaluationForm->item->count());
 
-            } else {
-                // render dashboard with no data - no evaluation form yet
-            }
-        }
+        //         return Inertia::render('Progmes/Dashboard/Dashboard-HEI', [
+        //             'complied' => [$complied->count(), $notComplied->count()],
+        //             'compliedPercentage' => $compliedPercentage,
+        //             'notComplied' => [$notComplied->count(), $complied->count()],
+        //             'notCompliedPercentage' => $notCompliedPercentage,
+        //             'totalItem' => $evaluationForm->item->count(),
+        //         ]);
+
+        //     } else {
+        //         // render dashboard with no data - no evaluation form yet
+        //     }
+        // }
 
         
     }
