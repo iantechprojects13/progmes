@@ -15,12 +15,25 @@ use Inertia\Inertia;
 class DashboardController extends Controller
 {
     public function index() {
-        $userType = Auth::user()->type;
-        if ($userType == 'CHED') {
+        $userRole = Auth::user()->role;
+
+        if (
+            $userRole == 'Super Admin' ||
+            $userRole == 'Regional Director' ||
+            $userRole == 'Chief Education Program Specialist' ||
+            $userRole == 'Supervising Education Program Specialist'
+            ) {
+                return redirect()->route('dashboard.admin');
+        }
+        else if ($userRole == 'Education Supervisor') {
             return redirect()->route('dashboard.ched')->with('message', 'Sample Text, Sample Notification, Sample Text, Sample Notification, Sample Text, Sample Notification, Sample Text, Sample Notification.');
         } else {
             return redirect()->route('dashboard.hei');
         }
+    }
+
+    public function DashboardForAdmin() {
+        return Inertia::render('Progmes/Dashboard/Dashboard-Admin');
     }
 
     public function DashboardForCHED() {
@@ -56,9 +69,11 @@ class DashboardController extends Controller
         //         // render dashboard with no data - no evaluation form yet
         //     }
         // }
-
-        
     }
+
+
+    
+
 
 
 

@@ -4,7 +4,7 @@
     <content-container placeholder="Search User" :data_list="user_list">
         <template v-slot:channel>
             <div class="relative" @mouseleave="openSelectPageDropdown = false">
-                <button class="px-3 rounded h-10 text-white bg-green-700"
+                <button class="px-3 rounded h-10 text-blue-500 border border-blue-500"
                     @click.prevent="openSelectPageDropdown = !openSelectPageDropdown"><b>Active users </b><i
                         class="fas fa-caret-down ml-2"></i></button>
                 <div v-show="openSelectPageDropdown"

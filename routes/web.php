@@ -46,8 +46,13 @@ Route::controller(App\Http\Controllers\Auth\GoogleAuthController::class)->group(
 });
 
 
+// registration
+Route::post('/register/ched', [RegistrationController::class, 'registerCHED']);
+Route::post('/register/hei', [RegistrationController::class, 'registerHEI']);
+
 //dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth', 'user.verified')->name('dashboard');
+Route::get('/admin/dashboard', [DashboardController::class, 'dashboardForAdmin'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.admin');
 Route::get('/CHED/dashboard', [DashboardController::class, 'dashboardForCHED'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.ched');
 Route::get('/HEI/dashboard', [DashboardController::class, 'dashboardForHEI'])->middleware(['auth', 'type.hei', 'user.verified'])->name('dashboard.hei');
 
@@ -67,11 +72,16 @@ Route::get('/admin/higher-education-institutions', [InstitutionController::class
 Route::get('/admin/higher-education-institutions/create', [InstitutionController::class, 'create'])->middleware(['auth'])->name('admin.hei.create');
 Route::get('/admin/higher-education-institutions/{institution}/edit', [InstitutionController::class, 'edit'])->middleware(['auth'])->name('admin.hei.edit');
 Route::get('/admin/higher-education-institutions/{institution}/view', [InstitutionController::class, 'view'])->middleware(['auth'])->name('admin.hei.show');
+
 Route::get('admin/CMOs/{list?}', [CMOController::class, 'index'])->middleware('auth', 'type.ched')->name('admin.cmo.list');
 Route::get('admin/CMOs/{cmo}/view', [CMOController::class, 'view'])->middleware('auth', 'type.ched')->name('admin.cmo.show');
-Route::match(['post', 'get'], 'admin/form', [InstitutionProgramController::class, 'index'])->middleware('auth')->name('admin.form.list');
-Route::post('admin/form/create', [EvaluationFormController::class, 'create'])->middleware('auth')->name('admin.form.create');
+
+Route::get('admin/tool/{academicYear?}', [InstitutionProgramController::class, 'index'])->middleware('auth')->name('admin.form.list');
 Route::get('admin/form/{evaluation}/view', [EvaluationFormController::class, 'view'])->middleware('auth')->name('admin.form.view');
+Route::post('/admin/form/deploy', [EvaluationFormController::class, 'deploy'])->middleware('auth')->name('admin.form.deploy');
+
+Route::get('hei/tool/create/{id?}', [HEIFormController::class, 'store'])->middleware('auth')->name('hei.tool.store');
+
 Route::get('/admin/program', [ProgramController::class, 'index'])->middleware(['auth'])->name('admin.program.list');
 Route::get('/admin/program/discipline/create', [ProgramController::class, 'createDiscipline'])->middleware(['auth'])->name('admin.discipline.create');
 Route::post('/admin/program/discipline/store', [ProgramController::class, 'storeDiscipline'])->middleware(['auth'])->name('admin.discipline.store');
@@ -79,10 +89,8 @@ Route::get('/admin/program/create', [ProgramController::class, 'create'])->middl
 Route::post('/admin/program/store', [ProgramController::class, 'store'])->middleware(['auth'])->name('admin.program.store');
 Route::get('/admin/program/{program?}/edit', [ProgramController::class, 'edit'])->middleware(['auth'])->name('admin.program.edit');
 Route::post('/admin/program/update', [ProgramController::class, 'update'])->middleware(['auth'])->name('admin.program.update');
-Route::get('/admin/settings', [AdminSettingsController::class, 'index'])->middleware(['auth'])->name('admin.settings');
 
-Route::post('/register/ched', [RegistrationController::class, 'registerCHED']);
-Route::post('/register/hei', [RegistrationController::class, 'registerHEI']);
+Route::get('/admin/settings', [AdminSettingsController::class, 'index'])->middleware(['auth'])->name('admin.settings');
 
 
 Route::post('/discipline/delete', [ProgramController::class, 'deleteDiscipline'])->middleware(['auth'])->name('admin.discipline.delete');

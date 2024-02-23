@@ -7,25 +7,28 @@ use Inertia\Inertia;
 use App\Models\InstitutionProgramModel;
 use App\Models\InstitutionModel;
 use App\Models\ProgramModel;
+use App\Models\CMOModel;
 use App\Models\AdminSettingsModel;
 use Auth;
 
 class InstitutionProgramController extends Controller
 {
-    public function index(Request $request) {
+    public function index($academicYear = null) {
+        $effectivity = $academicYear ? $academicYear : AdminSettingsModel::where('userId', 201)->value('currentAcademicYear');
+        $program_list = ProgramModel::with('active_cmo')->get();
 
-        $effectivity = $request->effectivity ? $request->effectivity : AdminSettingsModel::where('userId', Auth::user()->id)->value('currentAcademicYear');
 
         return Inertia::render('Progmes/Admin/EvaluationForm',[
-            'list' => InstitutionProgramModel::with('institution', 'program', 'program.cmo', 'evaluationForm', 'evaluationForm.cmo')
-            ->paginate(8)
+            'list' => InstitutionProgramModel::with('institution', 'program', 'evaluationForm')
+            ->paginate(50)
             ->through(fn($item) => [
                 'id' => $item->id,
                 'institution' => $item->institution,
                 'program' => $item->program,
-                'evaluation' => $item->evaluationForm->where('effectivity', $effectivity)->first(),
+                'evaluation' => $item->evaluationForm()->where('effectivity', $effectivity)->with('item')->first(),
             ]),
             'effectivity' => $effectivity,
+            'program_list' => $program_list,
         ]);
     }
     

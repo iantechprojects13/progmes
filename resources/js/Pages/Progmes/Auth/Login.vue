@@ -2,6 +2,7 @@
     <Head title="Login" />
     <div class="w-full flex h-screen select-none">
         <div class="w-full h-screen flex text-center items-center justify-center" id="background-pic">
+            <!-- <img src="assets/ched-office.jpg" alt="" class="w-full fixed"> -->
             <div>
                 <div class="w-full text-white">
                     <img src="assets/ched-logo.png" width="100" class="mx-auto mb-5 lg:hidden">

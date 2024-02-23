@@ -3,16 +3,30 @@
     <AdminPanel />
     <content-container placeholder="Search" :data_list="list">
         <template v-slot:channel>
-            <div class="mx-3">
-                <label for="effectivity">Academic Year: </label>
-                <select id="effectivity" class="h-8 w-32 py-0 px-2 rounded border border-gray-400 text-blue-500 text-sm"
-                    v-model="form.effectivity" @change="submit">
-                    <option class="text-black" value="2023-2024">2023-2024</option>
-                    <option class="text-black" value="2024-2025">2024-2025</option>
-                    <option class="text-black" value="2025-2026">2025-2026</option>
-                    <option class="text-black" value="2026-2027">2026-2027</option>
-                </select>
+            <div class="relative" @mouseleave="openSelectPageDropdown = false">
+                <button class="px-3 rounded h-10 text-blue-500 border border-blue-500"
+                    @click.prevent="openSelectPageDropdown = !openSelectPageDropdown"><b>A.Y {{ effectivity }}</b><i
+                        class="fas fa-caret-down ml-2"></i></button>
+                <div v-show="openSelectPageDropdown"
+                    class="flex flex-col items-start absolute top-10 left-0 shadow border border-gray-300 bg-white rounded py-3 z-30 w-48"
+                    @mouseover.prevent="openSelectPageDropdown = true">
+                    <button v-for="(year, index) in academicYear" :key="index"
+                        class="flex flex-row py-2 w-full px-2 text-left text-gray-500 hover:text-gray-700 hover:bg-gray-200 pl-4"
+                        @click="changeAcademicYear(year)">
+                        <div class="w-6">
+                            <i v-show="year == effectivity" class="fas fa-check"></i>
+                        </div>
+                        <div>A.Y {{ year }}</div>
+                    </button>
+                </div>
             </div>
+        </template>
+        <template v-slot:actions>
+            <button @click="deployToolModal = true;"
+                class="text-gray-500 hover:text-black hover:bg-blue-200 border shadow shadow-gray-500 hover:shadow-gray-700 border-gray-400 w-10 h-10 rounded tooltipForActions group"
+                data-tooltip="Deploy compliant tool">
+                <i class="fas fa-rocket text-base group-hover:text-lg"></i>
+            </button>
         </template>
         <template v-slot:content>
             <content-table>
@@ -25,7 +39,7 @@
                     </th>
                 </template>
                 <template v-slot:table-body>
-                    <tr v-for="item in  props.list.data " :key="item" class="border-b border-gray-300">
+                    <tr v-for="item in  props.list.data " :key="item.id" class="border-b border-gray-300">
                         <td class="p-3 flex flex-col">
                             <span class="font-bold">{{ item.program.program }}</span>
                             <span>{{ item.institution.name }}</span>
@@ -45,8 +59,12 @@
                             -
                         </td>
                         <td class="p-3 whitespace-normal" v-if="item.evaluation">
-                            <span v-if="item.evaluation.status === null" class="p-1 text-xs bg-red-400 rounded text-white">
-                                Locked
+                            <span v-if="item.evaluation?.item.length > 0"
+                                class="p-1 text-xs bg-green-500 rounded text-white">
+                                In progress
+                            </span>
+                            <span v-else class="p-1 text-xs bg-blue-500 rounded text-white">
+                                Deployed
                             </span>
                         </td>
                         <td class="p-3" v-else>
@@ -54,15 +72,12 @@
                                 Pending
                             </span>
                         </td>
-                        <td class="pr-3 text-right relative">
-                            <content-table-action :item="item"
-                                @create="openModal(); modalForm = item; evaluationForm.institutionProgram = item.id"
-                                :canView="item.evaluation !== null" :canEdit="item.evaluation !== null"
-                                :canCreate="item.evaluation == null" :canLock="item.evaluation !== null"
-                                :canUnlock="item.evaluation !== null" :canArchive="item.evaluation !== null"
-                                :canDelete="item.evaluation !== null"
-                                :viewLink="'/admin/form/' + item.evaluation?.id + '/view'">
-                            </content-table-action>
+                        <td class="p-3 text-right relative">
+                            <!-- <button
+                                class="text-blue-500 hover:text-blue-600 hover:bg-gray-200 border shadow shadow-gray-500 hover:shadow-gray-700 border-gray-400 w-10 h-10 rounded tooltipForActions"
+                                data-tooltip="Deploy">
+                                <i class="text-lg fas fa-rocket"></i>
+                            </button> -->
                         </td>
                     </tr>
                     <tr v-show="list.data.length === 0">
@@ -72,100 +87,108 @@
             </content-table>
         </template>
     </content-container>
-    <modal v-if="showCreateModal" @close="closeModal" type="create" @create="createForm()" title="Create Evaluation Form">
-        <div class="flex flex-col md:px-5">
+    <modal :showModal="deployToolModal" @close="closeModal" @submit="deploy" type="deploy" title="Deploy Compliant Tool">
+        <div class="p-3">
             <div>
-                <label for="program" class="font-bold">Program</label><br>
-                <input id="program" :value="modalForm['program'].program" disabled
-                    class="h-8 w-full text-sm bg-gray-100 text-black font-bold rounded border-gray-400" />
+                <label for="program">Program</label>
+                <select id="program" class="w-full h-10 text-sm rounded border-gray-400 my-0.5"
+                    v-model="deployment.program">
+                    <option :value="null">Select program</option>
+                    <option v-for="program in program_list" :value="program">
+                        {{ program.program }}
+                    </option>
+                </select>
+                <FormErrorMessage :message="$page.props.errors.program" theme="dark" />
             </div>
             <div class="mt-3">
-                <label for="institution" class="font-bold">Institution</label><br>
-                <input id="institution" :value="modalForm['institution'].name" disabled
-                    class="h-8 w-full text-sm bg-gray-100 text-black font-bold rounded border-gray-400" />
+                <div :class="{ 'grayscale opacity-50 pointer-events-none': deployment.program == null }">
+                    <label for="cmo">Active CMO</label>
+                    <input id="cmo" type="text" disabled class="w-full text-sm rounded border-gray-400 my-0.5" :value="deployment.program?.active_cmo != null ?
+                        'CMO No.' + deployment.program.active_cmo.version + ' Series of ' + deployment.program.active_cmo.series + ' - Version ' + deployment.program.active_cmo.version
+                        : 'No Active CMO'">
+                </div>
+                <FormErrorMessage :message="$page.props.errors.cmo" theme="dark" />
             </div>
             <div class="mt-3">
-                <label for="effectivity" class="font-bold">Effectivity</label><br>
-                <input v-model="evaluationForm.effectivity" id="effectivity" disabled
-                    class="h-8 w-full text-sm bg-gray-100 text-black font-bold rounded border-gray-400" />
-            </div>
-            <div class="mt-3">
-                <label for="cmo" class="font-bold">CMO</label><br>
-                <div v-if="modalForm['program'].cmo.length > 0">
-                    <select v-model="evaluationForm.cmo" id="cmo"
-                        class="h-8 w-full text-sm p-1.5 rounded text-black border-gray-400">
-                        <option value="">Select CMO</option>
-                        <option v-for="cmo in modalForm['program'].cmo" :key="cmo.id" :value="cmo.id">
-                            CMO No.{{ cmo.number }} - s.{{ cmo.series }} v.{{ cmo.version }}
-                        </option>
-                    </select>
-                </div>
-                <div v-else>
-                    <input id="cmo" value="No CMO for this program" disabled
-                        class="h-8 w-full text-sm bg-red-100 text-red-500 rounded border-gray-400" />
-                </div>
-                <div v-if="$page.props.errors.cmo">
-                    <span class="text-sm text-red-600">{{ $page.props.errors.cmo }}</span>
-                </div>
+                <label for="toolEffectivity">Effective A.Y</label>
+                <input v-model="deployment.effectivity" id="toolEffectivity" type="text" disabled
+                    class="w-full text-sm rounded border-gray-400 my-0.5">
             </div>
         </div>
     </modal>
-    <div v-if="$page.props.flash.success">
-        <Notification :message="$page.props.flash.success" />
-    </div>
+    <Notification :message="$page.props.flash.success" />
 </template>
 
 <script setup>
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
+let deployToolModal = ref(false);
 
-const modalForm = {};
+const closeModal = () => {
+    deployToolModal.value = false;
+};
 
 const props = defineProps([
     'list',
     'effectivity',
+    'program_list',
 ]);
 
 const form = useForm({
     effectivity: ref(props.effectivity),
 });
 
-const evaluationForm = useForm({
-    institutionProgram: null,
-    cmo: "",
+
+const deployment = useForm({
+    program: null,
+    cmo: null,
     effectivity: ref(props.effectivity),
 });
 
-function submit() {
-    form.post('/admin/form/', form.effectivity);
+function deploy() {
+    if (deployment.program?.active_cmo) {
+        deployment.cmo = deployment.program.active_cmo;
+    } else {
+        deployment.cmo = null;
+    }
+
+    if (deployment.program != null && deployment.cmo != null) {
+        closeModal();
+    }
+
+    deployment.post('/admin/form/deploy', deployment);
+
 }
 
 
-function createForm() {
-    evaluationForm.post('/admin/form/create', evaluationForm);
+function changeAcademicYear(year) {
+    form.get('/admin/tool/' + year);
 }
+
 
 
 </script>
 
 <script>
 import Layout from '../Shared/Layout.vue';
+import FormErrorMessage from '../Shared/FormErrorMessage.vue';
 export default {
     data() {
         return {
-            showCreateModal: false,
+            openSelectPageDropdown: false,
+            academicYear: [
+                '2023-2024', '2024-2025', '2025-2026',
+            ]
         }
     },
     layout: Layout,
     methods: {
-        openModal() {
-            this.showCreateModal = true;
-        },
+        toggleBg() {
+            this.ishidden = !this.ishidden;
+        }
 
-        closeModal() {
-            this.showCreateModal = false;
-        },
+
     },
 
 }

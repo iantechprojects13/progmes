@@ -40,7 +40,7 @@
     content: attr(data-tooltip);
     position: absolute;
     right: 0px;
-    bottom: 40px;
+    bottom: 45px;
     font-size: 13px;
     font-weight: normal;
     width: fit-content;

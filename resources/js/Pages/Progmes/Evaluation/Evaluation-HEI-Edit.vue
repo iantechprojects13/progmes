@@ -1,9 +1,6 @@
 <template>
     <Head title="Evaluation Form" />
-    <div class="text-xl font-bold w-full mb-5">Program Self-Evaluation</div>
-    <!-- <div class="border">
-        asdasdasd
-    </div> -->
+    <div class="text-xl font-bold w-full mb-5 p-5">Program Self-Evaluation</div>
     <content-container placeholder="Search form">
         <template v-slot:channel>
             <Link :href="route('evaluation')" class="py-2 px-4 bg-gray-100 rounded-2xl hover:bg-gray-200">

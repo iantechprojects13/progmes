@@ -38,6 +38,6 @@ class CMOModel extends Model
 
     public function criteria()
     {
-        return $this->hasMany(CriteriaModel::class, 'cmoId', 'id');
+        return $this->hasMany(CriteriaModel::class, 'cmoId', 'id')->orderBy('itemNo', 'asc');
     }
 }

@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full">
+    <div v-show="message != null" class="w-full">
         <div class="bg-stone-800 text-white fixed p-5 md:rounded-lg -bottom-20 md:left-auto md:right-3 md:w-max w-full left-0 right-0 md:max-w-md"
             :class="{ 'show md:-translate-y-3': openNotification, 'hide': !openNotification }">
             <div class="flex justify-between items-center text-sm">

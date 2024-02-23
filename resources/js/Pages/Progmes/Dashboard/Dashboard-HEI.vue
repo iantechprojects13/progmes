@@ -7,11 +7,6 @@
 
 <script setup>
 defineProps([
-    'complied',
-    'notComplied',
-    'compliedPercentage',
-    'notCompliedPercentage',
-    'totalItem',
 ]);
 </script>
 

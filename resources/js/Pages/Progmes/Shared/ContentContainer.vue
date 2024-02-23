@@ -1,8 +1,6 @@
 <template>
-    <div
-        class="h-auto rounded-t mb-5 mt-7 pt-0 mx-3 md:mx-8 text-sm border shadow shadow-gray-300 border-gray-400 rounded-lg">
-        <div
-            class="w-full flex flex-row justify-between items-center py-3 border-b border-gray-400 z-30 px-3 bg-white rounded-t-lg">
+    <div class="h-auto mb-5 mt-7 pt-0 mx-3 md:mx-8 text-sm border shadow shadow-gray-300 border-gray-400">
+        <div class="w-full flex flex-row justify-between items-center py-3 border-b border-gray-400 z-30 px-3 bg-white">
             <div class="flex items-center justify-between w-full" :class="{ 'hidden': !hideSearch }">
                 <div class="flex">
                     <slot name="channel"></slot>
@@ -11,18 +9,18 @@
                     <slot name="actions"></slot>
                 </div>
             </div>
-            <div v-show="placeholder" class="flex md:w-80" :class="{ ' justify-end w-full relative': !hideSearch }">
-                <div class="relative md:block w-full" :class="{ 'hidden': hideSearch }">
+            <div v-show="placeholder" class="flex lg:w-80" :class="{ ' justify-end w-full relative': !hideSearch }">
+                <div class="relative lg:block w-full" :class="{ 'hidden': hideSearch }">
                     <form>
                         <input type="search" id="content-search" :placeholder="placeholder"
-                            class="rounded border w-full border-gray-400 pr-11 h-10 md:bg-white bg-blue-100 text-sm">
+                            class="rounded border w-full border-gray-400 pr-11 h-10 lg:bg-white bg-blue-100 text-sm shadow shadow-gray-500">
                         <button
                             class="rounded-full hover:bg-blue-300 active:bg-blue-600 active:text-white absolute top-0 right-0 h-10 w-10">
                             <i class="fas fa-search"></i>
                         </button>
                     </form>
                 </div>
-                <button class="hover:bg-gray-200 rounded border h-10 w-12 border-gray-400 md:hidden"
+                <button class="hover:bg-gray-200 rounded border h-10 w-12 border-gray-400 lg:hidden shadow shadow-gray-500"
                     :class="{ 'ml-1': !hideSearch }" @click="toggleSearch">
                     <i :class="[{ 'fas fa-search': hideSearch }, { 'fas fa-close': !hideSearch }]"></i>
                 </button>

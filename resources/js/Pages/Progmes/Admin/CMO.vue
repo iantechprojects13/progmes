@@ -34,7 +34,8 @@
         </template>
         <template v-slot:actions>
             <div class="relative text-gray-600" @mouseleave="openCreateDropdown = false">
-                <button class="px-3 border rounded h-10 border-gray-400 hover:border-black text-gray-500 hover:text-black"
+                <button
+                    class="px-3 shadow shadow-gray-700 border rounded h-10 border-gray-400 hover:border-black text-gray-500 hover:text-black"
                     @click.prevent="openCreateDropdown = !openCreateDropdown">
                     <i class="fas fa-plus"></i>
                     <i class="fas fa-caret-down ml-3"></i></button>
@@ -136,7 +137,7 @@
             </content-table>
         </template>
     </content-container>
-    <modal v-if="uploadModal" title="Import excel file" @close="closeModal" @upload="upload" type="import">
+    <modal :showModal="uploadModal" title="Import excel file" @close="closeModal" @upload="upload" type="import">
         <form @submit.prevent="upload">
             <div class="text-center pt-5">
                 <input ref="uploadfile" hidden type="file" @change="form.cmo_file = $event.target.files[0]" id="excel">

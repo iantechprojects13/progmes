@@ -12,6 +12,7 @@ use App\Models\CMOModel;
 use App\Models\CriteriaModel;
 use App\Http\Requests\EvaluationFormRequest;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 
 class EvaluationFormController extends Controller
 {
@@ -28,15 +29,15 @@ class EvaluationFormController extends Controller
     }
 
     public function create(EvaluationFormRequest $request) {
-        $validatedData = $request->validated();
+        // $validatedData = $request->validated();
 
-        if ($validatedData) {
-            $evaluationForm = EvaluationFormModel::create([
-                'institutionProgramId' => $validatedData['institutionProgram'],
-                'cmoId' => $validatedData['cmo'],
-                'effectivity' => $validatedData['effectivity'],
-            ]);
-        }
+        // if ($validatedData) {
+        //     $evaluationForm = EvaluationFormModel::create([
+        //         'institutionProgramId' => $validatedData['institutionProgram'],
+        //         'cmoId' => $validatedData['cmo'],
+        //         'effectivity' => $validatedData['effectivity'],
+        //     ]);
+        // }
 
         $criteria = CriteriaModel::where('cmoId', $validatedData['cmo'])->orderBy('itemNo', 'asc')->get();
 
@@ -63,6 +64,38 @@ class EvaluationFormController extends Controller
             'evaluationForm' => $evaluationForm,
             'items' => EvaluationItemModel::where('evaluationFormId',  $evaluation->id)->with('criteria')->get(),
         ]);
+    }
+
+    public function deploy(Request $request) {
+        $validatedData = $request->validate([
+            'program' => 'required',
+            'cmo' => 'required',
+            'effectivity' => 'required',
+        ], [
+            'cmo.required' => 'Active CMO is required.',
+        ]);
+
+
+        $institutionProgram = InstitutionProgramModel::where('programId', $validatedData['program']['id'])
+        ->whereNotExists(function ($query) use ($validatedData) {
+            $query->select(DB::raw(1))
+                ->from('evaluation_form')
+                ->whereRaw('evaluation_form.institutionProgramId = institution_program.id')
+                ->where('effectivity', $validatedData['effectivity']);
+        })->get();
+
+        $cmo = $validatedData['cmo']['id'];
+
+        foreach($institutionProgram as $item) {
+            EvaluationFormModel::create([
+                'institutionProgramId' => $item->id,
+                'cmoId' => $cmo,
+                'effectivity' => $validatedData['effectivity'],
+                'status' => 'deployed',
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Compliant tool for ' . $validatedData['program']['program'] . ' programs has been deployed.');
     }
 
 }

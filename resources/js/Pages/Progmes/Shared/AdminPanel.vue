@@ -1,6 +1,6 @@
 <template>
     <div class="px-3 md:px-7 pt-4 bg-white text-gray-600 sticky -top-14 z-60">
-        <h1 class="text-2xl font-bold">AdminPanel</h1>
+        <h1 class="text-2xl font-bold">Admin Panel</h1>
         <div class="mt-3 w-full z-40 text-gray-700 font-bold text-sm md:pb-0 md:border-b-2 border-gray-400">
             <div class="text-right">
                 <button @click="toggleMenu"
@@ -31,7 +31,7 @@
                         CMO
                     </button>
                     </Link>
-                    <Link href="/admin/form">
+                    <Link href="/admin/tool">
                     <button
                         class="h-12 md:w-auto md:px-5 w-full md:hover:bg-stone-200 hover:bg-stone-600 md:hover:text-black rounded"
                         :class="{ 'text-blue-500 md:border-b-blue-500 md:border-b-4 rounded-none md:hover:bg-white md:hover:text-blue-500': highlight('form') }">
@@ -66,7 +66,7 @@ export default {
             {
                 user: ['/admin/users'],
                 cmo: ['/admin/CMOs'],
-                form: ['/admin/form'],
+                form: ['/admin/tool'],
                 institution: ['/admin/higher-education-institutions'],
                 program: ['/admin/program'],
                 settings: ['/admin/settings'],
