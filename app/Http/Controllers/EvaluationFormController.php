@@ -16,17 +16,17 @@ use Illuminate\Support\Facades\DB;
 
 class EvaluationFormController extends Controller
 {
-    public function index() {
-        return Inertia::render('Progmes/Admin/EvaluationForm-Create', [
-            'list' => EvaluationFormModel::where('effectivity', '2023-2024')->with('institution_program', 'cmo', 'institution_program.institution', 'institution_program.program')
-            ->paginate(10)
-            ->through(fn($item) => [
-                'id' => $item->id,
-                'cmo' => $item->cmo,
-                'institutionProgram' => $item->institution_program,
-            ]),
-        ]);
-    }
+    // public function index() {
+    //     return Inertia::render('Progmes/Admin/EvaluationForm-Create', [
+    //         'list' => EvaluationFormModel::where('effectivity', '2023-2024')->with('institution_program', 'cmo', 'institution_program.institution', 'institution_program.program')
+    //         ->paginate(10)
+    //         ->through(fn($item) => [
+    //             'id' => $item->id,
+    //             'cmo' => $item->cmo,
+    //             'institutionProgram' => $item->institution_program,
+    //         ]),
+    //     ]);
+    // }
 
     public function create(EvaluationFormRequest $request) {
         // $validatedData = $request->validated();

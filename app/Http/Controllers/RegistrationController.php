@@ -19,19 +19,19 @@ use App\Mail\NotificationEmail;
 
 class RegistrationController extends Controller
 {   
-    // select account type render page
+    
     public function index () {
         return Inertia::render('Progmes/Auth/Register-Select');
     }
 
-    // ched registration render page
+    
     public function accountCHED () {
         return Inertia::render('Progmes/Auth/Register-CHED', [
             'discipline_list' => DisciplineModel::select('id', 'discipline')->get(),
         ]);
     }
 
-    // hei registration render page
+    
     public function accountHEI () {
         return Inertia::render('Progmes/Auth/Register-HEI', [
             'institution_list' => InstitutionModel::select('id', 'name')->get(),
@@ -51,14 +51,14 @@ class RegistrationController extends Controller
                 function ($attribute, $value, $fail) use ($request) {
                     if (count($value) !== count(array_unique($value))) {
                         $fail('Discipline has repeated values.');
-                    } elseif (in_array($request->input('discipline'), $value)) {
+                    } elseif (in_array($request->discipline, $value)) {
                         $fail('Discipline has repeated values.');
                     }
                 },
             ],
         ];
 
-        if ($request->input('role') !== 'Education Supervisor') {
+        if ($request->role !== 'Education Supervisor') {
             $rules['discipline'] = 'nullable';
             $rules['other_discipline'] = 'nullable';
         }
@@ -78,10 +78,11 @@ class RegistrationController extends Controller
 
             // update user type to 'CHED'
             $user->type = 'CHED';
+            $user->role = $roleValue;
             $user->save();
             
             // create role
-            if ($roleValue && $disciplineValue && $otherDisciplineValue) {
+            if ($roleValue) {
 
                 RoleModel::create([
                     'userId' => Auth::user()->id,
@@ -89,30 +90,23 @@ class RegistrationController extends Controller
                     'disciplineId' => $disciplineValue,
                 ]);
 
-                foreach($otherDisciplineValue as $discipline) {
-                    RoleModel::create([
-                        'userId' => Auth::user()->id,
-                        'role' => $roleValue,
-                        'disciplineId' => $discipline,
-                    ]);
+                if ($otherDisciplineValue) {
+                    foreach($otherDisciplineValue as $discipline) {
+                        RoleModel::create([
+                            'userId' => Auth::user()->id,
+                            'role' => $roleValue,
+                            'disciplineId' => $discipline,
+                        ]);
+                    }
                 }
 
-            } elseif ($roleValue && $disciplineValue) {
-                RoleModel::create([
-                    'userId' => Auth::user()->id,
-                    'role' => $roleValue,
-                    'disciplineId' => $disciplineValue,
-                ]);
-            } elseif ($roleValue) {
-                RoleModel::create([
-                    'userId' => Auth::user()->id,
-                    'role' => $roleValue,
-                ]);
+                
+
             } else {
                 return redirect()->back()->with('failed', 'Unable to register.');
             }
 
-            return redirect()->route('register.pending')->with('success', 'Registration successful.');
+            return redirect()->route('register.pending');
         }
     
     }
@@ -127,10 +121,11 @@ class RegistrationController extends Controller
             'program' => 'nullable',
         ];
 
-        if ($request->input('role') == 'Dean') {
+        if ($request->role == 'Dean') {
             $rules['discipline'] = 'required';
         }
-        if ($request->input('role') == 'Program Head') {
+
+        if ($request->role == 'Program Head') {
             $rules['program'] = 'required';
         }
 
@@ -144,7 +139,6 @@ class RegistrationController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         } else {
-
             $institutionValue = $validator->fails() ? null : $validator->validated()['institution'];
             $roleValue = $validator->fails() ? null : $validator->validated()['role'];
             $disciplineValue = $validator->fails() ? null : $validator->validated()['discipline'];
@@ -153,36 +147,25 @@ class RegistrationController extends Controller
 
             // update user type to 'HEI'
             $user->type = 'HEI';
+            $user->role = $roleValue;
             $user->save();
 
             // create role
-            if ($institutionValue && $roleValue && $programValue) {
+            if ($institutionValue && $roleValue) {
 
                 RoleModel::create([
                     'userId' => Auth::user()->id,
                     'institutionId' => $institutionValue,
                     'role' => $roleValue,
-                    'programId' => $programValue,
+                    'disciplineId' => $disciplineValue ? $disciplineValue : null,
+                    'programId' => $programValue ? $programValue : null,
                 ]);
 
-            } elseif ($institutionValue && $roleValue && $disciplineValue) {
-                RoleModel::create([
-                    'userId' => Auth::user()->id,
-                    'institutionId' => $institutionValue,
-                    'role' => $roleValue,
-                    'disciplineId' => $disciplineValue,
-                ]);
-            } elseif ($institutionValue && $roleValue) {
-                RoleModel::create([
-                    'userId' => Auth::user()->id,
-                    'institutionId' => $institutionValue,
-                    'role' => $roleValue,
-                ]);
             } else {
                 return redirect()->back()->with('failed', 'Unable to register.');
             }
 
-            return redirect()->route('register.pending')->with('success', 'Registration successful.');
+            return redirect()->route('register.pending');
         }
     
     }

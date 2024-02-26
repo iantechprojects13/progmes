@@ -25,8 +25,8 @@ class HEIFormController extends Controller
             EvaluationItemModel::create([
                 'evaluationFormId' => $tool->id,
                 'criteriaId' => $item->id,
-                'selfEvaluationStatus' => 'Not Complied',
-                'evaluationStatus' => 'Not Complied',
+                'selfEvaluationStatus' => 'Not complied',
+                'evaluationStatus' => 'Not complied',
             ]);
         }
 
@@ -36,16 +36,16 @@ class HEIFormController extends Controller
 
         $tool->save();
         
-        return redirect('/hei/evaluation/'. $id);
+        return redirect('/hei/evaluation/'. $id . '/edit');
     }
 
     public function edit($evaluation) {
-        $form = EvaluationFormModel::where('id', $evaluation)->first();
+        $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program')->first();
         $items = EvaluationItemModel::where('evaluationFormId', $evaluation)->with('criteria')->get();
         
-        if($form->status == 'In progress') {
+        if($tool->status == 'In progress') {
             return Inertia::render('Progmes/Evaluation/Evaluation-HEI-Edit', [
-                'evaluation' => $form,
+                'evaluation' => $tool,
                 'items' => $items,
             ]);
         } else {

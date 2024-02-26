@@ -1,7 +1,7 @@
 <template>
     <Head title="Higher Education Institution List" />
     <AdminPanel />
-    <content-container placeholder="Search HEI">
+    <content-container :hasAction="true" placeholder="Search HEI">
         <template v-slot:actions>
             <Link :href="route('admin.hei.create')">
             <button class="h-10 px-3 border bg-blue-500 hover:bg-blue-600 rounded text-white">

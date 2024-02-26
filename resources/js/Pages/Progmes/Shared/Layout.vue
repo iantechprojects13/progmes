@@ -34,15 +34,15 @@
                             </div>
 
                             <!-- App Name -->
-                            <div class="p-2 my-2">
-                                <img src="/assets/ched-logo.png" width="30" class="inline-block mr-3">
-                                <div class="inline-block relative top-1">
+                            <div class="p-2 my-3 flex flex-row items-center">
+                                <img src="/assets/ched-logo.png" width="50" class="mr-3">
+                                <div class="text-2xl">
                                     ProgMES
                                 </div>
                             </div>
 
                             <!-- Searchbox -->
-                            <div class="bg-gray-700 mt-0 mb-5 h-10 rounded-md relative">
+                            <div class="bg-gray-700 my-7 h-10 rounded-md relative">
                                 <form class="h-full">
                                     <span
                                         class="w-1/6 h-full text-gray-400 p-1 absolute left-1 bg-inherit rounded flex justify-center items-center">
@@ -76,10 +76,10 @@
                                 <i class="fa fa-edit mr-4 text-xl"></i>
                                 Evaluation
                                 </Link>
-                                <Link href="" class="block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700">
+                                <!-- <Link href="" class="block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700">
                                 <i class="fa fa-archive mr-4 text-xl"></i>
                                 Archive
-                                </Link>
+                                </Link> -->
                             </div>
                         </div>
 
@@ -131,7 +131,7 @@
         </div>
 
         <!-- Page Content -->
-        <div class="w-full h-screen relative bg-white overflow-x-auto">
+        <div class="w-full h-screen relative bg-gray-200 overflow-x-auto">
             <slot />
         </div>
     </div>

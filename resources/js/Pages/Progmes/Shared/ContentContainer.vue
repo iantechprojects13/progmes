@@ -1,6 +1,6 @@
 <template>
-    <div class="h-auto mb-5 mt-7 pt-0 mx-3 md:mx-8 text-sm border shadow shadow-gray-300 border-gray-400">
-        <div class="w-full flex flex-row justify-between items-center py-3 border-b border-gray-400 z-30 px-3 bg-white">
+    <div class="h-auto mb-5 mt-7 pt-0 mx-3 md:mx-8 rounded">
+        <div v-show="hasAction" class="w-full flex flex-row justify-between items-center bg-white z-30 px-3 rounded-t py-3">
             <div class="flex items-center justify-between w-full" :class="{ 'hidden': !hideSearch }">
                 <div class="flex">
                     <slot name="channel"></slot>
@@ -13,7 +13,7 @@
                 <div class="relative lg:block w-full" :class="{ 'hidden': hideSearch }">
                     <form>
                         <input type="search" id="content-search" :placeholder="placeholder"
-                            class="rounded border w-full border-gray-400 pr-11 h-10 lg:bg-white bg-blue-100 text-sm shadow shadow-gray-500">
+                            class="rounded border w-full border-gray-500 pr-11 h-10 lg:bg-white bg-blue-200 text-base">
                         <button
                             class="rounded-full hover:bg-blue-300 active:bg-blue-600 active:text-white absolute top-0 right-0 h-10 w-10">
                             <i class="fas fa-search"></i>
@@ -26,10 +26,10 @@
                 </button>
             </div>
         </div>
-        <div>
+        <div class="bg-white">
             <slot name="content-head"></slot>
         </div>
-        <div class="overflow-auto max-h-screen">
+        <div class="overflow-auto h-full px-3 bg-white">
             <div>
                 <slot name="content"></slot>
             </div>
@@ -47,6 +47,8 @@
 defineProps([
     'placeholder',
     'data_list',
+    'hasAction',
+    'hasPagination'
 ]);
 </script>
 

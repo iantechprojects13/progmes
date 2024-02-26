@@ -14,24 +14,35 @@ use App\Models\RoleModel;
 class UserController extends Controller
 {
     public function index() {
-        return Inertia::render('Progmes/Admin/User-List',[
-            'user_list' => User::
-                where([
-                    'isVerified' => 1,
-                    'isActive' => 1,
-                ])
-                ->orderBy('name', 'asc')
-                ->paginate(40)
-                ->through(fn($account) => [
-                    'id' => $account->id,
-                    'name' => $account->name,
-                    'email' => $account->email,
-                    'type' => $account->type,
-                    'avatar' => $account->avatar,
-                    'role' => RoleModel::where('userId', $account->id)->value('role'),
-                    'institution' => InstitutionModel::where('id', RoleModel::where('userId', $account->id)->value('institutionId'))->value('name'),
-                ]),
-            ]);
+
+        $userList = User::where([
+            'isVerified' => 1,
+            'isActive' => 1,
+        ])->with('userRole', 'userRole.institution', 'userRole.program', 'userRole.discipline')->paginate(10);
+
+        // dd($userList);
+        return Inertia::render('Progmes/Admin/User-List', [
+            'user_list' => $userList,
+        ]);
+
+        // return Inertia::render('Progmes/Admin/User-List',[
+        //     'user_list' => User::
+        //         where([
+        //             'isVerified' => 1,
+        //             'isActive' => 1,
+        //         ])
+        //         ->orderBy('name', 'asc')
+        //         ->paginate(40)
+        //         ->through(fn($account) => [
+        //             'id' => $account->id,
+        //             'name' => $account->name,
+        //             'email' => $account->email,
+        //             'type' => $account->type,
+        //             'avatar' => $account->avatar,
+        //             'role' => RoleModel::where('userId', $account->id)->value('role'),
+        //             'institution' => InstitutionModel::where('id', RoleModel::where('userId', $account->id)->value('institutionId'))->value('name'),
+        //         ]),
+        //     ]);
     }
 
 

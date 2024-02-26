@@ -46,39 +46,41 @@
                     @click="closeModal">
                     Cancel
                 </button>
-                <Link v-if="modaltype == 'accept'" :href="route('register.accept', [selected])"
+                <Link v-if="modaltype == 'accept'" :href="route('register.accept', [selected])" @click="closeModal"
                     class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border"
                     preserve-scroll>
                 Accept
                 </Link>
-                <Link v-if="modaltype == 'reject'" :href="route('register.reject', [selected])"
+                <Link v-if="modaltype == 'reject'" :href="route('register.reject', [selected])" @click="closeModal"
                     class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border"
                     preserve-scroll>
                 Reject
                 </Link>
-                <Link method="get" v-if="modaltype == 'delete'" @click="handleSubmit"
-                    :href="'/admin/CMOs/delete/' + selected"
+                <Link method="get" v-if="modaltype == 'delete'" @click="closeModal" :href="'/admin/CMOs/delete/' + selected"
                     class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border cursor-pointer"
                     preserve-scroll>
                 Delete
                 </Link>
-                <Link method="get" v-if="modaltype == 'deleteHEI'" @click="handleSubmit"
+                <Link method="get" v-if="modaltype == 'deleteHEI'" @click="closeModal"
                     :href="'/admin/CMOs/delete/' + selected"
                     class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border cursor-pointer"
                     preserve-scroll>
                 Delete
                 </Link>
                 <Link method="get" v-if="modaltype == 'publish'" :href="'/admin/CMOs/publish/' + selected"
+                    @class="closeModal"
                     class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border cursor-pointer"
                     preserve-scroll>
                 Publish
                 </Link>
                 <Link method="get" v-if="modaltype == 'activate'" :href="'/admin/CMOs/activate/' + selected.id"
+                    @click="closeModal"
                     class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border cursor-pointer"
                     preserve-scroll>
                 Confirm
                 </Link>
                 <Link method="get" v-if="modaltype == 'deactivate'" :href="'/admin/CMOs/deactivate/' + selected"
+                    @click="closeModal"
                     class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border cursor-pointer"
                     preserve-scroll>
                 Confirm

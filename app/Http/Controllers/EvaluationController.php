@@ -12,9 +12,7 @@ use Auth;
 class EvaluationController extends Controller
 {
     public function index() {
-
-        $userRole = RoleModel::where('userId', Auth::user()->id)->value('role');
-
+        $userRole = Auth::user()->role;
         if (
             $userRole == 'Super Admin' ||
             $userRole == 'Regional Director' ||
@@ -24,17 +22,8 @@ class EvaluationController extends Controller
             return redirect()->route('evaluation.admin');
         } else if ($userRole == 'Education Supervisor') {
             return redirect()->route('evaluation.ched');
-        } else {
-            return redirect()->route('evaluation.hei');
-        }
-
-
-
-
-        if ($userType == 'CHED') {
-            return redirect()->route('evaluation.ched');
-        } else {
-            return redirect()->route('evaluation.hei');
+        } else if ($userRole == 'Program Head') {
+            return redirect()->route('evaluation.hei.programhead');
         }
     }
 
@@ -57,26 +46,17 @@ class EvaluationController extends Controller
         }
     }
 
-    public function EvaluationForHEI() {
-        $role = RoleModel::where('userId', Auth::user()->id)->with('institution', 'program', 'discipline')->first();
-        $evaluation = [];
+    public function evaluationForProgramHead() {
 
-        if($role->institution && $role->program ) {
-            $evaluation = InstitutionProgramModel::where([
-                'institutionId' => $role->institution->id,
-                'programId' => $role->program->id,
-            ])->with('evaluationForm')->first();
-            
-            return Inertia::render('Progmes/Evaluation/Evaluation-HEI', [
-                'role' => $role,
-                'evaluation' => $evaluation,
-            ]);
-        }
-        
-        return Inertia::render('Progmes/Evaluation/Evaluation-HEI', [
-            'role' => $role,
-            'discipline' => $discipline,
-            'program' => $program,
+        $role = RoleModel::where('userId', Auth::user()->id)->first();
+
+        $institutionProgram = InstitutionProgramModel::where([
+            'institutionId' => $role->institutionId,
+            'programId' => $role->programId,
+        ])->with('institution', 'program', 'evaluationForm')->first();
+
+        return Inertia::render('Progmes/Evaluation/ProgramHead-Select', [
+            'program' => $institutionProgram,
         ]);
     }
 }

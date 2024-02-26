@@ -1,42 +1,65 @@
 <template>
     <Head title="Users List" />
     <AdminPanel />
-    <content-container placeholder="Search User" :data_list="user_list">
+    <content-container :hasAction="true" placeholder="Search User" :data_list="user_list">
         <template v-slot:channel>
-            <div class="relative" @mouseleave="openSelectPageDropdown = false">
-                <button class="px-3 rounded h-10 text-blue-500 border border-blue-500"
-                    @click.prevent="openSelectPageDropdown = !openSelectPageDropdown"><b>Active users </b><i
-                        class="fas fa-caret-down ml-2"></i></button>
-                <div v-show="openSelectPageDropdown"
-                    class="flex flex-col items-start absolute top-10 left-0 shadow border border-gray-300 bg-white rounded py-3 z-30 w-48"
-                    @mouseover.prevent="openSelectPageDropdown = true">
-                    <button class="flex flex-row py-2 w-full px-2 text-left text-gray-500 pl-4" disabled>
+            <dropdown-option position="left">
+                <template v-slot:button>
+                    <button class="px-3 rounded h-10 bg-green-700 text-white">Active users<i
+                            class="fas fa-caret-down ml-2"></i></button>
+                </template>
+                <template v-slot:options>
+                    <div class="w-48">
+                        <Link :href="route('admin.users.list')"
+                            class="w-full p-2 text-left hover:bg-gray-200 rounded flex flex-row pl-4 text-blue-500">
                         <div class="w-6">
                             <i class="fas fa-check"></i>
                         </div>
-                        <div>Active users</div>
-                    </button>
-                    <Link :href="route('admin.users.request')"
-                        class="py-2 w-full px-2 text-left hover:bg-gray-200 rounded flex flex-row pl-4">
-                    <div class="w-6">
+                        <div>Active Users</div>
+                        </Link>
+                        <Link :href="route('admin.users.request')"
+                            class="w-full p-2 text-left hover:bg-gray-200 rounded flex flex-row pl-4 text-gray-700">
+                        <div class="w-6">
+                        </div>
+                        <div>Request</div>
+                        </Link>
                     </div>
-                    <div>User request</div>
-                    </Link>
-                </div>
-            </div>
+                </template>
+            </dropdown-option>
+        </template>
+        <template v-slot:actions>
+            <dropdown-option>
+                <template v-slot:button>
+                    <button class="h-10 border border-gray-500 rounded px-2">
+                        <i class="fas fa-filter mr-2"></i>
+                        <i class="fas fa-caret-down"></i>
+                    </button>
+                </template>
+                <template v-slot:options>
+                    <div class="w-32 flex flex-col">
+                        <Link>
+                        HEI
+                        </Link>
+                        <Link>
+                        CHED
+                        </Link>
+                    </div>
+                </template>
+            </dropdown-option>
         </template>
         <template v-slot:content>
             <content-table>
                 <template v-slot:table-head>
                     <th class="scope-col p-3 border-b border-gray-400">Name/Email</th>
-                    <th class="scope-col p-3 border-b border-gray-400">Account Type</th>
-                    <th class="scope-col p-3 border-b border-gray-400">Role</th>
+                    <th class="scope-col p-3 border-b border-gray-400">Role/HEI</th>
+                    <th class="scope-col p-3 border-b border-gray-400">Program</th>
+                    <th class="scope-col p-3 border-b border-gray-400">Discipline</th>
                 </template>
                 <template v-slot:table-body>
                     <tr v-for="(user, index) in user_list.data" :key="user.id"
-                        class="border-b border-gray-300 hover:bg-stone-100 text-gray-700"
+                        class="border-b border-gray-300 hover:bg-stone-100 text-gray-700 align-top"
                         :class="{ 'bg-gray-200': index % 2 == 0 }">
-                        <th scope="row" class="p-3 whitespace-nowrap flex items-center pr-10">
+                        <th scope="row" class="p-2 whitespace-nowrap flex items-center pr-10">
                             <img v-if="user.avatar" :src="user.avatar" width="35" class="rounded-full mr-3">
                             <img v-else src="/assets/user.png" width="35" class="rounded-full mr-3">
                             <div class="items-center">
@@ -44,8 +67,24 @@
                                 <span class="font-normal">{{ user.email }}</span>
                             </div>
                         </th>
-                        <td class="p-3">{{ user.type }}</td>
-                        <td class="p-3">{{ user.role }}</td>
+                        <td class="p-2">
+                            <div>
+                                {{ user.role }}
+                            </div>
+                            <div v-for="role in user.user_role">
+                                {{ role.institution?.name }}
+                            </div>
+                        </td>
+                        <td class="p-2 whitespace-normal ">
+                            <div v-for="role in user.user_role">
+                                {{ role.program?.program }}
+                            </div>
+                        </td>
+                        <td class="p-2 whitespace-normal">
+                            <div v-for="role in user.user_role">
+                                {{ role.discipline?.discipline }}
+                            </div>
+                        </td>
                     </tr>
                 </template>
             </content-table>
@@ -54,6 +93,9 @@
 </template>
 
 <script setup>
+import Dropdown from '@/Components/Dropdown.vue';
+
+
 const props = defineProps([
     'user_list',
 ]);

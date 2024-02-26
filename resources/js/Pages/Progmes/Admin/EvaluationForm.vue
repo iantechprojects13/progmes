@@ -1,28 +1,29 @@
 <template>
     <Head title="Evaluation Forms" />
     <AdminPanel />
-    <content-container placeholder="Search" :data_list="list">
+    <content-container :hasAction="true" placeholder="Search" :data_list="list">
         <template v-slot:channel>
-            <div class="relative" @mouseleave="openSelectPageDropdown = false">
-                <button class="px-3 rounded h-10 text-blue-500 border border-blue-500"
-                    @click.prevent="openSelectPageDropdown = !openSelectPageDropdown"><b>A.Y {{ effectivity }}</b><i
-                        class="fas fa-caret-down ml-2"></i></button>
-                <div v-show="openSelectPageDropdown"
-                    class="flex flex-col items-start absolute top-10 left-0 shadow border border-gray-300 bg-white rounded py-3 z-30 w-48"
-                    @mouseover.prevent="openSelectPageDropdown = true">
-                    <button v-for="(year, index) in academicYear" :key="index"
-                        class="flex flex-row py-2 w-full px-2 text-left text-gray-500 hover:text-gray-700 hover:bg-gray-200 pl-4"
-                        @click="changeAcademicYear(year)">
-                        <div class="w-6">
-                            <i v-show="year == effectivity" class="fas fa-check"></i>
-                        </div>
-                        <div>A.Y {{ year }}</div>
-                    </button>
-                </div>
-            </div>
+            <dropdown-option>
+                <template v-slot:button>
+                    <button class="px-3 rounded h-10 text-white bg-green-700">A.Y. {{ effectivity }}
+                        <i class="fas fa-caret-down ml-2"></i></button>
+                </template>
+                <template v-slot:options>
+                    <div class="w-52">
+                        <button v-for="(year, index) in academicYear" :key="index"
+                            class="flex flex-row py-2 w-full px-2 text-left text-gray-500 hover:text-gray-700 hover:bg-gray-200 pl-4"
+                            @click="changeAcademicYear(year)">
+                            <div class="w-6">
+                                <i v-show="year == effectivity" class="fas fa-check"></i>
+                            </div>
+                            <div>A.Y. {{ year }}</div>
+                        </button>
+                    </div>
+                </template>
+            </dropdown-option>
         </template>
         <template v-slot:actions>
-            <button @click="deployToolModal = true;"
+            <button v-show="defaultAcademicYear === effectivity" @click="deployToolModal = true;"
                 class="text-gray-500 hover:text-black hover:bg-blue-200 border shadow shadow-gray-500 hover:shadow-gray-700 border-gray-400 w-10 h-10 rounded tooltipForActions group"
                 data-tooltip="Deploy compliant tool">
                 <i class="fas fa-rocket text-base group-hover:text-lg"></i>
@@ -39,27 +40,27 @@
                     </th>
                 </template>
                 <template v-slot:table-body>
-                    <tr v-for="item in  props.list.data " :key="item.id" class="border-b border-gray-300">
+                    <tr v-for="(item, index) in  props.list.data " :key="item.id" class="border-b border-gray-300"
+                        :class="{ 'bg-slate-200': index % 2 == 0 }">
                         <td class="p-3 flex flex-col">
                             <span class="font-bold">{{ item.program.program }}</span>
                             <span>{{ item.institution.name }}</span>
                         </td>
-                        <td class="p-3 whitespace-normal" v-if="item.evaluation">
-                            <span v-if="item.evaluation.cmo">
-                                CMO No.{{ item.evaluation.cmo.number }}
+                        <td class="p-3 whitespace-normal align-middle" v-if="item.evaluation">
+                            <span v-if="item.evaluation?.cmo">
+                                CMO No.{{ item.evaluation.cmo?.number }} -
+                                Series of {{ item.evaluation.cmo?.series }} -
+                                Version {{ item.evaluation.cmo?.version }}
                             </span>
                             <span v-else>
                                 -
                             </span>
                         </td>
-                        <td class="p-3" v-else-if="item.program.cmo">
-                            -
-                        </td>
                         <td class="p-3" v-else>
                             -
                         </td>
                         <td class="p-3 whitespace-normal" v-if="item.evaluation">
-                            <span v-if="item.evaluation?.item.length > 0"
+                            <span v-if="item.evaluation.status == 'In progress'"
                                 class="p-1 text-xs bg-green-500 rounded text-white">
                                 In progress
                             </span>
@@ -120,7 +121,7 @@
 </template>
 
 <script setup>
-import { useForm } from '@inertiajs/vue3';
+import { useForm, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 let deployToolModal = ref(false);
@@ -133,6 +134,7 @@ const props = defineProps([
     'list',
     'effectivity',
     'program_list',
+    'defaultAcademicYear',
 ]);
 
 const form = useForm({
@@ -163,7 +165,7 @@ function deploy() {
 
 
 function changeAcademicYear(year) {
-    form.get('/admin/tool/' + year);
+    router.get('/admin/tool/' + year);
 }
 
 

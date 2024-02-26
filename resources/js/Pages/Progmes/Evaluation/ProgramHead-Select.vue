@@ -1,12 +1,17 @@
 <template>
-    <Head title="Evaluation" />
-    <div class="text-xl font-bold w-full px-7 pt-5">Program Self-Evaluation</div>
-
-    <content-container>
+    <Head title="Program Self-Evaluation" />
+    <page-title title="Program Self-Evaluation" />
+    <content-container :hasAction="true">
         <template v-slot:channel>
-            <div class="flex flex-col">
-                <div><b>Institution Name:</b> {{ role.institution.name }} </div>
-                <div><b>Program:</b> {{ role.program.program }} </div>
+            <div class="flex flex-col w-fit">
+                <div class="w-auto flex flex-col md:flex-row">
+                    <div class="mr-3 font-bold text-gray-700">HEI Name</div>
+                    <div class="bg-blue-200 rounded-full w-fit px-2 py-0">{{ program.institution.name }}</div>
+                </div>
+                <div class="w-auto flex flex-col md:flex-row md:text-center md:items-center mt-2">
+                    <div class="mr-3 font-bold text-gray-700">Program</div>
+                    <div class="bg-blue-200 rounded-full w-fit px-2 py-0">{{ program.program.program }}</div>
+                </div>
             </div>
         </template>
         <template v-slot:content>
@@ -19,7 +24,7 @@
                     </th>
                 </template>
                 <template v-slot:table-body>
-                    <tr v-for="item in evaluation.evaluation_form" :key="item.id"
+                    <tr v-for="item in program.evaluation_form" :key="item.id"
                         class="hover:bg-gray-100 border-b border-gray-300">
                         <td class="p-3 align-middle">
                             <i class="fas fa-file mr-2"></i>{{ item.effectivity }}
@@ -55,17 +60,14 @@
             </content-table>
         </template>
     </content-container>
-    <div v-if="$page.props.flash.failed">
-        <Notification :message="$page.props.flash.failed" />
-    </div>
+    <Notification :message="$page.props.flash.failed" />
 </template>
 
 <script setup>
 import { router } from '@inertiajs/vue3';
 
 defineProps([
-    'role',
-    'evaluation',
+    'program',
 ]);
 
 function edit(tool) {
@@ -78,7 +80,7 @@ function createTool(item) {
 </script>
 
 <script>
-import Layout from '../Shared/Layout.vue'
+import Layout from '../Shared/Layout.vue';
 export default {
     layout: Layout,
 }

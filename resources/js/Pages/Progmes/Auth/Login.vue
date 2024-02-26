@@ -6,11 +6,12 @@
             <div>
                 <div class="w-full text-white">
                     <img src="assets/ched-logo.png" width="100" class="mx-auto mb-5 lg:hidden">
-                    <p class="text-3xl font-bold">CHEDRO-XI</p>
+                    <p class="text-3xl lg:text-5xl font-bold">CHEDRO-XI</p>
                     <br>
-                    <p class="text-5xl font-bold text-yellow-400">ProgMES</p>
+                    <p class="text-3xl lg:text-5xl font-bold text-yellow-400">ProgMES</p>
                     <br>
-                    <p class="lg:w-3/4 md:w-4/6 w-11/12 mx-auto text-3xl">A Web-based Program Monitoring and Evaluation
+                    <p class="lg:w-3/4 md:w-4/6 w-11/12 mx-auto text-xl lg:text-3xl">A Web-based Program Monitoring and
+                        Evaluation
                         System</p>
                 </div>
                 <div class="p-3 rounded shadow-md w-full text-center lg:hidden mx-auto mt-5">
@@ -31,8 +32,8 @@
                     <img src="assets/ched-logo.png" width="100" class="mx-auto">
                 </div>
                 <div class="mb-7 mt-5 mx-auto w-64">
-                    <h1 class="text-3xl font-bold">SIGN IN</h1>
-                    <p class="text-sm text-gray-500">to continue to ProgMES</p>
+                    <h1 class="text-4xl font-bold">SIGN IN</h1>
+                    <p class="text-gray-700">to continue to ProgMES</p>
                 </div>
                 <a :href="route('auth.google')">
                     <button class="hover:bg-blue-500 hover:text-white font-bold px-4 py-1 rounded-full flex items-center

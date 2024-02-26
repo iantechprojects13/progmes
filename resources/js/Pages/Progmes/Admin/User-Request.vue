@@ -1,29 +1,31 @@
 <template>
     <Head title="Users Request" />
     <AdminPanel />
-    <content-container placeholder="Search User" :data_list="user_list">
+    <content-container :hasAction="true" placeholder="Search User" :data_list="user_list">
         <template v-slot:channel>
-            <div class="relative" @mouseleave="openSelectPageDropdown = false">
-                <button class="px-3 rounded h-10 text-blue-500 border border-blue-500"
-                    @click.prevent="openSelectPageDropdown = !openSelectPageDropdown"><b>User
-                        request </b><i class="fas fa-caret-down ml-2"></i></button>
-                <div v-show="openSelectPageDropdown"
-                    class="flex flex-col items-start absolute top-10 left-0 shadow border border-gray-300 bg-white rounded py-3 z-30 w-48"
-                    @mouseover.prevent="openSelectPageDropdown = true">
-                    <Link :href="route('admin.users.list')"
-                        class="py-2 w-full px-2 text-left hover:bg-gray-200 rounded flex flex-row pl-4">
-                    <div class="w-6">
-                    </div>
-                    <div>Active users</div>
-                    </Link>
-                    <button class="flex flex-row py-2 w-full px-2 text-left text-gray-500 pl-4" disabled>
+            <dropdown-option position="left">
+                <template v-slot:button>
+                    <button class="px-3 rounded h-10 bg-green-700 text-white">Request<i
+                            class="fas fa-caret-down ml-2"></i></button>
+                </template>
+                <template v-slot:options>
+                    <div class="w-48">
+                        <Link :href="route('admin.users.list')"
+                            class="py-2 w-full px-2 text-left hover:bg-gray-200 rounded flex flex-row pl-4 text-gray-700">
+                        <div class="w-6">
+                        </div>
+                        <div>Active Users</div>
+                        </Link>
+                        <Link :href="route('admin.users.request')"
+                            class="py-2 w-full px-2 text-left hover:bg-gray-200 rounded flex flex-row pl-4 text-blue-500">
                         <div class="w-6">
                             <i class="fas fa-check"></i>
                         </div>
-                        <div>User request</div>
-                    </button>
-                </div>
-            </div>
+                        <div>Request</div>
+                        </Link>
+                    </div>
+                </template>
+            </dropdown-option>
         </template>
         <template v-slot:content>
             <content-table>
@@ -36,7 +38,7 @@
                 <template v-slot:table-body>
                     <tr v-for="(user, index) in user_list.data" :key="user.id"
                         class="border-b border-gray-300 hover:bg-stone-100" :class="{ 'bg-gray-200': index % 2 == 0 }">
-                        <th scope="row" class="p-3 whitespace-nowrap flex items-center pr-10">
+                        <th scope="row" class="p-2 whitespace-nowrap flex items-center pr-10">
                             <img v-if="user.avatar" :src="user.avatar" width="35" class="rounded-full mr-3">
                             <img v-else src="/assets/user.png" width="35" class="rounded-full mr-3">
                             <div class="text-gray-600 items-center">
@@ -44,24 +46,16 @@
                                 <span class="font-normal">{{ user.email }}</span>
                             </div>
                         </th>
-                        <td class="p-3">{{ user.type }}</td>
-                        <td class="p-3">{{ user.role }}</td>
-                        <td class="p-3 text-right text-gray-500">
-                            <!-- <button @click="toggleModal(user, 'reject', 'Reject User')"
-                                class="text-sm h-7 w-16 hover:bg-red-500 hover:text-white border border-gray-400 rounded mr-1">
-                                Reject
-                            </button>
-                            <button @click="toggleModal(user, 'accept', 'Accept User')"
-                                class="text-sm h-7 w-16 bg-blue-500 hover:bg-blue-600 text-white rounded mr-1">
-                                Accept
-                            </button> -->
+                        <td class="p-2">{{ user.type }}</td>
+                        <td class="p-2">{{ user.role }}</td>
+                        <td class="p-2 text-right">
                             <button @click="toggleModal(user, 'reject', 'Reject User')"
-                                class="hover:text-red-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
+                                class="hover:text-white shadow shadow-gray-500 hover:bg-red-600 rounded border-2 text-red-600 border-red-600 w-8 h-8 tooltipForActions"
                                 data-tooltip="Reject">
                                 <i class="text-lg fas fa-times"></i>
                             </button>
                             <button @click="toggleModal(user, 'accept', 'Accept User')"
-                                class="hover:text-blue-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
+                                class="hover:text-white shadow shadow-gray-500 hover:bg-blue-600 rounded border-2 text-blue-600 border-blue-600 w-8 h-8 tooltipForActions ml-1"
                                 data-tooltip="Accept">
                                 <i class="text-lg fas fa-check"></i>
                             </button>
@@ -71,9 +65,7 @@
             </content-table>
         </template>
     </content-container>
-    <div v-if="$page.props.flash.success">
-        <Notification :message="$page.props.flash.success" />
-    </div>
+    <Notification :message="$page.props.flash.success" />
     <div v-if="modal">
         <Confirmation @close="closeModal" :title="title" :modaltype="modaltype" :selected="selectedUser" />
     </div>

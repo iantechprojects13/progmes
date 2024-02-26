@@ -14,7 +14,8 @@ use Auth;
 class InstitutionProgramController extends Controller
 {
     public function index($academicYear = null) {
-        $effectivity = $academicYear ? $academicYear : AdminSettingsModel::where('userId', 201)->value('currentAcademicYear');
+        $defaultAcademicYear = AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
+        $effectivity = $academicYear ? $academicYear : $defaultAcademicYear;
         $program_list = ProgramModel::with('active_cmo')->get();
 
 
@@ -25,10 +26,11 @@ class InstitutionProgramController extends Controller
                 'id' => $item->id,
                 'institution' => $item->institution,
                 'program' => $item->program,
-                'evaluation' => $item->evaluationForm()->where('effectivity', $effectivity)->with('item')->first(),
+                'evaluation' => $item->evaluationForm()->where('effectivity', $effectivity)->with('cmo')->first(),
             ]),
             'effectivity' => $effectivity,
             'program_list' => $program_list,
+            'defaultAcademicYear' => $defaultAcademicYear,
         ]);
     }
     

@@ -17,6 +17,8 @@ import ContentTable from './Pages/Progmes/Shared/ContentTable.vue';
 import ContentTableAction from './Pages/Progmes/Shared/ContentTableAction.vue';
 import FormErrorMessage from './Pages/Progmes/Shared/FormErrorMessage.vue';
 import SubmitButton from './Pages/Progmes/Shared/SubmitButton.vue';
+import DropdownOption from './Pages/Progmes/Shared/DropdownOption.vue';
+import PageTitle from './Pages/Progmes/Shared/PageTitle.vue';
 import DoughnutChart from './Pages/Progmes/Shared/Charts/DoughnutChart.vue';
 
 
@@ -41,6 +43,8 @@ createInertiaApp({
             .component('FormErrorMessage', FormErrorMessage)
             .component('ContentTableAction', ContentTableAction)
             .component('SubmitButton', SubmitButton)
+            .component('DropdownOption', DropdownOption)
+            .component('PageTitle', PageTitle)
             .component('DoughnutChart', DoughnutChart)
             .mount(el);
     },

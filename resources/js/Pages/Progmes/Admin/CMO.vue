@@ -1,36 +1,39 @@
 <template>
     <Head title="CHED Memorandum Order List" />
     <AdminPanel />
-    <content-container placeholder="Search CMO" :data_list="cmo_list">
+    <content-container :hasAction="true" placeholder="Search CMO" :data_list="cmo_list">
         <template v-slot:channel>
-            <div class="relative z-30" @mouseleave="openListOption = false">
-                <button class="bg-green-700 rounded h-10 text-white px-3" @click="openListOption = !openListOption">
-                    <span v-show="listItems == 'published'">Published</span>
-                    <span v-show="listItems == 'draft'">Draft</span>
-                    <i class="fas fa-caret-down ml-3"></i>
-                </button>
-                <div v-show="openListOption"
-                    class="absolute top-10 w-48 rounded py-3 border border-gray-400 shadow-lg bg-white">
-                    <Link class="w-full" :href="route('admin.cmo.list')">
-                    <button class=" w-full flex flex-row text-left indent-2 py-2 hover:bg-gray-300"
-                        :class="{ 'bg-gray-200': listItems == 'published' }">
-                        <div class="w-8">
-                            <i v-show="listItems == 'published'" class="fas fa-check"></i>
-                        </div>
-                        Published
+            <dropdown-option>
+                <template v-slot:button>
+                    <button class="bg-green-700 rounded h-10 text-white px-3">
+                        <span v-show="listItems == 'published'">Published</span>
+                        <span v-show="listItems == 'draft'">Draft</span>
+                        <i class="fas fa-caret-down ml-3"></i>
                     </button>
-                    </Link>
-                    <Link class="relative w-full" :href="route('admin.cmo.list', { list: 'draft' })">
-                    <button class="w-full flex flex-row text-left indent-2 py-2 hover:bg-gray-300"
-                        :class="{ 'bg-gray-200': listItems == 'draft' }">
-                        <div class="w-8">
-                            <i v-show="listItems == 'draft'" class="fas fa-check"></i>
-                        </div>
-                        Draft
-                    </button>
-                    </Link>
-                </div>
-            </div>
+                </template>
+                <template v-slot:options>
+                    <div class="w-40">
+                        <Link class="w-full" :href="route('admin.cmo.list')">
+                        <button class=" w-full flex flex-row text-left indent-2 py-2 hover:bg-gray-300"
+                            :class="{ 'text-blue-500': listItems == 'published' }">
+                            <div class="w-8">
+                                <i v-show="listItems == 'published'" class="fas fa-check"></i>
+                            </div>
+                            Published
+                        </button>
+                        </Link>
+                        <Link class="relative w-full" :href="route('admin.cmo.list', { list: 'draft' })">
+                        <button class="w-full flex flex-row text-left indent-2 py-2 hover:bg-gray-300"
+                            :class="{ 'text-blue-500': listItems == 'draft' }">
+                            <div class="w-8">
+                                <i v-show="listItems == 'draft'" class="fas fa-check"></i>
+                            </div>
+                            Draft
+                        </button>
+                        </Link>
+                    </div>
+                </template>
+            </dropdown-option>
         </template>
         <template v-slot:actions>
             <div class="relative text-gray-600" @mouseleave="openCreateDropdown = false">
@@ -130,8 +133,8 @@
                         </td>
                     </tr>
                     <tr v-show="cmo_list.data.length === 0">
-                        <td v-if="listItems == 'published'" colspan="7" class="h-24 text-center">Empty</td>
-                        <td v-else colspan="6" class="h-24 text-center">Empty</td>
+                        <td v-if="listItems == 'published'" colspan="7" class="h-24 text-center align-middle">Empty</td>
+                        <td v-else colspan="6" class="h-24 text-center align-middle">Empty</td>
                     </tr>
                 </template>
             </content-table>

@@ -60,9 +60,10 @@ Route::get('/HEI/dashboard', [DashboardController::class, 'dashboardForHEI'])->m
 //evaluation
 Route::get('/evaluation', [EvaluationController::class, 'index'])->middleware('auth', 'user.verified')->name('evaluation');
 Route::get('/ched/evaluation', [EvaluationController::class, 'evaluationForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('evaluation.ched');
-Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForHEI'])->middleware('type.hei')->name('evaluation.hei');
+Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware('type.hei')->name('evaluation.hei.programhead');
 Route::get('/admin/evaluation', [EvaluationController::class, 'evaluationForAdmin'])->middleware('type.ched')->name('evaluation.admin');
-Route::get('/hei/evaluation/{form}', [HEIFormController::class, 'edit'])->middleware('type.hei')->name('form.hei.edit');
+
+Route::get('/hei/evaluation/{tool}/edit', [HEIFormController::class, 'edit'])->middleware('auth', 'type.hei')->name('form.hei.edit');
 Route::post('/hei/evaluation/update', [HEIFormController::class, 'update'])->name('form.hei.update');
 
 //admin-panel
