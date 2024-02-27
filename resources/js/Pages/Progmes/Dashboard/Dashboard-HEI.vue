@@ -1,8 +1,6 @@
 <template>
     <Head title="Dashboard" />
-    <div>
-        HEI Dashboard
-    </div>
+    <page-title title="Dashboard" />
 </template>
 
 <script setup>

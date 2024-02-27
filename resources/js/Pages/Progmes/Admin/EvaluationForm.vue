@@ -24,7 +24,7 @@
         </template>
         <template v-slot:actions>
             <button v-show="defaultAcademicYear === effectivity" @click="deployToolModal = true;"
-                class="text-gray-500 hover:text-black hover:bg-blue-200 border shadow shadow-gray-500 hover:shadow-gray-700 border-gray-400 w-10 h-10 rounded tooltipForActions group"
+                class="text-gray-500 hover:text-black bg-gray-100 hover:bg-gray-200 border shadow shadow-gray-500 hover:shadow-gray-700 border-gray-500 w-10 h-10 rounded tooltipForActions group"
                 data-tooltip="Deploy compliant tool">
                 <i class="fas fa-rocket text-base group-hover:text-lg"></i>
             </button>

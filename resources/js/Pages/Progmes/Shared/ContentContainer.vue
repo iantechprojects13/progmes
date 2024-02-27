@@ -29,7 +29,7 @@
         <div class="bg-white">
             <slot name="content-head"></slot>
         </div>
-        <div class="overflow-auto h-full px-3 bg-white">
+        <div class="overflow-auto h-full px-3 bg-white rounded">
             <div>
                 <slot name="content"></slot>
             </div>

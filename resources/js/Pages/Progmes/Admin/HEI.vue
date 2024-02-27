@@ -30,15 +30,15 @@
                         <td class="p-3">{{ institution.address }}, {{ institution.cityOrMunicipality }}</td>
                         <td class="p-3 text-right">
                             <button @click="view(institution.id)"
-                                class="text-gray-500 hover:text-gray-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
+                                class="text-gray-500 hover:text-black shadow shadow-gray-500 bg-gray-100 hover:bg-gray-200 border border-gray-500 w-10 h-10 rounded tooltipForActions"
                                 data-tooltip="View">
                                 <i class="text-lg fas fa-eye"></i>
                             </button>
-                            <button @click="toggleModal(institution, 'deleteHEI', 'Delete HEI')"
+                            <!-- <button @click="toggleModal(institution, 'deleteHEI', 'Delete HEI')"
                                 class="text-red-500 hover:text-red-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
                                 data-tooltip="Delete">
                                 <i class="text-lg fas fa-trash"></i>
-                            </button>
+                            </button> -->
                         </td>
                     </tr>
                 </template>

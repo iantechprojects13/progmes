@@ -65,6 +65,7 @@ Route::get('/admin/evaluation', [EvaluationController::class, 'evaluationForAdmi
 
 Route::get('/hei/evaluation/{tool}/edit', [HEIFormController::class, 'edit'])->middleware('auth', 'type.hei')->name('form.hei.edit');
 Route::post('/hei/evaluation/update', [HEIFormController::class, 'update'])->name('form.hei.update');
+Route::post('/hei/evaluation/upload', [HEIFormController::class, 'upload'])->name('form.hei.upload');
 
 //admin-panel
 Route::get('/admin/users/list', [UserController::class, 'index'])->middleware(['auth', 'type.ched'])->name('admin.users.list');

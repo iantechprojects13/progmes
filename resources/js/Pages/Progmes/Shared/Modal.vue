@@ -39,6 +39,10 @@
                     class="text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 rounded border">
                 Create
                 </Link>
+                <button v-if="type == 'uploadEvidenceFile'" @click="upload"
+                    class="text-white bg-blue-600 hover:bg-blue-700 py-2 px-3 rounded border">
+                    Upload
+                </button>
             </div>
         </div>
     </div>
@@ -62,11 +66,11 @@ export default {
         },
 
         submit() {
-            this.$emit('submit')
+            this.$emit('submit');
         },
 
         upload() {
-            this.$emit('upload')
+            this.$emit('upload');
         },
 
         save() {

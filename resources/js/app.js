@@ -19,6 +19,7 @@ import FormErrorMessage from './Pages/Progmes/Shared/FormErrorMessage.vue';
 import SubmitButton from './Pages/Progmes/Shared/SubmitButton.vue';
 import DropdownOption from './Pages/Progmes/Shared/DropdownOption.vue';
 import PageTitle from './Pages/Progmes/Shared/PageTitle.vue';
+import TextEditor from './Pages/Progmes/Shared/TextEditor.vue';
 import DoughnutChart from './Pages/Progmes/Shared/Charts/DoughnutChart.vue';
 
 
@@ -45,6 +46,7 @@ createInertiaApp({
             .component('SubmitButton', SubmitButton)
             .component('DropdownOption', DropdownOption)
             .component('PageTitle', PageTitle)
+            .component('TextEditor', TextEditor)
             .component('DoughnutChart', DoughnutChart)
             .mount(el);
     },

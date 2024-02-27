@@ -57,3 +57,16 @@
 .tooltipForActions:hover::before {
     display: block;
 }
+
+
+/*  */
+/* app.css */
+
+/* Your existing styles go here */
+
+/* Custom scrollbar styles */
+.custom-scrollbar {
+    overflow-y: auto;
+    scrollbar-color: #a4a4a4 #e0e0e0;
+    scrollbar-width: thin;
+}

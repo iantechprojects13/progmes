@@ -1,19 +1,27 @@
 <template>
     <Head title="Program Self-Evaluation" />
     <page-title title="Program Self-Evaluation" />
-    <content-container :hasAction="true">
-        <template v-slot:channel>
-            <div class="flex flex-col w-fit">
-                <div class="w-auto flex flex-col md:flex-row">
-                    <div class="mr-3 font-bold text-gray-700">HEI Name</div>
-                    <div class="bg-blue-200 rounded-full w-fit px-2 py-0">{{ program.institution.name }}</div>
-                </div>
-                <div class="w-auto flex flex-col md:flex-row md:text-center md:items-center mt-2">
-                    <div class="mr-3 font-bold text-gray-700">Program</div>
-                    <div class="bg-blue-200 rounded-full w-fit px-2 py-0">{{ program.program.program }}</div>
-                </div>
+    <div class="md:mx-8 mx-3 mt-7">
+        <div class="flex flex-col w-full bg-white rounded p-3 py-5">
+            <div class="w-auto flex flex-col md:flex-row">
+                <label for="heiName"
+                    class="mr-3 h-8 md:h-10 flex items-center justify-start md:justify-end align-middle text-gray-800 w-full md:w-24">HEI
+                    Name
+                </label>
+                <input type="text" id="heiName" class="md:w-1/2 w-full rounded font-bold" disabled
+                    :value="program.institution.name">
             </div>
-        </template>
+            <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
+                <label for="program"
+                    class="mr-3 h-8 md:h-10 flex items-center justify-start md:justify-end align-middle text-gray-800 w-full md:w-24">
+                    Program
+                </label>
+                <input type="text" id="program" class="md:w-1/2 w-full rounded font-bold" disabled
+                    :value="program.program.program">
+            </div>
+        </div>
+    </div>
+    <content-container>
         <template v-slot:content>
             <content-table>
                 <template v-slot:table-head>
@@ -47,9 +55,10 @@
                                 @click="createTool(item.id)" v-show="item.status === 'deployed'">
                                 Start now
                             </button>
-                            <button @click="edit(item.id)" class="border rounded py-1 px-3 border-gray-400"
-                                v-show="item.status == 'In progress'">
-                                Edit
+                            <button @click="edit(item.id)"
+                                class="border rounded h-10 w-10 border-gray-400 hover:bg-gray-300 shadow transition-all duration-200 hover:text-xl shadow-gray-500 tooltipForActions"
+                                data-tooltip="Edit Evaluation" v-show="item.status == 'In progress'">
+                                <i class="fas fa-edit"></i>
                             </button>
                             <button class="border rounded py-1 px-3 border-gray-400" v-show="item.status == 'locked'">
                                 View
