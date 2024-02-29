@@ -1,10 +1,10 @@
 <template>
     <div v-show="showModal"
-        class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-70 z-100 p-2 flex items-center overflow-y-auto text-sm select-none"
+        class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-70 z-100 p-2 flex items-center overflow-y-auto select-none"
         @click.self="bgClicked">
-        <div class="text-sm bg-white w-full mx-auto max-w-lg rounded-md shadow-md shadow-gray-500 md:mb-48 opacity-100"
+        <div class="bg-white w-full mx-auto max-w-lg rounded-md shadow-md shadow-gray-500 md:mb-48 opacity-100 select-none"
             ref="modalContainer">
-            <div class="border-b-2 border-gray-100 p-3 px-5 flex justify-between items-center text-base">
+            <div class="border-b-2 border-gray-100 p-3 px-5 flex justify-between items-center text-lg">
                 <div class="font-bold">
                     {{ title }}
                 </div>
@@ -43,6 +43,7 @@
                     class="text-white bg-blue-600 hover:bg-blue-700 py-2 px-3 rounded border">
                     Upload
                 </button>
+                <slot name="custom-button"></slot>
             </div>
         </div>
     </div>

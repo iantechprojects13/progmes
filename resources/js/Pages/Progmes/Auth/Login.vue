@@ -1,7 +1,10 @@
 <template>
     <Head title="Login" />
     <div class="w-full flex h-screen select-none">
-        <div class="w-full h-screen flex text-center items-center justify-center" id="background-pic">
+        <div></div>
+
+        <div class="w-full h-screen flex text-center items-center justify-center"
+            style="background-size: cover; background-position: center; background-image: linear-gradient(#252525c7, #252525c7), url(assets/ched-office.jpg); background-size: auto 100%;">
             <!-- <img src="assets/ched-office.jpg" alt="" class="w-full fixed"> -->
             <div>
                 <div class="w-full text-white">

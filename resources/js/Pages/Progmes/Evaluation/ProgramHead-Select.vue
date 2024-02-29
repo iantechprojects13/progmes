@@ -55,9 +55,9 @@
                                 @click="createTool(item.id)" v-show="item.status === 'deployed'">
                                 Start now
                             </button>
-                            <button @click="edit(item.id)"
-                                class="border rounded h-10 w-10 border-gray-400 hover:bg-gray-300 shadow transition-all duration-200 hover:text-xl shadow-gray-500 tooltipForActions"
-                                data-tooltip="Edit Evaluation" v-show="item.status == 'In progress'">
+                            <button @click="edit(item.id)" ref="editButton"
+                                class="border rounded h-10 w-10 border-gray-400 hover:bg-gray-50 shadow text-gray-600 hover:text-black shadow-gray-500 tooltipForActions"
+                                data-tooltip="Edit evaluation">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button class="border rounded py-1 px-3 border-gray-400" v-show="item.status == 'locked'">
@@ -80,11 +80,11 @@ defineProps([
 ]);
 
 function edit(tool) {
-    router.get('/hei/evaluation/' + tool + '/edit')
+    router.get('/hei/evaluation/' + tool);
 }
 
 function createTool(item) {
-    router.get('/hei/tool/create/' + item)
+    router.get('/hei/tool/create/' + item);
 }
 </script>
 
