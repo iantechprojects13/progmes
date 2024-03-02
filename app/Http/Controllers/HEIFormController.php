@@ -64,7 +64,7 @@ class HEIFormController extends Controller
                 ]),
             ]);
         } else {
-            return redirect()->back()->with('failed', 'This form can\'t be accessed.');
+            return redirect()->back()->with('failed', 'This tool can\'t be accessed.');
         }
     }
 
@@ -103,13 +103,14 @@ class HEIFormController extends Controller
 
     public function upload(Request $request) {
         $validated = $request->validate([
-            'file' => 'required',
+            'evidence.file' => 'required',
         ], [
-            'file.required' => 'Please select a file.',
+            'evidence.file.required' => 'Please select a file.',
         ]);
 
-        dd(request()->file('file'));
-
+        // dd();
+        dd($request->file('evidence.file'));
+        
         // $excelContent = [];
         // $fileName ='';
 
@@ -150,7 +151,16 @@ class HEIFormController extends Controller
         return redirect('/hei/evaluation/'. $request->id . '/edit/'.$randomKey);
     }
 
+    public function deleteLink(Request $request) {
+        $evidenceModel = EvidenceModel::where('id', $request->evidenceLink)->first();
+        
+        $evidenceModel->delete();
 
+        $randomKey = $this->generateKey();
+        return redirect('/hei/evaluation/'. $request->id . '/edit/'.$randomKey);
+    }
+
+    
     function generateKey($length = 10) {
         return Str::random($length);
     }

@@ -14,29 +14,35 @@
                 </div>
             </div>
             <div class="py-4 pb-7 px-7 text-black text-base">
-                <div v-show="modaltype == 'reject'">
+                <div v-if="modaltype == 'reject'">
                     Are you sure you want to reject <b>{{ selected.name }} </b>'s registration?
                 </div>
-                <div v-show="modaltype == 'accept'">
+                <div v-if="modaltype == 'accept'">
                     Are you sure you want to accept <b>{{ selected.name }} </b>'s registration?
                 </div>
-                <div v-show="modaltype == 'delete'">
+                <div v-if="modaltype == 'delete'">
                     Are you sure you want to delete this draft? This action can't be undone.
                 </div>
-                <div v-show="modaltype == 'publish'">
+                <div v-if="modaltype == 'publish'">
                     Are you sure you want to publish this draft? Once published, the document cannot be edited further.
                 </div>
-                <div v-show="modaltype == 'activate'">
+                <div v-if="modaltype == 'activate'">
                     Are you sure you want to make
                     <b>CMO No.{{ selected.number }} - Series of {{ selected.series }} - Version {{
                         selected.version }}</b>
                     as active CMO for <b>{{ selected.program }}</b> programs?
                 </div>
-                <div v-show="modaltype == 'deactivate'">
+                <div v-if="modaltype == 'deactivate'">
                     Are you sure you want to remove the activation from this CMO?
                 </div>
-                <div v-show="modaltype == 'deleteHEI'">
+                <div v-if="modaltype == 'deleteHEI'">
                     Are you sure you want to delete <b>{{ selected.name }}</b>? This action can't be undone.
+                </div>
+                <div v-if="modaltype == 'deleteHEI'">
+                    Are you sure you want to delete <b>{{ selected.name }}</b>? This action can't be undone.
+                </div>
+                <div v-if="modaltype == 'confirmDeleteEvidence'">
+                    Are you sure you want to delete this evidence file/link? This action can't be undone.
                 </div>
                 <slot></slot>
             </div>
@@ -85,6 +91,7 @@
                     preserve-scroll>
                 Confirm
                 </Link>
+                <slot name="buttons"></slot>
             </div>
         </div>
     </div>
@@ -93,7 +100,6 @@
 <script setup>
 const props = defineProps({
     'title': String,
-    'message': String,
     'modaltype': String,
     'selected': Object,
 });

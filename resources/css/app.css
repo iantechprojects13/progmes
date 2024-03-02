@@ -59,6 +59,35 @@
 }
 
 
+.tooltipBottom {
+    position: relative;
+    cursor: pointer;
+}
+
+.tooltipBottom::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    right: 0px;
+    top: 45px;
+    font-size: 13px;
+    font-weight: normal;
+    width: fit-content;
+    height: fit-content;
+    white-space: nowrap;
+    background-color: #333;
+    color: #eee;
+    padding: 10px;
+    border-radius: 3px;
+    display: none;
+    z-index: 50;
+}
+
+.tooltipBottom:hover::before {
+    display: block;
+}
+
+
+
 /*  */
 /* app.css */
 

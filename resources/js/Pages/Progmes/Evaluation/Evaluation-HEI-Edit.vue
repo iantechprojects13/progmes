@@ -1,21 +1,44 @@
 <template>
     <Head title="Evaluation Form" />
     <page-title title="Program Self-Evaluation" />
-    <!-- <div class="ml-8">
-        <div>
-            {{ $page.url }}
+    <div class="md:mx-8 mx-3 mt-8">
+        <div class="flex flex-col w-full rounded">
+            <div class="w-auto flex flex-col md:flex-row">
+                <div class="mr-2 font-bold">
+                    HEI Name:
+                </div>
+                <div>
+                    {{ evaluation.institution_program.institution.name }}
+                </div>
+            </div>
+            <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
+                <div class="w-auto flex flex-col md:flex-row">
+                    <div class="mr-2 font-bold">
+                        Program:
+                    </div>
+                    <div>
+                        {{ evaluation.institution_program.program.program }}
+                    </div>
+                </div>
+            </div>
+            <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
+                <div class="w-auto flex flex-col md:flex-row">
+                    <div class="mr-2 font-bold">
+                        Effectivity:
+                    </div>
+                    <div>
+                        A.Y. {{ evaluation.effectivity }}
+                    </div>
+                </div>
+            </div>
         </div>
-        <div>
-            {{ updateIndicator }}
-        </div>
-    </div> -->
-    <div class="sticky top-0 bg-white lg:mx-8 mx-3 rounded mt-7 z-30">
-        <div class="flex items-center justify-between px-3 py-5">
-            <div class="text-gray-500 h-10 lg:ml-2">
-                <!-- <div v-if="!hasUpdate && updateIndicator == null">
-                </div> -->
-                <div v-if="hasUpdate">
-                    * Changes unsaved
+    </div>
+    <content-container :hasAction="true">
+        <template v-slot:channel>
+            <div class="text-gray-500 h-10 lg:ml-2 flex items-center">
+                <div v-if="hasUpdate" class="text-red-500">
+                    <i class="fas fa-asterisk text-xs text-red-500 mr-2"></i>
+                    Changes unsaved.
                 </div>
                 <div v-else-if="!hasUpdate && updateIndicator != $page.url && updateIndicator != null">
                     <i class="fas fa-check-circle text-green-500 mr-2"></i>
@@ -24,53 +47,45 @@
                 <div v-else-if="updateIndicator == $page.url && updateIndicator != null">
                     <i class="fas fa-spinner animate-spin mr-2"></i>Saving
                 </div>
-                <div v-else>
-
-                </div>
+                <div v-else></div>
             </div>
-            <div>
-                <button disabled class="lg:px-3 w-10 lg:w-auto text-gray-400 border border-gray-400 h-10 rounded mr-1">
-                    <i class="fas fa-check lg:mr-2"></i>
-                    <span class="hidden lg:inline-block">Ready for visit</span>
-                </button>
-                <button @click="update(); updateIndicator = $page.url"
-                    class="lg:px-3 w-10 lg:w-auto h-10 border border-gray-500 bg-blue-500 text-gray-100 rounded tooltipForActions"
-                    :class="{ 'bg-gray-200 text-gray-700': !hasUpdate }" data-tooltip="Save changes" :disabled="!hasUpdate">
-                    <i class="fas fa-floppy-disk lg:mr-2"></i>
-                    <span class="hidden lg:inline-block">Save</span>
-                </button>
-            </div>
-        </div>
-    </div>
-    <content-container>
-        <template v-slot:content-head>
-            <div class="flex flex-col w-full bg-white rounded p-3 py-5">
-                <div class="w-full flex flex-col md:flex-row">
-                    <label for="heiName"
-                        class="mr-3 h-8 flex items-center justify-start md:justify-end align-middle text-gray-800 w-full md:w-32">HEI
-                        Name
-                    </label>
-                    <input type="text" id="heiName"
-                        class="h-8 w-full rounded-full max-w-md font-bold border border-gray-500" disabled
-                        :value="evaluation.institution_program.institution.name">
-                </div>
-                <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
-                    <label for="program"
-                        class="mr-3 h-8 flex items-center justify-start md:justify-end align-middle text-gray-800 w-full md:w-32">
-                        Program
-                    </label>
-                    <input type="text" id="program"
-                        class="h-8 w-full rounded-full max-w-md font-bold border border-gray-500" disabled
-                        :value="evaluation.institution_program.program.program">
-                </div>
-                <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
-                    <label for="effectivity"
-                        class="mr-3 h-8 flex items-center justify-start md:justify-end align-middle text-gray-800 w-full md:w-32">
-                        Effectivity
-                    </label>
-                    <input type="text" id="effectivity"
-                        class="h-8 w-full rounded-full max-w-md font-bold border border-gray-500" disabled
-                        :value="'A.Y. ' + evaluation.effectivity">
+        </template>
+        <template v-slot:actions>
+            <div class="flex items-center justify-between">
+                <div class="flex">
+                    <dropdown-option position="right">
+                        <template v-slot:button>
+                            <button class="lg:px-3 w-16 lg:w-auto text-gray-600 border border-gray-500 h-10 rounded mr-1">
+                                <i class="fas fa-cog mr-2"></i>
+                                <i class="fas fa-caret-down"></i>
+                            </button>
+                        </template>
+                        <template v-slot:options>
+                            <div class="w-64">
+                                <div class="hover:bg-gray-100">
+                                    <input type="checkbox" id="showItemNo" class="cursor-pointer mx-3">
+                                    <label for="showItemNo" class="cursor-pointer ">Show item no</label>
+                                </div>
+                                <div class="flex items-center mt-3 hover:bg-gray-100">
+                                    <input type="checkbox" id="merge" class="cursor-pointer mx-3">
+                                    <div>
+                                        <label for="merge" class="cursor-pointer ">Merge Area and Minimum Requirement
+                                            columns</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </dropdown-option>
+                    <!-- <button disabled class="lg:px-3 w-10 lg:w-auto text-gray-400 border border-gray-400 h-10 rounded mr-1">
+                        <i class="fas fa-check lg:mr-2"></i>
+                        <span class="hidden lg:inline-block">Ready for visit</span>
+                    </button> -->
+                    <button @click="update($page.url)" ref="saveBtn"
+                        class="lg:px-3 w-10 lg:w-auto h-10 rounded text-gray-200 border bg-blue-500 border-blue-500 hover:bg-blue-600 hover:text-white tooltipBottom"
+                        data-tooltip="Save changes" :disabled="!hasUpdate">
+                        <i class="fas fa-floppy-disk lg:mr-2"></i>
+                        <span class="hidden lg:inline-block">Save</span>
+                    </button>
                 </div>
             </div>
         </template>
@@ -89,7 +104,7 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-for="(item, index) in items" :key="item.id" class="align-top"
-                        :class="{ 'bg-slate-200': index % 2 == 0 }">
+                        :class="{ 'bg-slate-200': index % 2 == 1 }">
                         <td class="p-3 max-w-6 font-bold">
                             {{ item.itemNo }}
                         </td>
@@ -130,13 +145,26 @@
                         <td class="h-auto p-3 max-w-12 min-w-8 flex flex-col justify-center">
                             <div class="flex flex-col" :class="{ 'hidden': item.selfEvaluationStatus == 'Not applicable' }"
                                 ref="evidenceFiles">
-                                <a class="px-1 text-gray-600 hover:text-black m-1 w-fit rounded"
-                                    v-for="(file, index) in item.evidence" :key="file.id" :href="file.url" target="_blank">
-                                    <span v-if="file.type == 'file'"><i class="fas fa-file mr-2"></i>File {{ index + 1
-                                    }}</span>
-                                    <span v-else-if="file.type == 'link'"><i class="fas fa-link mr-2"></i>Link {{ index + 1
-                                    }}</span>
-                                </a>
+                                <div v-for="(file, index) in item.evidence" :key="file.id" class="w-full">
+                                    <a class="px-1 text-gray-600 hover:text-blue-500 m-1 rounded" :href="file.url"
+                                        target="_blank">
+                                        <span v-if="file.type == 'file'">
+                                            <!-- <i class="fas fa-file mr-2"></i> -->
+                                            File
+                                        </span>
+                                        <span v-else-if="file.type == 'link'">
+                                            <!-- <i class="fas fa-link mr-2"></i> -->
+                                            Link
+                                        </span>
+                                    </a>
+                                    <button @click="confirmDelete(); deleteSelection = file.id, currentURL = $page.url"
+                                        class="text-gray-500 hover:text-red-500 tooltipForActions"
+                                        :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate"
+                                        :class="{ 'grayscale text-gray-500': hasUpdate }"
+                                        :data-tooltip="file.type == 'file' ? 'Delete file' : 'Delete link'">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </div>
                         </td>
                         <td class="h-32 p-3">
@@ -151,16 +179,18 @@
                             </div>
                         </td>
                         <td class="p-3">
-                            <div class="w-full text-right" ref="actionButtons"
-                                :class="{ 'hidden': item.selfEvaluationStatus == 'Not applicable' }">
-                                <button @click="openEvidenceUploadModal()"
-                                    class="h-8 w-10 shadow shadow-gray-500 hover:bg-gray-300 rounded border border-gray-500 bg-white tooltipForActions"
-                                    data-tooltip="Upload file" :disabled="item.selfEvaluationStatus == 'Not applicable'">
-                                    <i class="fas fa-file-upload"></i>
+                            <div class="w-full text-right visible" ref="actionButtons"
+                                :class="{ 'invisible': item.selfEvaluationStatus == 'Not applicable' }">
+                                <button @click="openEvidenceUploadModal(item)"
+                                    class="h-8 w-8 shadow shadow-gray-500 hover:text-blue-600 rounded border border-gray-500 bg-white tooltipForActions"
+                                    :class="{ 'grayscale text-gray-500': hasUpdate }" data-tooltip="Upload file"
+                                    :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate">
+                                    <i class="fas fa-upload"></i>
                                 </button>
                                 <button @click="openEvidenceLinkModal(item); submitLinkIndicator = $page.url; removeLink()"
-                                    class="ml-1 h-8 w-10 shadow shadow-gray-500 hover:bg-gray-300 rounded border border-gray-500 bg-white tooltipForActions"
-                                    data-tooltip="Submit link" :disabled="item.selfEvaluationStatus == 'Not applicable'">
+                                    class="ml-1 h-8 w-8 shadow shadow-gray-500 hover:text-blue-600 rounded border border-gray-500 bg-white tooltipForActions"
+                                    :class="{ 'grayscale text-gray-500': hasUpdate }" data-tooltip="Submit link"
+                                    :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate">
                                     <i class="fas fa-link"></i>
                                 </button>
                             </div>
@@ -219,9 +249,6 @@
                         </button>
                     </div>
                 </div>
-                <div class="flex items-center w-full justify-center">
-
-                </div>
             </div>
             <button v-if="!evidenceFile" @click.prevent="$refs.uploadEvidenceFile.click()"
                 class="hover:text-white border border-green-700 hover:bg-green-700 py-2 px-10 rounded"><i
@@ -229,7 +256,7 @@
                 Select file
             </button>
             <div class="mt-3">
-                <form-error-message :message="$page.props.errors.file" theme="dark" />
+                <form-error-message :message="$page.props.errors" theme="dark" />
             </div>
         </div>
     </modal>
@@ -247,24 +274,25 @@
             <button @click="submitLink()" class="text-white bg-blue-600 hover:bg-blue-700 w-24 py-2 px-3 rounded border">
                 Submit
             </button>
-            <!-- <button disabled class="text-white bg-blue-600 hover:bg-blue-700 w-24 py-2 px-3 rounded border">
-                <i class="fas fa-spinner animate-spin"></i>
-            </button> -->
-            <!-- <div>
-                {{ $page.url }}
-            </div>
-            <div>
-                {{ submitLinkIndicator }}
-            </div> -->
         </template>
     </modal>
     <Notification :message="$page.props.flash.message" />
+    <Notification :message="$page.props.flash.success" />
     <div v-if="$page.url != submitLinkIndicator && submitLinkIndicator != null">
         <Notification :message="'Success submit link'" />
     </div>
-    <div v-if="!hasUpdate && updateIndicator != $page.url && updateIndicator != null">
-        <Notification :message="'All changes saved.'" />
+    <div v-if="$page.url != currentURL && currentURL != null">
+        <Notification :message="'Success Deletion'" />
     </div>
+    <confirmation @close="closeDeleteConfirmation" v-show="deleteEvidence && currentURL == $page.url"
+        title="Delete File/Link" modaltype="confirmDeleteEvidence">
+        <template v-slot:buttons>
+            <button class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2 px-3 rounded mr-1"
+                @click="deleteLink">
+                Delete
+            </button>
+        </template>
+    </confirmation>
 </template>
 
 <script setup>
@@ -303,12 +331,16 @@ const selfEvaluationStatus = ref([]);
 const actionButtons = ref([]);
 const evidenceFiles = ref([]);
 const hasUpdate = ref(false);
+const deleteEvidence = ref(false);
+const deleteSelection = ref(null);
 
 const updateIndicator = ref(null);
 const uploadFileIndicator = ref(null);
 const submitLinkIndicator = ref(null);
+const saveBtn = ref(null);
+const currentURL = ref(null);
 
-const refs = { actualSituationInput, selfEvaluationStatus, actionButtons, evidenceFiles };
+const refs = { actualSituationInput, selfEvaluationStatus, actionButtons, evidenceFiles, saveBtn };
 
 // Functions
 function handleTextInput(index) {
@@ -358,12 +390,12 @@ function handleChangeStatus(index) {
 
 
 const handleFileChange = (event) => {
-    evidence.file = event.target.files[0];
+    evidenceUpload.file = event.target.files[0];
     evidenceFile.value = event.target.files[0];
 };
 
 const removeFile = () => {
-    evidence.file = null;
+    evidenceUpload.file = null;
     evidenceFile.value = null;
 };
 
@@ -384,21 +416,30 @@ function closeEvidenceUploadModal() {
 
 function closeEvidenceLinkModal() {
     removeLink();
+    submitLinkIndicator.value = null;
     submitEvidenceLinkModal.value = false;
 }
 
 function openEvidenceUploadModal(item) {
     uploadEvidenceFileModal.value = true;
-    evidence.itemId = item.id;
+    evidenceUpload.itemId = item.id;
 };
 
 function openEvidenceLinkModal(item) {
+    evidenceLink.itemId = item.id;
     submitEvidenceLinkModal.value = true;
-    evidenceLink.itemId = item.id
 };
 
 function closeEditor() {
     isEditorOpen.value = false;
+}
+
+function confirmDelete() {
+    deleteEvidence.value = true;
+}
+
+function closeDeleteConfirmation() {
+    deleteEvidence.value = false;
 }
 
 // CTRL + S function
@@ -406,41 +447,13 @@ const handleKeyDown = (event) => {
     if (event.ctrlKey || event.metaKey) {
         if (event.key === 's' || event.key === 'S') {
             event.preventDefault();
-            update();
+            console.log('CLTR+S');
+            refs.saveBtn.value.click();
         }
     }
 };
 
-
-// Computed
-// const itemsArray = computed(() => {
-//     return props.items.map(item => ({
-//         id: item.id,
-//         itemNo: item.criteria.itemNo,
-//         area: item.criteria.area,
-//         minimumRequirement: item.criteria.minimumRequirement,
-//         actualSituation: item.actualSituation,
-//         selfEvaluationStatus: item.selfEvaluationStatus,
-//     }));
-// });
-
-
-// Submit
-// const form = useForm({
-//     items: itemsArray,
-// });
-
-// const form = useForm({
-//     id: ref(props.items.id),
-//     itemNo: ref(props.items.itemNo),
-//     area: ref(props.items.area),
-//     minimumRequirement: ref(props.items.minimumRequirement),
-//     actualSituation: ref(props.items.actualSituation),
-//     selfEvaluationStatus: ref(props.items.selfEvaluationStatus),
-//     evidence: ref(props.items.evidence),
-// });
-
-const evidence = reactive({
+const evidenceUpload = reactive({
     itemId: null,
     file: null,
 });
@@ -450,17 +463,22 @@ const evidenceLink = reactive({
     link: null,
 });
 
-function update() {
+function update(url) {
+    updateIndicator.value = url;
     router.post('/hei/evaluation/update', { 'id': props.evaluation.id, 'items': props.items });
     hasUpdate.value = false;
 }
 
 function upload() {
-    router.post('/hei/evaluation/upload', { 'id': props.evaluation.id, 'evidence': evidence });
+    router.post('/hei/evaluation/upload', { 'id': props.evaluation.id, 'evidence': evidenceUpload });
 }
 
 function submitLink() {
     router.post('/hei/evaluation/link', { 'id': props.evaluation.id, 'evidenceLink': evidenceLink });
+}
+
+function deleteLink() {
+    router.post('/hei/evaluation/link/delete', { 'id': props.evaluation.id, 'evidenceLink': deleteSelection.value });
 }
 
 </script>

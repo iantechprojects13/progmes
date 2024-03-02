@@ -1,23 +1,25 @@
 <template>
     <Head title="Program Self-Evaluation" />
     <page-title title="Program Self-Evaluation" />
-    <div class="md:mx-8 mx-3 mt-7">
-        <div class="flex flex-col w-full bg-white rounded p-3 py-5">
+    <div class="md:mx-8 mx-3 mt-8">
+        <div class="flex flex-col w-full rounded">
             <div class="w-auto flex flex-col md:flex-row">
-                <label for="heiName"
-                    class="mr-3 h-8 md:h-10 flex items-center justify-start md:justify-end align-middle text-gray-800 w-full md:w-24">HEI
-                    Name
-                </label>
-                <input type="text" id="heiName" class="md:w-1/2 w-full rounded font-bold" disabled
-                    :value="program.institution.name">
+                <div class="mr-2 font-bold">
+                    HEI Name:
+                </div>
+                <div>
+                    {{ program.institution.name }}
+                </div>
             </div>
             <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
-                <label for="program"
-                    class="mr-3 h-8 md:h-10 flex items-center justify-start md:justify-end align-middle text-gray-800 w-full md:w-24">
-                    Program
-                </label>
-                <input type="text" id="program" class="md:w-1/2 w-full rounded font-bold" disabled
-                    :value="program.program.program">
+                <div class="w-auto flex flex-col md:flex-row">
+                    <div class="mr-2 font-bold">
+                        Program:
+                    </div>
+                    <div>
+                        {{ program.program.program }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

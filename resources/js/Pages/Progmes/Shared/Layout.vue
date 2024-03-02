@@ -2,7 +2,7 @@
     <Head title="Login" />
     <!-- Header -->
     <div
-        class="md:hidden sticky top-0 bg-blue-900 text-white flex justify-between text-center h-16 items-center shadow-md z-90 px-4">
+        class="md:hidden fixed top-0 w-full bg-blue-900 text-white flex justify-between text-center h-16 items-center shadow-md z-90 px-4">
         <div class="cursor-pointer" @click="toggleSideBar">
             <i class="fas fa-bars text-xl"></i>
         </div>
@@ -131,11 +131,12 @@
         </div>
 
         <!-- Page Content -->
-        <div class="w-full h-screen relative bg-gray-200 overflow-x-auto">
+        <div class="w-full h-screen relative bg-slate-100 overflow-x-auto pt-16 md:pt-0">
             <slot />
         </div>
     </div>
 </template>
+
 
 <script>
 export default {

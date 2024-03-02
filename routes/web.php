@@ -17,6 +17,7 @@ use App\Http\Controllers\HEIFormController;
 use App\Http\Controllers\InstitutionProgramController;
 use App\Http\Controllers\AdminSettingsController;
 use App\Http\Controllers\ExcelController;
+use App\Http\Controllers\EvidenceController;
 
 
 /*
@@ -71,6 +72,8 @@ Route::get('hei/tool/{tool}/edit', [HEIFormController::class, 'generateKeyBefore
 Route::post('/hei/evaluation/update', [HEIFormController::class, 'update'])->name('form.hei.update');
 Route::post('/hei/evaluation/upload', [HEIFormController::class, 'upload'])->name('form.hei.upload');
 Route::post('/hei/evaluation/link', [HEIFormController::class, 'submitLink'])->name('form.hei.link');
+
+Route::post('/hei/evaluation/link/delete', [HEIFormController::class, 'deleteLink'])->name('form.hei.link.delete');;
 
 //admin-panel
 Route::get('/admin/users/list', [UserController::class, 'index'])->middleware(['auth', 'type.ched'])->name('admin.users.list');
