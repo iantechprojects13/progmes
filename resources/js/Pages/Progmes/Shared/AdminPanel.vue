@@ -4,7 +4,7 @@
         <div class="mt-3 w-full z-40 text-gray-700 font-bold text-base md:pb-0">
             <div class="text-right">
                 <button @click="toggleMenu"
-                    class="flex flex-row  absolute top-2.5 right-3 justify-center items-center md:hidden w-14 h-10 rounded border-2 border-gray-500 text-gray-700 hover:text-black hover:bg-gray-100">
+                    class="flex flex-row  absolute top-20 right-3 justify-center items-center md:hidden w-14 h-10 rounded border-2 border-gray-500 text-gray-700 hover:text-black hover:bg-gray-100">
                     <span v-if="!isMenuOpen">
                         <i class="fas fa-bars"></i>
                     </span>
@@ -34,7 +34,7 @@
                     <Link href="/admin/tool" preserved-state>
                     <button class="h-12 md:w-auto md:px-5 w-full md:hover:bg-gray-600 hover:bg-stone-600  rounded"
                         :class="{ 'text-blue-500 md:border-b-blue-500 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-gray-700 md:hover:text-blue-500': highlight('form') }">
-                        Tool
+                        Compliant Tool
                     </button>
                     </Link>
 

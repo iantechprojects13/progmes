@@ -170,6 +170,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         // \Inertia\ServiceProvider::class,
+        Kreait\Laravel\Firebase\ServiceProvider::class,
     ])->toArray(),
 
     /*

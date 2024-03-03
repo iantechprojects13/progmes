@@ -75,7 +75,6 @@ class EvaluationFormController extends Controller
             'cmo.required' => 'Active CMO is required.',
         ]);
 
-
         $institutionProgram = InstitutionProgramModel::where('programId', $validatedData['program']['id'])
         ->whereNotExists(function ($query) use ($validatedData) {
             $query->select(DB::raw(1))
@@ -85,10 +84,12 @@ class EvaluationFormController extends Controller
         })->get();
 
         $cmo = $validatedData['cmo']['id'];
+        $discipline = $validatedData['program']['disciplineId'];
 
         foreach($institutionProgram as $item) {
             EvaluationFormModel::create([
                 'institutionProgramId' => $item->id,
+                'disciplineId' => $discipline,
                 'cmoId' => $cmo,
                 'effectivity' => $validatedData['effectivity'],
                 'status' => 'deployed',

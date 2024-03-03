@@ -1,12 +1,14 @@
 <template>
+
     <Head title="HEI Registration" />
-    <div class="w-full bg-white flex justify-center mt-20 select-none">
+    <div class="w-full flex justify-center mt-20 select-none">
         <div
-            class="mx-auto md:w-4/5 md:shadow md:shadow-gray-400 md:border md:border-gray-500 md:rounded max-w-xl px-10 pb-10">
+            class="bg-white mx-auto md:w-4/5 md:shadow md:shadow-gray-400 md:border md:border-gray-500 md:rounded max-w-xl px-10 pb-10">
             <!-- header -->
             <div class="text-center md:p-3 md:mb-0 mb-10 md:flex items-center justify-start">
                 <img src="/assets/ched-logo.png" alt="CHED Logo" width="75" class="mx-auto">
-                <h2 class="text-lg md:text-xl font-bold w-3/4 mx-auto m-5">Higher Education Institution Registration</h2>
+                <h2 class="text-lg md:text-xl font-bold w-3/4 mx-auto m-5">Higher Education Institution Registration
+                </h2>
             </div>
             <!-- select fields -->
             <div class="mt-5">
@@ -21,7 +23,7 @@
                             <option :value="null">Select institution</option>
                             <option class="text-gray-800" v-for="institution in institution_list" :key="institution.id"
                                 :value="institution.id">{{
-                                    institution.name }}</option>
+                    institution.name }}</option>
                         </select>
                         <form-error-message :message="$page.props.errors.institution" theme="dark" />
                     </div>
@@ -48,7 +50,7 @@
                             <option :value="null">Select discipline</option>
                             <option class="text-gray-800" v-for="discipline in discipline_list" :key="discipline.id"
                                 :value="discipline.id">{{
-                                    discipline.discipline }}</option>
+                    discipline.discipline }}</option>
                         </select>
                         <form-error-message :message="$page.props.errors.discipline" theme="dark" />
                     </div>
@@ -57,12 +59,13 @@
                         <div>
                             <label for="program" class="mb-2 font-bold text-gray-800 dark:text-white">Program</label>
                         </div>
-                        <select id="program" v-model="form.program" class="border border-gray-500 rounded block w-full p-2"
+                        <select id="program" v-model="form.program"
+                            class="border border-gray-500 rounded block w-full p-2"
                             :class="{ 'text-gray-500': form.program == null }">
                             <option :value="null">Select program</option>
                             <option class="text-gray-800" v-for="program in program_list" :key="program.id"
                                 :value="program.id">{{
-                                    program.program }}<span v-if="program.major"> - {{ program.major }}</span></option>
+                    program.program }}<span v-if="program.major"> - {{ program.major }}</span></option>
                         </select>
                         <form-error-message :message="$page.props.errors.program" theme="dark" />
                     </div>
@@ -128,4 +131,3 @@ const props = defineProps([
 ]);
 
 </script>
-

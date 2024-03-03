@@ -13,9 +13,11 @@ class EvaluationFormModel extends Model
 
     protected $fillable = [
         'institutionProgramId',
+        'disciplineId',
         'cmoId',
         'effectivity',
         'evaluationDate',
+        'submissionDate',
         'programHead',
         'evaluator',
         'conforme',
@@ -32,6 +34,11 @@ class EvaluationFormModel extends Model
         return $this->belongsTo(InstitutionProgramModel::class, 'institutionProgramId', 'id');
     }
 
+    public function discipline()
+    {
+        return $this->belongsTo(DisciplineModel::class, 'disciplineId', 'id');
+    }
+    
     public function cmo()
     {
         return $this->belongsTo(CMOModel::class, 'cmoId', 'id');
@@ -41,7 +48,5 @@ class EvaluationFormModel extends Model
     {
         return $this->hasMany(EvaluationItemModel::class, 'evaluationFormId', 'id');
     }
-
-    
 
 }

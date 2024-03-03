@@ -29,8 +29,8 @@
                 <div v-if="modaltype == 'activate'">
                     Are you sure you want to make
                     <b>CMO No.{{ selected.number }} - Series of {{ selected.series }} - Version {{
-                        selected.version }}</b>
-                    as active CMO for <b>{{ selected.program }}</b> programs?
+            selected.version }}</b>
+                    as active CMO for <b>{{ selected.program }}</b> program?
                 </div>
                 <div v-if="modaltype == 'deactivate'">
                     Are you sure you want to remove the activation from this CMO?
@@ -44,7 +44,7 @@
                 <div v-if="modaltype == 'confirmDeleteEvidence'">
                     Are you sure you want to delete this evidence file/link? This action can't be undone.
                 </div>
-                <slot></slot>
+                <slot name="message"></slot>
             </div>
             <div class="py-4 px-5 border-t-2 border-gray-100 text-right">
                 <button
@@ -62,7 +62,8 @@
                     preserve-scroll>
                 Reject
                 </Link>
-                <Link method="get" v-if="modaltype == 'delete'" @click="closeModal" :href="'/admin/CMOs/delete/' + selected"
+                <Link method="get" v-if="modaltype == 'delete'" @click="closeModal"
+                    :href="'/admin/CMOs/delete/' + selected"
                     class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border cursor-pointer"
                     preserve-scroll>
                 Delete

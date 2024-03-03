@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('google_id')->nullable();
             $table->string('password')->nullable();
             $table->string('role')->nullable();
+            $table->string('contact', 11)->nullable();
             $table->boolean('isVerified')->nullable();
             $table->boolean('isActive')->nullable();
             $table->string('type')->nullable();

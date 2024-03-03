@@ -14,6 +14,7 @@ use App\Http\Controllers\CMOController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\EvaluationFormController;
 use App\Http\Controllers\HEIFormController;
+use App\Http\Controllers\CHEDFormController;
 use App\Http\Controllers\InstitutionProgramController;
 use App\Http\Controllers\AdminSettingsController;
 use App\Http\Controllers\ExcelController;
@@ -64,16 +65,23 @@ Route::get('/ched/evaluation', [EvaluationController::class, 'evaluationForCHED'
 Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware('type.hei')->name('evaluation.hei.programhead');
 Route::get('/admin/evaluation', [EvaluationController::class, 'evaluationForAdmin'])->middleware('type.ched')->name('evaluation.admin');
 
-Route::get('hei/evaluation/{tool}/edit/{key?}', [HEIFormController::class, 'edit'])->middleware('auth', 'type.hei')->name('form.hei.edit');
 Route::get('hei/evaluation/{tool}', [HEIFormController::class, 'generateKeyBeforeEdit'])->middleware('auth', 'type.hei')->name('form.hei.key');
+Route::get('hei/evaluation/{tool}/edit/{key?}', [HEIFormController::class, 'edit'])->middleware('auth', 'type.hei')->name('form.hei.edit');
 
-Route::get('hei/tool/{tool}/edit', [HEIFormController::class, 'generateKeyBeforeEdit'])->middleware('auth');
+Route::get('ched/evaluation/{tool}', [CHEDFormController::class, 'generateKeyBeforeEdit'])->middleware('auth', 'type.ched')->name('form.ched.key');
+Route::get('ched/evaluation/{tool}/evaluate/{key?}', [CHEDFormController::class, 'evaluate'])->middleware('auth', 'type.ched')->name('form.ched.evaluate');
+
+
 
 Route::post('/hei/evaluation/update', [HEIFormController::class, 'update'])->name('form.hei.update');
 Route::post('/hei/evaluation/upload', [HEIFormController::class, 'upload'])->name('form.hei.upload');
 Route::post('/hei/evaluation/link', [HEIFormController::class, 'submitLink'])->name('form.hei.link');
+Route::post('/hei/evaluation/submit', [HEIFormController::class, 'readyForVisit'])->name('form.hei.submit');
 
-Route::post('/hei/evaluation/link/delete', [HEIFormController::class, 'deleteLink'])->name('form.hei.link.delete');;
+Route::post('/hei/evaluation/link/delete', [HEIFormController::class, 'deleteLink'])->name('form.hei.link.delete');
+
+
+Route::post('/ched/evaluation/update', [CHEDFormController::class, 'update'])->name('form.ched.update');
 
 //admin-panel
 Route::get('/admin/users/list', [UserController::class, 'index'])->middleware(['auth', 'type.ched'])->name('admin.users.list');

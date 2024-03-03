@@ -1,7 +1,7 @@
 <template>
     <div class="h-auto mb-5 mt-7 pt-0 mx-3 md:mx-8 rounded border border-gray-500 shadow shadow-gray-500 text-gray-700">
         <div v-show="hasAction"
-            class="w-full flex flex-row justify-between items-center bg-gray-100 z-30 px-3 rounded-t py-3 sticky -top-0.5 border-b border-gray-400">
+            class="w-full flex flex-row justify-between items-center bg-stone-100 text-gray-700 z-30 px-3 rounded-t py-3 sticky -top-0.5 border-b border-gray-400">
             <div class="flex items-center justify-between w-full" :class="{ 'hidden': !hideSearch }">
                 <div class="flex">
                     <slot name="channel"></slot>
@@ -21,7 +21,8 @@
                         </button>
                     </form>
                 </div>
-                <button class="hover:bg-gray-200 rounded border h-10 w-12 border-gray-400 lg:hidden shadow shadow-gray-500"
+                <button
+                    class="hover:bg-gray-200 rounded border h-10 w-12 border-gray-400 lg:hidden shadow shadow-gray-500"
                     :class="{ 'ml-1': !hideSearch }" @click="toggleSearch">
                     <i :class="[{ 'fas fa-search': hideSearch }, { 'fas fa-close': !hideSearch }]"></i>
                 </button>

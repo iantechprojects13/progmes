@@ -32,6 +32,11 @@ class ProgramModel extends Model
         return $this->hasMany(CMOModel::class, 'programId', 'id');
     }
 
+    public function institutionProgram()
+    {
+        return $this->hasMany(InstitutionProgramModel::class, 'programId', 'id');
+    }
+
     public function active_cmo()
     {
         return $this->hasOne(CMOModel::class, 'programId', 'id')->where('isActive', 1);

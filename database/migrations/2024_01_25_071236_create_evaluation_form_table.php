@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('evaluation_form', function (Blueprint $table) {
             $table->id();
             $table->foreignId('institutionProgramId')->nullable();
+            $table->foreignId('disciplineId')->nullable();
             $table->foreignId('cmoId')->nullable();
             $table->string('effectivity')->nullable();
             $table->date('evaluationDate')->nullable();
+            $table->date('submissionDate')->nullable();
             $table->string('programHead')->nullable();
             $table->string('evaluator')->nullable();
             $table->string('conforme')->nullable();

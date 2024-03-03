@@ -171,7 +171,7 @@ class CMOController extends Controller
         ]);
         $cmo->save();
         
-        return redirect()->back()->with('success', "Activation successful.");
+        return redirect()->back()->with('success', "CMO activation successful.");
 
         
     }

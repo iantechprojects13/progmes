@@ -1,4 +1,5 @@
 <template>
+
     <Head title="CHED Memorandum Order List" />
     <AdminPanel />
     <content-container :hasAction="true" placeholder="Search CMO" :data_list="cmo_list">
@@ -11,6 +12,7 @@
                         <i class="fas fa-caret-down ml-3"></i>
                     </button>
                 </template>
+
                 <template v-slot:options>
                     <div class="w-40">
                         <Link class="w-full" :href="route('admin.cmo.list')">
@@ -35,6 +37,7 @@
                 </template>
             </dropdown-option>
         </template>
+
         <template v-slot:actions>
             <div class="relative text-gray-600" @mouseleave="openCreateDropdown = false">
                 <button
@@ -61,6 +64,7 @@
                 </div>
             </div>
         </template>
+
         <template v-slot:content>
             <content-table>
                 <template v-slot:table-head>
@@ -71,6 +75,7 @@
                     <th v-show="listItems == 'draft'" class="p-3">Last Modified</th>
                     <th class="p-3 text-right">Action</th>
                 </template>
+
                 <template v-slot:table-body>
                     <tr v-for="( item, index ) in  cmo_list.data " :key="item.id"
                         class="border-b border-gray-300 text-gray-700 hover:bg-gray-300 hover:text-black cursor-pointer"
@@ -89,7 +94,8 @@
                         <td class="p-3">{{ item.discipline }}</td>
                         <td class="p-3">{{ item.program }}</td>
                         <td v-show="listItems == 'published'" class="p-3">
-                            <div v-if="item.active" class="py-0.5 px-1 text-xs rounded text-white bg-green-600 w-fit">Active
+                            <div v-if="item.active" class="py-0.5 px-1 text-xs rounded text-white bg-green-600 w-fit">
+                                Active
                             </div>
                             <div v-else class="py-0.5 px-1 text-xs rounded text-white bg-red-600 w-fit">Not active</div>
                         </td>
@@ -102,7 +108,7 @@
                                     @click="item.active ? toggleConfirmationModal(item.id, 'deactivate', 'Deactivate CMO') : toggleConfirmationModal(item, 'activate', 'Activate CMO')"
                                     class="hover:text-blue-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
                                     :data-tooltip="!item.active ? 'Set as Active' : 'Remove activation'">
-                                    <i class="text-lg fas fa-star"></i>
+                                    <i class="text-lg fas fa-heart"></i>
                                 </button>
                                 <Link :href="'/admin/CMOs/' + item.id + '/view'">
                                 <button
@@ -114,7 +120,7 @@
 
                             </div>
                             <div v-show="listItems == 'draft'">
-                                <button @click="toggleConfirmationModal(item.id, 'publish', 'Publish draft')"
+                                <button @click="toggleConfirmationModal(item.id, 'publish', 'Publish Draft')"
                                     class="text-blue-500 hover:text-blue-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
                                     data-tooltip="Publish">
                                     <i class="text-lg fas fa-paper-plane"></i>
@@ -124,7 +130,7 @@
                                     data-tooltip="Edit">
                                     <i class="text-lg fas fa-edit"></i>
                                 </button>
-                                <button @click="toggleConfirmationModal(item.id, 'delete', 'Delete draft')"
+                                <button @click="toggleConfirmationModal(item.id, 'delete', 'Delete Draft')"
                                     class="text-red-500 hover:text-red-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
                                     data-tooltip="Delete">
                                     <i class="text-lg fas fa-trash"></i>

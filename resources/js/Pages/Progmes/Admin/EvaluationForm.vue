@@ -1,4 +1,5 @@
 <template>
+
     <Head title="Evaluation Forms" />
     <AdminPanel />
     <content-container :hasAction="true" placeholder="Search" :data_list="list">
@@ -8,6 +9,7 @@
                     <button class="px-3 rounded h-10 text-white bg-green-700">A.Y. {{ effectivity }}
                         <i class="fas fa-caret-down ml-2"></i></button>
                 </template>
+
                 <template v-slot:options>
                     <div class="w-52">
                         <button v-for="(year, index) in academicYear" :key="index"
@@ -22,6 +24,7 @@
                 </template>
             </dropdown-option>
         </template>
+
         <template v-slot:actions>
             <button v-show="defaultAcademicYear === effectivity" @click="deployToolModal = true;"
                 class="text-gray-500 hover:text-black bg-gray-100 hover:bg-gray-200 border shadow shadow-gray-500 hover:shadow-gray-700 border-gray-500 w-10 h-10 rounded tooltipForActions group"
@@ -29,6 +32,7 @@
                 <i class="fas fa-rocket text-base group-hover:text-lg"></i>
             </button>
         </template>
+
         <template v-slot:content>
             <content-table>
                 <template v-slot:table-head>
@@ -39,6 +43,7 @@
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
+
                 <template v-slot:table-body>
                     <tr v-for="(item, index) in  props.list.data " :key="item.id" class="border-b border-gray-300"
                         :class="{ 'bg-slate-200': index % 2 == 0 }">
@@ -88,7 +93,8 @@
             </content-table>
         </template>
     </content-container>
-    <modal :showModal="deployToolModal" @close="closeModal" @submit="deploy" type="deploy" title="Deploy Compliant Tool">
+    <modal :showModal="deployToolModal" @close="closeModal" @submit="deploy" type="deploy"
+        title="Deploy Compliant Tool">
         <div class="p-3">
             <div>
                 <label for="program">Program</label>
@@ -105,8 +111,8 @@
                 <div :class="{ 'grayscale opacity-50 pointer-events-none': deployment.program == null }">
                     <label for="cmo">Active CMO</label>
                     <input id="cmo" type="text" disabled class="w-full text-sm rounded border-gray-400 my-0.5" :value="deployment.program?.active_cmo != null ?
-                        'CMO No.' + deployment.program.active_cmo.version + ' Series of ' + deployment.program.active_cmo.series + ' - Version ' + deployment.program.active_cmo.version
-                        : 'No Active CMO'">
+        'CMO No.' + deployment.program.active_cmo.version + ' Series of ' + deployment.program.active_cmo.series + ' - Version ' + deployment.program.active_cmo.version
+        : 'No Active CMO'">
                 </div>
                 <FormErrorMessage :message="$page.props.errors.cmo" theme="dark" />
             </div>

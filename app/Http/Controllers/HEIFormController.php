@@ -10,8 +10,10 @@ use App\Models\EvaluationItemModel;
 use App\Models\CMOModel;
 use App\Models\CriteriaModel;
 use App\Models\EvidenceModel;
-
+use Kreait\Laravel\Firebase\Facades\Firebase;
 use Illuminate\Support\Str;
+use Auth;
+
 
 class HEIFormController extends Controller
 {
@@ -49,9 +51,26 @@ class HEIFormController extends Controller
     public function edit($evaluation, $key=123) {
         $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program')->first();
         $items = EvaluationItemModel::where('evaluationFormId', $evaluation)->with('criteria', 'evidence')->get();
+        $canSubmit = true;
 
+        foreach ($items as $item) {
+            if ($item->selfEvaluationStatus == 'Not complied') {
+                $canSubmit = false;
+                break;
+            }
+            if ($item->selfEvaluationStatus == 'Complied') {
+                if ($item->actualSituation != null || count($item->evidence) > 0) {
+                    continue;
+                } else {
+                    $canSubmit = false;
+                    break;
+                }
+            }
+
+        }
+        
         if($tool->status == 'In progress') {
-            return Inertia::render('Progmes/Evaluation/Evaluation-HEI-Edit', [
+            return Inertia::render('Progmes/Evaluation/HEI-Evaluation-Edit', [
                 'evaluation' => $tool,
                 'items' => $items->map(fn($item) => [
                     'id' => $item->id,
@@ -62,6 +81,7 @@ class HEIFormController extends Controller
                     'selfEvaluationStatus' => $item->selfEvaluationStatus,
                     'evidence' => $item->evidence,
                 ]),
+                'canSubmit' => $canSubmit,
             ]);
         } else {
             return redirect()->back()->with('failed', 'This tool can\'t be accessed.');
@@ -91,7 +111,7 @@ class HEIFormController extends Controller
 
             if ($evaluationItem) {
                 $evaluationItem->update([
-                    'actualSituation' => $item['selfEvaluationStatus'] == 'Not applicable' ? null : $item['actualSituation'],
+                    'actualSituation' => $item['actualSituation'],
                     'selfEvaluationStatus' => $item['selfEvaluationStatus'],
                 ]);
             }
@@ -102,32 +122,47 @@ class HEIFormController extends Controller
     }
 
     public function upload(Request $request) {
-        $validated = $request->validate([
+        $request->validate([
+            'id' => 'required',
+            'evidence.itemId' => 'required',
             'evidence.file' => 'required',
         ], [
             'evidence.file.required' => 'Please select a file.',
         ]);
 
-        // dd();
-        dd($request->file('evidence.file'));
+        $evidenceFile = $request->file('evidence.file');
+        $itemId = $request->evidence['itemId'];
+        $toolId = $request->id;
+        $filename = $evidenceFile->getClientOriginalName();
+        $user = Auth::user();
+        $effectivity = EvaluationFormModel::where('id', $toolId)->value('effectivity');
+
+        // dd($effectivity);
+
         
-        // $excelContent = [];
-        // $fileName ='';
 
-        // if (request()->file('cmo_file')) {
-        //     $excelContent = Excel::toArray(new CMOImport, request()->file('cmo_file'));
-        //     $fileName = request()->file('cmo_file')->getClientOriginalName();
-        // } else {
-        //     $excelContent = null;
-        //     return redirect()->route('admin.cmo.list')->with('failed', 'Import failed!');
-        // }
+        $path = 'evidences/'.$effectivity.'/'.$user->name.'/'.$evidenceFile->getClientOriginalName();
+        $storage = Firebase::storage();
 
-        // $newCMO = CMOModel::create([
-        //     'status' => 'draft',
-        //     'isActive' => 0,
-        // ]);
+        $fileUrl = $storage->getBucket()->upload(
+            $evidenceFile,
+            [
+                'name' => $path,
+                'metadata' => [
+                    'contentType' => $evidenceFile->getMimeType(),
+                ],
+            ]
+        )->signedUrl(now()->addMinutes(60));
 
+        EvidenceModel::create([
+            'itemId' => $itemId,
+            'type' => "file",
+            'text' => $filename,
+            'url' => $fileUrl,
+        ]);
 
+        $randomKey = $this->generateKey();
+        return redirect('/hei/evaluation/'. $request->id . '/edit/'.$randomKey);
     }
 
     public function submitLink(Request $request) {
@@ -148,7 +183,7 @@ class HEIFormController extends Controller
         ]);
 
         $randomKey = $this->generateKey();
-        return redirect('/hei/evaluation/'. $request->id . '/edit/'.$randomKey);
+        return redirect('/hei/evaluation/'. $request->id . '/edit/'.$randomKey)->with('success', 'Successful link upload. :)');
     }
 
     public function deleteLink(Request $request) {
@@ -160,9 +195,23 @@ class HEIFormController extends Controller
         return redirect('/hei/evaluation/'. $request->id . '/edit/'.$randomKey);
     }
 
+
+    public function readyForVisit(Request $request) {
+        $evaluation = EvaluationFormModel::find($request->id);
+
+        $evaluation->update([
+            'status' => 'submitted',
+            'submissionDate' => now(),
+        ]);
+        $evaluation->save();
+
+        return redirect('/hei/evaluation')->with('success', "The evaluation tool was successfully submitted.");
+    }
+
     
     function generateKey($length = 10) {
         return Str::random($length);
     }
+
 
 }

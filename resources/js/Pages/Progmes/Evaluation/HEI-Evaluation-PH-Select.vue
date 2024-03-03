@@ -1,4 +1,5 @@
 <template>
+
     <Head title="Program Self-Evaluation" />
     <page-title title="Program Self-Evaluation" />
     <div class="md:mx-8 mx-3 mt-8">
@@ -33,6 +34,7 @@
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
+
                 <template v-slot:table-body>
                     <tr v-for="item in program.evaluation_form" :key="item.id"
                         class="hover:bg-gray-100 border-b border-gray-300">
@@ -50,6 +52,9 @@
                                 <span class="p-1 bg-red-500 rounded" v-show="item.status === 'locked'">
                                     Locked
                                 </span>
+                                <span class="p-1 bg-blue-500 rounded" v-show="item.status === 'submitted'">
+                                    Submitted
+                                </span>
                             </div>
                         </td>
                         <td class="p-3 text-right">
@@ -57,21 +62,26 @@
                                 @click="createTool(item.id)" v-show="item.status === 'deployed'">
                                 Start now
                             </button>
-                            <button @click="edit(item.id)" ref="editButton"
+                            <button v-show="item.status === 'In progress'" @click="edit(item.id)" ref="editButton"
                                 class="border rounded h-10 w-10 border-gray-400 hover:bg-gray-50 shadow text-gray-600 hover:text-black shadow-gray-500 tooltipForActions"
                                 data-tooltip="Edit evaluation">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="border rounded py-1 px-3 border-gray-400" v-show="item.status == 'locked'">
+                            <button class="border rounded py-1 px-3 border-gray-400"
+                                v-show="item.status == 'locked' || item.status == 'submitted'">
                                 View
                             </button>
                         </td>
+                    </tr>
+                    <tr v-show="program.evaluation_form.length == 0">
+                        <td colspan="3" class="text-center p-3">Empty</td>
                     </tr>
                 </template>
             </content-table>
         </template>
     </content-container>
     <Notification :message="$page.props.flash.failed" />
+    <Notification :message="$page.props.flash.success" />
 </template>
 
 <script setup>

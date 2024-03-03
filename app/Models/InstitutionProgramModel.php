@@ -24,7 +24,7 @@ class InstitutionProgramModel extends Model
     
     public function institution()
     {
-        return $this->belongsTo(InstitutionModel::class, 'institutionId', 'id')->select(['id', 'name']);
+        return $this->belongsTo(InstitutionModel::class, 'institutionId', 'id')->select(['id', 'name'])->orderBy('name', 'asc');
     }
 
     public function program()

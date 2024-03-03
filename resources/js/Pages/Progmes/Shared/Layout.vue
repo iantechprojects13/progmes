@@ -1,4 +1,5 @@
 <template>
+
     <Head title="Login" />
     <!-- Header -->
     <div
@@ -8,7 +9,7 @@
         </div>
         <div class="text-white font-bold">ProgMES | CHED RO XI</div>
         <div>
-            <img :src="this.$page.props.auth.user.avatar" width="35" class="rounded-full">
+            <img :src="$page.props.auth.user.avatar" width="35" class="rounded-full">
         </div>
     </div>
 
@@ -19,7 +20,8 @@
         <div class="fixed z-80 top-0 w-full h-full bg-black bg-opacity-70 md:hidden" :class="{ 'hidden': closeSideBar }"
             @click="toggleSideBar()">
         </div>
-        <div class="h-full absolute top-0 w-64 left-0 md:relative z-90 transition-all duration-200 bg-opacity-20" :class="{
+        <div class="h-full absolute top-0 w-64 left-0 md:relative z-90 transition-all duration-200 bg-opacity-20"
+            :class="{
             'md:w-0 -translate-x-64 md:sticky md:top-0': closeSideBar
         }" @click.self="toggleSideBar()">
             <div class="md:block md:w-64">
@@ -41,6 +43,10 @@
                                 </div>
                             </div>
 
+                            <div class="text-center py-5 border-t border-b ">
+                                <div>{{ $page.props.auth.user.role }}</div>
+                            </div>
+
                             <!-- Searchbox -->
                             <div class="bg-gray-700 my-7 h-10 rounded-md relative">
                                 <form class="h-full">
@@ -55,23 +61,22 @@
 
                             <!-- Navigation Buttons -->
                             <div class="my-4" @click="mobileSideBar">
-                                <Link :href="route('dashboard')" preserve-scroll
-                                    class="block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700"
+                                <Link :href="route('dashboard')"
+                                    class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700"
                                     :class="{ 'text-blue-400 bg-slate-800': highlight('dashboard') }">
                                 <i class="fa fa-th-large mr-4 text-xl"></i>
                                 Dashboard
                                 </Link>
 
-                                <Link :href="route('admin.users.list')" preserve-scroll
-                                    v-if="$page.props.auth.user.type == 'CHED'"
-                                    class="block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700"
+                                <Link :href="route('admin.users.list')" v-if="$page.props.auth.user.type == 'CHED'"
+                                    class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700"
                                     :class="{ 'text-blue-400 bg-slate-800': highlight('adminpanel') }">
                                 <i class="fas fa-shield mr-4 text-xl"></i>
                                 Admin Panel
                                 </Link>
 
                                 <Link :href="route('evaluation')"
-                                    class="block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700"
+                                    class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700"
                                     :class="{ 'text-blue-400 bg-slate-800': highlight('evaluation') }">
                                 <i class="fa fa-edit mr-4 text-xl"></i>
                                 Evaluation
@@ -90,13 +95,13 @@
                                 <div
                                     class=" w-full h-12 rounded p-2 mt-3 relative flex items-center justify-center hover:bg-stone-700 cursor-pointer">
                                     <div class="inline-block mr-2">
-                                        <img :src="this.$page.props.auth.user.avatar" width="40" class="rounded-full">
+                                        <img :src="$page.props.auth.user.avatar" width="40" class="rounded-full">
                                     </div>
-                                    <div class="inline-block overflow-hidden" :title="this.$page.props.auth.user.name">
+                                    <div class="inline-block overflow-hidden" :title="$page.props.auth.user.name">
                                         <div class="text-sm whitespace-nowrap overflow-hidden overflow-ellipsis">{{
-                                            this.$page.props.auth.user.name }}</div>
+            $page.props.auth.user.name }}</div>
                                         <p class="text-xs whitespace-nowrap overflow-hidden overflow-ellipsis">{{
-                                            this.$page.props.auth.user.email }}</p>
+            $page.props.auth.user.email }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -131,12 +136,11 @@
         </div>
 
         <!-- Page Content -->
-        <div class="w-full h-screen relative bg-slate-100 overflow-x-auto pt-16 md:pt-0">
+        <div class="w-full h-auto relative bg-slate-100 overflow-x-auto pt-16 md:pt-0">
             <slot />
         </div>
     </div>
 </template>
-
 
 <script>
 export default {
