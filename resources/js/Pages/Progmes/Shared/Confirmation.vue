@@ -20,6 +20,9 @@
                 <div v-if="modaltype == 'accept'">
                     Are you sure you want to accept <b>{{ selected.name }} </b>'s registration?
                 </div>
+                <div v-if="modaltype == 'deactivateUser'">
+                    Are you sure you want to deactivate <b>{{ selected.name }} </b>'s account?
+                </div>
                 <div v-if="modaltype == 'delete'">
                     Are you sure you want to delete this draft? This action can't be undone.
                 </div>
@@ -29,7 +32,7 @@
                 <div v-if="modaltype == 'activate'">
                     Are you sure you want to make
                     <b>CMO No.{{ selected.number }} - Series of {{ selected.series }} - Version {{
-            selected.version }}</b>
+                        selected.version }}</b>
                     as active CMO for <b>{{ selected.program }}</b> program?
                 </div>
                 <div v-if="modaltype == 'deactivate'">
@@ -61,6 +64,11 @@
                     class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border"
                     preserve-scroll>
                 Reject
+                </Link>
+                <Link v-if="modaltype == 'deactivateUser'" :href="route('user.deactivate', [selected])" @click="closeModal"
+                    class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border"
+                    preserve-scroll>
+                Deactivate
                 </Link>
                 <Link method="get" v-if="modaltype == 'delete'" @click="closeModal"
                     :href="'/admin/CMOs/delete/' + selected"
@@ -99,50 +107,50 @@
 </template>
 
 <script setup>
-const props = defineProps({
-    'title': String,
-    'modaltype': String,
-    'selected': Object,
-});
+    const props = defineProps({
+        'title': String,
+        'modaltype': String,
+        'selected': Object,
+    });
 
 </script>
 
 <script>
-export default {
-    methods: {
-        closeModal() {
-            this.$emit('close')
-        },
+    export default {
+        methods: {
+            closeModal() {
+                this.$emit('close')
+            },
 
-        handleSubmit() {
-            this.$emit('submit')
-        },
+            handleSubmit() {
+                this.$emit('submit')
+            },
 
-        bgClicked() {
-            let cont = this.$refs.confirmationModalContainer;
-            cont.classList.add('animate-shake');
-            setTimeout(() => {
-                cont.classList.remove('animate-shake');
-            }, 200);
+            bgClicked() {
+                let cont = this.$refs.confirmationModalContainer;
+                cont.classList.add('animate-shake');
+                setTimeout(() => {
+                    cont.classList.remove('animate-shake');
+                }, 200);
+            }
         }
     }
-}
 </script>
 
 <style scoped>
-@keyframes shake {
+    @keyframes shake {
 
-    0%,
-    100% {
-        transform: translateY(0);
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
     }
 
-    50% {
-        transform: translateY(-10px);
+    .animate-shake {
+        animation: shake 200ms 1;
     }
-}
-
-.animate-shake {
-    animation: shake 200ms 1;
-}
 </style>

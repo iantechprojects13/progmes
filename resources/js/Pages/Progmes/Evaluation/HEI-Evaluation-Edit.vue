@@ -36,8 +36,8 @@
                 </div>
             </div>
             <div class="mt-5 lg:mt-0">
-                <button @click="readyForVisitModal = true; readyForVisitIndicator = $page.url" :disabled="!canSubmit"
-                    class="px-3 w-fit text-white  h-10 rounded mr-1"
+                <button @click="readyForVisitModal = true; readyForVisitIndicator = $page.url"
+                    :disabled="!canSubmit || hasUpdate" class="px-3 w-fit text-white  h-10 rounded mr-1"
                     :class="[{ 'bg-blue-500 hover:bg-blue-600': canSubmit && !hasUpdate }, { 'bg-red-500 hover:red-600': !canSubmit || hasUpdate }]">
                     Ready for visit
                 </button>
@@ -533,7 +533,7 @@ function update(url) {
 }
 
 function upload() {
-    router.post('/hei/evaluation/upload', { 'id': props.evaluation.id, 'evidence': evidenceUpload });
+    router.post('/hei/evaluation/upload', { 'id': props.evaluation.id, 'itemId': evidenceUpload.itemId, 'file': evidenceUpload.file });
 }
 
 function submitLink() {

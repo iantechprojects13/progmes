@@ -11,8 +11,12 @@ use App\Models\CMOModel;
 use App\Models\CriteriaModel;
 use App\Models\EvidenceModel;
 use Kreait\Laravel\Firebase\Facades\Firebase;
+use Kreait\Firebase\ServiceAccount;
 use Illuminate\Support\Str;
 use Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use Kreait\Firebase\Factory;
 
 
 class HEIFormController extends Controller
@@ -122,44 +126,60 @@ class HEIFormController extends Controller
     }
 
     public function upload(Request $request) {
+        // dd($request);
         $request->validate([
             'id' => 'required',
-            'evidence.itemId' => 'required',
-            'evidence.file' => 'required',
+            'itemId' => 'required',
+            'file' => 'required',
         ], [
-            'evidence.file.required' => 'Please select a file.',
+            'file.required' => 'Please select a file.',
         ]);
 
-        $evidenceFile = $request->file('evidence.file');
-        $itemId = $request->evidence['itemId'];
-        $toolId = $request->id;
-        $filename = $evidenceFile->getClientOriginalName();
-        $user = Auth::user();
-        $effectivity = EvaluationFormModel::where('id', $toolId)->value('effectivity');
+        if($request->hasFile('file')) {
+            $evidenceFile = $request->file('file');
+            $itemId = $request->itemId;
+            $toolId = $request->id;
+            $filename = $evidenceFile->getClientOriginalName();
+            $user = Auth::user();
+            $effectivity = EvaluationFormModel::where('id', $toolId)->value('effectivity');
 
-        // dd($effectivity);
 
-        
+            $storage = Firebase::storage();
+            $bucket = $storage->getBucket();
 
-        $path = 'evidences/'.$effectivity.'/'.$user->name.'/'.$evidenceFile->getClientOriginalName();
-        $storage = Firebase::storage();
+            $object = $bucket->upload(file_get_contents($evidenceFile->path()), [
+                'name' => $filename,
+            ]);
 
-        $fileUrl = $storage->getBucket()->upload(
-            $evidenceFile,
-            [
-                'name' => $path,
-                'metadata' => [
-                    'contentType' => $evidenceFile->getMimeType(),
-                ],
-            ]
-        )->signedUrl(now()->addMinutes(60));
+            $url = $object->signedUrl(new \DateTime('tomorrow'));
 
-        EvidenceModel::create([
-            'itemId' => $itemId,
-            'type' => "file",
-            'text' => $filename,
-            'url' => $fileUrl,
-        ]);
+            EvidenceModel::create([
+                'itemId' => $itemId,
+                'type' => "file",
+                'text' => $filename,
+                'url' => $url,
+            ]);
+        }
+
+        // $path = 'evidences/'.$effectivity.'/'.$user->name.'/'.$evidenceFile->getClientOriginalName();
+        // $storage = Firebase::storage();
+
+        // $fileUrl = $storage->getBucket()->upload(
+        //     $evidenceFile,
+        //     [
+        //         'name' => $path,
+        //         'metadata' => [
+        //             'contentType' => $evidenceFile->getMimeType(),
+        //         ],
+        //     ]
+        // )->signedUrl(now()->addMinutes(60));
+
+        // EvidenceModel::create([
+        //     'itemId' => $itemId,
+        //     'type' => "file",
+        //     'text' => $filename,
+        //     'url' => $fileUrl,
+        // ]);
 
         $randomKey = $this->generateKey();
         return redirect('/hei/evaluation/'. $request->id . '/edit/'.$randomKey);

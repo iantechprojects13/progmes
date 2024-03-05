@@ -105,7 +105,6 @@ class RegistrationController extends Controller
             } else {
                 return redirect()->back()->with('failed', 'Unable to register.');
             }
-
             return redirect()->route('register.pending');
         }
     
@@ -174,6 +173,18 @@ class RegistrationController extends Controller
         return Inertia::render('Progmes/Auth/Register-Success');
     }
 
+    public function deactivate(User $user) {
+        $user = User::where('id', $user->id)->first();
+        
+        $user->update([
+            'isActive' => 0,
+        ]);
+
+        $user->save();
+
+        return redirect()->back()->with('success', $user->name .'\'s account has been deactivated.');
+    }
+
 
     public function accept(User $user) {
 
@@ -181,7 +192,7 @@ class RegistrationController extends Controller
 
         $acceptedUser->update([
             'isVerified'=> 1,
-            'isActive' => 1
+            'isActive' => 1,
         ]);
 
         $acceptedUser->save();

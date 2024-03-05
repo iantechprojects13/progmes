@@ -124,9 +124,7 @@ Route::get('/register/for-verification', [RegistrationController::class, 'pendin
 
 Route::get('/register/{user}/accept', [RegistrationController::class, 'accept'])->name('register.accept');
 Route::get('/register/{user}/reject', [RegistrationController::class, 'reject'])->name('register.reject');
-
-
-
+Route::get('/register/{user}/deactivate', [RegistrationController::class, 'deactivate'])->name('user.deactivate');
 
 
 

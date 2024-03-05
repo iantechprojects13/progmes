@@ -1,4 +1,5 @@
 <template>
+
     <Head title="HEI List" />
     <AdminPanel />
     <content-container>
@@ -7,6 +8,7 @@
                 HEI Registration
             </div>
         </template>
+
         <template v-slot:content>
             <div class="flex flex-col h-auto text-sm">
                 <div class="lg:max-w-xl w-full lg:p-3 p-5 mx-auto lg:my-5 border lg:rounded shadow shadow-gray-500">
@@ -42,7 +44,8 @@
                             <FormErrorMessage :message="$page.props.errors.address" theme="dark" />
                         </div>
                         <div class="lg:max-w-lg w-full mx-auto my-1.5">
-                            <label for="cityOrMunicipality" class="font-bold text-gray-500">City/Municipality</label><br>
+                            <label for="cityOrMunicipality"
+                                class="font-bold text-gray-500">City/Municipality</label><br>
                             <select v-model="form.cityOrMunicipality" id="cityOrMunicipality"
                                 class="w-full rounded py-2 px-4 text-sm text-gray-500 border-gray-300"
                                 :class="{ 'border-red-600': $page.props.errors.cityOrMunicipality }">
@@ -53,7 +56,7 @@
                             </select>
                             <div v-if="$page.props.errors.cityOrMunicipality">
                                 <span class="text-sm text-red-600">{{ $page.props.errors.cityOrMunicipality
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                         <div class="lg:max-w-lg w-full mx-auto my-1.5">
@@ -68,7 +71,7 @@
                             </select>
                             <div v-if="$page.props.errors.cityOrProvince">
                                 <span class="text-sm text-red-600">{{ $page.props.errors.cityOrProvince
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                         <div class="lg:max-w-lg w-full mx-auto my-1.5">
@@ -82,7 +85,8 @@
                             </div>
                         </div>
                         <div class="font-bold lg:mx-3 mt-5 mb-2 text-gray-500 text-base">Programs</div>
-                        <div class="h-screen overflow-y-auto border border-gray-300 rounded lg:max-w-lg w-full mx-auto p-3">
+                        <div
+                            class="h-auto max-h-screen overflow-y-auto border border-gray-300 rounded lg:max-w-lg w-full mx-auto p-3">
                             <div v-for="(  program, index  ) in   program_list  " :key="program.id" class="p-2">
                                 <div class="mr-2 flex flex-row items-center">
                                     <input type="checkbox" :id="'programCheck' + index" class="mr-2 text-blue-500"
@@ -102,7 +106,8 @@
                             Cancel
                         </button>
                         </Link>
-                        <button @click="submit" class="bg-blue-500 rounded hover:bg-blue-600 text-white py-2 px-4 mx-0.5">
+                        <button @click="submit"
+                            class="bg-blue-500 rounded hover:bg-blue-600 text-white py-2 px-4 mx-0.5">
                             Register
                         </button>
                     </div>

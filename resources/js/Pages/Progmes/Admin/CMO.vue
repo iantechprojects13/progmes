@@ -39,30 +39,11 @@
         </template>
 
         <template v-slot:actions>
-            <div class="relative text-gray-600" @mouseleave="openCreateDropdown = false">
-                <button
-                    class="px-3 shadow shadow-gray-700 border rounded h-10 border-gray-400 hover:border-black text-gray-500 hover:text-black"
-                    @click.prevent="openCreateDropdown = !openCreateDropdown">
-                    <i class="fas fa-plus"></i>
-                    <i class="fas fa-caret-down ml-3"></i></button>
-                <div v-show="openCreateDropdown"
-                    class="flex flex-col items-start absolute top-10 right-0 shadow border border-gray-300 bg-white rounded py-3 z-30 w-48"
-                    @mouseover.prevent="openCreateDropdown = true">
-                    <button class="py-2 indent-2 flex flex-row w-full text-left hover:bg-gray-200 hover:text-black">
-                        <div class="w-8">
-                            <i class="fas fa-plus"></i>
-                        </div>
-                        <div>Create new</div>
-                    </button>
-                    <button class="flex flex-row py-2 indent-2 w-full text-left hover:bg-gray-200 hover:text-black"
-                        @click="openUploadModal">
-                        <div class="w-8">
-                            <i class="fas fa-file-import"></i>
-                        </div>
-                        <div>Import file</div>
-                    </button>
-                </div>
-            </div>
+            <button class="h-10 w-full text-base bg-blue-500 hover:bg-blue-600 text-white px-3 rounded"
+                @click="openUploadModal">
+                    <i class="fas fa-file-import mr-2"></i>
+                    Import file
+            </button>
         </template>
 
         <template v-slot:content>
@@ -121,17 +102,17 @@
                             </div>
                             <div v-show="listItems == 'draft'">
                                 <button @click="toggleConfirmationModal(item.id, 'publish', 'Publish Draft')"
-                                    class="text-blue-500 hover:text-blue-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
+                                    class="text-gray-500 hover:text-blue-600 hover:bg-gray-200 rounded-full border-gray-400 w-8 h-8 tooltipForActions"
                                     data-tooltip="Publish">
                                     <i class="text-lg fas fa-paper-plane"></i>
                                 </button>
                                 <button @click="edit(item.id)"
-                                    class="text-orange-500 hover:text-orange-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
+                                    class="text-gray-500 hover:text-orange-600 hover:bg-gray-200 rounded-full border-gray-400 w-8 h-8 tooltipForActions"
                                     data-tooltip="Edit">
                                     <i class="text-lg fas fa-edit"></i>
                                 </button>
                                 <button @click="toggleConfirmationModal(item.id, 'delete', 'Delete Draft')"
-                                    class="text-red-500 hover:text-red-600 hover:bg-gray-200 hover:border border-gray-400 w-8 h-8 rounded-full tooltipForActions"
+                                    class="text-gray-500 hover:text-red-600 hover:bg-gray-200 rounded-full border-gray-400 w-8 h-8 tooltipForActions"
                                     data-tooltip="Delete">
                                     <i class="text-lg fas fa-trash"></i>
                                 </button>
