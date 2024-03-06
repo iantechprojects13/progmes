@@ -23,17 +23,17 @@
                 <div v-if="modaltype == 'deactivateUser'">
                     Are you sure you want to deactivate <b>{{ selected.name }} </b>'s account?
                 </div>
-                <div v-if="modaltype == 'delete'">
-                    Are you sure you want to delete this draft? This action can't be undone.
+                <div v-if="modaltype == 'deleteCMO'">
+                    Are you sure you want to delete this CMO? This action can't be undone.
                 </div>
                 <div v-if="modaltype == 'publish'">
-                    Are you sure you want to publish this draft? Once published, the document cannot be edited further.
+                    Are you sure you want to publish this CMO? Once published, the document cannot be edited further.
                 </div>
                 <div v-if="modaltype == 'activate'">
                     Are you sure you want to make
                     <b>CMO No.{{ selected.number }} - Series of {{ selected.series }} - Version {{
                         selected.version }}</b>
-                    as active CMO for <b>{{ selected.program }}</b> program?
+                    as active CMO for <b>{{ selected.program.program }}</b> program?
                 </div>
                 <div v-if="modaltype == 'deactivate'">
                     Are you sure you want to remove the activation from this CMO?
@@ -65,12 +65,13 @@
                     preserve-scroll>
                 Reject
                 </Link>
-                <Link v-if="modaltype == 'deactivateUser'" :href="route('user.deactivate', [selected])" @click="closeModal"
+                <Link v-if="modaltype == 'deactivateUser'" :href="route('user.deactivate', [selected])"
+                    @click="closeModal"
                     class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border"
                     preserve-scroll>
                 Deactivate
                 </Link>
-                <Link method="get" v-if="modaltype == 'delete'" @click="closeModal"
+                <Link method="get" v-if="modaltype == 'deleteCMO'" @click="closeModal"
                     :href="'/admin/CMOs/delete/' + selected"
                     class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border cursor-pointer"
                     preserve-scroll>

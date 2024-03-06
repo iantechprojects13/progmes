@@ -14,23 +14,24 @@ use App\Models\CMOModel;
 class ExcelController extends Controller
 {
     public function importExcel(Request $request) {
-
-        $request->validate([
-            'cmo_file' => 'required|mimes:xlsx,xls',
-        ], [
-            'cmo_file.required' => 'Please select an Excel file.',
-            'cmo_file.mimes' => 'File must be in Excel format: .xlsx or .xls.',
-        ]);
+        
+       $request->validate([
+        'file' => 'required|mimes:xlsx,xls',
+            ], [
+                'file.required' => 'Please select a file.',
+                'file.mimes' => 'File must be in Excel format: .xlsx or .xls.',
+            ]);
 
         $excelContent = [];
         $fileName ='';
-
-        if (request()->file('cmo_file')) {
-            $excelContent = Excel::toArray(new CMOImport, request()->file('cmo_file'));
-            $fileName = request()->file('cmo_file')->getClientOriginalName();
+        
+        
+        if (request()->file('file')) {
+            $excelContent = Excel::toArray(new CMOImport, request()->file('file'));
+            $fileName = request()->file('file')->getClientOriginalName();
         } else {
             $excelContent = null;
-            return redirect()->route('admin.cmo.list')->with('failed', 'Import failed!');
+            return redirect()->back()->with('failed', 'Import failed!');
         }
 
         $newCMO = CMOModel::create([

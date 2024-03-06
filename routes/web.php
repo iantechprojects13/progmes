@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InstitutionController;
+use App\Http\Controllers\DisciplineController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\CMOController;
 use App\Http\Controllers\EvaluationController;
@@ -91,7 +92,8 @@ Route::get('/admin/higher-education-institutions/create', [InstitutionController
 Route::get('/admin/higher-education-institutions/{institution}/edit', [InstitutionController::class, 'edit'])->middleware(['auth'])->name('admin.hei.edit');
 Route::get('/admin/higher-education-institutions/{institution}/view', [InstitutionController::class, 'view'])->middleware(['auth'])->name('admin.hei.show');
 
-Route::get('admin/CMOs/{list?}', [CMOController::class, 'index'])->middleware('auth', 'type.ched')->name('admin.cmo.list');
+Route::get('/admin/CMOs', [CMOController::class, 'index'])->middleware('auth', 'type.ched')->name('admin.cmo.list');
+Route::get('/admin/CMOs/draft', [CMOController::class, 'draft'])->middleware('auth', 'type.ched')->name('admin.cmo.draft');
 Route::get('admin/CMOs/{cmo}/view', [CMOController::class, 'view'])->middleware('auth', 'type.ched')->name('admin.cmo.show');
 
 Route::get('admin/tool/{academicYear?}', [InstitutionProgramController::class, 'index'])->middleware('auth')->name('admin.form.list');
@@ -101,14 +103,18 @@ Route::post('/admin/form/deploy', [EvaluationFormController::class, 'deploy'])->
 Route::get('hei/tool/create/{id?}', [HEIFormController::class, 'store'])->middleware('auth')->name('hei.tool.store');
 
 Route::get('/admin/program', [ProgramController::class, 'index'])->middleware(['auth'])->name('admin.program.list');
-Route::get('/admin/program/discipline/create', [ProgramController::class, 'createDiscipline'])->middleware(['auth'])->name('admin.discipline.create');
-Route::post('/admin/program/discipline/store', [ProgramController::class, 'storeDiscipline'])->middleware(['auth'])->name('admin.discipline.store');
 Route::get('/admin/program/create', [ProgramController::class, 'create'])->middleware(['auth'])->name('admin.program.create');
+
 Route::post('/admin/program/store', [ProgramController::class, 'store'])->middleware(['auth'])->name('admin.program.store');
 Route::get('/admin/program/{program?}/edit', [ProgramController::class, 'edit'])->middleware(['auth'])->name('admin.program.edit');
 Route::post('/admin/program/update', [ProgramController::class, 'update'])->middleware(['auth'])->name('admin.program.update');
 
 Route::get('/admin/settings', [AdminSettingsController::class, 'index'])->middleware(['auth'])->name('admin.settings');
+
+//discipline
+Route::get('/admin/program/discipline', [DisciplineController::class,'index'])->middleware('auth')->name('admin.discipline.list');
+Route::get('/admin/program/discipline/create', [DisciplineController::class, 'create'])->middleware(['auth'])->name('admin.discipline.create');
+Route::post('/admin/program/discipline/store', [DisciplineController::class, 'store'])->middleware(['auth'])->name('admin.discipline.store');
 
 
 Route::post('/discipline/delete', [ProgramController::class, 'deleteDiscipline'])->middleware(['auth'])->name('admin.discipline.delete');
@@ -127,7 +133,7 @@ Route::get('/register/{user}/reject', [RegistrationController::class, 'reject'])
 Route::get('/register/{user}/deactivate', [RegistrationController::class, 'deactivate'])->name('user.deactivate');
 
 
-
+// CMO
 Route::post('/admin/CMOs/create/import', [ExcelController::class, 'importExcel'])->name('admin.cmo.import');
 
 Route::get('/admin/CMOs/draft/{id}/edit', [CMOController::class, 'edit'])->name('admin.cmo.edit');
@@ -138,8 +144,13 @@ Route::post('/admin/CMOs/save-as-draft', [CMOController::class, 'saveAsDraft'])-
 Route::get('/admin/CMOs/publish/{cmo}', [CMOController::class, 'publish'])->middleware('auth')->name('admin.cmo.publish');
 
 Route::get('/admin/CMOs/delete/{id?}', [CMOController::class, 'destroy'])->middleware('auth')->name('admin.cmo.delete');
+
 Route::get('/admin/CMOs/activate/{id?}', [CMOController::class, 'activate'])->middleware('auth')->name('admin.cmo.activate');
 Route::get('/admin/CMOs/deactivate/{id?}', [CMOController::class, 'deactivate'])->middleware('auth')->name('admin.cmo.deactivate');
+
+
+
+
 
 Route::get('/chart', function () {
     return Inertia::render('Progmes/Shared/Charts/DoughnutChart');

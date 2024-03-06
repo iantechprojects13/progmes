@@ -8,17 +8,51 @@ use App\Models\ProgramModel;
 use App\Models\InstitutionProgramModel;
 use Inertia\Inertia;
 use App\Http\Requests\InstitutionValidationRequest;
+use Auth;
 
 class InstitutionController extends Controller
 {
 
-    public function index()
-    {
-        return Inertia::render('Progmes/Admin/HEI',[
-            'institution_list' => InstitutionModel::orderBy('name', 'asc')->get(),
-            ]);
-    }
+    // public function index()
+    // {
+    //     return Inertia::render('Progmes/Admin/HEI',[
+    //         'institution_list' => InstitutionModel::orderBy('name', 'asc')->get(),
+    //         ]);
+    // }
 
+    public function index(Request $request)
+    {
+
+        $role = Auth::user()->role;
+        $canEdit = false;
+
+        if ($role == 'Super Admin') {
+            $canEdit = true;
+        }
+
+        $institutionlist = InstitutionModel::query()
+        ->when($request->query('search'), function ($query) use ($request) {
+            $query->where('name', 'like', '%' . $request->query('search') . '%');
+        })
+        ->paginate(10)
+        ->withQueryString();
+
+        return Inertia::render('Progmes/Admin/HEI', [
+            'institution_list' => $institutionlist,
+            'canEdit' => $canEdit,
+            'filters' => $request->only(['search']),
+        ]);
+
+        // return Inertia::render('Progmes/Admin/Program',[
+        //     'program_list' => ProgramModel::orderBy('program', 'asc')->paginate(20)
+        //         ->through(fn($program) => [
+        //             'id' => $program->id,
+        //             'discipline' => DisciplineModel::where('id', $program->disciplineId)->value('discipline'),
+        //             'program' => $program->program,
+        //             'major' => $program->major,
+        //         ]),
+        //     ]);
+    }
 
     public function create()
     {

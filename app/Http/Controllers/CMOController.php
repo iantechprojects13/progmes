@@ -12,32 +12,92 @@ use App\Models\ProgramModel;
 use App\Http\Requests\CMORequest;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use Auth;
 
 class CMOController extends Controller
 {
-    public function index($list = 'published') {
+    // public function index($list = 'published') {
         
-        $order = $list == 'published' ? 'number' : 'updated_at';
-        $sort = $order == 'number' ? 'asc' : 'desc';
+    //     $order = $list == 'published' ? 'number' : 'updated_at';
+    //     $sort = $order == 'number' ? 'asc' : 'desc';
 
-        return Inertia::render('Progmes/Admin/CMO',[
-        'cmo_list' => CMOModel::where('status', $list)
-            ->orderByRaw("CAST($order AS UNSIGNED) $sort")
-            ->paginate(50)
-            ->through(fn($cmo) => [
-                'id' => $cmo->id,
-                'number' => $cmo->number,
-                'series' => $cmo->series,
-                'version' => $cmo->version,
-                'status' => $cmo->status,
-                'active' => $cmo->isActive,
-                'modified' => Carbon::parse($cmo->updated_at)->timezone('Asia/Manila')->format('M d, Y h:i:sa'),
-                'discipline' => DisciplineModel::where('id', $cmo->disciplineId)->value('discipline'),
-                'program' => ProgramModel::where('id', $cmo->programId)->value('program'),
-            ]),
-        'listItems' => $list,
+    //     return Inertia::render('Progmes/Admin/CMO',[
+    //     'cmo_list' => CMOModel::where('status', $list)
+    //         ->orderByRaw("CAST($order AS UNSIGNED) $sort")
+    //         ->paginate(50)
+    //         ->through(fn($cmo) => [
+    //             'id' => $cmo->id,
+    //             'number' => $cmo->number,
+    //             'series' => $cmo->series,
+    //             'version' => $cmo->version,
+    //             'status' => $cmo->status,
+    //             'active' => $cmo->isActive,
+    //             'modified' => Carbon::parse($cmo->updated_at)->timezone('Asia/Manila')->format('M d, Y h:i:sa'),
+    //             'discipline' => DisciplineModel::where('id', $cmo->disciplineId)->value('discipline'),
+    //             'program' => ProgramModel::where('id', $cmo->programId)->value('program'),
+    //         ]),
+    //     'listItems' => $list,
+    //     ]);
+    // }
+
+    public function index(Request $request) {
+
+        $role = Auth::user()->role;
+        $canEdit = true;
+
+        $activelist = CMOModel::query()
+        ->when($request->query('search'), function ($query) use ($request) {
+            $query->where('number', 'like', '%' . $request->query('search') . '%')
+            ->orWhere('series', 'like', '%' . $request->query('search') . '%')
+            ->orWhere('version', 'like', '%' . $request->query('search') . '%')
+            ->orWhereHas('program', function ($programQuery) use ($request) {
+                $programQuery->where('program', 'like', '%' . $request->query('search') . '%');
+            });
+        })
+        ->where([
+            'status' => 'published',
+        ])
+        ->with('program')
+        ->paginate(10)
+        ->withQueryString();
+
+        return Inertia::render('Progmes/Admin/CMO', [
+            'cmo_list' => $activelist,
+            'canEdit' => $canEdit,
+            'filters' => $request->only(['search']),
         ]);
+
     }
+
+    public function draft(Request $request) {
+
+        $role = Auth::user()->role;
+        $canEdit = true;
+
+        $draftlist = CMOModel::query()
+        ->when($request->query('search'), function ($query) use ($request) {
+            $query->where('number', 'like', '%' . $request->query('search') . '%')
+            ->orWhere('series', 'like', '%' . $request->query('search') . '%')
+            ->orWhere('version', 'like', '%' . $request->query('search') . '%')
+            ->orWhereHas('program', function ($programQuery) use ($request) {
+                $programQuery->where('program', 'like', '%' . $request->query('search') . '%');
+            });
+        })
+        ->where([
+            'status' => 'draft',
+        ])
+        ->with('program')
+        ->paginate(10)
+        ->withQueryString();
+
+        return Inertia::render('Progmes/Admin/CMO-Draft', [
+            'cmo_list' => $draftlist,
+            'canEdit' => $canEdit,
+            'filters' => $request->only(['search']),
+        ]);
+
+    }
+
 
     public function create() {
         return Inertia::render('Progmes/Admin/CMO-Create');
@@ -87,7 +147,7 @@ class CMOController extends Controller
         }
 
 
-        return redirect()->route('admin.cmo.list')->with('success', 'Successfully saved.');
+        return redirect()->route('admin.cmo.list')->with('success', 'CMO successfully published.');
     }
 
     public function saveAsDraft(Request $request) {
@@ -117,7 +177,7 @@ class CMOController extends Controller
         }
 
 
-        return redirect()->route('admin.cmo.list', ['list' => 'draft'])->with('success', 'Successfully saved.');
+        return redirect()->route('admin.cmo.draft')->with('success', 'CMO saved as draft.');
 
     }
 
@@ -144,7 +204,7 @@ class CMOController extends Controller
 
         $cmoModel->save();
 
-        return redirect()->back()->with('success', 'Successfully published.');
+        return redirect()->back()->with('success', 'CMO successfully published.');
     }
 
     public function activate($id) {
@@ -188,18 +248,18 @@ class CMOController extends Controller
         ]);
         $cmo->save();
         
-        return redirect()->back()->with('success', "Deactivation successful.");
+        return redirect()->back()->with('success', "CMO deactivation successful.");
     }
 
     public function destroy($id) {
         $cmoModel = CMOModel::find($id);
-
+        
         if (!$cmoModel) {
             return redirect()->back()->with('failed', 'Failed to delete CMO.');
         }
 
-        // $cmoModel->criteria()->delete();
-        // $cmoModel->delete();
+        $cmoModel->criteria()->delete();
+        $cmoModel->delete();
 
         return redirect()->back()->with('success', 'CMO deleted successfully.');
     }

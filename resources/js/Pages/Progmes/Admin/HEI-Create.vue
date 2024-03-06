@@ -1,24 +1,24 @@
 <template>
 
-    <Head title="HEI List" />
+    <Head title="New HEI" />
     <AdminPanel />
-    <content-container>
-        <template v-slot:channel>
-            <div class="h-8 flex items-center align-middle">
-                HEI Registration
-            </div>
-        </template>
 
-        <template v-slot:content>
-            <div class="flex flex-col h-auto text-sm">
-                <div class="lg:max-w-xl w-full lg:p-3 p-5 mx-auto lg:my-5 border lg:rounded shadow shadow-gray-500">
-                    <div class="lg:p-3 py-3 text-base font-bold text-gray-500">
-                        HEI Information
-                    </div>
+    <content-container pageTitle="Create HEI" hasBackButton="true">
+        <template v-slot:back-button>
+            <Link href="/admin/higher-education-institutions">
+            <button class="w-10 h-10 mr-2 rounded-full hover:bg-gray-300">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            </Link>
+        </template>
+        <template v-slot:main-content>
+            <div>
+                <div class="mx-auto shadow shadow-gray-500 border border-gray-500 rounded p-5 max-w-lg">
                     <div class="flex flex-col justify-center lg:py-3">
                         <div class="lg:max-w-lg w-full mx-auto my-1.5">
                             <label for="code" class="font-bold text-gray-500">Institutional
-                                Code</label><br>
+                                Code</label>
+                            <span class="text-sm ml-1 text-red-500">(Required)</span>
                             <input type="text" v-model="form.code" id="code" placeholder="HEI Code"
                                 class="w-full rounded placeholder-gray-400 py-2 px-4 text-sm border-gray-300"
                                 :class="{ 'border-red-600': $page.props.errors.code }">
@@ -28,7 +28,7 @@
                         </div>
                         <div class="lg:max-w-lg w-full mx-auto my-1.5">
                             <label for="name" class="font-bold text-gray-500">Institution
-                                Name</label><br>
+                                Name</label><span class="text-sm ml-1 text-red-500">(Required)</span>
                             <input type="text" v-model="form.name" id="name" placeholder="HEI Name"
                                 class="w-full rounded placeholder-gray-400 py-2 px-4 text-sm border-gray-300"
                                 :class="{ 'border-red-600': $page.props.errors.name }">
@@ -37,7 +37,8 @@
                             </div>
                         </div>
                         <div class="lg:max-w-lg w-full mx-auto my-1.5">
-                            <label for="address" class="font-bold text-gray-500">Address</label><br>
+                            <label for="address" class="font-bold text-gray-500">Address</label><span
+                                class="text-sm ml-1 text-red-500">(Required)</span>
                             <input type="text" v-model="form.address" id="address" placeholder="Address"
                                 class="w-full rounded placeholder-gray-400 py-2 px-4 text-sm border-gray-300"
                                 :class="{ 'border-red-600': $page.props.errors.address }">
@@ -45,7 +46,8 @@
                         </div>
                         <div class="lg:max-w-lg w-full mx-auto my-1.5">
                             <label for="cityOrMunicipality"
-                                class="font-bold text-gray-500">City/Municipality</label><br>
+                                class="font-bold text-gray-500">City/Municipality</label><span
+                                class="text-sm ml-1 text-red-500">(Required)</span>
                             <select v-model="form.cityOrMunicipality" id="cityOrMunicipality"
                                 class="w-full rounded py-2 px-4 text-sm text-gray-500 border-gray-300"
                                 :class="{ 'border-red-600': $page.props.errors.cityOrMunicipality }">
@@ -60,7 +62,8 @@
                             </div>
                         </div>
                         <div class="lg:max-w-lg w-full mx-auto my-1.5">
-                            <label for="cityOrProvince" class="font-bold text-gray-500">Province</label><br>
+                            <label for="cityOrProvince" class="font-bold text-gray-500">Province</label><span
+                                class="text-sm ml-1 text-red-500">(Required)</span>
                             <select v-model="form.cityOrProvince" id="cityOrProvince"
                                 class="w-full rounded py-2 px-4 text-sm text-gray-500 border-gray-300"
                                 :class="{ 'border-red-600': $page.props.errors.cityOrProvince }">
@@ -76,7 +79,7 @@
                         </div>
                         <div class="lg:max-w-lg w-full mx-auto my-1.5">
                             <label for="zip" class="font-bold text-gray-500 placeholder-gray-400">Postal/Zip
-                                Code</label><br>
+                                Code</label><span class="text-sm ml-1 text-red-500">(Required)</span>
                             <input type="number" v-model="form.zipCode" id="zip"
                                 class="w-full rounded py-2 px-4 text-sm border-gray-300" placeholder="xxxx"
                                 :class="{ 'border-red-600': $page.props.errors.zipCode }">
@@ -100,12 +103,6 @@
                         </div>
                     </div>
                     <div class="lg:mt-2 mt-5 lg:mx-5 text-right">
-                        <Link :href="route('admin.hei.list')">
-                        <button
-                            class="rounded border border-gray-300 hover:border-gray-400 text-gray-400 hover:text-gray-500 py-2 px-4 mx-0.5">
-                            Cancel
-                        </button>
-                        </Link>
                         <button @click="submit"
                             class="bg-blue-500 rounded hover:bg-blue-600 text-white py-2 px-4 mx-0.5">
                             Register
@@ -119,63 +116,63 @@
 
 <script setup>
 
-import { ref, reactive } from 'vue';
-import { router } from '@inertiajs/vue3';
+    import { ref, reactive } from 'vue';
+    import { router } from '@inertiajs/vue3';
 
-const programChecked = [];
+    const programChecked = [];
 
-const form = reactive({
-    code: null,
-    name: null,
-    address: null,
-    cityOrMunicipality: '',
-    cityOrProvince: '',
-    zipCode: null,
-    programs: ref(programChecked),
-});
-
-
-
-function submit() {
-    router.post('/admin/higher-education-institutions/register', form);
-}
+    const form = reactive({
+        code: null,
+        name: null,
+        address: null,
+        cityOrMunicipality: '',
+        cityOrProvince: '',
+        zipCode: null,
+        programs: ref(programChecked),
+    });
 
 
-function addProgram(id) {
-    let index = this.programChecked.indexOf(id);
 
-    if (index === -1) {
-        this.programChecked.push(id);
-    } else {
-        this.programChecked.splice(index, 1);
+    function submit() {
+        router.post('/admin/higher-education-institutions/register', form);
     }
 
-    console.log(this.programChecked);
 
-}
+    function addProgram(id) {
+        let index = this.programChecked.indexOf(id);
 
-defineProps([
-    'program_list',
-]);
+        if (index === -1) {
+            this.programChecked.push(id);
+        } else {
+            this.programChecked.splice(index, 1);
+        }
+
+        console.log(this.programChecked);
+
+    }
+
+    defineProps([
+        'program_list',
+    ]);
 
 
 </script>
 
 <script>
-import Layout from '../Shared/Layout.vue';
-import FormErrorMessage from '../Shared/FormErrorMessage.vue';
-export default {
-    layout: Layout,
-    data() {
-        return {
-            city_municipality: [
-                'Davao City', 'Digos City', 'Panabo City', 'Tagum City', 'Mati City', 'Island Garden City of Samal',
-            ],
-            province: [
-                'Davao City', 'Davao del Sur', 'Davao Oriental',
-            ],
-        }
-    },
+    import Layout from '../Shared/Layout.vue';
+    import FormErrorMessage from '../Shared/FormErrorMessage.vue';
+    export default {
+        layout: Layout,
+        data() {
+            return {
+                city_municipality: [
+                    'Davao City', 'Digos City', 'Panabo City', 'Tagum City', 'Mati City', 'Island Garden City of Samal',
+                ],
+                province: [
+                    'Davao City', 'Davao del Sur', 'Davao Oriental',
+                ],
+            }
+        },
 
-}
+    }
 </script>

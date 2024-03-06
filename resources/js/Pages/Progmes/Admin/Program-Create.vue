@@ -1,7 +1,49 @@
 <template>
+
     <Head title="New Program" />
     <AdminPanel />
-    <content-container placeholder="Search program">
+    <content-container pageTitle="Create Program" hasBackButton="true">
+        <template v-slot:back-button>
+            <Link href="/admin/program">
+            <button class="w-10 h-10 mr-2 rounded-full hover:bg-gray-300">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            </Link>
+        </template>
+        <template v-slot:main-content>
+            <div class="p-5 w-full md:max-w-md md:shadow md:shadow-gray-600 rounded mx-auto md:my-10">
+                <div>
+                    <label for="discipline" class="font-bold text-gray-600">Discipline</label>
+                    <select v-model="form.discipline" type="text" id="discipline"
+                        class="rounded text-sm border-gray-400 w-full my-0.5"
+                        :class="[{ 'text-gray-500': form.discipline == null }, { 'text-gray-700': form.discipline }]">
+                        <option :value="null">Select discipline</option>
+                        <option v-for="item in discipline_list" :value="item.id" class="text-black">
+                            {{ item.discipline }}
+                        </option>
+                    </select>
+                    <FormErrorMessage :message="$page.props.errors.discipline" theme="dark" />
+                </div>
+                <div class="mt-3">
+                    <label for="program" class="font-bold text-gray-600">Program</label>
+                    <input v-model="form.program" type="text" id="program"
+                        class="rounded text-sm border-gray-400 w-full my-0.5 placeholder-gray-500"
+                        placeholder="Program">
+                    <FormErrorMessage :message="$page.props.errors.program" theme="dark" />
+                </div>
+                <!-- <div class="mt-3">
+                    <label for="major" class="font-bold text-gray-600">Major</label>
+                    <input v-model="form.major" type="text" id="major"
+                        class="rounded text-sm border-gray-400 w-full my-0.5 placeholder-gray-500" placeholder="Major">
+                </div> -->
+                <div class="text-right mt-5">
+                    <button @click="submit"
+                        class="rounded text-white bg-blue-500 hover:bg-blue-600 py-2 px-4">Create</button>
+                </div>
+            </div>
+        </template>
+    </content-container>
+    <!-- <content-container placeholder="Search program">
         <template v-slot:channel>
             <Link :href="route('admin.program.list')">
             <button class="py-1 px-4 h-10 rounded-full">
@@ -71,40 +113,40 @@
                 </div>
             </div>
         </template>
-    </content-container>
+    </content-container> -->
 </template>
 
 <script setup>
-import { useForm } from '@inertiajs/vue3';
+    import { useForm } from '@inertiajs/vue3';
 
-const form = useForm({
-    discipline: null,
-    program: null,
-    major: null,
-})
+    const form = useForm({
+        discipline: null,
+        program: null,
+        major: null,
+    })
 
-function submit() {
-    form.post('/admin/program/store', form);
-}
+    function submit() {
+        form.post('/admin/program/store', form);
+    }
 
 </script>
 
 <script>
-import FormErrorMessage from '../Shared/FormErrorMessage.vue';
-import Layout from '../Shared/Layout.vue';
+    import FormErrorMessage from '../Shared/FormErrorMessage.vue';
+    import Layout from '../Shared/Layout.vue';
 
-export default {
-    layout: Layout,
-    data() {
-        return {
-            openCreateDropdown: false,
-        };
-    },
-    components: {
-        FormErrorMessage,
-    },
-    props: {
-        discipline_list: Array,
+    export default {
+        layout: Layout,
+        data() {
+            return {
+                openCreateDropdown: false,
+            };
+        },
+        components: {
+            FormErrorMessage,
+        },
+        props: {
+            discipline_list: Array,
+        }
     }
-}
 </script>

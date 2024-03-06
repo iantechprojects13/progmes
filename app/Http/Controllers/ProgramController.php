@@ -7,20 +7,46 @@ use Inertia\Inertia;
 use App\Models\ProgramModel;
 use App\Models\DisciplineModel;
 use App\Http\Requests\ProgramRequest;
+use Auth;
 
 class ProgramController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render('Progmes/Admin/Program',[
-            'program_list' => ProgramModel::orderBy('program', 'asc')->paginate(20)
-                ->through(fn($program) => [
-                    'id' => $program->id,
-                    'discipline' => DisciplineModel::where('id', $program->disciplineId)->value('discipline'),
-                    'program' => $program->program,
-                    'major' => $program->major,
-                ]),
-            ]);
+
+        $role = Auth::user()->role;
+        $canEdit = false;
+
+        if ($role == 'Super Admin') {
+            $canEdit = true;
+        }
+
+        $programlist = ProgramModel::query()
+        ->when($request->query('search'), function ($query) use ($request) {
+            $query->where('program', 'like', '%' . $request->query('search') . '%');
+        })
+        ->when($request->query('sort'), function ($query) use ($request) {
+            $query->orderBy($request->query('sort'), 'asc');
+        })
+        ->with('discipline')
+        ->paginate(10)
+        ->withQueryString();
+
+        return Inertia::render('Progmes/Admin/Program', [
+            'program_list' => $programlist,
+            'canEdit' => $canEdit,
+            'filters' => $request->only(['search', 'sort', 'type']),
+        ]);
+
+        // return Inertia::render('Progmes/Admin/Program',[
+        //     'program_list' => ProgramModel::orderBy('program', 'asc')->paginate(20)
+        //         ->through(fn($program) => [
+        //             'id' => $program->id,
+        //             'discipline' => DisciplineModel::where('id', $program->disciplineId)->value('discipline'),
+        //             'program' => $program->program,
+        //             'major' => $program->major,
+        //         ]),
+        //     ]);
     }
 
     public function create() {
@@ -64,24 +90,7 @@ class ProgramController extends Controller
 
         return redirect()->route('admin.program.list')->with('success', 'Program successfully edited.');
     }
-
-    public function createDiscipline() {
-        return Inertia::render('Progmes/Admin/Program-Create-Discipline');
-    }
-
-    public function storeDiscipline(Request $request) {
-        $validated = $request->validate([
-            'discipline' => 'required',
-        ], [
-            'discipline.required' => 'The discipline field is required.'
-        ]);
-
-        DisciplineModel::create([
-            'discipline' => $validated['discipline'],
-        ]);
-
-        return redirect()->route('admin.program.list')->with('success', 'Discipline successfully added.');
-    }
+    
 
     public function addDiscipline(Request $request) {
         $validated = $request->validate([

@@ -17,69 +17,69 @@
     </div>
 </template>
 <script>
-export default {
-    data() {
-        return {
-            openNotification: true,
-        }
-    },
+    export default {
+        data() {
+            return {
+                openNotification: true,
+            }
+        },
 
-    props: {
-        message: String,
-    },
+        props: {
+            message: String,
+        },
 
-    methods: {
-        closeNotification() {
-            this.openNotification = false;
+        methods: {
+            closeNotification() {
+                this.openNotification = false;
 
+            }
         }
     }
-}
 </script>
 
 <style scoped>
-@keyframes show {
-    0% {
-        bottom: -0.75rem;
-        opacity: 0;
-        display: block;
+    @keyframes show {
+        0% {
+            bottom: -0.75rem;
+            opacity: 0;
+            display: block;
+        }
+
+        2% {
+            bottom: 0rem;
+            opacity: 1;
+        }
+
+        98% {
+            bottom: 0rem;
+            opacity: 1;
+        }
+
+        100% {
+            bottom: -0.75rem;
+            opacity: 0;
+            display: none;
+        }
     }
 
-    2% {
-        bottom: 0rem;
-        opacity: 1;
+    @keyframes hide {
+        0% {
+            bottom: 0rem;
+            opacity: 1;
+        }
+
+        100% {
+            bottom: -0.75rem;
+            opacity: 0;
+            display: none;
+        }
     }
 
-    98% {
-        bottom: 0rem;
-        opacity: 1;
+    .show {
+        animation: show 6s forwards;
     }
 
-    100% {
-        bottom: -0.75rem;
-        opacity: 0;
-        display: none;
+    .hide {
+        animation: hide 150ms forwards;
     }
-}
-
-@keyframes hide {
-    0% {
-        bottom: 0rem;
-        opacity: 1;
-    }
-
-    100% {
-        bottom: -0.75rem;
-        opacity: 0;
-        display: none;
-    }
-}
-
-.show {
-    animation: show 10s forwards;
-}
-
-.hide {
-    animation: hide 150ms forwards;
-}
 </style>
