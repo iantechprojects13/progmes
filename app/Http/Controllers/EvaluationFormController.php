@@ -13,20 +13,43 @@ use App\Models\CriteriaModel;
 use App\Http\Requests\EvaluationFormRequest;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
+use App\Models\AdminSettingsModel;
+use Auth;
 
 class EvaluationFormController extends Controller
 {
-    // public function index() {
-    //     return Inertia::render('Progmes/Admin/EvaluationForm-Create', [
-    //         'list' => EvaluationFormModel::where('effectivity', '2023-2024')->with('institution_program', 'cmo', 'institution_program.institution', 'institution_program.program')
-    //         ->paginate(10)
-    //         ->through(fn($item) => [
-    //             'id' => $item->id,
-    //             'cmo' => $item->cmo,
-    //             'institutionProgram' => $item->institution_program,
-    //         ]),
-    //     ]);
-    // }
+    public function index(Request $request) {
+        $defaultAcademicYear = AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
+        $program_list = ProgramModel::with('active_cmo')->get();
+
+        
+        $role = Auth::user()->role;
+        $canEdit = true;
+
+        $allinstitutionprograms = InstitutionProgramModel::query()
+        ->when($request->query('search'), function ($query) use ($request) {
+            $query->where('id', 'like', '%' . $request->query('search') . '%')
+            ->orWhereHas('program', function ($programQuery) use ($request) {
+                $programQuery->where('program', 'like', '%' . $request->query('search') . '%');
+            })
+            ->orWhereHas('institution', function ($programQuery) use ($request) {
+                $programQuery->where('name', 'like', '%' . $request->query('search') . '%');
+            });
+        })
+        ->with(['program', 'institution', 'evaluationForm' => function ($evalFormQuery) {
+            $evalFormQuery->where('effectivity', AdminSettingsModel::where('id', 1)->value('currentAcademicYear'));
+        }, 'evaluationForm.cmo'])
+        ->paginate(10)
+        ->withQueryString();
+        
+        return Inertia::render('Progmes/Admin/EvaluationForm', [
+            'program_list' => $program_list,
+            'effectivity' => $defaultAcademicYear,
+            'institutionProgramList' => $allinstitutionprograms,
+            'canEdit' => $canEdit,
+            'filters' => $request->only(['search']),
+        ]);
+    }
 
     public function create(EvaluationFormRequest $request) {
         // $validatedData = $request->validated();
@@ -51,7 +74,7 @@ class EvaluationFormController extends Controller
             ]);
         }
 
-
+        
         return redirect()->route('admin.form.view', [
             'evaluation' => $evaluationForm,
             'criteria' => CriteriaModel::where('evaluationFormId',  $evaluationForm->id),
@@ -92,7 +115,7 @@ class EvaluationFormController extends Controller
                 'disciplineId' => $discipline,
                 'cmoId' => $cmo,
                 'effectivity' => $validatedData['effectivity'],
-                'status' => 'deployed',
+                'status' => 'Deployed',
             ]);
         }
 

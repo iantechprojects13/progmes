@@ -36,7 +36,7 @@
             <div class="mr-1">
                 <Link href="/admin/CMOs">
                 <button
-                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-8 text-gray-600 hover:text-black border-gray-500">
+                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
                     <i class="fas fa-refresh"></i>
                 </button>
                 </Link>
@@ -73,18 +73,17 @@
                             <button @click="toggleConfirmationModal(cmo.id, 'deleteCMO', 'Delete Published CMO')"
                                 class="h-8 px-2 mr-1 rounded bg-red-500 hover:bg-red-600 text-white">Delete</button>
                             <button v-if="!cmo.isActive"
-                                class="h-8 px-2 rounded bg-blue-500 hover:bg-blue-600 text-white"
-                                @click="toggleConfirmationModal(cmo, 'activate', 'Activate CMO')">Set as active
+                                class="h-8 px-2 w-24 rounded bg-blue-500 hover:bg-blue-600 text-white"
+                                @click="toggleConfirmationModal(cmo, 'activate', 'Activate CMO')">Activate
                             </button>
-                            <button v-else class="h-8 px-2 rounded bg-blue-500 hover:bg-blue-600 text-white"
-                                @click="toggleConfirmationModal(cmo.id, 'deactivate', 'Deactivate CMO')">Set as not
-                                active
+                            <button v-else class="h-8 px-2 w-24 rounded bg-green-500 hover:bg-blue-600 text-white"
+                                @click="toggleConfirmationModal(cmo.id, 'deactivate', 'Deactivate CMO')">Deactivate
                             </button>
                         </td>
                     </tr>
                     <tr v-if="cmo_list.data.length == 0">
                         <td class="text-center py-10" colspan="3">
-                            No HEI found
+                            No CMO found
                         </td>
                     </tr>
                 </template>

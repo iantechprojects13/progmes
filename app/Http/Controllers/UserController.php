@@ -80,8 +80,7 @@ class UserController extends Controller
             $query->whereNot('role', 'Super Admin');
         })
         ->when($role != 'Super Admin' || $role != 'Education Supervisor', function ($query) {
-            $query->whereNot('role', 'Super Admin')
-            ->orWhere('role', null);
+            $query->whereNot('role', 'Super Admin');
         })
         ->where([
             'isVerified' => null,

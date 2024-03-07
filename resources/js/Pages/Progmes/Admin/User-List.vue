@@ -2,8 +2,8 @@
 
     <Head title="Users List" />
     <AdminPanel />
-    <content-container @submit="submit" pageTitle="Active Users" hasNavigation="true" hasSearch="true" hasFilters="true"
-        :data_list="user_list">
+    <content-container @submit="submit" pageTitle="Active Users List" hasNavigation="true" hasSearch="true"
+        hasFilters="true" :data_list="user_list">
         <template v-slot:navigation>
             <div>
                 <button class="text-blue-500 h-10 mr-8 border-b-2 font-bold border-blue-500">
@@ -31,7 +31,7 @@
             <div class="mr-1">
                 <Link href="/admin/users/list">
                 <button
-                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-8 text-gray-600 hover:text-black border-gray-500">
+                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
                     <i class="fas fa-refresh"></i>
                 </button>
                 </Link>
@@ -156,7 +156,7 @@
                             {{ user.role }}
                         </td>
                         <td class="py-2">
-                            {{ user.google_id }}
+                            -
                         </td>
                         <td class="py-2 text-right px-3" v-if="canEdit">
                             <button @click="

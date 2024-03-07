@@ -96,7 +96,7 @@ Route::get('/admin/CMOs', [CMOController::class, 'index'])->middleware('auth', '
 Route::get('/admin/CMOs/draft', [CMOController::class, 'draft'])->middleware('auth', 'type.ched')->name('admin.cmo.draft');
 Route::get('admin/CMOs/{cmo}/view', [CMOController::class, 'view'])->middleware('auth', 'type.ched')->name('admin.cmo.show');
 
-Route::get('admin/tool/{academicYear?}', [InstitutionProgramController::class, 'index'])->middleware('auth')->name('admin.form.list');
+Route::get('admin/tool', [EvaluationFormController::class, 'index'])->middleware('auth')->name('admin.form.list');
 Route::get('admin/form/{evaluation}/view', [EvaluationFormController::class, 'view'])->middleware('auth')->name('admin.form.view');
 Route::post('/admin/form/deploy', [EvaluationFormController::class, 'deploy'])->middleware('auth')->name('admin.form.deploy');
 

@@ -3,11 +3,14 @@
     <Head title="Discipline List" />
     <AdminPanel />
     <content-container pageTitle="Discipline List" hasTopButton="true" hasNavigation="true" hasSearch="true"
-        hasFilters="true" :data_list="discipline_list">
+        hasPageDescription="true" hasFilters="true" :data_list="discipline_list">
         <template v-slot:top-button>
             <Link :href="route('admin.discipline.create')">
             <button class="bg-blue-500 hover:bg-blue-600 h-10 px-2 rounded text-white mr-1">Add Discipline</button>
             </Link>
+        </template>
+        <template v-slot:page-description>
+            <div class="ml-5 text-base text-gray-500">( {{ itemCount }} Results )</div>
         </template>
         <template v-slot:navigation>
             <div>
@@ -39,7 +42,7 @@
             <div class="mr-1">
                 <Link href="/admin/program/discipline">
                 <button
-                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-8 text-gray-600 hover:text-black border-gray-500">
+                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
                     <i class="fas fa-refresh"></i>
                 </button>
                 </Link>
@@ -79,7 +82,7 @@
     import { useForm, router } from "@inertiajs/vue3";
     import { ref } from "vue";
 
-    const props = defineProps(['discipline_list', 'canEdit', 'filters']);
+    const props = defineProps(['discipline_list', 'canEdit', 'filters', 'itemCount']);
 
     const query = useForm({
         search: props.filters.search,

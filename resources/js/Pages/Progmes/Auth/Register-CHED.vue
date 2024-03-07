@@ -1,8 +1,8 @@
 <template>
     <Head title="CHED Registration" />
-    <div class="w-full bg-white flex justify-center mt-10 md:mt-20 select-none">
+    <div class="w-full flex justify-center mt-10 md:mt-20 select-none">
         <div
-            class="mb-10 mx-auto md:w-4/5 md:shadow md:shadow-gray-400 md:border md:rounded max-w-xl px-10 pb-10 md:border-gray-400">
+            class="bg-white mb-10 mx-auto md:w-4/5 md:shadow md:shadow-gray-400 md:border md:rounded max-w-xl px-10 pb-10 md:border-gray-400">
             <!-- header -->
             <div class="text-center md:p-3 md:mb-0 mb-10 md:flex items-center justify-start">
                 <img src="/assets/ched-logo.png" alt="CHED Logo" width="75" class="mx-auto">

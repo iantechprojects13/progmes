@@ -21,15 +21,21 @@ class DisciplineController extends Controller
         $disciplinelist = DisciplineModel::query()
         ->when($request->query('search'), function ($query) use ($request) {
             $query->where('discipline', 'like', '%' . $request->query('search') . '%');
-        })
+        });
+        $itemCount = $disciplinelist->count();
+        $disciplinelist = $disciplinelist
         ->paginate(10)
         ->withQueryString();
+        
+        // ->paginate(10)
+        // ->withQueryString();
 
         
         return Inertia::render('Progmes/Admin/Discipline', [
             'discipline_list' => $disciplinelist,
             'canEdit' => $canEdit,
             'filters' => $request->only(['search']),
+            'itemCount' => $itemCount,
         ]);
 
     }

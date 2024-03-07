@@ -22,7 +22,7 @@ class CHEDFormController extends Controller
         $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program')->first();
         $items = EvaluationItemModel::where('evaluationFormId', $evaluation)->with('criteria', 'evidence')->get();
         
-        if($tool->status == 'submitted') {
+        if($tool->status == 'Submitted') {
             return Inertia::render('Progmes/Evaluation/CHED-Evaluation-Edit', [
                 'evaluation' => $tool,
                 'items' => $items->map(fn($item) => [

@@ -24,7 +24,46 @@
             </div>
         </div>
     </div>
-    <content-container :hasAction="true">
+    <content-container>
+        <template v-slot:main-content>
+            <content-table>
+                <template v-slot:table-head>
+                    <th class="p-3 border-b border-gray-400">Program/Institution</th>
+                    <th class="p-3 border-b border-gray-400">Date of Submission</th>
+                    <th class="p-3 border-b border-gray-400 text-right">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </th>
+                </template>
+
+                <template v-slot:table-body>
+                    <tr v-for="(item, index) in tools" :key="item.id" class="border-b border-gray-400">
+                        <td class="p-3">
+                            <div>
+                                {{ item.institution_program.program.program }}
+                            </div>
+                            <div class="font-bold">
+                                {{ item.institution_program.institution.name }}
+                            </div>
+                        </td>
+                        <td class="p-3">
+                            <div>
+                                {{ item.submissionDate }}
+                            </div>
+                        </td>
+                        <td class="p-3 text-right">
+                            <button @click="edit(item.id)"
+                                class="w-auto text-sm select-none px-2 h-10 bg-green-700 hover:bg-green-800 text-white rounded">Evaluate
+                            </button>
+                        </td>
+                    </tr>
+                    <tr v-show="tools.length == 0">
+                        <td colspan="3" class="p-3 text-center">Empty</td>
+                    </tr>
+                </template>
+            </content-table>
+        </template>
+    </content-container>
+    <!-- <content-container :hasAction="true">
         <template v-slot:channel>
             <dropdown-option>
                 <template v-slot:button>
@@ -77,30 +116,30 @@
                 </template>
             </content-table>
         </template>
-    </content-container>
+    </content-container> -->
 </template>
 
 <script setup>
-import { router } from '@inertiajs/vue3';
+    import { router } from '@inertiajs/vue3';
 
-defineProps([
-    'disciplines',
-    'role',
-    'tools',
-]);
+    defineProps([
+        'disciplines',
+        'role',
+        'tools',
+    ]);
 
-function edit(tool) {
-    router.get('/ched/evaluation/' + tool);
-}
+    function edit(tool) {
+        router.get('/ched/evaluation/' + tool);
+    }
 
-function createTool(item) {
-    router.get('/hei/tool/create/' + item);
-}
+    function createTool(item) {
+        router.get('/hei/tool/create/' + item);
+    }
 </script>
 
 <script>
-import Layout from '../Shared/Layout.vue';
-export default {
-    layout: Layout,
-}
+    import Layout from '../Shared/Layout.vue';
+    export default {
+        layout: Layout,
+    }
 </script>

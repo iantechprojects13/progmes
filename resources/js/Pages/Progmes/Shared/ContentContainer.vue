@@ -8,6 +8,9 @@
                 <div class="tracking-tight font-bold text-lg text-gray-600">
                     {{ pageTitle }}
                 </div>
+                <div v-show="hasPageDescription" class="tracking-tight font-bold text-lg text-gray-600">
+                    <slot name="page-description"></slot>
+                </div>
             </div>
             <div v-show="hasTopButton" class="mt-3 md:mt-0">
                 <slot name="top-button"></slot>
@@ -20,7 +23,7 @@
             <div>
                 <slot name="left-button"></slot>
             </div>
-            <div v-show="hasSearch" class="w-full mr-0 md:mr-5">
+            <div v-show="hasSearch" class="w-full mr-1">
                 <slot name="search"></slot>
             </div>
             <div v-show="hasFilters" class="flex flex-row items-center justify-end mt-5 md:mt-0">
@@ -90,6 +93,7 @@
         "hasAction",
         "hasPagination",
         "hasTopButton",
+        "hasPageDescription",
         "hasSearch",
         "hasFilters",
         "hasNavigation",

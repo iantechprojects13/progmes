@@ -38,7 +38,7 @@
             <div class="mr-1">
                 <Link href="/admin/program">
                 <button
-                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-8 text-gray-600 hover:text-black border-gray-500">
+                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
                     <i class="fas fa-refresh"></i>
                 </button>
                 </Link>

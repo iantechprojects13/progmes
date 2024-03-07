@@ -15,7 +15,7 @@
     <!-- Body -->
     <div class="flex flex-col md:flex-row h-full bg-gray-200">
         <!-- Navigation -->
-        <div class="fixed z-80 top-0 w-full h-full bg-black bg-opacity-70 md:hidden" :class="{ hidden: closeSideBar }"
+        <div class="fixed z-90 top-0 w-full h-full bg-black bg-opacity-70 md:hidden" :class="{ hidden: closeSideBar }"
             @click="toggleSideBar()"></div>
         <div class="h-full absolute top-0 w-64 left-0 md:relative z-90 transition-all duration-200 bg-opacity-20"
             :class="{

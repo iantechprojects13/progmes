@@ -167,6 +167,7 @@
             return {
                 city_municipality: [
                     'Davao City', 'Digos City', 'Panabo City', 'Tagum City', 'Mati City', 'Island Garden City of Samal',
+
                 ],
                 province: [
                     'Davao City', 'Davao del Sur', 'Davao Oriental',

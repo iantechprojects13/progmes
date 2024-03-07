@@ -220,7 +220,7 @@ class HEIFormController extends Controller
         $evaluation = EvaluationFormModel::find($request->id);
 
         $evaluation->update([
-            'status' => 'submitted',
+            'status' => 'Submitted',
             'submissionDate' => now(),
         ]);
         $evaluation->save();
