@@ -58,4 +58,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(RoleModel::class, 'userId', 'id');
     }
+
+    public function discipline()
+    {
+        return $this->hasManyThrough(DisciplineModel::class, RoleModel::class, 'disciplineId', 'id', 'disciplineId', 'id');
+    }
 }

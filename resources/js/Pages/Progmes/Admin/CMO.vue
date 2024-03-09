@@ -5,9 +5,11 @@
     <content-container pageTitle="CHED Memorandum Order List" hasTopButton="true" hasSearch="true" hasFilters="true"
         hasNavigation="true" :data_list="cmo_list">
         <template v-slot:top-button>
-            <input ref="uploadfile" hidden type="file" @change="cmo_file = $event.target.files[0]">
-            <button @click.prevent="$refs.uploadfile.click()"
-                class="bg-blue-500 hover:bg-blue-600 h-10 px-2 rounded text-white">Import CMO</button>
+            <input ref="uploadfile" hidden type="file" @change="evidence_file = $event.target.files[0]" />
+            <button @click="$refs.uploadfile.click()"
+                class="bg-blue-500 hover:bg-blue-600 h-10 px-2 rounded text-white">
+                Import CMO
+            </button>
         </template>
         <template v-slot:navigation>
             <div>
@@ -54,9 +56,10 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-for="(cmo, index) in cmo_list.data" :key="cmo.id" class="hover:bg-gray-100"
-                        :class="{'bg-slate-200': index % 2 == 0}">
+                        :class="{ 'bg-slate-200': index % 2 == 0 }">
                         <td class="p-2">
-                            CMO No.{{ cmo.number }} Series of {{cmo.series}}, Version {{cmo.version}}
+                            CMO No.{{ cmo.number }} Series of {{ cmo.series }},
+                            Version {{ cmo.version }}
                         </td>
                         <td class="p-2">
                             {{ cmo.program?.program }}
@@ -70,14 +73,34 @@
                             </div>
                         </td>
                         <td class="p-2 text-right">
-                            <button @click="toggleConfirmationModal(cmo.id, 'deleteCMO', 'Delete Published CMO')"
-                                class="h-8 px-2 mr-1 rounded bg-red-500 hover:bg-red-600 text-white">Delete</button>
+                            <button @click="
+                                    toggleConfirmationModal(
+                                        cmo.id,
+                                        'deleteCMO',
+                                        'Delete Published CMO'
+                                    )
+                                " class="h-8 px-2 mr-1 rounded bg-red-500 hover:bg-red-600 text-white">
+                                Delete
+                            </button>
                             <button v-if="!cmo.isActive"
-                                class="h-8 px-2 w-24 rounded bg-blue-500 hover:bg-blue-600 text-white"
-                                @click="toggleConfirmationModal(cmo, 'activate', 'Activate CMO')">Activate
+                                class="h-8 px-2 w-24 rounded bg-blue-500 hover:bg-blue-600 text-white" @click="
+                                    toggleConfirmationModal(
+                                        cmo,
+                                        'activate',
+                                        'Activate CMO'
+                                    )
+                                ">
+                                Activate
                             </button>
                             <button v-else class="h-8 px-2 w-24 rounded bg-green-500 hover:bg-blue-600 text-white"
-                                @click="toggleConfirmationModal(cmo.id, 'deactivate', 'Deactivate CMO')">Deactivate
+                                @click="
+                                    toggleConfirmationModal(
+                                        cmo.id,
+                                        'deactivate',
+                                        'Deactivate CMO'
+                                    )
+                                ">
+                                Deactivate
                             </button>
                         </td>
                     </tr>
@@ -247,28 +270,25 @@
 </template>
 
 <script setup>
-    import {
-        useForm,
-        router
-    } from '@inertiajs/vue3';
-    import { ref, watch } from 'vue';
-    import { Inertia } from '@inertiajs/inertia'
+    import { useForm, router } from "@inertiajs/vue3";
+    import { ref, watch } from "vue";
+    import { Inertia } from "@inertiajs/inertia";
 
-    const form = useForm({
-        cmo_file: null,
-    });
+    // const form = useForm({
+    //     cmo_file: null,
+    // });
 
-    const cmo_file = ref(null);
+    const evidence_file = ref(null);
 
     function upload() {
-        form.post('/admin/CMOs/create/import', form);
+        form.post("/admin/CMOs/create/import", form);
     }
 
     function edit(id) {
-        router.get('/admin/CMOs/draft/' + id + '/edit');
+        router.get("/admin/CMOs/draft/" + id + "/edit");
     }
 
-    const props = defineProps(['cmo_list', 'canEdit', 'filters']);
+    const props = defineProps(["cmo_list", "canEdit", "filters"]);
 
     const query = useForm({
         search: props.filters.search,
@@ -284,18 +304,20 @@
         }
     }
 
-    watch(cmo_file, value => {
-        Inertia.post('/admin/CMOs/create/import', { file: value }, {
-            preserveScroll: true,
-            preserveState: true,
-        });
+    watch(evidence_file, (value) => {
+        Inertia.post(
+            "/admin/CMOs/create/import",
+            { file: value },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            }
+        );
     });
-
 </script>
 
-
 <script>
-    import Layout from '../Shared/Layout.vue'
+    import Layout from "../Shared/Layout.vue";
     export default {
         data() {
             return {
@@ -303,10 +325,10 @@
                 openListOption: false,
                 uploadModal: false,
                 confirmationModal: false,
-                selectedCMO: '',
-                modaltype: '',
-                title: '',
-            }
+                selectedCMO: "",
+                modaltype: "",
+                title: "",
+            };
         },
 
         methods: {
@@ -324,9 +346,9 @@
             closeModal() {
                 this.confirmationModal = false;
                 this.uploadModal = false;
-            }
+            },
         },
 
         layout: Layout,
-    }
+    };
 </script>

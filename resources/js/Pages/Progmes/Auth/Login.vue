@@ -1,4 +1,5 @@
 <template>
+
     <Head title="Login" />
     <div class="w-full flex h-screen select-none">
         <div class="w-full h-screen flex text-center items-center justify-center"
@@ -16,7 +17,7 @@
                 </div>
                 <div class="p-3 rounded shadow-md w-full text-center lg:hidden mx-auto mt-5">
                     <a :href="route('auth.google')">
-                        <button class="hover:bg-blue-500 hover:text-white bg-white font-bold py-0 px-3 rounded-full flex items-center
+                        <button class="active:bg-blue-500 hover:bg-blue-100 active:text-white bg-white font-bold py-0 px-3 rounded-full flex items-center
                 justify-center border border-gray-400 mx-auto">
                             <img src="assets/google.png" width="40" class="p-1 inline top-0 mr-1">
                             Sign in with Google
@@ -36,7 +37,7 @@
                     <p class="text-gray-700 text-sm">to continue to ProgMES</p>
                 </div>
                 <a :href="route('auth.google')">
-                    <button class="hover:bg-blue-500 hover:text-white font-bold px-3 py-0 rounded-full flex items-center
+                    <button class="active:bg-blue-500 hover:bg-blue-100 active:text-white font-bold px-3 py-0 rounded-full flex items-center
                         justify-center border border-gray-400 mx-auto">
                         <img src="assets/google.png" width="40" class="p-1 inline top-0 mr-1">
                         Sign in with Google

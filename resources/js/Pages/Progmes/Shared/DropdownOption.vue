@@ -1,6 +1,6 @@
 <template>
     <div class="relative select-none text-gray-600 text-base" ref="dropdownContainer" @click="isOpen = true">
-        <div>
+        <div ref="dropdownButton">
             <slot name="button"></slot>
         </div>
         <div v-show="isOpen"
@@ -12,28 +12,29 @@
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+    import { onMounted, onBeforeUnmount, ref } from 'vue';
 
-defineProps([
-    'position',
-]);
+    defineProps([
+        'position',
+    ]);
 
-const dropdownContainer = ref(null);
-const isOpen = ref(false);
+    const dropdownContainer = ref(null);
+    const dropdownButton = ref(null);
+    const isOpen = ref(false);
 
 
-const closeDropdown = (element) => {
-    if (!dropdownContainer.value.contains(element.target)) {
-        isOpen.value = false;
+    const closeDropdown = (element) => {
+        if (!dropdownButton.value.contains(element.target)) {
+            isOpen.value = false;
+        }
     }
-}
 
-onMounted(() => {
-    window.addEventListener('click', closeDropdown);
-});
+    onMounted(() => {
+        window.addEventListener('click', closeDropdown);
+    });
 
-onBeforeUnmount(() => {
-    window.removeEventListener('click', closeDropdown);
-});
+    onBeforeUnmount(() => {
+        window.removeEventListener('click', closeDropdown);
+    });
 
 </script>

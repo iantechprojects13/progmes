@@ -18,14 +18,31 @@ class UserController extends Controller
 
         $role = Auth::user()->role;
         $canEdit = false;
-
+        $list = ['type' => 'HEI'];
+        
         if ($role == 'Super Admin') {
             $canEdit = true;
         }
 
+        if ($role != 'Super Admin') {
+            
+        }
+        
         $userlist = User::query()
-        ->when($request->query('search'), function ($query) use ($request) {
-            $query->where('name', 'like', '%' . $request->query('search') . '%');
+        ->when($request->query('search'), function ($query) use ($request, $role, $list) {
+            $query->where(function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->query('search') . '%')
+                    ->orWhere('type', 'like', '%' . $request->query('search') . '%')
+                    ->orWhere('role', 'like', '%' . $request->query('search') . '%');
+            })
+            ->where([
+                'isVerified' => 1,
+                'isActive' => 1,
+            ])
+            ->when($role != 'Super Admin', function ($query) use ($list) {
+                $query->where($list);
+            })
+            ->orderBy('name', 'asc');
         })
         ->when($request->query('sort'), function ($query) use ($request) {
             $query->orderBy($request->query('sort'), 'asc');
@@ -33,22 +50,25 @@ class UserController extends Controller
         ->when($request->query('type'), function ($query) use ($request) {
             $query->where('type', $request->query('type'));
         })
-        ->when($role == 'Super Admin', function ($query) {
-            $query->whereNot('role', 'Super Admin');
-        })
-        ->when($role != 'Super Admin' || $role != 'Education Supervisor', function ($query) {
-            $query->whereNot('role', 'Super Admin');
+        ->when($role != 'Super Admin', function ($query) use ($list) {
+            $query->where($list);
         })
         ->where([
             'isVerified' => 1,
             'isActive' => 1,
         ])
-        ->with('userRole')
+        ->whereNot('role', 'Super Admin')
+        ->with('userRole', 'userRole.discipline', 'userRole.program', 'userRole.institution');
+        
+        $count = $userlist->count();
+
+        $userlist = $userlist
         ->paginate(10)
         ->withQueryString();
 
         return Inertia::render('Progmes/Admin/User-List', [
             'user_list' => $userlist,
+            'count' => $count,
             'canEdit' => $canEdit,
             'filters' => $request->only(['search', 'sort', 'type']),
         ]);
@@ -68,7 +88,15 @@ class UserController extends Controller
 
         $userlist = User::query()
         ->when($request->query('search'), function ($query) use ($request) {
-            $query->where('name', 'like', '%' . $request->query('search') . '%');
+            $query->where(function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->query('search') . '%')
+                    ->orWhere('type', 'like', '%' . $request->query('search') . '%')
+                    ->orWhere('role', 'like', '%' . $request->query('search') . '%');
+            })
+            ->where([
+                'isVerified' => null,
+                'isActive' => null,
+            ])->orderBy('name', 'asc');
         })
         ->when($request->query('sort'), function ($query) use ($request) {
             $query->orderBy($request->query('sort'), 'asc');
@@ -76,22 +104,20 @@ class UserController extends Controller
         ->when($request->query('type'), function ($query) use ($request) {
             $query->where('type', $request->query('type'));
         })
-        ->when($role == 'Super Admin', function ($query) {
-            $query->whereNot('role', 'Super Admin');
-        })
-        ->when($role != 'Super Admin' || $role != 'Education Supervisor', function ($query) {
-            $query->whereNot('role', 'Super Admin');
-        })
         ->where([
             'isVerified' => null,
             'isActive' => null,
         ])
-        ->with('userRole')
-        ->paginate(20)
+        ->whereNot('role', 'Super Admin')
+        ->with('userRole');
+        $count = $userlist->count();
+        
+        $userlist = $userlist->paginate(10)
         ->withQueryString();
 
         return Inertia::render('Progmes/Admin/User-Request', [
             'user_list' => $userlist,
+            'count' => $count,
             'canEdit' => $canEdit,
             'filters' => $request->only(['search', 'sort', 'type']),
         ]);

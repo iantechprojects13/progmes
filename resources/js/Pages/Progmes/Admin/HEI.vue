@@ -34,7 +34,6 @@
             <content-table>
                 <template v-slot:table-head>
                     <th class="py-2">HEI Name</th>
-                    <th class="py-2">Address</th>
                     <th v-show="canEdit" class="py-2 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
@@ -44,9 +43,6 @@
                         :class="{'bg-slate-200': index % 2 == 0}">
                         <td class="p-2">
                             {{ hei.name }}
-                        </td>
-                        <td class="p-2">
-                            {{ hei.address }}, {{ hei.cityOrMunicipality }}
                         </td>
                         <td class="p-2 text-right">
                             <button class="h-8 px-2 rounded bg-red-500 hover:bg-red-600 text-white">Delete</button>

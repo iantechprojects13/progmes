@@ -17,7 +17,7 @@ class RoleModel extends Model
         'disciplineId',
         'programId',
         'role',
-        'status',
+        'isActive',
     ];
 
     protected $hidden = [

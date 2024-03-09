@@ -32,6 +32,6 @@ class UserSeeder extends Seeder
                 'type' => $type,
             ]);
         }
-
+        
     }
 }

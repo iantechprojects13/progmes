@@ -3,7 +3,7 @@
     <Head title="HEI Registration" />
     <div class="w-full flex justify-center mt-20 select-none">
         <div
-            class="bg-white mx-auto md:w-4/5 md:shadow md:shadow-gray-400 md:border md:border-gray-500 md:rounded max-w-xl px-10 pb-10">
+            class="bg-white mx-auto md:w-4/5 md:shadow md:shadow-gray-400 md:border md:border-gray-500 md:rounded max-w-xl p-10 md:pt-0">
             <!-- header -->
             <div class="text-center md:p-3 md:mb-0 mb-10 md:flex items-center justify-start">
                 <img src="/assets/ched-logo.png" alt="CHED Logo" width="75" class="mx-auto">
@@ -23,7 +23,7 @@
                             <option :value="null">Select institution</option>
                             <option class="text-gray-800" v-for="institution in institution_list" :key="institution.id"
                                 :value="institution.id">{{
-                    institution.name }}</option>
+                                institution.name }}</option>
                         </select>
                         <form-error-message :message="$page.props.errors.institution" theme="dark" />
                     </div>
@@ -50,7 +50,7 @@
                             <option :value="null">Select discipline</option>
                             <option class="text-gray-800" v-for="discipline in discipline_list" :key="discipline.id"
                                 :value="discipline.id">{{
-                    discipline.discipline }}</option>
+                                discipline.discipline }}</option>
                         </select>
                         <form-error-message :message="$page.props.errors.discipline" theme="dark" />
                     </div>
@@ -65,12 +65,12 @@
                             <option :value="null">Select program</option>
                             <option class="text-gray-800" v-for="program in program_list" :key="program.id"
                                 :value="program.id">{{
-                    program.program }}<span v-if="program.major"> - {{ program.major }}</span></option>
+                                program.program }}<span v-if="program.major"> - {{ program.major }}</span></option>
                         </select>
                         <form-error-message :message="$page.props.errors.program" theme="dark" />
                     </div>
                     <div class="text-center mt-7">
-                        <input type="submit"
+                        <input type="submit" :disabled="processing"
                             class=" bg-blue-600 hover:bg-blue-800 text-white p-2 px-5 rounded max-w-16 w-full cursor-pointer"
                             value="REGISTER">
                     </div>
@@ -81,53 +81,63 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue';
-import { router } from '@inertiajs/vue3';
+    import { reactive, ref } from 'vue';
+    import { router } from '@inertiajs/vue3';
 
 
-const form = reactive({
-    institution: null,
-    role: null,
-    discipline: null,
-    program: null,
-})
+    const form = reactive({
+        institution: null,
+        role: null,
+        discipline: null,
+        program: null,
+    })
 
-const role = reactive({
-    isDean: false,
-    isPH: false,
-});
+    const role = reactive({
+        isDean: false,
+        isPH: false,
+    });
 
-
-// submit
-function submit() {
-    router.post('/register/hei', form);
-}
+    const processing = ref(false);
 
 
-function checkRole() {
-    if (form.role === 'Dean') {
-        role.isDean = true;
-        role.isPH = false;
-        form.program = null;
-    } else if (form.role === 'Program Head') {
-        role.isPH = true;
-        role.isDean = false;
-        form.discipline = null;
-    } else {
-        role.isPH = false;
-        role.isDean = false;
-        form.discipline = null;
-        form.program = null;
+    // submit
+    function submit() {
+        router.post('/register/hei', form, {
+            onStart: () => {
+                processing.value = true;
+            },
+            onFinish: () => {
+                processing.value = false;
+            },
+            preserveState: true,
+        });
     }
-}
+
+
+    function checkRole() {
+        if (form.role === 'Dean') {
+            role.isDean = true;
+            role.isPH = false;
+            form.program = null;
+        } else if (form.role === 'Program Head') {
+            role.isPH = true;
+            role.isDean = false;
+            form.discipline = null;
+        } else {
+            role.isPH = false;
+            role.isDean = false;
+            form.discipline = null;
+            form.program = null;
+        }
+    }
 
 
 
 
-const props = defineProps([
-    'discipline_list',
-    'program_list',
-    'institution_list',
-]);
+    const props = defineProps([
+        'discipline_list',
+        'program_list',
+        'institution_list',
+    ]);
 
 </script>

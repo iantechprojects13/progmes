@@ -35,7 +35,7 @@ class DisciplineController extends Controller
             'discipline_list' => $disciplinelist,
             'canEdit' => $canEdit,
             'filters' => $request->only(['search']),
-            'itemCount' => $itemCount,
+            'count' => $itemCount,
         ]);
 
     }

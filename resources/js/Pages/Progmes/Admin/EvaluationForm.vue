@@ -15,14 +15,12 @@
             </div>
         </template>
         <template v-slot:page-description>
-            <div class="ml-3">
-                ( A.Y. {{ effectivity }} )
-            </div>
+            <div class="ml-3">( A.Y. {{ effectivity }} )</div>
         </template>
         <template v-slot:search>
             <div class="w-full flex justify-end">
                 <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
-                    placeholder="Search a CHED Memorandum Order"
+                    placeholder="Search"
                     class="rounded border-2 w-full border-gray-400 h-10 bg-white text-base placeholder-gray-400" />
                 <button @click="submit"
                     class="hover:bg-gray-300 border-2 active:bg-blue-600 active:text-white h-10 w-12 border-gray-400 relative right-0.5 bg-white rounded-r">
@@ -53,34 +51,43 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-for="(program, index) in institutionProgramList.data" :key="program.id"
-                        :class="{'bg-slate-200': index % 2 == 0}">
+                        :class="{ 'bg-slate-200': index % 2 == 0 }">
                         <td class="py-2">
                             {{ program.institution.name }}
                         </td>
                         <td class="py-2">
-                            {{program.program.program}}
+                            {{ program.program.program }}
                         </td>
                         <td class="py-2">
-                            <div v-if="program.evaluation_form[0]?.status == 'Deployed'">
-                                CMO No.{{ program.evaluation_form[0]?.cmo?.number }}
-                                Series of {{ program.evaluation_form[0]?.cmo?.series }},
-                                Version {{ program.evaluation_form[0]?.cmo?.version }}
+                            <div v-if="
+                                    program.evaluation_form[0]?.status ==
+                                    'Deployed'
+                                ">
+                                CMO No.{{
+                                program.evaluation_form[0]?.cmo?.number
+                                }}
+                                Series of
+                                {{ program.evaluation_form[0]?.cmo?.series }},
+                                Version
+                                {{ program.evaluation_form[0]?.cmo?.version }}
                             </div>
                         </td>
                         <td class="py-2">
-                            <div v-if="program.evaluation_form[0]?.status == 'Deployed'"
-                                class="bg-green-600 text-white w-fit px-1 rounded">
+                            <div v-if="
+                                    program.evaluation_form[0]?.status ==
+                                    'Deployed'
+                                " class="bg-green-600 text-white w-fit px-1 rounded">
                                 Deployed
                             </div>
-                            <div v-if="program.evaluation_form[0]?.status == 'In progress'"
-                                class="bg-blue-500 text-white w-fit px-1 rounded">
+                            <div v-if="
+                                    program.evaluation_form[0]?.status ==
+                                    'In progress'
+                                " class="bg-blue-500 text-white w-fit px-1 rounded">
                                 In Progress
                             </div>
                         </td>
                         <td class="py-4 px-3">
-                            <button>
-                                -
-                            </button>
+                            <button>-</button>
                         </td>
                     </tr>
                     <tr v-if="institutionProgramList.data.length == 0">
@@ -101,7 +108,7 @@
                 <select id="program" class="w-full h-10 text-sm rounded border-gray-400 my-0.5"
                     v-model="deployment.program">
                     <option :value="null">Select program</option>
-                    <option v-for="program in program_list" :value="program">
+                    <option v-for="program in program_list" :key="program.id" :value="program">
                         {{ program.program }}
                     </option>
                 </select>
@@ -196,9 +203,6 @@
             });
         }
     }
-
-
-
 </script>
 
 <script>

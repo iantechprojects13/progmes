@@ -3,7 +3,7 @@
     <Head title="Register" />
     <div class="w-full flex justify-center mt-20 select-none">
         <div
-            class="bg-white mx-auto md:w-4/5 md:shadow md:shadow-gray-400 md:border md:border-gray-500 md:rounded max-w-lg px-10 p-5 pb-10 text-gray-600">
+            class="bg-white mx-5 md:mx-auto md:w-4/5 md:shadow md:shadow-gray-400 md:border md:border-gray-500 md:rounded max-w-lg px-10 p-5 pb-10 text-gray-600">
             <div class="p-2 mb-5">
                 <div class="mb-5">
                     <img src="/assets/ched-logo.png" alt="CHED Logo" width="75" class="mx-auto">

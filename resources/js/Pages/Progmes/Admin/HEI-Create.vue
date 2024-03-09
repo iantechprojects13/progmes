@@ -13,9 +13,9 @@
         </template>
         <template v-slot:main-content>
             <div>
-                <div class="mx-auto shadow shadow-gray-500 border border-gray-500 rounded p-5 max-w-lg">
+                <div class="mx-auto shadow shadow-gray-500 border border-gray-500 rounded p-5 max-w-xl">
                     <div class="flex flex-col justify-center lg:py-3">
-                        <div class="lg:max-w-lg w-full mx-auto my-1.5">
+                        <!-- <div class="lg:max-w-lg w-full mx-auto my-1.5">
                             <label for="code" class="font-bold text-gray-500">Institutional
                                 Code</label>
                             <span class="text-sm ml-1 text-red-500">(Required)</span>
@@ -25,8 +25,8 @@
                             <div v-if="$page.props.errors.code">
                                 <span class="text-sm text-red-600">{{ $page.props.errors.code }}</span>
                             </div>
-                        </div>
-                        <div class="lg:max-w-lg w-full mx-auto my-1.5">
+                        </div> -->
+                        <div class="lg:max-w-xl w-full mx-auto my-1.5">
                             <label for="name" class="font-bold text-gray-500">Institution
                                 Name</label><span class="text-sm ml-1 text-red-500">(Required)</span>
                             <input type="text" v-model="form.name" id="name" placeholder="HEI Name"
@@ -36,7 +36,7 @@
                                 <span class="text-sm text-red-600">{{ $page.props.errors.name }}</span>
                             </div>
                         </div>
-                        <div class="lg:max-w-lg w-full mx-auto my-1.5">
+                        <!-- <div class="lg:max-w-lg w-full mx-auto my-1.5">
                             <label for="address" class="font-bold text-gray-500">Address</label><span
                                 class="text-sm ml-1 text-red-500">(Required)</span>
                             <input type="text" v-model="form.address" id="address" placeholder="Address"
@@ -73,8 +73,7 @@
                                 </option>
                             </select>
                             <div v-if="$page.props.errors.cityOrProvince">
-                                <span class="text-sm text-red-600">{{ $page.props.errors.cityOrProvince
-                                    }}</span>
+                                <span class="text-sm text-red-600">{{ $page.props.errors.cityOrProvince}}</span>
                             </div>
                         </div>
                         <div class="lg:max-w-lg w-full mx-auto my-1.5">
@@ -86,15 +85,15 @@
                             <div v-if="$page.props.errors.zipCode">
                                 <span class="text-sm text-red-600">{{ $page.props.errors.zipCode }}</span>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="font-bold lg:mx-3 mt-5 mb-2 text-gray-500 text-base">Programs</div>
                         <div
-                            class="h-auto max-h-screen overflow-y-auto border border-gray-300 rounded lg:max-w-lg w-full mx-auto p-3">
+                            class="h-auto max-h-screen overflow-y-auto border border-gray-300 rounded lg:max-w-xl w-full mx-auto p-3">
                             <div v-for="(  program, index  ) in   program_list  " :key="program.id" class="p-2">
                                 <div class="mr-2 flex flex-row items-center">
                                     <input type="checkbox" :id="'programCheck' + index" class="mr-2 text-blue-500"
                                         @change="addProgram(program.id)">
-                                    <label class="cursor-pointer" :for="'programCheck' + index">
+                                    <label class="cursor-pointer text-sm" :for="'programCheck' + index">
                                         {{ program.program }}
                                         <span v-if="program.major"> - {{ program.major }}</span>
                                     </label>

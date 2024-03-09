@@ -10,7 +10,7 @@
             </Link>
         </template>
         <template v-slot:page-description>
-            <div class="ml-5 text-base text-gray-500">( {{ itemCount }} Results )</div>
+            <div class="ml-5 text-base text-gray-500">( {{ count }} Result<span v-if="count > 1">s</span> )</div>
         </template>
         <template v-slot:navigation>
             <div>
@@ -82,7 +82,7 @@
     import { useForm, router } from "@inertiajs/vue3";
     import { ref } from "vue";
 
-    const props = defineProps(['discipline_list', 'canEdit', 'filters', 'itemCount']);
+    const props = defineProps(['discipline_list', 'canEdit', 'filters', 'count']);
 
     const query = useForm({
         search: props.filters.search,

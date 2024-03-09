@@ -53,6 +53,20 @@ Route::controller(App\Http\Controllers\Auth\GoogleAuthController::class)->group(
 Route::post('/register/ched', [RegistrationController::class, 'registerCHED']);
 Route::post('/register/hei', [RegistrationController::class, 'registerHEI']);
 
+
+Route::get('/register', [RegistrationController::class, 'index'])->middleware(['auth', 'unregistered'])->name('register.select');
+Route::get('/register/commission-on-higher-education', [RegistrationController::class, 'accountCHED'])->middleware('unregistered')->name('register.ched');
+Route::get('/register/higher-education-institution', [RegistrationController::class, 'accountHEI'])->middleware('unregistered')->name('register.hei');
+Route::get('/register/for-verification', [RegistrationController::class, 'pending'])->middleware(['auth', 'toverify'])->name('register.pending');
+
+Route::get('/register/{user}/accept', [RegistrationController::class, 'accept'])->name('register.accept');
+Route::get('/register/{user}/reject', [RegistrationController::class, 'reject'])->name('register.reject');
+Route::get('/register/{user}/deactivate', [RegistrationController::class, 'deactivate'])->name('user.deactivate');
+
+//Profile
+Route::get('/myaccount/{id?}',[RegistrationController::class, 'viewMyAccount'])->middleware(['auth', 'user.verified'])->name('my.account'); 
+
+
 //dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth', 'user.verified')->name('dashboard');
 Route::get('/admin/dashboard', [DashboardController::class, 'dashboardForAdmin'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.admin');
@@ -85,7 +99,7 @@ Route::post('/hei/evaluation/link/delete', [HEIFormController::class, 'deleteLin
 Route::post('/ched/evaluation/update', [CHEDFormController::class, 'update'])->name('form.ched.update');
 
 //admin-panel
-Route::get('/admin/users/list', [UserController::class, 'index'])->middleware(['auth', 'type.ched'])->name('admin.users.list');
+Route::get('/admin/users/list', [UserController::class, 'index'])->middleware(['auth','user.verified', 'type.ched'])->name('admin.users.list');
 Route::get('/admin/users/request', [UserController::class, 'request'])->middleware('auth')->name('admin.users.request');
 Route::get('/admin/higher-education-institutions', [InstitutionController::class, 'index'])->middleware(['auth'])->name('admin.hei.list');
 Route::get('/admin/higher-education-institutions/create', [InstitutionController::class, 'create'])->middleware(['auth'])->name('admin.hei.create');
@@ -121,16 +135,6 @@ Route::post('/discipline/delete', [ProgramController::class, 'deleteDiscipline']
 
 Route::post('/admin/higher-education-institutions/register', [InstitutionController::class, 'store']);
 Route::post('/admin/higher-education-institutions/update', [InstitutionController::class, 'update']);
-
-Route::get('/register', [RegistrationController::class, 'index'])->middleware(['auth', 'unregistered'])->name('register.select');
-Route::get('/register/commission-on-higher-education', [RegistrationController::class, 'accountCHED'])->middleware('unregistered')->name('register.ched');
-Route::get('/register/higher-education-institution', [RegistrationController::class, 'accountHEI'])->middleware('unregistered')->name('register.hei');
-Route::get('/register/for-verification', [RegistrationController::class, 'pending'])->middleware(['auth', 'toverify'])->name('register.pending');
-
-
-Route::get('/register/{user}/accept', [RegistrationController::class, 'accept'])->name('register.accept');
-Route::get('/register/{user}/reject', [RegistrationController::class, 'reject'])->name('register.reject');
-Route::get('/register/{user}/deactivate', [RegistrationController::class, 'deactivate'])->name('user.deactivate');
 
 
 // CMO

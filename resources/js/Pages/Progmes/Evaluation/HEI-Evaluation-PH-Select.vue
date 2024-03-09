@@ -9,7 +9,7 @@
                     HEI Name:
                 </div>
                 <div>
-                    {{ program.institution.name }}
+                    {{ program.institution?.name }}
                 </div>
             </div>
             <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">

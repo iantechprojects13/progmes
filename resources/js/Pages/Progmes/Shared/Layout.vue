@@ -8,7 +8,26 @@
             <i class="fas fa-bars text-xl"></i>
         </div>
         <div>
-            <img :src="$page.props.auth.user.avatar" width="35" class="rounded-full" />
+            <dropdown-option position="right">
+                <template v-slot:button>
+                    <img :src="$page.props.auth.user.avatar" width="35"
+                        class=" border-2 bg-white rounded-full cursor-pointer" />
+                </template>
+                <template v-slot:options>
+                    <div class="w-52">
+                        <Link :href="'/myaccount/' + $page.props.auth.user.id">
+                        <button class="block py-2 indent-3 hover:bg-gray-200 w-full text-left">
+                            <i class="fas fa-user mr-3"></i>My Account
+                        </button>
+                        </Link>
+                        <Link href="/logout" method="post" as="button" class="w-full">
+                        <button class="block py-2 indent-3 hover:bg-gray-200 w-full text-left">
+                            <i class="fas fa-sign-out mr-3"></i>Log out
+                        </button>
+                        </Link>
+                    </div>
+                </template>
+            </dropdown-option>
         </div>
     </div>
 
@@ -96,7 +115,7 @@
                         </div>
 
                         <!-- Profile -->
-                        <div class="md:block flex-shrink-0 hidden relative" @click="toggleSideBarUser">
+                        <div class="md:block flex-shrink-0 hidden relative" ref="container" @click="isOpen = true">
                             <div>
                                 <hr />
                                 <div
@@ -114,14 +133,17 @@
                                     </div>
                                 </div>
                             </div>
-                            <div v-if="sideBarUser"
+                            <div v-if="isOpen"
                                 class="md:block h-auto w-full hidden absolute bottom-14 bg-stone-700 rounded py-3">
-                                <Link class="block py-2 indent-3 hover:bg-stone-600">
-                                <i class="fas fa-user mr-3"></i>My Account
+                                <Link :href="'/myaccount/' + $page.props.auth.user.id">
+                                <button class="block py-2 indent-3 hover:bg-stone-600 w-full text-left">
+                                    <i class="fas fa-user mr-3"></i>My Account
+                                </button>
                                 </Link>
-                                <Link :href="route('logout')" method="post" as="button"
-                                    class="block py-2 indent-3 hover:bg-stone-600 w-full text-left">
-                                <i class="fas fa-sign-out mr-3"></i>Log out
+                                <Link href="/logout" method="post" as="button" class="w-full">
+                                <button class="block py-2 indent-3 hover:bg-stone-600 w-full text-left">
+                                    <i class="fas fa-sign-out mr-3"></i>Log out
+                                </button>
                                 </Link>
                             </div>
                         </div>
@@ -157,6 +179,29 @@
         </div>
     </div>
 </template>
+
+<script setup>
+    import { onMounted, onBeforeUnmount, ref } from 'vue';
+
+    const container = ref(null);
+    const isOpen = ref(false);
+
+
+    const closeOption = (element) => {
+        if (!container.value.contains(element.target)) {
+            isOpen.value = false;
+        }
+    }
+
+    onMounted(() => {
+        window.addEventListener('click', closeOption);
+    });
+
+    onBeforeUnmount(() => {
+        window.removeEventListener('click', closeOption);
+    });
+
+</script>
 
 <script>
     export default {

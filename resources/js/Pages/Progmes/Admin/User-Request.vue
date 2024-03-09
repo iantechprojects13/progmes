@@ -2,8 +2,11 @@
 
     <Head title="Users Request" />
     <AdminPanel />
-    <content-container @submit="submit" pageTitle="Request List" hasNavigation="true" hasSearch="true" hasFilters="true"
-        :data_list="user_list">
+    <content-container @submit="submit" pageTitle="Request List" hasPageDescription="true" hasNavigation="true"
+        hasSearch="true" hasFilters="true" :data_list="user_list">
+        <template v-slot:page-description>
+            <div class="ml-5 text-base text-gray-500">( {{ count }} Result<span v-if="count > 1">s</span> )</div>
+        </template>
         <template v-slot:navigation>
             <div>
                 <Link :href="route('admin.users.list')">
@@ -253,7 +256,7 @@
     import { useForm, router } from "@inertiajs/vue3";
     import { ref } from "vue";
 
-    const props = defineProps(["user_list", "canEdit", "filters"]);
+    const props = defineProps(["user_list", "count", "canEdit", "filters"]);
 
     const query = useForm({
         search: props.filters.search,

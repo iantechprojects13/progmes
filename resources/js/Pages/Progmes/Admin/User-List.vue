@@ -2,8 +2,11 @@
 
     <Head title="Users List" />
     <AdminPanel />
-    <content-container @submit="submit" pageTitle="Active Users List" hasNavigation="true" hasSearch="true"
-        hasFilters="true" :data_list="user_list">
+    <content-container @submit="submit" pageTitle="Active Users List" hasPageDescription="true" hasNavigation="true"
+        hasSearch="true" hasFilters="true" :data_list="user_list">
+        <template v-slot:page-description>
+            <div class="ml-5 text-base text-gray-500">( {{ count }} Result<span v-if="count > 1">s</span> )</div>
+        </template>
         <template v-slot:navigation>
             <div>
                 <button class="text-blue-500 h-10 mr-8 border-b-2 font-bold border-blue-500">
@@ -40,8 +43,9 @@
                 <dropdown-option position="right">
                     <template v-slot:button>
                         <button
-                            class="px-2 border-2 whitespace-nowrap rounded h-8 text-gray-600 hover:text-black border-gray-500">
-                            Type
+                            class="flex justify-between items-center px-2 min-w-6 border-2 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
+                            <span v-if="props.filters.type == null">Type</span>
+                            <span v-else>{{ props.filters.type }}</span>
                             <i class="fas fa-caret-down ml-2"></i>
                         </button>
                     </template>
@@ -82,7 +86,7 @@
                 <dropdown-option position="right">
                     <template v-slot:button>
                         <button
-                            class="px-2 border-2 whitespace-nowrap rounded h-8 text-gray-600 hover:text-black border-gray-500">
+                            class="px-2 border-2 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
                             Sort by
 
                             <i class="fas fa-caret-down ml-2"></i>
@@ -122,22 +126,31 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="py-2">Name/Email</th>
-                    <th class="py-2">Type</th>
-                    <th class="py-2">Role</th>
-                    <th class="py-2">Discipline/Program</th>
+                    <th class="p-3">Name/Email</th>
+                    <th class="p-3">Type</th>
+                    <th class="p-3">Role</th>
+                    <th class="p-3">Discipline/Program</th>
+                    <th class="p-3">Institution</th>
+                    <th class="p-3 text-right">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </th>
                 </template>
                 <template v-slot:table-body>
-                    <tr v-for="(user, index) in user_list.data" :key="user.id"
-                        :class="{ 'bg-slate-200': index % 2 == 0 }">
-                        <td class="py-2">
+                    <tr v-if="user_list.data.length==0">
+                        <td class="py-10 text-center" colspan="4">
+                            No users found
+                        </td>
+                    </tr>
+                    <tr v-else v-for="(user, index) in user_list.data" :key="user.id"
+                        :class="{ 'bg-slate-200': index % 2 == 0 }" class="align-top">
+                        <td class="p-3 px-3">
                             <div class="flex flex-row">
-                                <div class="mx-3">
+                                <div class="mr-3 w-10">
                                     <img :src="
                                             user.avatar
                                                 ? user.avatar
                                                 : '/assets/user.png'
-                                        " width="40" alt="user" class="rounded-full" />
+                                        " alt="user" class="rounded-full" />
                                 </div>
                                 <div class="flex flex-col">
                                     <div class="font-bold">
@@ -149,36 +162,44 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="py-2">
+                        <td class="p-3 px-3">
                             {{ user.type }}
                         </td>
-                        <td class="py-2">
+                        <td class="p-3">
                             {{ user.role }}
                         </td>
-                        <td class="py-2">
-                            -
+                        <td class="p-3">
+                            <div v-for="(role, index) in user.user_role" :key="role.id">
+                                {{ role.discipline?.discipline }}
+                                {{ role.program?.program }}
+                            </div>
                         </td>
-                        <td class="py-2 text-right px-3" v-if="canEdit">
+                        <td class="p-3">
+                            <div v-for="(role, index) in user.user_role" :key="role.id">
+                                {{ role.institution?.name }}
+                            </div>
+                        </td>
+                        <td class="p-3 text-right px-3" v-if="canEdit">
                             <button @click="
                                     toggleModal(
                                         user,
                                         'deactivateUser',
                                         'Deactivate User'
                                     )
-                                " class="h-8 px-2 text-white bg-red-500 hover:bg-red-600 rounded mr-1">
+                                " class="h-10 px-2 text-white bg-red-500 hover:bg-red-600 rounded mr-1">
                                 Deactivate
                             </button>
-                        </td>
-                    </tr>
-                    <tr v-if=" user_list.data.length==0">
-                        <td class="py-10 text-center" colspan="4">
-                            No users found
                         </td>
                     </tr>
                 </template>
             </content-table>
         </template>
     </content-container>
+    <div>
+        <pre>
+            {{ props.user_list }}
+        </pre>
+    </div>
     <Notification :message="$page.props.flash.success" />
     <div v-if="modal">
         <Confirmation @close="closeModal" :title="title" :modaltype="modaltype" :selected="selectedUser" />
@@ -187,15 +208,20 @@
 
 <script setup>
     import { useForm, router } from "@inertiajs/vue3";
-    import { ref } from "vue";
+    import { ref, computed } from "vue";
 
-    const props = defineProps(["user_list", "canEdit", "filters"]);
+    const props = defineProps(["user_list", "count", "canEdit", "filters"]);
 
     const query = useForm({
         search: props.filters.search,
         sort: props.filters.sort,
         type: props.filters.type,
     });
+
+    const getDiscipline = (index) => {
+        let discipline = props.user_list[index];
+        return discipline;
+    }
 
     function submit() {
         if (query.search == "" && query.sort == "" && query.filter == "") {

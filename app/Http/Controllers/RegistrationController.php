@@ -13,8 +13,8 @@ use App\Models\ProgramModel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
-use Illuminate\Support\Facades\Mail;
-use App\Mail\NotificationEmail;
+// use Illuminate\Support\Facades\Mail;
+// use App\Mail\NotificationEmail;
 
 
 class RegistrationController extends Controller
@@ -27,7 +27,7 @@ class RegistrationController extends Controller
     
     public function accountCHED () {
         return Inertia::render('Progmes/Auth/Register-CHED', [
-            'discipline_list' => DisciplineModel::select('id', 'discipline')->get(),
+            'discipline_list' => DisciplineModel::select('id', 'discipline')->orderBy('discipline', 'asc')->get(),
         ]);
     }
 
@@ -36,12 +36,14 @@ class RegistrationController extends Controller
         return Inertia::render('Progmes/Auth/Register-HEI', [
             'institution_list' => InstitutionModel::select('id', 'name')->get(),
             'discipline_list' => DisciplineModel::select('id', 'discipline')->orderBy('discipline', 'asc')->get(),
-            'program_list' => ProgramModel::select('id','disciplineId', 'program', 'major')->orderBy('disciplineId', 'asc')->get(),
+            'program_list' => ProgramModel::select('id','disciplineId', 'program', 'major')->orderBy('program', 'asc')->get(),
         ]);
     }
 
     // register ched account
     public function registerCHED (Request $request) {
+
+
     
         $rules = [
             'role' => 'required',
@@ -100,8 +102,6 @@ class RegistrationController extends Controller
                     }
                 }
 
-                
-
             } else {
                 return redirect()->back()->with('failed', 'Unable to register.');
             }
@@ -151,7 +151,6 @@ class RegistrationController extends Controller
 
             // create role
             if ($institutionValue && $roleValue) {
-
                 RoleModel::create([
                     'userId' => Auth::user()->id,
                     'institutionId' => $institutionValue,
@@ -159,14 +158,13 @@ class RegistrationController extends Controller
                     'disciplineId' => $disciplineValue ? $disciplineValue : null,
                     'programId' => $programValue ? $programValue : null,
                 ]);
-
+                
             } else {
                 return redirect()->back()->with('failed', 'Unable to register.');
             }
 
             return redirect()->route('register.pending');
         }
-    
     }
 
     public function pending() {
@@ -189,13 +187,23 @@ class RegistrationController extends Controller
     public function accept(User $user) {
 
         $acceptedUser = User::where('id', $user->id)->first();
+        $roles = RoleModel::where('userId', $acceptedUser->id)->get();
 
         $acceptedUser->update([
             'isVerified'=> 1,
             'isActive' => 1,
         ]);
-
         $acceptedUser->save();
+
+
+        foreach ($roles as $role) {
+            $role->update([
+                'isActive' => 1,
+            ]);
+            $role->save();
+        }
+
+        
 
         // try {
         //     Mail::to($acceptedUser->email)->send(new NotificationEmail($acceptedUser->name));
@@ -210,11 +218,75 @@ class RegistrationController extends Controller
     public function reject(User $user) {
 
         $rejectedUser = User::where('id', $user->id)->first();
+        $roles = RoleModel::where('userId', $rejectedUser->id)->get();
 
         $rejectedUser->update(['isVerified'=> 0, 'isActive' => 0]);
         $rejectedUser->save();
 
+        foreach ($roles as $role) {
+            $role->update([
+                'isActive' => 0,
+            ]);
+            $role->save();
+        }
+
         return redirect()->back()->with('success', $rejectedUser->name .'\'s registration has been rejected.');
+    }
+
+
+
+
+    //View account
+    public function viewMyAccount($id) {
+
+        $user = Auth::user();
+        $canChangeRole = true;
+        $roles = [];
+        $hasDiscipline = false;
+        $hasProgram = false;
+        $hasInstitution = false;
+
+        if ($id != $user->id) {
+            return redirect('/unauthorized');
+        }
+
+        if ($user->role == 'Super Admin') {
+            $canChangeRole = false;
+        }
+
+        if ($user->role == 'Education Supervisor') {
+            $roles = RoleModel::where(['userId'=> $user->id, 'isActive' => 1])->with('discipline')->get();
+            if($roles) {
+                $hasDiscipline = true;
+            }
+        }
+
+        if ($user->role == 'Dean') {
+            $roles = RoleModel::where(['userId' => $user->id, 'isActive' => 1])->with('discipline', 'institution')->get();
+            if($roles) {
+                $hasDiscipline = true;
+                $hasInstitution = true;
+            }
+        }
+
+        if ($user->role == 'Program Head') {
+            $roles = RoleModel::where(['userId' => $user->id, 'isActive' => 1])->with('program', 'institution')->get();
+
+            if($roles) {
+                $hasProgram = true;
+                $hasInstitution = true;
+            }
+        }
+        
+
+        return Inertia::render('Progmes/Auth/Account', [
+            'profile' => Auth::user(),
+            'roles' => $roles,
+            'canChangeRole' => $canChangeRole,
+            'hasDiscipline' => $hasDiscipline,
+            'hasProgram' => $hasProgram,
+            'hasInstitution' => $hasInstitution,
+        ]);
     }
 
 }
