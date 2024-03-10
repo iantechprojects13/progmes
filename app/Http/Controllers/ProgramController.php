@@ -25,28 +25,21 @@ class ProgramController extends Controller
         ->when($request->query('search'), function ($query) use ($request) {
             $query->where('program', 'like', '%' . $request->query('search') . '%');
         })
-        ->when($request->query('sort'), function ($query) use ($request) {
-            $query->orderBy($request->query('sort'), 'asc');
-        })
         ->with('discipline')
+        ->orderBy('program');
+
+        $count = $programlist->count();
+
+        $programlist = $programlist
         ->paginate(10)
         ->withQueryString();
 
         return Inertia::render('Progmes/Admin/Program', [
             'program_list' => $programlist,
+            'count' => $count,
             'canEdit' => $canEdit,
-            'filters' => $request->only(['search', 'sort', 'type']),
+            'filters' => $request->only(['search']),
         ]);
-
-        // return Inertia::render('Progmes/Admin/Program',[
-        //     'program_list' => ProgramModel::orderBy('program', 'asc')->paginate(20)
-        //         ->through(fn($program) => [
-        //             'id' => $program->id,
-        //             'discipline' => DisciplineModel::where('id', $program->disciplineId)->value('discipline'),
-        //             'program' => $program->program,
-        //             'major' => $program->major,
-        //         ]),
-        //     ]);
     }
 
     public function create() {
@@ -90,25 +83,20 @@ class ProgramController extends Controller
 
         return redirect()->route('admin.program.list')->with('success', 'Program successfully edited.');
     }
+
+    public function delete(Request $request) {
+
+        $program = ProgramModel::where('id', $request->id)->first();
+
+        if($program) {
+            ProgramModel::destroy($request->id);
+            return redirect()->back()->with('success', 'Deleted successfully.');
+        }
+
+        return redirect()->back()->with('failed', 'Failed to delete program.');
+
+        
+    }
+
     
-
-    public function addDiscipline(Request $request) {
-        $validated = $request->validate([
-            'value' => 'required',
-        ]);
-
-        DisciplineModel::create([
-            'discipline' => $validated['value'],
-        ]);
-
-        return redirect()->back()->with('success', $validated['value'] .' has been added to the discipline list.');
-    }
-
-
-    public function deleteDiscipline(Request $request) {
-
-        DisciplineModel::destroy($request->id);
-
-        return redirect()->back()->with('success', 'Deleted successfully.');
-    }
 }

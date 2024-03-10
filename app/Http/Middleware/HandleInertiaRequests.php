@@ -44,6 +44,9 @@ class HandleInertiaRequests extends Middleware
                 'error' => session('error'),
                 'success' => session('success'),
                 'failed' => session('failed'),
+                'updated' => session('updated'),
+                'deleted' => session('deleted'),
+                'uploaded' => session('uploaded'),
             ],
         ];
     }

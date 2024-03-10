@@ -42,7 +42,7 @@ class InstitutionController extends Controller
             'canEdit' => $canEdit,
             'filters' => $request->only(['search']),
         ]);
-
+        
         // return Inertia::render('Progmes/Admin/Program',[
         //     'program_list' => ProgramModel::orderBy('program', 'asc')->paginate(20)
         //         ->through(fn($program) => [
@@ -71,10 +71,6 @@ class InstitutionController extends Controller
             $institution = InstitutionModel::create([
                 'code' => $validatedData['code'],
                 'name' => $validatedData['name'],
-                'address' => $validatedData['address'],
-                'cityOrMunicipality' => $validatedData['cityOrMunicipality'],
-                'cityOrProvince' => $validatedData['cityOrProvince'],
-                'zipCode' => $validatedData['zipCode'],
             ]);
         }
         if ($programs) {
@@ -108,6 +104,24 @@ class InstitutionController extends Controller
 
     public function update(InstitutionValidationRequest $request) {
         $validatedData = $request->validated();
+    }
+
+    public function delete(Request $request) {
+
+        $institution = InstitutionModel::find($request->id);
+
+        if($institution) {
+
+            $institution->institution_program()->delete();
+
+            InstitutionModel::destroy($request->id);
+
+            return redirect()->back()->with('success', 'Deleted successfully.');
+        }
+
+        return redirect()->back()->with('failed', 'Failed to delete program.');
+
+        
     }
 
     

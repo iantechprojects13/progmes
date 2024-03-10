@@ -24,10 +24,6 @@ class InstitutionValidationRequest extends FormRequest
         return [
             'code' => 'required',
             'name' => 'required',
-            'address' => 'required',
-            'cityOrMunicipality' => 'required',
-            'cityOrProvince' => 'required',
-            'zipCode' => 'required',
             'programs' => 'nullable',
         ];
     }
@@ -37,9 +33,6 @@ class InstitutionValidationRequest extends FormRequest
         return [
             'code.required' => 'The institutional code field is required.',
             'name.required' => 'The institution name field is required.',
-            'cityOrMunicipality.required' => 'The city or municipality field is required.',
-            'cityOrProvince.required' => 'The province field is required.',
-            'zipCode.required' => 'The zip code field is required.',
         ];
     }
 

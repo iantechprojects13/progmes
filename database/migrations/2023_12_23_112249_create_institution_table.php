@@ -15,10 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('code')->nullable();
             $table->string('name')->nullable();
-            $table->string('address')->nullable();
-            $table->string('cityOrMunicipality')->nullable();
-            $table->string('cityOrProvince')->nullable();
-            $table->string('zipCode')->nullable();
             $table->timestamps();
         });
     }

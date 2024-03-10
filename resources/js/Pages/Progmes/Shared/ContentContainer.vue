@@ -1,5 +1,5 @@
 <template>
-    <div class="h-auto mx-3 md:mx-8 mt-8 pb-10 mb-5 bg-white p-5 rounded">
+    <div class="h-auto mx-3 md:mx-8 mt-8 pb-10 mb-5 bg-white p-5 rounded relative">
         <div class="flex flex-col md:flex-row justify-between">
             <div class="flex items-center">
                 <div v-show="hasBackButton" class="mr-2">
@@ -8,15 +8,15 @@
                 <div class="tracking-tight font-bold text-lg text-gray-600">
                     {{ pageTitle }}
                 </div>
-                <div v-show="hasPageDescription" class="tracking-tight font-bold text-lg text-gray-600">
-                    <slot name="page-description"></slot>
+                <div v-show="hasResultCount" class="tracking-tight font-bold text-lg text-gray-600">
+                    <slot name="result-count"></slot>
                 </div>
             </div>
             <div v-show="hasTopButton" class="mt-3 md:mt-0">
                 <slot name="top-button"></slot>
             </div>
         </div>
-        <div class="mt-5 w-full overflow-x-auto border-b-2 border-gray-400 whitespace-nowrap" v-show="hasNavigation">
+        <div class="mt-5 w-full overflow-x-auto border-b border-gray-400 whitespace-nowrap" v-show="hasNavigation">
             <slot name="navigation"></slot>
         </div>
         <div v-show="hasSearch || hasFilters" class="w-full py-3 mt-3 flex flex-col md:flex-row justify-between">
@@ -93,7 +93,7 @@
         "hasAction",
         "hasPagination",
         "hasTopButton",
-        "hasPageDescription",
+        "hasResultCount",
         "hasSearch",
         "hasFilters",
         "hasNavigation",

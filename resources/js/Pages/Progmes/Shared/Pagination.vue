@@ -1,5 +1,6 @@
 <template>
-    <div v-if="data_list.links.length > 3" class="  bg-gray-200 px-3 py-2 my-1 rounded select-none">
+    <div v-if="data_list.links.length > 3 && data_list != null"
+        class="  bg-gray-200 px-3 py-2 my-1 rounded select-none">
         <div class="h-10 text-gray-600 flex items-center justify-center w-fit">
             <Link v-for="link in data_list.links" :key="link.id" preserve-state
                 :class="{ 'font-bold underline text-blue-500': link.active }"

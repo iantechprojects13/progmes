@@ -115,10 +115,10 @@
                         </div>
 
                         <!-- Profile -->
-                        <div class="md:block flex-shrink-0 hidden relative" ref="container" @click="isOpen = true">
+                        <div class="md:block flex-shrink-0 hidden relative" @click="isOpen = true">
                             <div>
                                 <hr />
-                                <div
+                                <div ref="profileContainer"
                                     class="w-full h-12 rounded p-2 mt-3 relative flex items-center justify-start hover:bg-stone-700 cursor-pointer">
                                     <div class="inline-block mr-2">
                                         <img :src="$page.props.auth.user.avatar" width="40" class="rounded-full" />
@@ -183,12 +183,12 @@
 <script setup>
     import { onMounted, onBeforeUnmount, ref } from 'vue';
 
-    const container = ref(null);
+    const profileContainer = ref(null);
     const isOpen = ref(false);
 
 
     const closeOption = (element) => {
-        if (!container.value.contains(element.target)) {
+        if (!profileContainer.value.contains(element.target)) {
             isOpen.value = false;
         }
     }

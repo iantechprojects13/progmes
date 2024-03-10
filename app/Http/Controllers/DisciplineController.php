@@ -21,7 +21,7 @@ class DisciplineController extends Controller
         $disciplinelist = DisciplineModel::query()
         ->when($request->query('search'), function ($query) use ($request) {
             $query->where('discipline', 'like', '%' . $request->query('search') . '%');
-        });
+        })->orderBy('discipline');
         $itemCount = $disciplinelist->count();
         $disciplinelist = $disciplinelist
         ->paginate(10)
@@ -56,6 +56,21 @@ class DisciplineController extends Controller
         ]);
 
         return redirect()->route('admin.discipline.list')->with('success', 'Discipline successfully added.');
+    }
+
+
+    public function delete(Request $request) {
+
+        $discipline = DisciplineModel::where('id', $request->id)->first();
+
+        if($discipline) {
+            DisciplineModel::destroy($request->id);
+            return redirect()->back()->with('success', 'Deleted successfully.');
+        }
+
+        return redirect()->back()->with('failed', 'Failed to delete program.');
+
+        
     }
 
 }

@@ -51,58 +51,58 @@
 
 <script setup>
 
-const props = defineProps([
-    'title',
-    'type',
-    'showModal',
-]);
+    const props = defineProps([
+        'title',
+        'type',
+        'showModal',
+    ]);
 
 </script>
 
 <script>
-export default {
-    methods: {
-        closeModal() {
-            this.$emit('close')
-        },
+    export default {
+        methods: {
+            closeModal() {
+                this.$emit('close')
+            },
 
-        submit() {
-            this.$emit('submit');
-        },
+            submit() {
+                this.$emit('submit');
+            },
 
-        upload() {
-            this.$emit('upload');
-        },
+            upload() {
+                this.$emit('upload');
+            },
 
-        save() {
-            this.$emit('create');
-        },
+            save() {
+                this.$emit('create');
+            },
 
-        bgClicked() {
-            let cont = this.$refs.modalContainer;
-            cont.classList.add('animate-shake');
-            setTimeout(() => {
-                cont.classList.remove('animate-shake');
-            }, 200);
+            bgClicked() {
+                let cont = this.$refs.modalContainer;
+                cont.classList.add('animate-shake');
+                setTimeout(() => {
+                    cont.classList.remove('animate-shake');
+                }, 200);
+            }
         }
     }
-}
 </script>
 
 <style scoped>
-@keyframes shake {
+    @keyframes shake {
 
-    0%,
-    100% {
-        transform: translateY(0);
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
     }
 
-    50% {
-        transform: translateY(-10px);
+    .animate-shake {
+        animation: shake 200ms 1;
     }
-}
-
-.animate-shake {
-    animation: shake 200ms 1;
-}
 </style>

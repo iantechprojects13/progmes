@@ -13,6 +13,7 @@ class InstitutionProgramModel extends Model
 
     protected $fillable = [
         'institutionId',
+        'disciplineId',
         'programId',
     ];
 
@@ -25,6 +26,11 @@ class InstitutionProgramModel extends Model
     public function institution()
     {
         return $this->belongsTo(InstitutionModel::class, 'institutionId', 'id')->select(['id', 'name'])->orderBy('name', 'asc');
+    }
+
+    public function discipline()
+    {
+        return $this->belongsTo(DisciplineModel::class, 'disciplineId', 'id')->select(['id', 'discipline']);
     }
 
     public function program()

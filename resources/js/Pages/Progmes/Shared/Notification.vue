@@ -3,6 +3,10 @@
         <div class="bg-stone-800 text-white fixed p-5 md:rounded-lg -bottom-20 md:left-auto md:right-3 md:w-max w-full left-0 right-0 md:max-w-md"
             :class="{ 'show md:-translate-y-3': openNotification, 'hide': !openNotification }">
             <div class="flex justify-between items-center text-sm">
+                <div class="mr-3">
+                    <div v-show="type == 'success'"><i class="fas fa-check-circle text-xl text-green-400"></i></div>
+                    <div v-show="type == 'failed'"><i class="fas fa-times-circle text-xl text-red-400"></i></div>
+                </div>
                 <div>
                     {{ message }}
                 </div>
@@ -26,6 +30,7 @@
 
         props: {
             message: String,
+            type: String,
         },
 
         methods: {

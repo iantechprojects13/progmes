@@ -25,9 +25,6 @@ class HEIFormController extends Controller
 
         $tool = EvaluationFormModel::find($id);
         $cmo = CMOModel::where('id', $tool->cmoId)->with('criteria')->first();
-        // $criteria = CriteriaModel::where('cmoId', $cmo->id)->orderBy('itemNo', 'asc')->get();
-
-        // dd($cmo->criteria);
 
         foreach($cmo->criteria as $item) {
             EvaluationItemModel::create([
@@ -47,13 +44,15 @@ class HEIFormController extends Controller
         return redirect('/hei/evaluation/'. $id . '/edit');
     }
 
-    public function generateKeyBeforeEdit($id) {
-        $randomKey = $this->generateKey();
-        return redirect('/hei/evaluation/'. $id . '/edit/'.$randomKey);
-    }
+    public function edit($evaluation) {
 
-    public function edit($evaluation, $key=123) {
         $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program')->first();
+
+        if(!$tool) {
+            return redirect('/hei/evaluation')->with('failed', 'Evaluation tool not found.');
+        }
+
+        
         $items = EvaluationItemModel::where('evaluationFormId', $evaluation)->with('criteria', 'evidence')->get();
         $canSubmit = true;
 
@@ -70,7 +69,6 @@ class HEIFormController extends Controller
                     break;
                 }
             }
-
         }
         
         if($tool->status == 'In progress') {
@@ -92,24 +90,8 @@ class HEIFormController extends Controller
         }
     }
 
-
-    // public function evaluationInput($tool) {
-    //     return Inertia::render('Progmes/Evaluation/HEI-Evaluation-PH-Edit', [
-    //         'list' => User::all(),
-    //     ]);
-    // }
-
-    // public function updateTool(Request $request) {
-    //     if ($request->id % 2 == 0) {
-    //         return redirect()->back()->with('success', 'Success.');
-    //     } else {
-    //         return redirect()->back()->with('error', 'Error.');
-    //     }
-    // }
-
     public function update(Request $request) {
-        // dd($request->items);
-
+        
         foreach ($request->items as $item) {
             $evaluationItem = EvaluationItemModel::find($item['id']);
 
@@ -121,12 +103,11 @@ class HEIFormController extends Controller
             }
         }
 
-        $randomKey = $this->generateKey();
-        return redirect('/hei/evaluation/'. $request->id . '/edit/'.$randomKey);
+        return redirect()->back()->with('updated', 'All changes saved.');
+        
     }
 
     public function upload(Request $request) {
-        // dd($request);
         $request->validate([
             'id' => 'required',
             'itemId' => 'required',
@@ -181,38 +162,36 @@ class HEIFormController extends Controller
         //     'url' => $fileUrl,
         // ]);
 
-        $randomKey = $this->generateKey();
-        return redirect('/hei/evaluation/'. $request->id . '/edit/'.$randomKey);
+        return redirect()->back()->with('uploaded', 'Evidence successfully uploaded.');
     }
 
     public function submitLink(Request $request) {
-        $validated = $request->validate([
-            'evidenceLink.itemId' => 'nullable',
-            'evidenceLink.link' => 'required|url',
-        ], [
-            'evidenceLink.link.required' => 'URL for the link is required.',
-            'evidenceLink.link.url' => 'Invalid URL format.',
-        ]);
 
-        // dd($validated['evidenceLink']['itemId']);
+        $validated = $request->validate([
+            'id' => 'required',
+            'link' => 'required|url',
+        ], [
+            'link.required' => 'URL for the link is required.',
+            'link.url' => 'Invalid URL format.',
+        ]);
 
         $evidenceItem = EvidenceModel::create([
-            'itemId' => $validated['evidenceLink']['itemId'],
+            'itemId' => $validated['id'],
             'type' => "link",
-            'url' => $validated['evidenceLink']['link'],
+            'text' => $validated['link'],
+            'url' => $validated['link'],
         ]);
 
-        $randomKey = $this->generateKey();
-        return redirect('/hei/evaluation/'. $request->id . '/edit/'.$randomKey)->with('success', 'Successful link upload. :)');
+        return redirect()->back()->with('uploaded', 'Link successfully posted.');
     }
 
     public function deleteLink(Request $request) {
-        $evidenceModel = EvidenceModel::where('id', $request->evidenceLink)->first();
+
+        $evidenceModel = EvidenceModel::where('id', $request->item)->first();
         
         $evidenceModel->delete();
 
-        $randomKey = $this->generateKey();
-        return redirect('/hei/evaluation/'. $request->id . '/edit/'.$randomKey);
+        return redirect()->back()->with('deleted', 'File/Link deleted successfully.');
     }
 
 

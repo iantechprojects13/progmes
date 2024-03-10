@@ -36,7 +36,7 @@
         <div class="mt-5 lg:mt-0">
             <button @click="readyForVisitModal = true; readyForVisitIndicator = $page.url"
                 :disabled="!canSubmit || hasUpdate" class="px-3 w-fit text-white  h-10 rounded mr-1"
-                :class="[{ 'bg-green-700 hover:bg-green-800': canSubmit && !hasUpdate }, { 'bg-red-500 hover:red-600': !canSubmit || hasUpdate }]">
+                :class="[{ 'bg-green-700 hover:bg-green-800': canSubmit && !hasUpdate }, { 'bg-red-400 hover:red-600': !canSubmit || hasUpdate }]">
                 Ready for visit
             </button>
         </div>
@@ -44,7 +44,7 @@
     <content-container hasTopButton="true" hasBackButton="true">
         <template v-slot:back-button>
             <Link href="/hei/evaluation">
-            <button class="w-10 h-10 mr-2 rounded-full hover:bg-gray-300 tooltipForActions" data-tooltip="asd">
+            <button class="w-10 h-10 mr-2 rounded-full hover:bg-gray-300 tooltipForActions" data-tooltip="Back">
                 <i class="fas fa-arrow-left"></i>
             </button>
             </Link>
@@ -52,26 +52,24 @@
         <template v-slot:top-button>
             <div class="flex">
                 <div class="text-gray-500 h-10 lg:ml-2 flex items-center mr-5">
-                    <div v-if="hasUpdate" class="text-red-500">
-                        <i class="fas fa-asterisk text-xs text-red-500 mr-2"></i>
-                        Changes unsaved.
-                    </div>
-                    <div v-else-if="!hasUpdate && updateIndicator != $page.url && updateIndicator != null">
-                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                        All changes saved.
-
-                    </div>
-                    <div v-else-if="updateIndicator == $page.url && updateIndicator != null">
+                    <div v-if="saving">
                         <i class="fas fa-spinner animate-spin mr-2"></i>Saving
                     </div>
+                    <div v-else-if="hasUpdate" class="text-red-500 italic">
+                        *Changes unsaved
+                    </div>
+                    <div v-else-if="$page.props.flash.updated" class="italic">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                        {{ $page.props.flash.updated }}
+                    </div>
+
                     <div v-else></div>
                 </div>
                 <div>
-                    <button @click="update($page.url)" ref="saveBtn"
-                        class="lg:px-3 w-10 lg:w-auto h-10 rounded text-gray-200 border bg-blue-500 border-blue-500 hover:bg-blue-600 hover:text-white tooltipBottom"
-                        data-tooltip="Save changes" :disabled="!hasUpdate">
-                        <i class="fas fa-floppy-disk lg:mr-2"></i>
-                        <span class="hidden lg:inline-block">Save</span>
+                    <button @click="update" ref="saveBtn"
+                        class="lg:px-3 w-10 lg:w-auto h-10 rounded text-gray-200 border bg-blue-500 border-blue-500 hover:bg-blue-600 hover:text-white"
+                        :disabled="!hasUpdate">
+                        <span class="hidden lg:inline-block">Save Changes</span>
                     </button>
                 </div>
             </div>
@@ -89,7 +87,6 @@
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
-
                 <template v-slot:table-body>
                     <tr v-for="(item, index) in items" :key="item.id" class="align-top text-base"
                         :class="{ 'bg-slate-200': index % 2 == 0 }">
@@ -138,15 +135,13 @@
                                     <a class="px-1 text-gray-600 hover:text-blue-500 m-1 rounded" :href="file.url"
                                         target="_blank">
                                         <span v-if="file.type == 'file'">
-                                            <!-- <i class="fas fa-file mr-2"></i> -->
                                             File
                                         </span>
                                         <span v-else-if="file.type == 'link'">
-                                            <!-- <i class="fas fa-link mr-2"></i> -->
                                             Link
                                         </span>
                                     </a>
-                                    <button @click="confirmDelete(); deleteSelection = file.id, currentURL = $page.url"
+                                    <button @click="deleteModal = true; toDelete = file.id"
                                         class="text-gray-500 hover:text-red-500 tooltipForActions"
                                         :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate"
                                         :class="{ 'grayscale text-gray-500': hasUpdate }"
@@ -170,18 +165,17 @@
                         <td class="p-3">
                             <div class="w-full text-right visible" ref="actionButtons"
                                 :class="{ 'invisible': item.selfEvaluationStatus == 'Not applicable' }">
-                                <button @click="openEvidenceUploadModal(item); uploadFileIndicator = $page.url"
-                                    class="h-8 w-8 shadow shadow-gray-500 hover:text-blue-600 rounded border border-gray-500 bg-white tooltipForActions"
+                                <button @click=" fileModal = true; fileItem = item.id; $refs.inputEvidenceFile.click()"
+                                    class="h-8 px-2 text-white bg-green-600 hover:bg-green-700 rounded tooltipForActions"
                                     :class="{ 'grayscale text-gray-500': hasUpdate }" data-tooltip="Upload file"
                                     :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate">
-                                    <i class="fas fa-upload"></i>
+                                    <i class="fas fa-upload mr-2"></i>File
                                 </button>
-                                <button
-                                    @click="openEvidenceLinkModal(item); submitLinkIndicator = $page.url; removeLink()"
-                                    class="ml-1 h-8 w-8 shadow shadow-gray-500 hover:text-blue-600 rounded border border-gray-500 bg-white tooltipForActions"
-                                    :class="{ 'grayscale text-gray-500': hasUpdate }" data-tooltip="Submit link"
+                                <button @click="linkModal = true; evidenceLink = null; linkItem = item.id"
+                                    class="ml-1 h-8 px-2 bg-green-600 text-white hover:bg-green-700 rounded tooltipForActions"
+                                    :class="{ 'grayscale text-gray-500': hasUpdate }" data-tooltip="Drop link"
                                     :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate">
-                                    <i class="fas fa-link"></i>
+                                    <i class="fas fa-upload mr-2"></i>Link
                                 </button>
                             </div>
                         </td>
@@ -191,191 +185,93 @@
         </template>
     </content-container>
 
-
-
-    <div ref="containerDiv" class="h-screen overflow-y-auto">
-        <!-- <div class="md:mx-8 mx-3 mt-8 flex flex-col lg:flex-row justify-between">
-            <div class="flex flex-col w-auto rounded">
-                <div class="w-auto flex flex-col md:flex-row">
-                    <div class="mr-2 font-bold">
-                        HEI Name:
-                    </div>
-                    <div>
-                        {{ evaluation.institution_program.institution.name }}
-                    </div>
-                </div>
-                <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
-                    <div class="w-auto flex flex-col md:flex-row">
-                        <div class="mr-2 font-bold">
-                            Program:
-                        </div>
-                        <div>
-                            {{ evaluation.institution_program.program.program }}
-                        </div>
-                    </div>
-                </div>
-                <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
-                    <div class="w-auto flex flex-col md:flex-row">
-                        <div class="mr-2 font-bold">
-                            Effectivity:
-                        </div>
-                        <div>
-                            A.Y. {{ evaluation.effectivity }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-5 lg:mt-0">
-                <button @click="readyForVisitModal = true; readyForVisitIndicator = $page.url"
-                    :disabled="!canSubmit || hasUpdate" class="px-3 w-fit text-white  h-10 rounded mr-1"
-                    :class="[{ 'bg-blue-500 hover:bg-blue-600': canSubmit && !hasUpdate }, { 'bg-red-500 hover:red-600': !canSubmit || hasUpdate }]">
-                    Ready for visit
-                </button>
-            </div>
-        </div> -->
-        <!-- <div class="mx-8 my-5 ">
-
-            Progress
-            <div class="relative flex flex-row">
-                <div class="h-5 w-1/3 bg-blue-500"></div>
-                <div class="h-5 w-2/3 bg-gray-300"></div>
-            </div>
-        </div> -->
-
-
-        <content-container :hasAction="true">
-            <template v-slot:channel>
-                <div class="text-gray-500 h-10 lg:ml-2 flex items-center">
-                    <div v-if="hasUpdate" class="text-red-500">
-                        <i class="fas fa-asterisk text-xs text-red-500 mr-2"></i>
-                        Changes unsaved.
-                    </div>
-                    <div v-else-if="!hasUpdate && updateIndicator != $page.url && updateIndicator != null">
-                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                        All changes saved.
-
-                    </div>
-                    <div v-else-if="updateIndicator == $page.url && updateIndicator != null">
-                        <i class="fas fa-spinner animate-spin mr-2"></i>Saving
-                    </div>
-                    <div v-else></div>
-                </div>
-            </template>
-
-            <template v-slot:content>
-
-
-
-                <!-- ------ grid view ------- -->
-
-
-                <!-- <div class="flex flex-col max-w-5xl mx-auto px-3 p-4" v-show="itemsLayout === 'grid'">
-                <div v-for="(  item, index  ) in   items  " :key="item.id"
-                    class="flex flex-col mb-5 p-2 m-2 bg-gray-200 rounded shadow-lg">
-                    <div class="font-bold bg-gray-100 w-fit rounded-t p-2">
-                        #{{ item.criteria.itemNo }} {{ item.criteria.area }}
-                    </div>
-                    <div class="bg-gray-100 p-2 px-3 rounded-b">
-                        {{ item.criteria.minimumRequirement }}
-                    </div>
-                    <div class="bg-gray-200 p-0.5 pt-2">
-                        <textarea class="w-full h-24 border-none " placeholder="Input actual situation here"></textarea>
-                    </div>
-                    <div class="w-full py-2 px-1">
-                        <select class=" py-1 px-2 ml-1 rounded w-36 border-gray-300 bg-gray-100">
-                            <option value="Not complied">Not complied</option>
-                            <option value="Complied">Complied</option>
-                            <option value="Not applicable">Not applicable</option>
-                        </select>
-                        <button class=" py-1 px-2 hover:bg-blue-600 bg-blue-500 text-white rounded">
-                            <i class="fas fa-upload mr-2"></i>
-                            Upload evidence
+    <modal :showModal="uploadEvidenceFileModal && $page.url == uploadFileIndicator" title="Upload Evidence File"
+        @close="closeEvidenceUploadModal" @upload="upload" type="uploadEvidenceFile">
+        <div class="text-center pt-5">
+            <input ref="uploadEvidenceFile" hidden type="file" @change="handleFileChange" id="evidence">
+            <div v-if="evidenceFile" class="text-black text-left flex flex-col">
+                <div class="p-2 rounded bg-gray-200">
+                    <div>File name: {{ evidenceFile.name }}</div>
+                    <div>Size: {{ (evidenceFile.size / 1024).toFixed(2) }} KB</div>
+                    <div class="w-full text-right">
+                        <button
+                            class="inline-block mr-1 py-1 px-2 border border-gray-400 rounded hover:text-orange-500 tooltipForActions"
+                            data-tooltip="Change file" @click.prevent="$refs.uploadEvidenceFile.click()">
+                            <i class="fas fa-refresh"></i>
                         </button>
                     </div>
                 </div>
-            </div> -->
-
-
-            </template>
-        </content-container>
-        <!-- upload file, link modals -->
-        <modal :showModal="uploadEvidenceFileModal && $page.url == uploadFileIndicator" title="Upload Evidence File"
-            @close="closeEvidenceUploadModal" @upload="upload" type="uploadEvidenceFile">
-            <div class="text-center pt-5">
-                <input ref="uploadEvidenceFile" hidden type="file" @change="handleFileChange" id="evidence">
-                <div v-if="evidenceFile" class="text-black text-left flex flex-col">
-                    <div class="p-2 rounded bg-gray-200">
-                        <div>File name: {{ evidenceFile.name }}</div>
-                        <div>Size: {{ (evidenceFile.size / 1024).toFixed(2) }} KB</div>
-                        <div class="w-full text-right">
-                            <button
-                                class="inline-block mr-1 py-1 px-2 border border-gray-400 rounded hover:text-orange-500 tooltipForActions"
-                                data-tooltip="Change file" @click.prevent="$refs.uploadEvidenceFile.click()">
-                                <i class="fas fa-refresh"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <button v-if="!evidenceFile" @click.prevent="$refs.uploadEvidenceFile.click()"
-                    class="hover:text-white border border-green-700 hover:bg-green-700 py-2 px-10 rounded"><i
-                        class="fas fa-cloud-upload mr-5 text-xl"></i>
-                    Select file
-                </button>
-                <div class="mt-3 w-full text-left">
-                    <form-error-message :message="$page.props.errors['evidence.file']" theme="dark" />
-                </div>
             </div>
-        </modal>
-
-        <modal :showModal="submitEvidenceLinkModal && $page.url == submitLinkIndicator" title="Evidence Link"
-            @close="closeEvidenceLinkModal" @submit="submitLink" type="submitEvidenceLink">
-            <div class="text-center">
-                <textarea class="w-full h-32 resize-none" placeholder="Input URL/Link here" id="link"
-                    v-model="evidenceLink.link"></textarea>
-                <div class="mt-1 w-full text-left" v-show="$page.props.errors">
-                    <form-error-message :message="$page.props.errors['evidenceLink.link']" theme="dark" />
-                </div>
+            <button v-if="!evidenceFile" @click.prevent="$refs.uploadEvidenceFile.click()"
+                class="hover:text-white border border-green-700 hover:bg-green-700 py-2 px-10 rounded"><i
+                    class="fas fa-cloud-upload mr-5 text-xl"></i>
+                Select file
+            </button>
+            <div class="mt-3 w-full text-left">
+                <form-error-message :message="$page.props.errors['evidence.file']" theme="dark" />
             </div>
-
-            <template v-slot:custom-button>
-                <button @click="submitLink()"
-                    class="text-white bg-blue-600 hover:bg-blue-700 w-24 py-2 px-3 rounded border">
-                    Submit
-                </button>
-            </template>
-        </modal>
-        <Notification :message="$page.props.flash.message" />
-        <div v-if="$page.url != submitLinkIndicator && submitLinkIndicator != null">
-            <Notification :message="'Link successfully uploaded.'" />
         </div>
-        <div v-if="$page.url != currentURL && currentURL != null">
-            <Notification :message="'Link/File successfully deleted.'" />
-        </div>
-        <confirmation @close="closeDeleteConfirmation" v-show="deleteEvidence && currentURL == $page.url"
-            title="Delete File/Link" modaltype="confirmDeleteEvidence">
+    </modal>
 
-            <template v-slot:buttons>
-                <button class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2 px-3 rounded mr-1"
-                    @click="deleteLink">
-                    Delete
-                </button>
-            </template>
-        </confirmation>
-        <confirmation @close="closeReadyForVisitConfirmation"
-            v-show="readyForVisitModal && readyForVisitIndicator == $page.url" title="Ready For Visit">
+    <confirmation @close="closeReadyForVisitConfirmation"
+        v-show="readyForVisitModal && readyForVisitIndicator == $page.url" title="Ready For Visit">
 
-            <template v-slot:message>
-                Are you sure you want to submit this compliant tool? You won't be able to make changes after submitting.
-            </template>
+        <template v-slot:message>
+            Are you sure you want to submit this compliant tool? You won't be able to make changes after submitting.
+        </template>
 
-            <template v-slot:buttons>
-                <button class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2 px-3 rounded mr-1"
-                    @click="readyForVisit">
-                    Submit
-                </button>
-            </template>
-        </confirmation>
+        <template v-slot:buttons>
+            <button class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2 px-3 rounded mr-1"
+                @click="readyForVisit">
+                Submit
+            </button>
+        </template>
+    </confirmation>
+
+
+    <!-- Select evidence file -->
+    <div>
+        <input type="file" ref="inputEvidenceFile" id="inputEvidenceFile"
+            @change="evidenceFile = $event.target.files[0]">
     </div>
+
+    <!-- Upload link modal -->
+    <modal :showModal="linkModal" title="Evidence Link" @close="linkModal = false">
+        <div class="text-center">
+            <textarea class="w-full h-32 resize-none" placeholder="Input URL/Link here" id="link"
+                v-model="evidenceLink">
+            </textarea>
+        </div>
+        <template v-slot:custom-button>
+            <button @click="submitLink" :disabled="uploadingLink"
+                class="text-white bg-blue-600 hover:bg-blue-700 w-24 py-2 px-3 rounded border">
+                <span v-if="uploadingLink"><i class="fas fa-spinner animate-spin"></i></span>
+                <span v-else>Upload</span>
+            </button>
+        </template>
+    </modal>
+
+    <!-- Delete confirmation modal -->
+    <confirmation-modal :showModal="deleteModal" @close="deleteModal = false" title="Delete file/link">
+        <template v-slot:message>
+            Are you sure you want to delete this evidence file/link? This action can't be undone.
+        </template>
+        <template v-slot:buttons>
+            <button @click="deleteLink" :disabled="deleting"
+                class="select-none text-white h-10 w-20 rounded bg-red-500">
+                <span v-if="deleting"><i class="fas fa-spinner animate-spin"></i></span>
+                <span v-else>Delete</span>
+            </button>
+        </template>
+    </confirmation-modal>
+
+    <!-- Notifications -->
+    <Notification :message="$page.props.flash.message" />
+    <Notification :message="$page.props.flash.updated" />
+    <Notification :message="$page.props.flash.deleted" />
+    <Notification :message="$page.props.flash.uploaded" type="success" />
+    <Notification :message="$page.props.errors.link" type="failed" />
+
 </template>
 
 <script setup>
@@ -409,31 +305,47 @@
     });
 
     // Variables
+    const deleteModal = ref(false);
+    const deleting = ref(false);
+    const toDelete = ref(null);
+
+    const linkModal = ref(false);
+    const uploadingLink = ref(false);
+    const linkItem = ref(null);
+    const evidenceLink = ref(null);
+
+    const fileModal = ref(false);
+    const uploadingFile = ref(false);
+    const fileItem = ref(null);
+    const evidenceFile = ref(null);
+    const inputEvidenceFile = ref([]);
+
     const uploadEvidenceFileModal = ref(false);
-    const submitEvidenceLinkModal = ref(false);
+
     const isEditorOpen = ref(false);
     const textEditorIndex = ref('');
     const texteditor = ref([]);
-    const evidenceFile = ref(null);
     const readyForVisitModal = ref(false);
+
+
 
     const actualSituationInput = ref([]);
     const selfEvaluationStatus = ref([]);
     const actionButtons = ref([]);
     const evidenceFiles = ref([]);
     const hasUpdate = ref(false);
-    const deleteEvidence = ref(false);
-    const deleteSelection = ref(null);
 
     const updateIndicator = ref(null);
     const uploadFileIndicator = ref(null);
     const submitLinkIndicator = ref(null);
     const readyForVisitIndicator = ref(null);
     const saveBtn = ref(null);
-    const currentURL = ref(null);
-    const toUpload = ref(null);
 
-    const refs = { actualSituationInput, selfEvaluationStatus, actionButtons, evidenceFiles, saveBtn, texteditor };
+    const toUpload = ref(null);
+    const saving = ref(false);
+    const remountPage = ref(false);
+
+    const refs = { actualSituationInput, selfEvaluationStatus, actionButtons, evidenceFiles, saveBtn, texteditor, inputEvidenceFile };
 
     // Functions
     function handleTextInput(index) {
@@ -490,10 +402,6 @@
     const removeFile = () => {
         evidenceUpload.file = null;
         evidenceFile.value = null;
-    };
-
-    const removeLink = () => {
-        evidenceLink.link = null;
     };
 
 
@@ -555,15 +463,16 @@
         file: null,
     });
 
-    const evidenceLink = reactive({
-        itemId: null,
-        link: null,
-    });
-
-    function update(url) {
-        updateIndicator.value = url;
-        router.post('/hei/evaluation/update', { 'id': props.evaluation.id, 'items': props.items });
-        hasUpdate.value = false;
+    function update() {
+        router.post('/hei/evaluation/update', { 'id': props.evaluation.id, 'items': props.items }, {
+            onStart: () => {
+                saving.value = true;
+            },
+            onFinish: () => {
+                saving.value = false;
+            },
+            preserveState: false,
+        });
     }
 
     function upload() {
@@ -571,11 +480,34 @@
     }
 
     function submitLink() {
-        router.post('/hei/evaluation/link', { 'id': props.evaluation.id, 'evidenceLink': evidenceLink });
+        router.post('/hei/evaluation/link', {
+            id: linkItem.value,
+            link: evidenceLink.value,
+        }, {
+            onStart: () => {
+                uploadingLink.value = true;
+            },
+            onFinish: () => {
+                uploadingLink.value = false;
+            },
+            preserveState: false,
+        });
     }
 
+
     function deleteLink() {
-        router.post('/hei/evaluation/link/delete', { 'id': props.evaluation.id, 'evidenceLink': deleteSelection.value });
+        router.post('/hei/evaluation/link/delete', {
+            'id': props.evaluation.id,
+            'item': toDelete.value
+        }, {
+            onStart: () => {
+                deleting.value = true;
+            },
+            onFinish: () => {
+                deleting.value = false;
+            },
+            preserveState: false,
+        });
     }
 
     function readyForVisit() {
@@ -589,6 +521,16 @@
     //     });
     // });
 
+
+    watch(evidenceFile, value => {
+        router.post('/hei/evaluation/upload', {
+            id: props.evaluation.id,
+            itemId: fileItem.value,
+            file: evidenceFile.value,
+        }, {
+            preserveState: false,
+        })
+    });
 </script>
 
 <script>

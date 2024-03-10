@@ -3,16 +3,19 @@
     <Head title="Evaluation Forms" />
     <AdminPanel />
     <content-container pageTitle="Compliant Tool" hasTopButton="true" hasSearch="true" hasFilters="true"
-        hasPageDescription="true">
+        hasResultCount="true" :data_list="institutionProgramList">
         <template v-slot:top-button>
             <div class="flex md:flex-row flex-col">
                 <div class="w-full mr-1 md:mb-0 mb-1">
                     <button @click="deployToolModal = true"
                         class="px-3 w-fit rounded h-10 bg-blue-500 hover:bg-blue-600 text-white group">
-                        Deploy Tool
+                        Deploy tool
                     </button>
                 </div>
             </div>
+        </template>
+        <template v-slot:result-count>
+            <div class="ml-5 text-base text-gray-500">( {{ count }} Result<span v-if="count > 1">s</span> )</div>
         </template>
         <template v-slot:page-description>
             <div class="ml-3">( A.Y. {{ effectivity }} )</div>
@@ -41,58 +44,61 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="py-2">Institution</th>
-                    <th class="py-2">Program</th>
-                    <th class="py-2">CHED Memorandum Order</th>
-                    <th class="py-2">Status</th>
-                    <th class="py-2 text-right">
+                    <th class="p-3">Institution</th>
+                    <th class="p-3">Program</th>
+                    <th class="p-3">CMO</th>
+                    <th class="p-3">Status</th>
+                    <th v-show="canEdit" class="p-3 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
                 <template v-slot:table-body>
-                    <tr v-for="(program, index) in institutionProgramList.data" :key="program.id"
+                    <tr v-if="institutionProgramList.data.length == 0">
+                        <td class="text-center py-10 italic" colspan="5">
+                            No institution or program found
+                        </td>
+                    </tr>
+                    <tr v-else v-for="(program, index) in institutionProgramList.data" :key="program.id"
                         :class="{ 'bg-slate-200': index % 2 == 0 }">
-                        <td class="py-2">
-                            {{ program.institution.name }}
+                        <td class="p-3">
+                            {{ program.institution?.name }}
                         </td>
-                        <td class="py-2">
-                            {{ program.program.program }}
+                        <td class="p-3">
+                            {{ program.program?.program }}
                         </td>
-                        <td class="py-2">
-                            <div v-if="
-                                    program.evaluation_form[0]?.status ==
-                                    'Deployed'
-                                ">
-                                CMO No.{{
-                                program.evaluation_form[0]?.cmo?.number
-                                }}
-                                Series of
-                                {{ program.evaluation_form[0]?.cmo?.series }},
-                                Version
-                                {{ program.evaluation_form[0]?.cmo?.version }}
+                        <td class="p-3">
+                            <div v-if="program.evaluation_form[0]?.status == 'Deployed'">
+                                CMO No.{{ program.evaluation_form[0]?.cmo?.number }}
+                                Series of {{ program.evaluation_form[0]?.cmo?.series }},
+                                Version {{ program.evaluation_form[0]?.cmo?.version }}
                             </div>
                         </td>
-                        <td class="py-2">
+                        <td class="p-3">
+                            <div v-if="program.evaluation_form.length == 0"
+                                class="bg-gray-600 text-white w-fit px-1 rounded text-xs">
+                                Pending
+                            </div>
                             <div v-if="
                                     program.evaluation_form[0]?.status ==
                                     'Deployed'
-                                " class="bg-green-600 text-white w-fit px-1 rounded">
+                                " class="bg-green-600 text-white w-fit px-1 rounded text-xs">
                                 Deployed
                             </div>
                             <div v-if="
                                     program.evaluation_form[0]?.status ==
                                     'In progress'
-                                " class="bg-blue-500 text-white w-fit px-1 rounded">
+                                " class="bg-blue-500 text-white w-fit px-1 rounded text-xs">
                                 In Progress
                             </div>
                         </td>
-                        <td class="py-4 px-3">
-                            <button>-</button>
-                        </td>
-                    </tr>
-                    <tr v-if="institutionProgramList.data.length == 0">
-                        <td class="text-center py-10" colspan="3">
-                            No program or institution found
+                        <td v-show="canEdit" class="p-3 text-right">
+                            <button v-show="program.evaluation_form[0]?.status == 'In progress'"
+                                class="bg-red-500 hover:bg-red-600 text-white rounded h-8 px-3">
+                                <i class="fas fa-lock mr-2"></i>Lock
+                            </button>
+                            <!-- <button v-show="program.evaluation_form[0]?.status == 'In progress'">
+                                <i class="fas fa-lock"></i>
+                            </button> -->
                         </td>
                     </tr>
                 </template>
@@ -155,6 +161,7 @@
 
     const props = defineProps([
         "institutionProgramList",
+        "count",
         "effectivity",
         "program_list",
         "defaultAcademicYear",

@@ -10,14 +10,10 @@ class InstitutionModel extends Model
     use HasFactory;
 
     protected $table = 'institution';
-
+    
     protected $fillable = [
         'code',
         'name',
-        'address',
-        'cityOrMunicipality',
-        'cityOrProvince',
-        'zipCode',
     ];
 
     protected $hidden = [
@@ -25,7 +21,7 @@ class InstitutionModel extends Model
         'updated_at',
     ];
 
-    public function institutionProgram()
+    public function institution_program()
     {
         return $this->hasMany(InstitutionProgramModel::class, 'institutionId', 'id');
     }

@@ -18,7 +18,7 @@
                 <div class="p-3 rounded shadow-md w-full text-center lg:hidden mx-auto mt-5">
                     <a :href="route('auth.google')">
                         <button class="active:bg-blue-500 hover:bg-blue-100 active:text-white bg-white font-bold py-0 px-3 rounded-full flex items-center
-                justify-center border border-gray-400 mx-auto">
+                justify-center border-2 border-gray-400 mx-auto">
                             <img src="assets/google.png" width="40" class="p-1 inline top-0 mr-1">
                             Sign in with Google
                         </button>
@@ -38,7 +38,7 @@
                 </div>
                 <a :href="route('auth.google')">
                     <button class="active:bg-blue-500 hover:bg-blue-100 active:text-white font-bold px-3 py-0 rounded-full flex items-center
-                        justify-center border border-gray-400 mx-auto">
+                        justify-center border-2 border-gray-500 mx-auto">
                         <img src="assets/google.png" width="40" class="p-1 inline top-0 mr-1">
                         Sign in with Google
                     </button>

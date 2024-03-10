@@ -6,8 +6,11 @@
         hasNavigation="true" :data_list="cmo_list">
         <template v-slot:top-button>
             <input ref="uploadfile" hidden type="file" @change="cmo_file = $event.target.files[0]">
-            <button @click.prevent="$refs.uploadfile.click()"
-                class="bg-blue-500 hover:bg-blue-600 h-10 px-2 rounded text-white">Import CMO</button>
+            <button @click.prevent="$refs.uploadfile.click()" :disabled="importing"
+                class="bg-blue-500 hover:bg-blue-600 h-10 px-2 rounded text-white">
+                <span v-if="importing"><i class="fas fa-spinner animate-spin mr-2"></i>Importing...</span>
+                <span v-else>Import CMO</span>
+            </button>
         </template>
         <template v-slot:navigation>
             <div>
@@ -107,6 +110,7 @@
     });
 
     const cmo_file = ref(null);
+    const importing = ref(false);
 
     function upload() {
         form.post('/admin/CMOs/create/import', form);
@@ -133,9 +137,15 @@
     }
 
     watch(cmo_file, value => {
-        Inertia.post('/admin/CMOs/create/import', { file: value }, {
+        router.post('/admin/CMOs/create/import', { file: value }, {
+            onStart: () => {
+                importing.value = true;
+            },
+            onFinish: () => {
+                importing.value = false;
+            },
             preserveScroll: true,
-            preserveState: true,
+            preserveState: false,
         });
     });
 

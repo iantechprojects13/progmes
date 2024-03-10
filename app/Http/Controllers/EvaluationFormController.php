@@ -22,7 +22,6 @@ class EvaluationFormController extends Controller
         $defaultAcademicYear = AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
         $program_list = ProgramModel::with('active_cmo')->get();
 
-        
         $role = Auth::user()->role;
         $canEdit = true;
 
@@ -38,7 +37,11 @@ class EvaluationFormController extends Controller
         })
         ->with(['program', 'institution', 'evaluationForm' => function ($evalFormQuery) {
             $evalFormQuery->where('effectivity', AdminSettingsModel::where('id', 1)->value('currentAcademicYear'));
-        }, 'evaluationForm.cmo'])
+        }, 'evaluationForm.cmo']);
+
+        $count = $allinstitutionprograms->count();
+
+        $allinstitutionprograms = $allinstitutionprograms
         ->paginate(10)
         ->withQueryString();
         
@@ -46,6 +49,7 @@ class EvaluationFormController extends Controller
             'program_list' => $program_list,
             'effectivity' => $defaultAcademicYear,
             'institutionProgramList' => $allinstitutionprograms,
+            'count' => $count,
             'canEdit' => $canEdit,
             'filters' => $request->only(['search']),
         ]);

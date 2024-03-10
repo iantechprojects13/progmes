@@ -11,6 +11,11 @@ import AdminPanel from '../js/Pages/Progmes/Shared/AdminPanel.vue';
 import Modal from '../js/Pages/Progmes/Shared/Modal.vue';
 import Notification from '../js/Pages/Progmes/Shared/Notification.vue';
 import Confirmation from '../js/Pages/Progmes/Shared/Confirmation.vue';
+import ConfirmationModal from '../js/Pages/Progmes/Shared/ConfirmationModal.vue';
+
+import DeleteModal from '../js/Pages/Progmes/Shared/DeleteModal.vue';
+import ScreenSpinner from '../js/Pages/Progmes/Shared/ScreenSpinner.vue';
+
 import Pagination from './Pages/Progmes/Shared/Pagination.vue';
 import ContentContainer from './Pages/Progmes/Shared/ContentContainer.vue';
 import ContentTable from './Pages/Progmes/Shared/ContentTable.vue';
@@ -38,6 +43,8 @@ createInertiaApp({
             .component('Modal', Modal)
             .component('Notification', Notification)
             .component('Confirmation', Confirmation)
+            .component('ConfirmationModal', ConfirmationModal)
+            .component('DeleteModal', DeleteModal)
             .component('Pagination', Pagination)
             .component('ContentContainer', ContentContainer)
             .component('ContentTable', ContentTable)
@@ -45,6 +52,7 @@ createInertiaApp({
             .component('ContentTableAction', ContentTableAction)
             .component('SubmitButton', SubmitButton)
             .component('DropdownOption', DropdownOption)
+            .component('ScreenSpinner', ScreenSpinner)
             .component('PageTitle', PageTitle)
             .component('TextEditor', TextEditor)
             .component('DoughnutChart', DoughnutChart)

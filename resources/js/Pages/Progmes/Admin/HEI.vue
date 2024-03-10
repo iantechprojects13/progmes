@@ -39,32 +39,51 @@
                     </th>
                 </template>
                 <template v-slot:table-body>
-                    <tr v-for="(hei, index) in institution_list.data" :key="hei.id" class="hover:bg-gray-100"
+                    <tr v-if="institution_list.data.length == 0">
+                        <td class="text-center py-10 italic" colspan="3">
+                            No HEI found
+                        </td>
+                    </tr>
+                    <tr v-else v-for="(hei, index) in institution_list.data" :key="hei.id" class="hover:bg-gray-100"
                         :class="{'bg-slate-200': index % 2 == 0}">
                         <td class="p-2">
                             {{ hei.name }}
                         </td>
                         <td class="p-2 text-right">
-                            <button class="h-8 px-2 rounded bg-red-500 hover:bg-red-600 text-white">Delete</button>
+                            <button @click="deleteModal = true; selected = hei;"
+                                class="h-8 px-2 rounded bg-red-500 hover:bg-red-600 text-white">Delete</button>
                         </td>
                     </tr>
-                    <tr v-if="institution_list.data.length == 0">
-                        <td class="text-center py-10" colspan="3">
-                            No HEI found
-                        </td>
-                    </tr>
+
                 </template>
             </content-table>
         </template>
     </content-container>
-    <Confirmation v-show="openModal" @close="closeModal" :selected="selected" :title="title" :modaltype="modaltype" />
+    <DeleteModal title="Delete HEI" @close="deleteModal = false" :showModal="deleteModal">
+        <template v-slot:message>
+            <div v-if="deleteProcessing" class="py-5 w-full text-center">
+                Deleting
+                <i class="fas fa-spinner animate-spin ml-2"></i>
+            </div>
+            <div v-else class="py-5">Are you sure you want to delete <b>{{ selected?.name }}</b>? This action
+                can't be
+                undone.</div>
+        </template>
+        <template v-slot:buttons>
+            <button @click="deleteHEI" :disabled="deleteProcessing"
+                class="h-10 w-16 rounded bg-red-500 hover:bg-red-600 text-white">Delete</button>
+        </template>
+    </DeleteModal>
     <Notification :message="$page.props.flash.success" />
 </template>
 
 <script setup>
     import { router, useForm } from '@inertiajs/vue3';
+    import { ref } from 'vue';
 
-    const props = defineProps(['institution_list', 'canEdit', 'filters']);
+    const props = defineProps(['institution_list', 'count', 'canEdit', 'filters']);
+    const selected = ref(null);
+    const deleteProcessing = ref(false);
 
     const query = useForm({
         search: props.filters.search,
@@ -81,9 +100,16 @@
         }
     }
 
-
-    function view(id) {
-        router.get('/admin/higher-education-institutions/' + id + '/view');
+    function deleteHEI() {
+        router.post('/admin/higher-education-institutions/delete', { 'id': selected.value.id }, {
+            onStart: () => {
+                deleteProcessing.value = true;
+            },
+            onFinish: () => {
+                deleteProcessing.value = false;
+            },
+            preserveState: false,
+        });
     }
 
 </script>
@@ -93,25 +119,22 @@
     export default {
         data() {
             return {
-                openModal: false,
-                title: '',
-                modaltype: '',
-                selected: '',
+                deleteModal: false,
             }
         },
         layout: Layout,
 
         methods: {
-            toggleModal(item, type, title) {
-                this.openModal = !this.openModal;
-                this.selected = item;
-                this.modaltype = type;
-                this.title = title;
-            },
+            // toggleModal(item, type, title) {
+            //     this.openModal = !this.openModal;
+            //     this.selected = item;
+            //     this.modaltype = type;
+            //     this.title = title;
+            // },
 
-            closeModal() {
-                this.openModal = false;
-            }
+            // closeModal() {
+            //     this.openModal = false;
+            // }
         }
     }
 </script>

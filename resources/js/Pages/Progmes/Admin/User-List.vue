@@ -9,7 +9,7 @@
         </template>
         <template v-slot:navigation>
             <div>
-                <button class="text-blue-500 h-10 mr-8 border-b-2 font-bold border-blue-500">
+                <button class="text-blue-500 h-10 mr-8 border-b-2 relative font-bold border-blue-500">
                     Active users
                 </button>
                 <Link :href="route('admin.users.request')">
@@ -23,9 +23,9 @@
             <div class="w-full flex justify-end">
                 <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
                     placeholder="Search a user"
-                    class="rounded border-2 w-full border-gray-400 h-10 bg-white text-base placeholder-gray-400" />
+                    class="rounded border-2 w-full border-gray-500 h-10 bg-white text-base placeholder-gray-400" />
                 <button @click="submit"
-                    class="hover:bg-gray-300 border-2 active:bg-blue-600 active:text-white h-10 w-12 border-gray-400 relative right-0.5 bg-white rounded-r">
+                    class="hover:bg-gray-300 border-2 active:bg-blue-600 active:text-white h-10 w-12 border-gray-500 relative right-0.5 bg-white rounded-r">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
@@ -137,12 +137,12 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="user_list.data.length==0">
-                        <td class="py-10 text-center" colspan="4">
+                        <td class="py-10 text-center italic" colspan="6">
                             No users found
                         </td>
                     </tr>
                     <tr v-else v-for="(user, index) in user_list.data" :key="user.id"
-                        :class="{ 'bg-slate-200': index % 2 == 0 }" class="align-top">
+                        :class="{ 'bg-slate-200': index % 2 == 0 }">
                         <td class="p-3 px-3">
                             <div class="flex flex-row">
                                 <div class="mr-3 w-10">
@@ -195,11 +195,6 @@
             </content-table>
         </template>
     </content-container>
-    <div>
-        <pre>
-            {{ props.user_list }}
-        </pre>
-    </div>
     <Notification :message="$page.props.flash.success" />
     <div v-if="modal">
         <Confirmation @close="closeModal" :title="title" :modaltype="modaltype" :selected="selectedUser" />

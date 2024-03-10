@@ -19,12 +19,12 @@ class UserSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        for ($i = 0; $i < 200; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $name = $faker->name;
             $email = strtolower(str_replace(' ', '.', $name)) . '@gmail.com';
             $password = Hash::make('randompassword');
             $type = $faker->randomElement(['HEI', 'CHED']);
-
+            
             DB::table('users')->insert([
                 'name' => $name,
                 'email' => $email,

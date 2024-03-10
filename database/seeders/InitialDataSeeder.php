@@ -37,37 +37,20 @@ class InitialDataSeeder extends Seeder
         DB::table('institution')->insert([
             'code' => '11093',
             'name' => 'University of Mindanao',
-            'address' => 'Bolton Street, District 1',
-            'cityOrMunicipality' => 'Davao City',
-            'cityOrProvince' => 'Davao City',
-            'zipCode' => '8000',
         ]);
         DB::table('institution')->insert([
             'code' => '11050',
-            'name' => 'North Davao Colleges',
-            'address' => 'Quirino St., Brgy, Gredu',
-            'cityOrMunicipality' => 'Panabo City',
-            'cityOrProvince' => 'Davao Del Norte',
-            'zipCode' => '8105',
+            'name' => 'North Davao Colleges, Inc.',
         ]);
         DB::table('institution')->insert([
             'code' => '11035',
             'name' => 'Holy Cross of Davao College',
-            'address' => 'Santa Ana Avenue Corner C. De Guzman Street, Brgy. 14-B',
-            'cityOrMunicipality' => 'Davao City',
-            'cityOrProvince' => 'Davao City',
-            'zipCode' => '8000',
         ]);
         DB::table('institution')->insert([
             'code' => '11094',
             'name' => 'University of Southeastern Philippines, Obrero (Main)',
-            'address' => 'Iñigo St. Bo. Obrero',
-            'cityOrMunicipality' => 'Davao City',
-            'cityOrProvince' => 'Davao City',
-            'zipCode' => '8000',
         ]);
 		
-
 
         // PROGRAMS
         DB::table('program')->insert([
@@ -100,21 +83,6 @@ class InitialDataSeeder extends Seeder
             'disciplineId' => 3,
             'program' => 'Bachelor of Secondary Education',
             'major' => 'English',
-        ]);
-
-        // ROLE
-        DB::table('role')->insert([
-            'userId' => 4,
-            'institutionId' => 2,
-            'disciplineId' => 3,
-            'role' => 'Dean',
-        ]);
-
-        DB::table('role')->insert([
-            'userId' => 5,
-            'institutionId' => 2,
-            'programId' => 5,
-            'role' => 'Program Head',
         ]);
     }
 }
