@@ -17,7 +17,7 @@
                     <div>
                         <label for="institution" class="mb-2 font-bold text-gray-800 dark:text-white">Higher Education
                             Institution</label>
-                        <select id="institution" v-model="form.institution"
+                        <select id="institution" v-model="institution"
                             class="border border-gray-500 rounded block w-full p-2"
                             :class="{ 'text-gray-500': form.institution == null }">
                             <option :value="null">Select institution</option>
@@ -28,7 +28,7 @@
                         <form-error-message :message="$page.props.errors.institution" theme="dark" />
                     </div>
                     <!-- role -->
-                    <div class="mt-4">
+                    <div class="mt-4" v-show="props.institution">
                         <label for="role" class="block font-bold text-gray-800 dark:text-white">Role</label>
                         <select id="role" v-model="form.role" @change="checkRole()"
                             class="border border-gray-500 rounded block w-full p-2"
@@ -64,8 +64,10 @@
                             :class="{ 'text-gray-500': form.program == null }">
                             <option :value="null">Select program</option>
                             <option class="text-gray-800" v-for="program in program_list" :key="program.id"
-                                :value="program.id">{{
-                                program.program }}<span v-if="program.major"> - {{ program.major }}</span></option>
+                                :value="program.program.id">{{
+                                program.program?.program }}<span v-if="program.major"> - {{ program.program?.major
+                                    }}</span>
+                            </option>
                         </select>
                         <form-error-message :message="$page.props.errors.program" theme="dark" />
                     </div>
@@ -78,15 +80,50 @@
             </div>
         </div>
     </div>
+    <div>
+        <pre>
+            {{ institution }}
+        </pre>
+        <pre>
+            {{ discipline_list }}
+        </pre>
+        <pre>
+            {{ program_list }}
+        </pre>
+    </div>
 </template>
 
 <script setup>
-    import { reactive, ref } from 'vue';
+    import { reactive, ref, watch } from 'vue';
     import { router } from '@inertiajs/vue3';
 
+    const props = defineProps([
+        'discipline_list',
+        'program_list',
+        'institution_list',
+        'institution',
+        'discipline',
+        'program',
+    ]);
+
+    const institution = ref(props.institution);
+    const processing = ref(false);
+
+    watch(institution, value => {
+        router.post('/register/higher-education-institution', { institution: value }, {
+            onStart: () => {
+                processing.value = true;
+            },
+            onFinish: () => {
+                processing.value = false;
+            },
+            preserveScroll: true,
+            preserveState: false,
+        });
+    });
 
     const form = reactive({
-        institution: null,
+        institution: ref(props.institution),
         role: null,
         discipline: null,
         program: null,
@@ -97,7 +134,6 @@
         isPH: false,
     });
 
-    const processing = ref(false);
 
 
     // submit
@@ -130,14 +166,5 @@
             form.program = null;
         }
     }
-
-
-
-
-    const props = defineProps([
-        'discipline_list',
-        'program_list',
-        'institution_list',
-    ]);
 
 </script>

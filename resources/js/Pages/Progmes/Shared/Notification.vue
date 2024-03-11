@@ -4,6 +4,10 @@
             :class="{ 'show md:-translate-y-3': openNotification, 'hide': !openNotification }">
             <div class="flex justify-between items-center text-sm">
                 <div class="mr-3">
+                    <!-- <div v-show="type == 'processing'"><i class="fas fa-spinner animate-spin"></i></div> -->
+                    <div v-show="type == 'processing'">
+                        <img src="/assets/spinner-light.png" class="animate-spin" width="20">
+                    </div>
                     <div v-show="type == 'success'"><i class="fas fa-check-circle text-xl text-green-400"></i></div>
                     <div v-show="type == 'failed'"><i class="fas fa-times-circle text-xl text-red-400"></i></div>
                 </div>

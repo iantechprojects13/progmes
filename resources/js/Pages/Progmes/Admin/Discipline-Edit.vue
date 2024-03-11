@@ -1,8 +1,8 @@
 <template>
 
-    <Head title="New Discipline" />
+    <Head title="Update Discipline" />
     <AdminPanel />
-    <content-container pageTitle="Create Discipline" hasBackButton="true">
+    <content-container pageTitle="Update Discipline" hasBackButton="true">
         <template v-slot:back-button>
             <Link href="/admin/program/discipline">
             <button class="w-10 h-10 mr-2 rounded-full hover:bg-gray-300 tooltipForActions" data-tooltip="asd">
@@ -28,10 +28,8 @@
                     <div class="mt-5 w-full">
                         <button @click="submit" :disabled="processing"
                             class="w-full rounded text-white bg-blue-500 hover:bg-blue-600 py-2 px-4">
-                            <span v-if="!processing">Create</span>
-                            <span v-else>
-                                <i class="fas fa-spinner animate-spin"></i>
-                            </span>
+                            <span v-if="!processing">Update</span>
+                            <span v-else><i class="fas fa-spinner animate-spin"></i></span>
                         </button>
                     </div>
                 </div>
@@ -45,14 +43,19 @@
     import { router, useForm } from "@inertiajs/vue3";
     import { ref, reactive } from 'vue';
 
+    const props = defineProps([
+        'discipline',
+    ]);
+
     const form = reactive({
-        discipline: null,
+        id: ref(props.discipline.id),
+        discipline: ref(props.discipline.discipline),
     });
 
     const processing = ref(false);
 
     function submit() {
-        router.post('/admin/program/discipline/store', form, {
+        router.post('/admin/program/discipline/update', form, {
             onStart: () => {
                 processing.value = true;
             },

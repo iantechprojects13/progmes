@@ -130,7 +130,7 @@
                     <th class="p-3">Type</th>
                     <th class="p-3">Role</th>
                     <th class="p-3">Discipline/Program</th>
-                    <th class="p-3">Institution</th>
+                    <th class="p-3">HEI Name</th>
                     <th class="p-3 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
@@ -143,7 +143,7 @@
                     </tr>
                     <tr v-else v-for="(user, index) in user_list.data" :key="user.id"
                         :class="{ 'bg-slate-200': index % 2 == 0 }">
-                        <td class="p-3 px-3">
+                        <td class="p-3">
                             <div class="flex flex-row">
                                 <div class="mr-3 w-10">
                                     <img :src="
@@ -162,7 +162,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="p-3 px-3">
+                        <td class="p-3">
                             {{ user.type }}
                         </td>
                         <td class="p-3">
@@ -179,7 +179,7 @@
                                 {{ role.institution?.name }}
                             </div>
                         </td>
-                        <td class="p-3 text-right px-3" v-if="canEdit">
+                        <td class="p-3 text-right" v-if="canEdit">
                             <button @click="
                                     toggleModal(
                                         user,

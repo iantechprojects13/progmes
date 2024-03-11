@@ -56,7 +56,7 @@ Route::post('/register/hei', [RegistrationController::class, 'registerHEI']);
 
 Route::get('/register', [RegistrationController::class, 'index'])->middleware(['auth', 'unregistered'])->name('register.select');
 Route::get('/register/commission-on-higher-education', [RegistrationController::class, 'accountCHED'])->middleware('unregistered')->name('register.ched');
-Route::get('/register/higher-education-institution', [RegistrationController::class, 'accountHEI'])->middleware('unregistered')->name('register.hei');
+Route::match(['get', 'post'], '/register/higher-education-institution', [RegistrationController::class, 'accountHEI'])->middleware('unregistered')->name('register.hei');
 Route::get('/register/for-verification', [RegistrationController::class, 'pending'])->middleware(['auth', 'toverify'])->name('register.pending');
 
 Route::get('/register/{user}/accept', [RegistrationController::class, 'accept'])->name('register.accept');
@@ -77,7 +77,7 @@ Route::get('/HEI/dashboard', [DashboardController::class, 'dashboardForHEI'])->m
 //evaluation
 Route::get('/evaluation', [EvaluationController::class, 'index'])->middleware('auth', 'user.verified')->name('evaluation');
 Route::get('/ched/evaluation', [EvaluationController::class, 'evaluationForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('evaluation.ched');
-Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware('type.hei')->name('evaluation.hei.programhead');
+Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware(['auth','type.hei'])->name('evaluation.hei.programhead');
 Route::get('/admin/evaluation', [EvaluationController::class, 'evaluationForAdmin'])->middleware('type.ched')->name('evaluation.admin');
 
 Route::get('hei/evaluation/{tool}/edit', [HEIFormController::class, 'edit'])->middleware('auth', 'type.hei')->name('form.hei.key');
@@ -91,9 +91,7 @@ Route::post('/hei/evaluation/update', [HEIFormController::class, 'update'])->nam
 Route::post('/hei/evaluation/upload', [HEIFormController::class, 'upload'])->name('form.hei.upload');
 Route::post('/hei/evaluation/link', [HEIFormController::class, 'submitLink'])->name('form.hei.link');
 Route::post('/hei/evaluation/submit', [HEIFormController::class, 'readyForVisit'])->name('form.hei.submit');
-
 Route::post('/hei/evaluation/link/delete', [HEIFormController::class, 'deleteLink'])->name('form.hei.link.delete');
-
 
 Route::post('/ched/evaluation/update', [CHEDFormController::class, 'update'])->name('form.ched.update');
 
@@ -116,8 +114,8 @@ Route::get('admin/tool', [EvaluationFormController::class, 'index'])->middleware
 Route::get('admin/tool/{evaluation}/view', [EvaluationFormController::class, 'view'])->middleware('auth')->name('admin.form.view');
 Route::post('/admin/form/deploy', [EvaluationFormController::class, 'deploy'])->middleware('auth')->name('admin.form.deploy');
 
-Route::get('hei/tool/create/{id?}', [HEIFormController::class, 'store'])->middleware('auth')->name('hei.tool.store');
-
+Route::post('hei/tool/create', [HEIFormController::class, 'store'])->middleware('auth')->name('hei.tool.store');
+Route::get('/hei/evaluation/{tool}/view', [HEIFormController::class, 'view'])->middleware(['auth', 'type.hei'])->name('hei.evaluation.view');
 
 //Program
 Route::get('/admin/program', [ProgramController::class, 'index'])->middleware(['auth'])->name('admin.program.list');
@@ -131,7 +129,9 @@ Route::post('/admin/program/delete', [ProgramController::class, 'delete'])->midd
 //Discipline
 Route::get('/admin/program/discipline', [DisciplineController::class,'index'])->middleware('auth')->name('admin.discipline.list');
 Route::get('/admin/program/discipline/create', [DisciplineController::class, 'create'])->middleware(['auth'])->name('admin.discipline.create');
+Route::get('/admin/program/discipline/{id}/edit', [DisciplineController::class, 'edit'])->middleware(['auth'])->name('admin.discipline.edit');
 Route::post('/admin/program/discipline/store', [DisciplineController::class, 'store'])->middleware(['auth'])->name('admin.discipline.store');
+Route::post('/admin/program/discipline/update', [DisciplineController::class, 'update'])->middleware(['auth'])->name('admin.discipline.update');
 Route::post('/admin/discipline/delete', [DisciplineController::class, 'delete'])->middleware(['auth'])->name('admin.discipline.delete');
 
 Route::post('/admin/higher-education-institutions/register', [InstitutionController::class, 'store']);

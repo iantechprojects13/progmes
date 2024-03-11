@@ -20,7 +20,6 @@ class InitialDataSeeder extends Seeder
     
 
         // DISCIPLINES
-
         DB::table('discipline')->insert([
             'discipline' => 'IT-Related Disciplines',
         ]);
@@ -66,7 +65,6 @@ class InitialDataSeeder extends Seeder
         DB::table('program')->insert([
             'disciplineId' => 2,
             'program' => 'Bachelor of Science in Business Administration',
-            'major' => 'Financial Management',
         ]);
 
         DB::table('program')->insert([
@@ -82,7 +80,39 @@ class InitialDataSeeder extends Seeder
         DB::table('program')->insert([
             'disciplineId' => 3,
             'program' => 'Bachelor of Secondary Education',
-            'major' => 'English',
+        ]);
+
+        //institution_program
+        for($i = 1; $i <= 6; $i++) {
+            DB::table('institution_program')->insert([
+            'institutionId' => 1,
+            'programId' => $i,
+            ]);
+        }
+
+        for($i = 5; $i <= 6; $i++) {
+            DB::table('institution_program')->insert([
+            'institutionId' => 2,
+            'programId' => $i,
+            ]);
+        }
+
+        for($i = 1; $i <= 6; $i++) {
+            DB::table('institution_program')->insert([
+            'institutionId' => 3,
+            'programId' => $i,
+            ]);
+        }
+
+        for($i = 1; $i <= 6; $i++) {
+            DB::table('institution_program')->insert([
+            'institutionId' => 4,
+            'programId' => $i,
+            ]);
+        }
+
+        DB::table('admin_settings')->insert([
+            'currentAcademicYear' => '2024-2025',
         ]);
     }
 }

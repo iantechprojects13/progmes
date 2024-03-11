@@ -11,13 +11,13 @@
                 <table class="border border-gray-400">
                     <tr>
                         <th scope="row"
-                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right min-w-10">
+                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right whitespace-nowrap">
                             Name</th>
                         <td class="px-3 py-1 align-top border-b border-gray-400 w-full">{{ profile.name }}</td>
                     </tr>
                     <tr>
                         <th scope="row"
-                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right min-w-10">
+                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right whitespace-nowrap">
                             Account
                             Type</th>
                         <td class="px-3 py-1 align-top border-b border-gray-400 w-full">
@@ -31,13 +31,13 @@
                     </tr>
                     <tr>
                         <th scope="row"
-                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right min-w-10">
+                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right whitespace-nowrap">
                             Role</th>
                         <td class="px-3 py-1 align-top border-b border-gray-400 w-full">{{ profile.role }}</td>
                     </tr>
                     <tr v-show="hasInstitution">
                         <th scope="row"
-                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right min-w-10">
+                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right whitespace-nowrap">
                             HEI Name</th>
                         <td class="px-3 py-1 align-top border-b border-gray-400 w-full">
                             {{ getInstitution }}
@@ -45,7 +45,7 @@
                     </tr>
                     <tr v-show="hasDiscipline">
                         <th scope="row"
-                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right min-w-10">
+                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right whitespace-nowrap">
                             Discipline</th>
                         <td class="px-3 py-1 align-top border-b border-gray-400 w-full">
                             <div v-for="(item, index) in disciplineArray">
@@ -55,7 +55,7 @@
                     </tr>
                     <tr v-show="hasProgram">
                         <th scope="row"
-                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right min-w-10">
+                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right whitespace-nowrap">
                             Program</th>
                         <td class="px-3 py-1 align-top border-b border-gray-400 w-full">
                             {{getProgram}}

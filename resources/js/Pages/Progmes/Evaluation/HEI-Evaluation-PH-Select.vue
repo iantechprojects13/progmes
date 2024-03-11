@@ -60,17 +60,21 @@
                             </div>
                         </td>
                         <td class="p-3 text-right">
-                            <button class="border rounded py-1 px-3 border-gray-400 text-white bg-green-600"
+                            <button :disabled="starting"
+                                class="rounded h-10 px-2 w-24 text-white bg-blue-500 hover:bg-blue-600"
                                 @click="createTool(item.id)" v-show="item.status === 'Deployed'">
-                                Start now
+                                <span v-if="starting"><i class="fas fa-spinner animate-spin"></i></span>
+                                <span v-else>Start now</span>
                             </button>
                             <button v-show="item.status === 'In progress'" @click="edit(item.id)" ref="editButton"
-                                class="bg-amber-400 hover:bg-amber-500 text-base px-2 h-8 rounded">
+                                class="rounded h-10 px-2 mr-1 text-gray-700 hover:text-black active:text-blue-500 border-2 border-gray-500 bg-stone-100">
                                 <i class="fas fa-edit"></i>
                                 Edit
                             </button>
-                            <button class="border rounded py-1 px-3 border-gray-400"
-                                v-show="item.status == 'Locked' || item.status == 'Submitted'">
+                            <button @click="view(item.id)"
+                                class="rounded h-10 px-2 text-gray-700 hover:text-black active:text-blue-500 border-2 border-gray-500 bg-stone-100"
+                                v-show="item.status != 'Deployed'">
+                                <i class="fas fa-eye"></i>
                                 View
                             </button>
                         </td>
@@ -79,23 +83,38 @@
             </content-table>
         </template>
     </content-container>
-    <Notification :message="$page.props.flash.failed" />
-    <Notification :message="$page.props.flash.success" />
+    <Notification :message="$page.props.flash.failed" type="failed" />
+    <Notification :message="$page.props.flash.success" type="success" />
 </template>
 
 <script setup>
     import { router } from '@inertiajs/vue3';
+    import { ref } from 'vue';
 
     defineProps([
         'program',
     ]);
 
+    const starting = ref(false);
+
     function edit(tool) {
         router.get('/hei/evaluation/' + tool + '/edit');
     }
 
+    function view(tool) {
+        router.get('/hei/evaluation/' + tool + '/view');
+    }
+
     function createTool(item) {
-        router.get('/hei/tool/create/' + item);
+        router.post('/hei/tool/create', { id: item }, {
+            onStart: () => {
+                starting.value = true;
+            },
+            onFinish: () => {
+                starting.value = false;
+            },
+            preserveState: false,
+        });
     }
 </script>
 

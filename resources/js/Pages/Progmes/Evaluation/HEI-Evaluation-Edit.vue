@@ -2,7 +2,7 @@
 
     <Head title="Evaluation Form" />
     <page-title title="Program Self-Evaluation" />
-    <div class="md:mx-8 mx-3 mt-8 flex flex-col lg:flex-row justify-between">
+    <div class="md:mx-8 mx-3 mt-8 flex flex-col lg:flex-row justify-between rounded bg-white p-8">
         <div class="flex flex-col w-auto rounded">
             <div class="w-auto flex flex-col md:flex-row">
                 <div class="mr-2 font-bold">
@@ -33,13 +33,6 @@
                 </div>
             </div>
         </div>
-        <div class="mt-5 lg:mt-0">
-            <button @click="readyForVisitModal = true; readyForVisitIndicator = $page.url"
-                :disabled="!canSubmit || hasUpdate" class="px-3 w-fit text-white  h-10 rounded mr-1"
-                :class="[{ 'bg-green-700 hover:bg-green-800': canSubmit && !hasUpdate }, { 'bg-red-400 hover:red-600': !canSubmit || hasUpdate }]">
-                Ready for visit
-            </button>
-        </div>
     </div>
     <content-container hasTopButton="true" hasBackButton="true">
         <template v-slot:back-button>
@@ -50,29 +43,34 @@
             </Link>
         </template>
         <template v-slot:top-button>
-            <div class="flex">
-                <div class="text-gray-500 h-10 lg:ml-2 flex items-center mr-5">
-                    <div v-if="saving">
+            <div class="flex justify-between">
+                <button @click="readyForVisitModal = true" v-show="canSubmit"
+                    class="px-3 w-fit text-white bg-green-700 hover:bg-green-800 h-10 rounded mr-1">
+                    Ready for visit
+                </button>
+                <div class="text-gray-500 h-10 lg:ml-1 flex items-center mr-5">
+                    <!-- <div v-if="saving">
                         <i class="fas fa-spinner animate-spin mr-2"></i>Saving
-                    </div>
-                    <div v-else-if="hasUpdate" class="text-red-500 italic">
+                    </div> -->
+                    <div v-if="hasUpdate" class="text-red-500">
                         *Changes unsaved
                     </div>
-                    <div v-else-if="$page.props.flash.updated" class="italic">
+                    <div v-else-if="$page.props.flash.updated">
                         <i class="fas fa-check-circle text-green-500 mr-2"></i>
                         {{ $page.props.flash.updated }}
                     </div>
-
                     <div v-else></div>
                 </div>
                 <div>
                     <button @click="update" ref="saveBtn"
-                        class="lg:px-3 w-10 lg:w-auto h-10 rounded text-gray-200 border bg-blue-500 border-blue-500 hover:bg-blue-600 hover:text-white"
-                        :disabled="!hasUpdate">
-                        <span class="hidden lg:inline-block">Save Changes</span>
+                        class="px-3 w-fit h-10 rounded text-gray-200 border bg-blue-500 border-blue-500 hover:bg-blue-600 hover:text-white"
+                        :disabled="!hasUpdate">Save Changes
                     </button>
                 </div>
             </div>
+        </template>
+        <template v-slot:sticky-div>
+            <div>sadasdasd</div>
         </template>
         <template v-slot:main-content>
             <content-table v-show="itemsLayout === 'list'">
@@ -81,7 +79,7 @@
                     <th class="p-3 max-w-xs">Area</th>
                     <th class="p-3 max-w-xs">Minimum Requirement</th>
                     <th class="p-3 w-16">Actual Situation</th>
-                    <th class="p-3">Evidence</th>
+                    <th class="p-3 w-16">Evidence</th>
                     <th class="p-3 whitespace-normal">Self-Evaluation Status</th>
                     <th class="p-3 text-right">
                         <i class="fas fa-ellipsis-v"></i>
@@ -110,8 +108,8 @@
                                 :name="'actualSituation' + index" :id="'actualSituation' + index"
                                 class="w-full min-w-16 h-32 rounded border-gray-500 resize-none group custom-scrollbar"
                                 :disabled="item.selfEvaluationStatus == 'Not applicable'"
-                                placeholder="Input actual situation here" @input="handleTextInput(index)">
-                                        </textarea>
+                                placeholder="Input actual situation here" @input="handleTextInput(index, item.id)">
+                            </textarea>
                             <button @click="openEditor(index)"
                                 class="absolute bottom-4 right-10 text-gray-500 hover:text-black group-focus-within:visible invisible tooltipForActions"
                                 data-tooltip="Open editor">
@@ -123,11 +121,11 @@
                                     :name="'actualSituationEditor' + index" :id="'actualSituationEditor' + index"
                                     class="w-full h-32 rounded border-gray-500 resize-none group"
                                     placeholder="Input actual situation here" @focus="handleTextEditorInput(index)"
-                                    @input="handleTextEditorInput(index)">
-                                            </textarea>
+                                    @input="handleTextEditorInput(index, item.id)">
+                            </textarea>
                             </text-editor>
                         </td>
-                        <td class="h-auto p-3 max-w-16 min-w-12 flex flex-col justify-center">
+                        <td class="h-auto p-3 w-16 flex flex-col justify-center">
                             <div class="flex flex-col"
                                 :class="{ 'hidden': item.selfEvaluationStatus == 'Not applicable' }"
                                 ref="evidenceFiles">
@@ -155,7 +153,8 @@
                             <div class="w-full h-full">
                                 <select ref="selfEvaluationStatus" v-model="item.selfEvaluationStatus"
                                     :id="'selfEvaluationStatus' + index" :name="'selfEvaluationStatus' + index"
-                                    @change="handleChangeStatus(index)" class="p-1 rounded w-36 border-gray-400">
+                                    @change="handleChangeStatus(index, item.id)"
+                                    class="p-1 rounded w-36 border-2 border-gray-500 select-none">
                                     <option value="Complied">Complied</option>
                                     <option value="Not complied">Not complied</option>
                                     <option value="Not applicable">Not applicable</option>
@@ -163,17 +162,17 @@
                             </div>
                         </td>
                         <td class="p-3">
-                            <div class="w-full text-right visible" ref="actionButtons"
+                            <div class="w-full text-right text-sm visible" ref="actionButtons"
                                 :class="{ 'invisible': item.selfEvaluationStatus == 'Not applicable' }">
                                 <button @click=" fileModal = true; fileItem = item.id; $refs.inputEvidenceFile.click()"
-                                    class="h-8 px-2 text-white bg-green-600 hover:bg-green-700 rounded tooltipForActions"
-                                    :class="{ 'grayscale text-gray-500': hasUpdate }" data-tooltip="Upload file"
+                                    class="rounded bg-white h-8 mr-1 px-2 text-gray-700 hover:text-black active:text-blue-500 border-2 border-gray-500 tooltipForActions"
+                                    :class="{ 'grayscale text-gray-400': hasUpdate }" data-tooltip="Upload file"
                                     :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate">
                                     <i class="fas fa-upload mr-2"></i>File
                                 </button>
                                 <button @click="linkModal = true; evidenceLink = null; linkItem = item.id"
-                                    class="ml-1 h-8 px-2 bg-green-600 text-white hover:bg-green-700 rounded tooltipForActions"
-                                    :class="{ 'grayscale text-gray-500': hasUpdate }" data-tooltip="Drop link"
+                                    class="rounded bg-white h-8 px-2 text-gray-700 hover:text-black active:text-blue-500 border-2 border-gray-500 tooltipForActions"
+                                    :class="{ 'grayscale text-gray-400': hasUpdate }" data-tooltip="Drop link"
                                     :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate">
                                     <i class="fas fa-upload mr-2"></i>Link
                                 </button>
@@ -185,36 +184,8 @@
         </template>
     </content-container>
 
-    <modal :showModal="uploadEvidenceFileModal && $page.url == uploadFileIndicator" title="Upload Evidence File"
-        @close="closeEvidenceUploadModal" @upload="upload" type="uploadEvidenceFile">
-        <div class="text-center pt-5">
-            <input ref="uploadEvidenceFile" hidden type="file" @change="handleFileChange" id="evidence">
-            <div v-if="evidenceFile" class="text-black text-left flex flex-col">
-                <div class="p-2 rounded bg-gray-200">
-                    <div>File name: {{ evidenceFile.name }}</div>
-                    <div>Size: {{ (evidenceFile.size / 1024).toFixed(2) }} KB</div>
-                    <div class="w-full text-right">
-                        <button
-                            class="inline-block mr-1 py-1 px-2 border border-gray-400 rounded hover:text-orange-500 tooltipForActions"
-                            data-tooltip="Change file" @click.prevent="$refs.uploadEvidenceFile.click()">
-                            <i class="fas fa-refresh"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <button v-if="!evidenceFile" @click.prevent="$refs.uploadEvidenceFile.click()"
-                class="hover:text-white border border-green-700 hover:bg-green-700 py-2 px-10 rounded"><i
-                    class="fas fa-cloud-upload mr-5 text-xl"></i>
-                Select file
-            </button>
-            <div class="mt-3 w-full text-left">
-                <form-error-message :message="$page.props.errors['evidence.file']" theme="dark" />
-            </div>
-        </div>
-    </modal>
-
-    <confirmation @close="closeReadyForVisitConfirmation"
-        v-show="readyForVisitModal && readyForVisitIndicator == $page.url" title="Ready For Visit">
+    <!-- Ready for visit confirmation -->
+    <confirmation @close="closeReadyForVisitConfirmation" v-show="readyForVisitModal" title="Ready For Visit">
 
         <template v-slot:message>
             Are you sure you want to submit this compliant tool? You won't be able to make changes after submitting.
@@ -231,7 +202,7 @@
 
     <!-- Select evidence file -->
     <div>
-        <input type="file" ref="inputEvidenceFile" id="inputEvidenceFile"
+        <input type="file" hidden ref="inputEvidenceFile" id="inputEvidenceFile"
             @change="evidenceFile = $event.target.files[0]">
     </div>
 
@@ -266,12 +237,13 @@
     </confirmation-modal>
 
     <!-- Notifications -->
-    <Notification :message="$page.props.flash.message" />
-    <Notification :message="$page.props.flash.updated" />
-    <Notification :message="$page.props.flash.deleted" />
+    <Notification :message="$page.props.flash.success" type="success" />
+    <Notification :message="$page.props.flash.updated" type="success" />
+    <Notification :message="$page.props.flash.deleted" type="success" />
     <Notification :message="$page.props.flash.uploaded" type="success" />
     <Notification :message="$page.props.errors.link" type="failed" />
-
+    <Notification v-show="saving" message="Saving..." type="processing" />
+    <Notification v-show="uploadingFile" message="Uploading file..." type="processing" />
 </template>
 
 <script setup>
@@ -320,58 +292,51 @@
     const evidenceFile = ref(null);
     const inputEvidenceFile = ref([]);
 
-    const uploadEvidenceFileModal = ref(false);
-
     const isEditorOpen = ref(false);
     const textEditorIndex = ref('');
     const texteditor = ref([]);
     const readyForVisitModal = ref(false);
 
-
-
     const actualSituationInput = ref([]);
     const selfEvaluationStatus = ref([]);
     const actionButtons = ref([]);
     const evidenceFiles = ref([]);
+
     const hasUpdate = ref(false);
-
-    const updateIndicator = ref(null);
-    const uploadFileIndicator = ref(null);
-    const submitLinkIndicator = ref(null);
-    const readyForVisitIndicator = ref(null);
+    const updatedRows = ref([]);
     const saveBtn = ref(null);
-
-    const toUpload = ref(null);
     const saving = ref(false);
-    const remountPage = ref(false);
 
     const refs = { actualSituationInput, selfEvaluationStatus, actionButtons, evidenceFiles, saveBtn, texteditor, inputEvidenceFile };
 
     // Functions
-    function handleTextInput(index) {
+    function handleTextInput(index, id) {
         let textarea = actualSituationInput.value[index];
         textarea.style.height = "128px";
         let newHeight = textarea.scrollHeight + "px";
         let maxHeight = 384;
         textarea.style.height = Math.min(maxHeight, Math.max(128, parseInt(newHeight))) + "px";
         hasUpdate.value = true;
+        getRowsWithUpdates(id);
     }
 
-    function handleTextEditorInput(index) {
+    function handleTextEditorInput(index, id) {
         let textEditor = refs.texteditor.value[index];
         textEditor.style.height = "250px";
         let newHeight = textEditor.scrollHeight + "px";
         let maxHeight = 400;
         textEditor.style.height = Math.min(maxHeight, Math.max(128, parseInt(newHeight))) + "px";
         hasUpdate.value = true;
+        getRowsWithUpdates(id);
     }
 
-    function handleChangeStatus(index) {
+    function handleChangeStatus(index, id) {
         let selfEvaluationStatus = refs.selfEvaluationStatus.value[index];
         let actualSituationInput = refs.actualSituationInput.value[index];
         let actionButtons = refs.actionButtons.value[index];
         let evidenceFiles = refs.evidenceFiles.value[index];
         hasUpdate.value = true;
+        getRowsWithUpdates(id);
 
         if (selfEvaluationStatus.value == 'Not applicable') {
             actualSituationInput.disabled = true;
@@ -393,16 +358,11 @@
         }
     };
 
-
-    const handleFileChange = (event) => {
-        evidenceUpload.file = event.target.files[0];
-        evidenceFile.value = event.target.files[0];
-    };
-
-    const removeFile = () => {
-        evidenceUpload.file = null;
-        evidenceFile.value = null;
-    };
+    function getRowsWithUpdates(id) {
+        if (!updatedRows.value.includes(id)) {
+            updatedRows.value.push(id);
+        }
+    }
 
 
     function openEditor(index) {
@@ -410,41 +370,12 @@
         textEditorIndex.value = index;
     }
 
-    function closeEvidenceUploadModal() {
-        removeFile();
-        uploadEvidenceFileModal.value = false;
-    }
-
-    function closeEvidenceLinkModal() {
-        removeLink();
-        submitLinkIndicator.value = null;
-        submitEvidenceLinkModal.value = false;
-    }
-
-    function closeReadyForVisitConfirmation() {
-        readyForVisitModal.value = false;
-    }
-
-    function openEvidenceUploadModal(item) {
-        uploadEvidenceFileModal.value = true;
-        evidenceUpload.itemId = item.id;
-    };
-
-    function openEvidenceLinkModal(item) {
-        evidenceLink.itemId = item.id;
-        submitEvidenceLinkModal.value = true;
-    };
-
     function closeEditor() {
         isEditorOpen.value = false;
     }
 
-    function confirmDelete() {
-        deleteEvidence.value = true;
-    }
-
-    function closeDeleteConfirmation() {
-        deleteEvidence.value = false;
+    function closeReadyForVisitConfirmation() {
+        readyForVisitModal.value = false;
     }
 
     // CTRL + S function
@@ -452,7 +383,6 @@
         if (event.ctrlKey || event.metaKey) {
             if (event.key === 's' || event.key === 'S') {
                 event.preventDefault();
-                console.log('CLTR+S');
                 refs.saveBtn.value.click();
             }
         }
@@ -464,7 +394,11 @@
     });
 
     function update() {
-        router.post('/hei/evaluation/update', { 'id': props.evaluation.id, 'items': props.items }, {
+        router.post('/hei/evaluation/update', {
+            id: props.evaluation.id,
+            items: props.items,
+            rows: updatedRows.value,
+        }, {
             onStart: () => {
                 saving.value = true;
             },
@@ -472,11 +406,8 @@
                 saving.value = false;
             },
             preserveState: false,
+            preserveScroll: true,
         });
-    }
-
-    function upload() {
-        router.post('/hei/evaluation/upload', { 'id': props.evaluation.id, 'itemId': evidenceUpload.itemId, 'file': evidenceUpload.file });
     }
 
     function submitLink() {
@@ -491,6 +422,7 @@
                 uploadingLink.value = false;
             },
             preserveState: false,
+            preserveScroll: true,
         });
     }
 
@@ -507,6 +439,7 @@
                 deleting.value = false;
             },
             preserveState: false,
+            preserveScroll: true,
         });
     }
 
@@ -514,12 +447,6 @@
         router.post('/hei/evaluation/submit', props.evaluation);
     }
 
-    // watch(toUpload, value => {
-    //     Inertia.post('/hei/evaluation/upload', { id: props.evidence.id, file: value }, {
-    //         preserveScroll: true,
-    //         preserveState: true,
-    //     });
-    // });
 
 
     watch(evidenceFile, value => {
@@ -528,7 +455,14 @@
             itemId: fileItem.value,
             file: evidenceFile.value,
         }, {
+            onStart: () => {
+                uploadingFile.value = true;
+            },
+            onFinish: () => {
+                uploadingFile.value = false;
+            },
             preserveState: false,
+            preserveScroll: true,
         })
     });
 </script>

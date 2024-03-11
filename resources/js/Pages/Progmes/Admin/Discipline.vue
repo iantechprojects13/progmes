@@ -6,7 +6,8 @@
         hasResultCount="true" hasFilters="true" :data_list="discipline_list">
         <template v-slot:top-button>
             <Link :href="route('admin.discipline.create')">
-            <button class="bg-blue-500 hover:bg-blue-600 h-10 px-2 rounded text-white mr-1">Add Discipline</button>
+            <button class="select-none bg-blue-500 hover:bg-blue-600 h-10 px-2 rounded text-white mr-1">Add
+                Discipline</button>
             </Link>
         </template>
         <template v-slot:result-count>
@@ -28,12 +29,12 @@
             </div>
         </template>
         <template v-slot:search>
-            <div class="w-full flex justify-end">
+            <div class="w-full flex justify-end relative">
                 <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
                     placeholder="Search a discipline"
-                    class="rounded border-2 w-full border-gray-500 h-10 bg-white text-base placeholder-gray-400" />
+                    class="rounded border-2 w-full border-gray-400 h-10 bg-white text-base placeholder-gray-400" />
                 <button @click="submit"
-                    class="hover:bg-gray-300 border-2 active:bg-blue-600 active:text-white h-10 w-12 border-gray-500 relative right-0.5 bg-white rounded-r">
+                    class="hover:text-black text-gray-700 absolute right-0 active:text-blue-500 h-10 w-10 rounded-full">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
@@ -42,7 +43,7 @@
             <div class="mr-1">
                 <Link href="/admin/program/discipline">
                 <button
-                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
+                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-700 hover:text-black border-gray-500">
                     <i class="fas fa-refresh"></i>
                 </button>
                 </Link>
@@ -58,7 +59,7 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="discipline_list.data.length == 0">
-                        <td class="text-center py-10 italic" colspan="2">
+                        <td class="text-center py-10" colspan="2">
                             No discipline found
                         </td>
                     </tr>
@@ -69,8 +70,13 @@
                         </td>
                         <td v-show="canEdit" class="p-3 text-right">
                             <button @click="deleteModal = true; selected = discipline;"
-                                class="h-8 px-2 rounded bg-red-500 hover:bg-red-600 text-white">Delete</button>
-                            <!-- <button class="h-8 px-2 rounded bg-da hover:bg-red-600 text-white ml-1">Edit</button> -->
+                                class="select-none h-10 px-2 rounded bg-white text-gray-700 hover:text-black active:text-red-500 border-2 border-gray-500">
+                                <i class="fas fa-trash mr-0.5"></i>Delete
+                            </button>
+                            <button @click="edit(discipline.id)"
+                                class="ml-1 select-none h-10 px-2 rounded bg-white text-gray-700 hover:text-black active:text-blue-500 border-2 border-gray-500">
+                                <i class="fas fa-edit mr-0.5"></i>Edit
+                            </button>
                         </td>
                     </tr>
 
@@ -90,10 +96,11 @@
         </template>
         <template v-slot:buttons>
             <button @click="deleteDiscipline" :disabled="deleteProcessing"
-                class="h-10 w-16 rounded bg-red-500 hover:bg-red-600 text-white">Delete</button>
+                class="select-none h-10 w-16 rounded bg-red-500 hover:bg-red-600 text-white">Delete</button>
         </template>
     </DeleteModal>
-    <Notification :message="$page.props.flash.success" />
+    <Notification :message="$page.props.flash.success" type="success" />
+    <Notification :message="$page.props.flash.failed" type="failed" />
 </template>
 
 <script setup>
@@ -117,6 +124,10 @@
                 preserveScroll: true,
             });
         }
+    }
+
+    function edit(id) {
+        router.get('/admin/program/discipline/' + id + '/edit');
     }
 
     function deleteDiscipline() {

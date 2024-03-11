@@ -21,9 +21,8 @@ use Kreait\Firebase\Factory;
 
 class HEIFormController extends Controller
 {
-    public function store($id) {
-
-        $tool = EvaluationFormModel::find($id);
+    public function store(Request $request) {
+        $tool = EvaluationFormModel::find($request->id);
         $cmo = CMOModel::where('id', $tool->cmoId)->with('criteria')->first();
 
         foreach($cmo->criteria as $item) {
@@ -41,7 +40,22 @@ class HEIFormController extends Controller
 
         $tool->save();
         
-        return redirect('/hei/evaluation/'. $id . '/edit');
+        return redirect('/hei/evaluation/'. $request->id . '/edit');
+    }
+
+    public function view($tool) {
+        $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.program', 'institution_program.institution')->first();
+        
+        if (!$evaluationTool) {
+            return redirect('/hei/evaluation')->with('failed', 'Evaluation tool not found.');
+        }
+
+        $evaluationItems = EvaluationItemModel::where('evaluationFormId', $evaluationTool->id)->with('criteria', 'evidence')->get();
+
+        return Inertia::render('Progmes/Evaluation/HEI-Evaluation-View', [
+            'evaluation_tool' => $evaluationTool,
+            'evaluation_items' => $evaluationItems,
+        ]);
     }
 
     public function edit($evaluation) {
@@ -55,7 +69,7 @@ class HEIFormController extends Controller
         
         $items = EvaluationItemModel::where('evaluationFormId', $evaluation)->with('criteria', 'evidence')->get();
         $canSubmit = true;
-
+        
         foreach ($items as $item) {
             if ($item->selfEvaluationStatus == 'Not complied') {
                 $canSubmit = false;
@@ -91,20 +105,22 @@ class HEIFormController extends Controller
     }
 
     public function update(Request $request) {
-        
         foreach ($request->items as $item) {
-            $evaluationItem = EvaluationItemModel::find($item['id']);
 
-            if ($evaluationItem) {
-                $evaluationItem->update([
-                    'actualSituation' => $item['actualSituation'],
-                    'selfEvaluationStatus' => $item['selfEvaluationStatus'],
-                ]);
+            if (in_array($item['id'], $request->rows)) {
+                
+                $evaluationItem = EvaluationItemModel::find($item['id']);
+
+                if ($evaluationItem) {
+                    $evaluationItem->update([
+                        'actualSituation' => $item['actualSituation'],
+                        'selfEvaluationStatus' => $item['selfEvaluationStatus'],
+                    ]);
+                }
             }
         }
 
         return redirect()->back()->with('updated', 'All changes saved.');
-        
     }
 
     public function upload(Request $request) {
@@ -141,26 +157,6 @@ class HEIFormController extends Controller
                 'url' => $url,
             ]);
         }
-
-        // $path = 'evidences/'.$effectivity.'/'.$user->name.'/'.$evidenceFile->getClientOriginalName();
-        // $storage = Firebase::storage();
-
-        // $fileUrl = $storage->getBucket()->upload(
-        //     $evidenceFile,
-        //     [
-        //         'name' => $path,
-        //         'metadata' => [
-        //             'contentType' => $evidenceFile->getMimeType(),
-        //         ],
-        //     ]
-        // )->signedUrl(now()->addMinutes(60));
-
-        // EvidenceModel::create([
-        //     'itemId' => $itemId,
-        //     'type' => "file",
-        //     'text' => $filename,
-        //     'url' => $fileUrl,
-        // ]);
 
         return redirect()->back()->with('uploaded', 'Evidence successfully uploaded.');
     }

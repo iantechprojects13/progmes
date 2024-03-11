@@ -18,7 +18,7 @@
                 <slot name="message"></slot>
             </div>
             <div class="py-4 px-5 border-t-2 border-gray-100 text-right">
-                <button class=" text-gray-500 hover:text-red-500 h-10 w-16 rounded border border-gray-300 mr-1"
+                <button class="select-none text-gray-500 hover:text-black h-10 w-16 rounded border border-gray-300 mr-1"
                     @click="closeModal">
                     Cancel
                 </button>

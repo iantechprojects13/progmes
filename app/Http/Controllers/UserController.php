@@ -109,7 +109,8 @@ class UserController extends Controller
             'isActive' => null,
         ])
         ->whereNot('role', 'Super Admin')
-        ->with('userRole');
+        ->with('userRole', 'userRole.discipline', 'userRole.program', 'userRole.institution');
+        
         $count = $userlist->count();
         
         $userlist = $userlist->paginate(10)

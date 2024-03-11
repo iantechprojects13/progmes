@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Models\User;
 use App\Models\DisciplineModel;
 use App\Models\InstitutionModel;
+use App\Models\InstitutionProgramModel;
 use App\Models\RoleModel;
 use App\Models\ProgramModel;
 use Illuminate\Support\Facades\Validator;
@@ -32,12 +33,40 @@ class RegistrationController extends Controller
     }
 
     
-    public function accountHEI () {
+    public function accountHEI (Request $request) {
+        
+        $discipline_list = [];
+        $program_list = [];
+
+        if($request->institution) {
+            $program_list = InstitutionProgramModel::where('institutionId', $request->institution)->with('program', 'program.discipline')->get();
+
+            foreach ($program_list as $program) {
+                $disciplineId = $program->program->discipline->id;
+                
+                if (!in_array($disciplineId, array_column($discipline_list, 'id'))) {
+                    $discipline = DisciplineModel::where('id', $disciplineId)->first();
+
+                    if ($discipline) {
+                        array_push($discipline_list, $discipline);
+                    }
+                }
+            }
+        }
+        
         return Inertia::render('Progmes/Auth/Register-HEI', [
             'institution_list' => InstitutionModel::select('id', 'name')->get(),
-            'discipline_list' => DisciplineModel::select('id', 'discipline')->orderBy('discipline', 'asc')->get(),
-            'program_list' => ProgramModel::select('id','disciplineId', 'program', 'major')->orderBy('program', 'asc')->get(),
+            'discipline_list' => $discipline_list,
+            'program_list' => $program_list,
+            'institution' => $request->institution ? $request->institution : null,
         ]);
+
+        // return Inertia::render('Progmes/Auth/Register-HEI', [
+        //     'institution_list' => InstitutionModel::select('id', 'name')->get(),
+        //     'discipline_list' => DisciplineModel::select('id', 'discipline')->orderBy('discipline', 'asc')->get(),
+        //     'program_list' => ProgramModel::select('id','disciplineId', 'program', 'major')->orderBy('program', 'asc')->get(),
+        //     'institution' => $request->institution ? $request->institution : null,
+        // ]);
     }
 
     // register ched account

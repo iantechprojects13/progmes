@@ -125,22 +125,19 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="py-2">Name/Email</th>
-                    <th class="py-2">Type</th>
-                    <th class="py-2">Role</th>
-                    <th class="py-2">Discipline/Program</th>
+                    <th class="p-3">Name/Email</th>
+                    <th class="p-3">Type</th>
+                    <th class="p-3">Role</th>
+                    <th class="p-3">Discipline/Program</th>
+                    <th class="p-3">HEI Name</th>
                 </template>
                 <template v-slot:table-body>
                     <tr v-for="(user, index) in user_list.data" :key="user.id"
                         :class="{ 'bg-slate-200': index % 2 == 0 }">
-                        <td class="py-2">
+                        <td class="p-3">
                             <div class="flex flex-row">
-                                <div class="mx-3">
-                                    <img :src="
-                                                user.avatar
-                                                    ? user.avatar
-                                                    : '/assets/user.png'
-                                            " width="40" alt="user" class="rounded-full" />
+                                <div class="mr-3 w-10">
+                                    <img :src="user.avatar ? user.avatar : '/assets/user.png'" class="rounded-full" />
                                 </div>
                                 <div class="flex flex-col">
                                     <div class="font-bold">
@@ -152,16 +149,27 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="py-2">
+                        <td class="p-3">
                             {{ user.type }}
                         </td>
-                        <td class="py-2">
+                        <td class="p-3">
                             {{ user.role }}
                         </td>
-                        <td class="py-2">
-                            -
+                        <td class="p-3">
+                            <div v-for="(role, index) in user.user_role" :key="role.id">
+                                {{ role.discipline?.discipline }}
+                                {{ role.program?.program }}
+                            </div>
                         </td>
-                        <td class="py-2 text-right px-3" v-if="canEdit">
+                        <td class="p-3">
+                            <!-- <div v-if="user.user_role[0].institution == null">
+                                -
+                            </div> -->
+                            <div v-for="(role, index) in user.user_role" :key="role.id">
+                                {{ role.institution?.name }}
+                            </div>
+                        </td>
+                        <td class="p-3 text-right px-3" v-if="canEdit">
                             <button @click="toggleModal(user, 'reject', 'Reject User')"
                                 class="h-8 px-2 text-white bg-red-500 hover:bg-red-600 rounded mr-1">
                                 Reject
@@ -181,71 +189,6 @@
             </content-table>
         </template>
     </content-container>
-    <!-- <content-container :hasAction="true" placeholder="Search User" :data_list="user_list">
-        <template v-slot:channel>
-            <dropdown-option position="left">
-                <template v-slot:button>
-                    <button class="px-3 rounded h-10 bg-green-700 text-white">Request<i
-                            class="fas fa-caret-down ml-2"></i></button>
-                </template>
-
-                <template v-slot:options>
-                    <div class="w-48">
-                        <Link :href="route('admin.users.list')"
-                            class="py-2 w-full px-2 text-left hover:bg-gray-200 rounded flex flex-row pl-4 text-gray-700">
-                        <div class="w-6">
-                        </div>
-                        <div>Active Users</div>
-                        </Link>
-                        <Link :href="route('admin.users.request')"
-                            class="py-2 w-full px-2 text-left hover:bg-gray-200 rounded flex flex-row pl-4 text-blue-500">
-                        <div class="w-6">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <div>Request</div>
-                        </Link>
-                    </div>
-                </template>
-            </dropdown-option>
-        </template>
-
-        <template v-slot:content>
-            <content-table>
-                <template v-slot:table-head>
-                    <th class="scope-col p-3">Name/Email</th>
-                    <th class="scope-col p-3">Account Type</th>
-                    <th class="scope-col p-3">Role</th>
-                    <th class="scope-col p-3 text-right"><i class="fas fa-ellipsis-v"></i></th>
-                </template>
-
-                <template v-slot:table-body>
-                    <tr v-for="(user, index) in user_list.data" :key="user.id"
-                        class="border-b border-gray-300 hover:bg-stone-100" :class="{ 'bg-gray-200': index % 2 == 0 }">
-                        <th scope="row" class="p-2 whitespace-nowrap flex items-center pr-10">
-                            <img v-if="user.avatar" :src="user.avatar" width="35" class="rounded-full mr-3">
-                            <img v-else src="/assets/user.png" width="35" class="rounded-full mr-3">
-                            <div class="text-gray-600 items-center">
-                                <span class="text-left block">{{ user.name }}</span>
-                                <span class="font-normal">{{ user.email }}</span>
-                            </div>
-                        </th>
-                        <td class="p-2">{{ user.type }}</td>
-                        <td class="p-2">{{ user.role }}</td>
-                        <td class="p-2 text-right">
-                            <button @click="toggleModal(user, 'reject', 'Reject User')"
-                                class="hover:text-white shadow shadow-gray-500 hover:bg-red-600 rounded border text-red-600 border-gray-500 px-2 h-8">
-                                Reject
-                            </button>
-                            <button @click="toggleModal(user, 'accept', 'Accept User')"
-                                class="hover:text-white shadow shadow-gray-500 hover:bg-blue-600 rounded border text-blue-600 border-gray-500 px-2 h-8 ml-1">
-                                Accept
-                            </button>
-                        </td>
-                    </tr>
-                </template>
-            </content-table>
-        </template>
-    </content-container> -->
     <Notification :message="$page.props.flash.success" />
     <div v-if="modal">
         <Confirmation @close="closeModal" :title="title" :modaltype="modaltype" :selected="selectedUser" />

@@ -44,6 +44,18 @@ class DisciplineController extends Controller
         return Inertia::render('Progmes/Admin/Discipline-Create');
     }
 
+    public function edit($id) {
+        $disciplineModel = DisciplineModel::find($id);
+
+        if($disciplineModel) {
+            return Inertia::render('Progmes/Admin/Discipline-Edit', [
+                'discipline' => $disciplineModel,
+            ]);
+        }
+
+        return redirect('/admin/program/discipline/')->with('failed', 'Discipline not found.');
+    }
+
     public function store(Request $request) {
         $validated = $request->validate([
             'discipline' => 'required',
@@ -58,6 +70,26 @@ class DisciplineController extends Controller
         return redirect()->route('admin.discipline.list')->with('success', 'Discipline successfully added.');
     }
 
+    public function update(Request $request) {
+        $validated = $request->validate([
+            'discipline' => 'required',
+        ], [
+            'discipline.required' => 'The discipline field is required.'
+        ]);
+
+        $discipline = DisciplineModel::find($request->id);
+
+        if($discipline) {
+            $discipline->update([
+                'discipline' => $validated['discipline'],
+            ]);
+            $discipline->save();
+
+            return redirect('/admin/program/discipline/')->with('success', 'Discipline successfully updated.');
+        }
+
+    }
+
 
     public function delete(Request $request) {
 
@@ -69,8 +101,6 @@ class DisciplineController extends Controller
         }
 
         return redirect()->back()->with('failed', 'Failed to delete program.');
-
-        
     }
 
 }
