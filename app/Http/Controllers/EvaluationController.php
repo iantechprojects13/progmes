@@ -37,26 +37,52 @@ class EvaluationController extends Controller
         ]);
     }
 
-    public function EvaluationForCHED() {
+    public function EvaluationForCHED(Request $request) {
         $user = Auth::user();
         $disciplines = RoleModel::where('userId', Auth::user()->id)->with('discipline')->get();
         $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
 
-        $tools = EvaluationFormModel::whereIn('disciplineId', $disciplineIds)->where('status', 'submitted')
-            ->with('institution_program.program', 'institution_program.institution')
-            ->get();
+        $complianceTools = EvaluationFormModel::query()
+        ->when($request->query('search'), function ($query) use ($request) {
+            $query->whereHas('institution_program.program', function ($searchQuery) use ($request) {
+                $searchQuery->where('program', 'like', '%' . $request->query('search') . '%')
+               ->where('status', 'Submitted')->orWhere('status', 'In progress');
+            })
+            ->orWhereHas('institution_program.institution', function ($searchQuery) use ($request) {
+                $searchQuery->where('name', 'like', '%' . $request->query('search') . '%')
+               ->where('status', 'Submitted')->orWhere('status', 'In progress');
+            });
+        })
+        ->whereIn('disciplineId', $disciplineIds)
+        ->where('status', 'Submitted')
+        ->orWhere('status', 'In progress')
+        ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_applicable');
+
+        $count = $complianceTools->count();
+
+        $complianceTools = $complianceTools
+        ->paginate(10)
+        ->through(fn($item) => [
+            'id' => $item->id,
+            'submissionDate' => $item->submissionDate,
+            'status' => $item->status,
+            'institution' => $item->institution_program->institution->name,
+            'program' => $item->institution_program->program->program,
+            'itemComplied' => $item->complied->count(),
+            'applicableItems' => $item->item->count() - $item->not_applicable->count(),
+        ])
+        ->withQueryString();
 
         if ($user->role == 'Education Supervisor') {
             return Inertia::render('Progmes/Evaluation/CHED-Evaluation-ES-Select', [
-                'data' => "Hello World",
                 'role' => $user->role,
                 'disciplines' => $disciplines,
-                'tools' => $tools,
+                'complianceTools' => $complianceTools,
+                'count' => $count,
+                'filters' => $request->only(['search']),
             ]);
         }
     }
-
-
 
 
     public function evaluationForProgramHead() {

@@ -8,15 +8,15 @@
 </template>
 
 <script setup>
-defineProps([
-    'data',
-    'role',
-]);
+    defineProps([
+        'data',
+        'role',
+    ]);
 </script>
 
 <script>
-import Layout from '../Shared/Layout.vue'
-export default {
-    layout: Layout,
-}
+    import Layout from '../Shared/Layout.vue'
+    export default {
+        layout: Layout,
+    }
 </script>

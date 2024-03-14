@@ -2,7 +2,7 @@
 
     <Head title="Evaluation Forms" />
     <AdminPanel />
-    <content-container pageTitle="Compliant Tool" hasTopButton="true" hasSearch="true" hasFilters="true"
+    <content-container pageTitle="Compliance Tool" hasTopButton="true" hasSearch="true" hasFilters="true"
         hasResultCount="true" :data_list="institutionProgramList">
         <template v-slot:top-button>
             <div class="flex md:flex-row flex-col">
@@ -75,26 +75,30 @@
                         </td>
                         <td class="p-3">
                             <div v-if="program.evaluation_form.length == 0"
-                                class="bg-gray-600 text-white w-fit px-1 rounded text-xs">
+                                class="bg-gray-600 text-white w-fit px-1 rounded">
                                 Pending
                             </div>
                             <div v-if="
                                     program.evaluation_form[0]?.status ==
                                     'Deployed'
-                                " class="bg-green-600 text-white w-fit px-1 rounded text-xs">
+                                " class="bg-green-600 text-white w-fit px-1 rounded">
                                 Deployed
                             </div>
                             <div v-if="
                                     program.evaluation_form[0]?.status ==
                                     'In progress'
-                                " class="bg-blue-500 text-white w-fit px-1 rounded text-xs">
+                                " class="bg-blue-500 text-white w-fit px-1 rounded">
                                 In Progress
+                            </div>
+                            <div v-if="program.evaluation_form[0]?.status == 'Submitted'"
+                                class="bg-emerald-500 text-white w-fit px-1 rounded">
+                                Submitted
                             </div>
                         </td>
                         <td v-show="canEdit" class="p-3 text-right">
                             <button v-show="program.evaluation_form[0]?.status == 'In progress'"
-                                class="bg-red-500 hover:bg-red-600 text-white rounded h-8 px-3">
-                                <i class="fas fa-lock mr-2"></i>Lock
+                                class="border-2 border-gray-500 hover:text-blue-500 bg-white rounded h-10 px-2">
+                                <i class="fas fa-lock mr-1"></i>Lock
                             </button>
                             <!-- <button v-show="program.evaluation_form[0]?.status == 'In progress'">
                                 <i class="fas fa-lock"></i>
@@ -107,7 +111,7 @@
     </content-container>
 
     <modal :showModal="deployToolModal" @close="closeModal" @submit="deploy" type="deploy"
-        title="Deploy Compliant Tool">
+        title="Deploy Compliance Tool">
         <div class="p-3">
             <div>
                 <label class="font-bold text-gray-700" for="program">Program</label>

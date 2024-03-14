@@ -7,7 +7,7 @@
             <button class="h-10 px-2 bg-green-600 hover:bg-green-700 text-white rounded">Change role</button>
         </template>
         <template v-slot:main-content>
-            <div class="m-5">
+            <div class="mt-5">
                 <table class="border border-gray-400">
                     <tr>
                         <th scope="row"

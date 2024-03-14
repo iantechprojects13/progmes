@@ -20,12 +20,12 @@
             </div>
         </template>
         <template v-slot:search>
-            <div class="w-full flex justify-end">
+            <div class="w-full flex justify-end relative">
                 <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
                     placeholder="Search a user"
-                    class="rounded border-2 w-full border-gray-500 h-10 bg-white text-base placeholder-gray-400" />
+                    class="w-full rounded-full bg-slate-100 h-10 border-none indent-3 text-base placeholder-gray-400 pr-11" />
                 <button @click="submit"
-                    class="hover:bg-gray-300 border-2 active:bg-blue-600 active:text-white h-10 w-12 border-gray-500 relative right-0.5 bg-white rounded-r">
+                    class="hover:bg-gray-300 active:text-blue-500 h-10 w-10 rounded-full absolute right-1">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
@@ -137,7 +137,7 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="user_list.data.length==0">
-                        <td class="py-10 text-center italic" colspan="6">
+                        <td class="py-10 text-center" colspan="6">
                             No users found
                         </td>
                     </tr>
@@ -186,7 +186,7 @@
                                         'deactivateUser',
                                         'Deactivate User'
                                     )
-                                " class="h-10 px-2 text-white bg-red-500 hover:bg-red-600 rounded mr-1">
+                                " class="h-8 px-2 text-white bg-red-500 hover:bg-red-600 rounded mr-1">
                                 Deactivate
                             </button>
                         </td>

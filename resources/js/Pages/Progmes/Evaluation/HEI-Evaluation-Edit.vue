@@ -2,7 +2,7 @@
 
     <Head title="Evaluation Form" />
     <page-title title="Program Self-Evaluation" />
-    <div class="md:mx-8 mx-3 mt-8 flex flex-col lg:flex-row justify-between rounded bg-white p-8">
+    <div class="md:mx-8 mx-3 mt-8 flex flex-col lg:flex-row justify-between rounded bg-white p-8  align-top">
         <div class="flex flex-col w-auto rounded">
             <div class="w-auto flex flex-col md:flex-row">
                 <div class="mr-2 font-bold">
@@ -33,6 +33,12 @@
                 </div>
             </div>
         </div>
+        <div>
+            <button @click="readyForVisitModal = true" v-show="canSubmit && !hasUpdate"
+                class="px-3 w-fit text-white bg-blue-500 hover:bg-blue-600 h-10 rounded mr-1">
+                Ready for visit
+            </button>
+        </div>
     </div>
     <content-container hasTopButton="true" hasBackButton="true">
         <template v-slot:back-button>
@@ -44,16 +50,9 @@
         </template>
         <template v-slot:top-button>
             <div class="flex justify-between">
-                <button @click="readyForVisitModal = true" v-show="canSubmit"
-                    class="px-3 w-fit text-white bg-green-700 hover:bg-green-800 h-10 rounded mr-1">
-                    Ready for visit
-                </button>
                 <div class="text-gray-500 h-10 lg:ml-1 flex items-center mr-5">
-                    <!-- <div v-if="saving">
-                        <i class="fas fa-spinner animate-spin mr-2"></i>Saving
-                    </div> -->
                     <div v-if="hasUpdate" class="text-red-500">
-                        *Changes unsaved
+                        *Changes unsaved.
                     </div>
                     <div v-else-if="$page.props.flash.updated">
                         <i class="fas fa-check-circle text-green-500 mr-2"></i>
@@ -63,7 +62,8 @@
                 </div>
                 <div>
                     <button @click="update" ref="saveBtn"
-                        class="px-3 w-fit h-10 rounded text-gray-200 border bg-blue-500 border-blue-500 hover:bg-blue-600 hover:text-white"
+                        class="select-none cursor-pointer px-2 w-fit h-10 rounded text-white"
+                        :class="[{'bg-gray-500' : !hasUpdate}, {'bg-green-600 hover:bg-green-700': hasUpdate}]"
                         :disabled="!hasUpdate">Save Changes
                     </button>
                 </div>
@@ -106,7 +106,7 @@
                         <td class="h-32 max-w-lg p-3 relative group">
                             <textarea ref="actualSituationInput" v-model="item.actualSituation"
                                 :name="'actualSituation' + index" :id="'actualSituation' + index"
-                                class="w-full min-w-16 h-32 rounded border-gray-500 resize-none group custom-scrollbar"
+                                class="w-full min-w-16 h-32 rounded border-2 border-gray-500 resize-none group custom-scrollbar"
                                 :disabled="item.selfEvaluationStatus == 'Not applicable'"
                                 placeholder="Input actual situation here" @input="handleTextInput(index, item.id)">
                             </textarea>
@@ -119,7 +119,7 @@
                                 @close="closeEditor">
                                 <textarea ref="texteditor" v-model="item.actualSituation"
                                     :name="'actualSituationEditor' + index" :id="'actualSituationEditor' + index"
-                                    class="w-full h-32 rounded border-gray-500 resize-none group"
+                                    class="w-full h-32 rounded border-2 border-gray-500 resize-none group"
                                     placeholder="Input actual situation here" @focus="handleTextEditorInput(index)"
                                     @input="handleTextEditorInput(index, item.id)">
                             </textarea>

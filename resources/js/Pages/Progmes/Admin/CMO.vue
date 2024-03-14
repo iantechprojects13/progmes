@@ -76,7 +76,7 @@
                         <td class="p-2 text-right">
                             <button @click="
                                     toggleConfirmationModal(
-                                        cmo.id,
+                                        cmo,
                                         'deleteCMO',
                                         'Delete Published CMO'
                                     )
@@ -96,7 +96,7 @@
                             <button v-else class="h-8 px-2 w-24 rounded bg-green-500 hover:bg-blue-600 text-white"
                                 @click="
                                     toggleConfirmationModal(
-                                        cmo.id,
+                                        cmo,
                                         'deactivate',
                                         'Deactivate CMO'
                                     )
@@ -117,13 +117,9 @@
     <div v-if="confirmationModal">
         <Confirmation @close="closeModal" :title="title" :modaltype="modaltype" :selected="selectedCMO" />
     </div>
-    <div v-show="$page.props.flash.success">
-        <Notification :message="$page.props.flash.success" />
-    </div>
-    <div v-show="$page.props.flash.failed">
-        <Notification :message="$page.props.flash.failed" />
-    </div>
-    <Notification :message="$page.props.errors.file" />
+    <Notification :message="$page.props.flash.success" type="success" />
+    <Notification :message="$page.props.flash.failed" type="failed" />
+    <Notification :message="$page.props.errors.file" type="failed" />
 </template>
 
 <script setup>
@@ -203,9 +199,9 @@
                 this.uploadModal = !this.uploadModal;
             },
 
-            toggleConfirmationModal(id, type, title) {
+            toggleConfirmationModal(cmo, type, title) {
                 this.confirmationModal = !this.confirmationModal;
-                this.selectedCMO = id;
+                this.selectedCMO = cmo;
                 this.modaltype = type;
                 this.title = title;
             },

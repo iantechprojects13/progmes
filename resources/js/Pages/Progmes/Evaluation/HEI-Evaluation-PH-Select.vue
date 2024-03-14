@@ -36,7 +36,7 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="program.evaluation_form.length == 0">
-                        <td colspan="3" class="text-center py-10 italic">No evaluation tool found</td>
+                        <td colspan="3" class="text-center py-10">No evaluation tool found</td>
                     </tr>
                     <tr v-else v-for="(item, index) in program.evaluation_form" :key="item.id"
                         class="hover:bg-gray-100 border-b border-gray-300" :class="{'bg-slate-200': index % 2 == 0}">

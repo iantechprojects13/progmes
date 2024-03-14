@@ -88,13 +88,9 @@
     <div v-if="confirmationModal">
         <Confirmation @close="closeModal" :title="title" :modaltype="modaltype" :selected="selectedCMO" />
     </div>
-    <div v-show="$page.props.flash.success">
-        <Notification :message="$page.props.flash.success" />
-    </div>
-    <div v-show="$page.props.flash.failed">
-        <Notification :message="$page.props.flash.failed" />
-    </div>
-    <Notification :message="$page.props.errors.file" />
+    <Notification :message="$page.props.flash.success" type="success" />
+    <Notification :message="$page.props.flash.failed" type="failed" />
+    <Notification :message="$page.props.errors.file" type="failed" />
 </template>
 
 <script setup>

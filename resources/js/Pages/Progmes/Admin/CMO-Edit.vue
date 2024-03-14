@@ -52,10 +52,8 @@
                             <div class="w-full flex flex-col mt-2">
                                 <label for="discipline" class="font-bold text-gray-600">Discipline</label>
                                 <select id="discipline" v-model="form.discipline"
-                                    class="py-1 px-3 h-10 text-sm border border-gray-400 rounded m-1" :class="{
-                                        'border-red-500 bg-red-50':
-                                            this.$page.props.errors.discipline,
-                                    }" @change="form.program = null">
+                                    class="py-1 px-3 h-10 text-sm border border-gray-400 rounded m-1"
+                                    @change="form.program = null">
                                     <option :value="null">
                                         Select discipline
                                     </option>
@@ -65,16 +63,14 @@
                                     </option>
                                 </select>
                                 <FormErrorMessage :message="
-                                        this.$page.props.errors.discipline
+                                        $page.props.errors.discipline
                                     " theme="dark" />
                             </div>
                             <div class="w-full flex flex-col mt-2">
                                 <label for="program" class="font-bold text-gray-600">Program</label>
                                 <select id="program" v-model="form.program"
-                                    class="py-1 px-3 h-10 text-sm border border-gray-400 rounded m-1" :class="{
-                                        'border-red-500 bg-red-50':
-                                            this.$page.props.errors.program,
-                                    }" :disabled="!form.discipline">
+                                    class="py-1 px-3 h-10 text-sm border border-gray-400 rounded m-1"
+                                    :disabled="!form.discipline">
                                     <option :value="null">
                                         Select program
                                     </option>
@@ -86,36 +82,27 @@
                                         {{ program.program }}
                                     </option>
                                 </select>
-                                <FormErrorMessage :message="this.$page.props.errors.program" theme="dark" />
+                                <FormErrorMessage :message="$page.props.errors.program" theme="dark" />
                             </div>
                         </div>
                         <div class="flex flex-col lg:flex-row">
                             <div class="w-full flex flex-col mt-2">
                                 <label for="number" class="font-bold text-gray-600">CMO No.</label>
                                 <input id="number" type="number" placeholder="CMO No." v-model="form.number"
-                                    class="h-10 m-1 rounded text-sm border border-gray-400" :class="{
-                                        'border-red-500 bg-red-50':
-                                            this.$page.props.errors.number,
-                                    }" />
-                                <FormErrorMessage :message="this.$page.props.errors.number" theme="dark" />
+                                    class="h-10 m-1 rounded text-sm border border-gray-400" />
+                                <FormErrorMessage :message="$page.props.errors.number" theme="dark" />
                             </div>
                             <div class="w-full flex flex-col mt-2">
                                 <label for="series" class="font-bold text-gray-600">Series</label>
                                 <input id="series" type="number" placeholder="Series" v-model="form.series"
-                                    class="h-10 m-1 rounded text-sm border border-gray-400" :class="{
-                                        'border-red-500 bg-red-50':
-                                            this.$page.props.errors.series,
-                                    }" />
-                                <FormErrorMessage :message="this.$page.props.errors.series" theme="dark" />
+                                    class="h-10 m-1 rounded text-sm border border-gray-400" />
+                                <FormErrorMessage :message="$page.props.errors.series" theme="dark" />
                             </div>
                             <div class="w-full flex flex-col mt-2">
                                 <label for="version" class="font-bold text-gray-600">Version</label>
                                 <input id="version" type="number" placeholder="Version" v-model="form.version"
-                                    class="h-10 m-1 rounded text-sm border border-gray-400" :class="{
-                                        'border-red-500 bg-red-50':
-                                            this.$page.props.errors.version,
-                                    }" />
-                                <FormErrorMessage :message="this.$page.props.errors.version" theme="dark" />
+                                    class="h-10 m-1 rounded text-sm border border-gray-400" />
+                                <FormErrorMessage :message="$page.props.errors.version" theme="dark" />
                             </div>
                         </div>
                     </div>

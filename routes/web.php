@@ -82,8 +82,8 @@ Route::get('/admin/evaluation', [EvaluationController::class, 'evaluationForAdmi
 
 Route::get('hei/evaluation/{tool}/edit', [HEIFormController::class, 'edit'])->middleware('auth', 'type.hei')->name('form.hei.key');
 
-Route::get('ched/evaluation/{tool}/edit', [CHEDFormController::class, 'generateKeyBeforeEdit'])->middleware('auth', 'type.ched')->name('form.ched.key');
-Route::get('ched/evaluation/{tool}/evaluate/{ke', [CHEDFormController::class, 'evaluate'])->middleware('auth', 'type.ched')->name('form.ched.evaluate');
+Route::get('ched/evaluation/{tool}/view', [CHEDFormController::class, 'view'])->middleware('auth', 'type.ched')->name('evaluation.ched.view');
+Route::get('ched/evaluation/{tool}/evaluate', [CHEDFormController::class, 'evaluate'])->middleware('auth', 'type.ched')->name('form.ched.evaluate');
 
 
 

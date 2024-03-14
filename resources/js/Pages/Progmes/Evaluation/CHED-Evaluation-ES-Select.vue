@@ -3,17 +3,17 @@
     <Head title="Program Self-Evaluation" />
     <page-title title="Program Self-Evaluation" />
     <div class="md:mx-8 mx-3 mt-8">
-        <div class="flex flex-col w-full rounded">
-            <div class="w-auto flex flex-col md:flex-row">
+        <div class="flex flex-col w-full rounded bg-white p-5">
+            <!-- <div class="w-auto flex flex-col md:flex-row">
                 <div class="font-bold lg:w-32 w-full">
                     Role
                 </div>
                 <div>
                     {{ role }}
                 </div>
-            </div>
+            </div> -->
             <div class="w-auto flex flex-col md:flex-row mt-3">
-                <div class="font-bold lg:w-32 w-full">
+                <div class="font-bold w-32">
                     Discipline(s)
                 </div>
                 <ul>
@@ -24,122 +24,114 @@
             </div>
         </div>
     </div>
-    <content-container>
+    <content-container hasSearch="true">
+        <template v-slot:search>
+            <div class="w-full flex justify-end relative">
+                <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
+                    placeholder="Search"
+                    class="w-full rounded-full bg-slate-200 h-10 border-none indent-3 text-base placeholder-gray-400 pr-11" />
+                <button @click="submit"
+                    class="hover:bg-gray-300 active:text-blue-500 h-10 w-10 rounded-full absolute right-1">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </template>
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
                     <th class="p-3 border-b border-gray-400">Program/Institution</th>
-                    <th class="p-3 border-b border-gray-400">Date of Submission</th>
+                    <th class="p-3 border-b border-gray-400">Status</th>
+                    <th class="p-3 border-b border-gray-400">Progress</th>
                     <th class="p-3 border-b border-gray-400 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
 
                 <template v-slot:table-body>
-                    <tr v-for="(item, index) in tools" :key="item.id" class="border-b border-gray-400">
+                    <tr v-if="complianceTools.data.length == 0">
+                        <td colspan="3" class="p-3 py-10 text-center">No evaluation tool found</td>
+                    </tr>
+                    <tr v-else v-for="(item, index) in complianceTools.data" :key="item.id"
+                        class="border-b border-gray-400" :class="{'bg-slate-200': index % 2 ==0}">
                         <td class="p-3">
                             <div>
-                                {{ item.institution_program.program.program }}
+                                {{ item.program }}
                             </div>
                             <div class="font-bold">
-                                {{ item.institution_program.institution.name }}
+                                {{ item.institution }} -->
                             </div>
                         </td>
                         <td class="p-3">
-                            <div>
-                                {{ item.submissionDate }}
+                            <div class="px-1 bg-blue-500 text-white rounded w-fit">
+                                {{ item.status }}
                             </div>
                         </td>
+                        <td class="p-3">
+                            <progress :value="item.itemComplied" :max="item.applicableItems"></progress>
+                        </td>
                         <td class="p-3 text-right">
-                            <button @click="edit(item.id)"
-                                class="w-auto text-sm select-none px-2 h-10 bg-green-700 hover:bg-green-800 text-white rounded">Evaluate
+                            <button @click="edit(item.id)" v-show="item.status == 'Submitted'"
+                                class="w-auto text-sm select-none px-2 h-10 bg-white hover:text-blue-500 border-2 border-gray-500 active:text-white active:bg-blue-600 rounded mr-1">
+                                <i class="fas fa-edit mr-1"></i>Evaluate
+                            </button>
+                            <button
+                                class="w-auto text-sm select-none px-2 h-10 bg-white hover:text-blue-500 border-2 border-gray-500 active:text-white active:bg-blue-600 rounded">
+                                <i class="fas fa-eye mr-1"></i>View
+
                             </button>
                         </td>
-                    </tr>
-                    <tr v-show="tools.length == 0">
-                        <td colspan="3" class="p-3 text-center">Empty</td>
                     </tr>
                 </template>
             </content-table>
         </template>
     </content-container>
-    <!-- <content-container :hasAction="true">
-        <template v-slot:channel>
-            <dropdown-option>
-                <template v-slot:button>
-                    <button class="h-10 px-3 border border-gray-500 rounded">A.Y. 2023-2024
-                        <i class="fas fa-caret-down ml-2"></i></button>
-                </template>
-
-                <template v-slot:options>
-                    <div class="w-48">
-                        <button class="w-full text-left indent-5">A.Y. 2024-2025</button>
-                    </div>
-                </template>
-            </dropdown-option>
-        </template>
-
-        <template v-slot:content>
-            <content-table>
-                <template v-slot:table-head>
-                    <th class="p-3 border-b border-gray-400">Program/Institution</th>
-                    <th class="p-3 border-b border-gray-400">Date of Submission</th>
-                    <th class="p-3 border-b border-gray-400 text-right">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </th>
-                </template>
-
-                <template v-slot:table-body>
-                    <tr v-for="(item, index) in tools" :key="item.id" class="border-b border-gray-400">
-                        <td class="p-3">
-                            <div>
-                                {{ item.institution_program.program.program }}
-                            </div>
-                            <div class="font-bold">
-                                {{ item.institution_program.institution.name }}
-                            </div>
-                        </td>
-                        <td class="p-3">
-                            <div>
-                                {{ item.submissionDate }}
-                            </div>
-                        </td>
-                        <td class="p-3 text-right">
-                            <button @click="edit(item.id)"
-                                class="w-auto text-sm select-none px-2 h-10 bg-blue-500 hover:bg-blue-600 text-white shadow shadow-gray-500 rounded">Evaluate
-                            </button>
-                        </td>
-                    </tr>
-                    <tr v-show="tools.length == 0">
-                        <td colspan="3" class="p-3 text-center">Empty</td>
-                    </tr>
-                </template>
-            </content-table>
-        </template>
-    </content-container> -->
 </template>
 
 <script setup>
-    import { router } from '@inertiajs/vue3';
+    import { router, useForm } from '@inertiajs/vue3';
 
-    defineProps([
+    const props = defineProps([
         'disciplines',
         'role',
-        'tools',
+        'complianceTools',
+        'count',
+        'filters',
     ]);
 
+    const query = useForm({
+        search: props.filters.search,
+        sort: props.filters.sort,
+        type: props.filters.type,
+    });
+
     function edit(tool) {
-        router.get('/ched/evaluation/' + tool);
+        console.log(tool);
+        router.get('/ched/evaluation/' + tool + '/evaluate');
     }
 
-    function createTool(item) {
-        router.get('/hei/tool/create/' + item);
+    function submit() {
+        if (query.search == "") {
+            router.get("/ched/evaluation");
+        } else {
+            query.get("/ched/evaluation", {
+                preserveState: true,
+                preserveScroll: true,
+            });
+        }
     }
 </script>
 
 <script>
     import Layout from '../Shared/Layout.vue';
+
     export default {
         layout: Layout,
     }
 </script>
+
+<style scoped>
+    .progress-bar {
+        height: 20px;
+        border-radius: 50%;
+    }
+</style>

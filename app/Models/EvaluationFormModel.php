@@ -49,4 +49,22 @@ class EvaluationFormModel extends Model
         return $this->hasMany(EvaluationItemModel::class, 'evaluationFormId', 'id');
     }
 
+    public function complied()
+    {
+        return $this->hasMany(EvaluationItemModel::class, 'evaluationFormId', 'id')
+        ->where('selfEvaluationStatus', '=', 'Complied');
+    }
+
+    public function evaluated_complied()
+    {
+        return $this->hasMany(EvaluationItemModel::class, 'evaluationFormId', 'id')
+        ->where('evaluationStatus', '=', 'Complied');
+    }
+
+    public function not_applicable()
+    {
+        return $this->hasMany(EvaluationItemModel::class, 'evaluationFormId', 'id')
+        ->where('selfEvaluationStatus', '=', 'Not applicable');
+    }
+
 }

@@ -12,13 +12,8 @@ use Auth;
 
 class CHEDFormController extends Controller
 {
-
-    public function generateKeyBeforeEdit($id) {
-        $randomKey = $this->generateKey();
-        return redirect('/ched/evaluation/'. $id . '/evaluate/'.$randomKey);
-    }
     
-    public function evaluate($evaluation, $key=123) {
+    public function evaluate($evaluation) {
         $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program')->first();
         $items = EvaluationItemModel::where('evaluationFormId', $evaluation)->with('criteria', 'evidence')->get();
         
@@ -43,24 +38,23 @@ class CHEDFormController extends Controller
         }
     }
 
+
     public function update(Request $request) {
         foreach ($request->items as $item) {
-            $evaluationItem = EvaluationItemModel::find($item['id']);
+            if (in_array($item['id'], $request->rows)) {
+                
+                $evaluationItem = EvaluationItemModel::find($item['id']);
 
-            if ($evaluationItem) {
-                $evaluationItem->update([
-                    'findings' => $item['findings'],
-                    'recommendations' => $item['recommendations'],
-                    'evaluationStatus' => $item['evaluationStatus'],
-                ]);
-            }
+                if ($evaluationItem) {
+                    $evaluationItem->update([
+                        'findings' => $item['findings'],
+                        'recommendations' => $item['recommendations'],
+                        'evaluationStatus' => $item['evaluationStatus'],
+                    ]);
+                }
+            }   
         }
 
-        $randomKey = $this->generateKey();
-        return redirect('/ched/evaluation/'. $request->id . '/evaluate/'.$randomKey);
-    }
-
-    function generateKey($length = 10) {
-        return Str::random($length);
+        return redirect()->back()->with('updated', 'All changes saved.');
     }
 }

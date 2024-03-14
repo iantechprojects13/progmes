@@ -26,7 +26,7 @@ class DashboardController extends Controller
                 return redirect()->route('dashboard.admin');
         }
         else if ($userRole == 'Education Supervisor') {
-            return redirect()->route('dashboard.ched')->with('message', 'Sample Text, Sample Notification, Sample Text, Sample Notification, Sample Text, Sample Notification, Sample Text, Sample Notification.');
+            return Inertia::render('Progmes/Dashboard/CHED-ES-Dashboard');
         } else {
             return redirect()->route('dashboard.hei');
         }

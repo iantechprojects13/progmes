@@ -29,6 +29,7 @@
 </template>
 
 <script setup>
+
     const props = defineProps([
         'title',
         'showModal',

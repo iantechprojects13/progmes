@@ -174,7 +174,7 @@
         </div>
 
         <!-- Page Content -->
-        <div class="w-full h-auto relative bg-slate-100 overflow-x-auto pt-16 md:pt-0">
+        <div class="w-full h-auto relative bg-gray-300 overflow-x-auto pt-16 md:pt-0">
             <slot />
         </div>
     </div>

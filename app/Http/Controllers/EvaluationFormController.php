@@ -123,7 +123,7 @@ class EvaluationFormController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', 'Compliant tool for ' . $validatedData['program']['program'] . ' programs has been deployed.');
+        return redirect()->back()->with('success', 'Compliant tool for ' . $validatedData['program']['program'] . ' program has been deployed.');
     }
 
 }

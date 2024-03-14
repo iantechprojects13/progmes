@@ -34,7 +34,7 @@
                     <Link href="/admin/tool" preserved-state>
                     <button class="h-12 md:w-auto md:px-5 w-full md:hover:bg-gray-600 hover:bg-stone-600  rounded"
                         :class="{ 'text-blue-500 md:border-b-blue-500 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-stone-700 md:hover:text-blue-500': highlight('form') }">
-                        Compliant Tool
+                        Compliance Tool
                     </button>
                     </Link>
 

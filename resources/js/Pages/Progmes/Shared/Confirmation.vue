@@ -95,7 +95,7 @@
                     preserve-scroll>
                 Confirm
                 </Link>
-                <Link method="get" v-if="modaltype == 'deactivate'" :href="'/admin/CMOs/deactivate/' + selected"
+                <Link method="get" v-if="modaltype == 'deactivate'" :href="'/admin/CMOs/deactivate/' + selected.id"
                     @click="closeModal"
                     class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border cursor-pointer"
                     preserve-scroll>
