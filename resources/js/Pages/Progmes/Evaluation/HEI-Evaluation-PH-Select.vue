@@ -2,7 +2,7 @@
 
     <Head title="Program Self-Evaluation" />
     <page-title title="Program Self-Evaluation" />
-    <div class="md:mx-8 mx-3 mt-8">
+    <div class="md:mx-8 mx-3 mt-8 bg-white p-5 rounded">
         <div class="flex flex-col w-full rounded">
             <div class="w-auto flex flex-col md:flex-row">
                 <div class="mr-2 font-bold">
@@ -41,7 +41,7 @@
                     <tr v-else v-for="(item, index) in program.evaluation_form" :key="item.id"
                         class="hover:bg-gray-100 border-b border-gray-300" :class="{'bg-slate-200': index % 2 == 0}">
                         <td class="p-3 align-middle">
-                            <i class="fas fa-file mr-2"></i>{{ item.effectivity }}
+                            <i class="fas fa-file text-lg mr-2"></i>{{ item.effectivity }}
                         </td>
                         <td class="p-3 align-middle">
                             <div class="text-white text-sm">

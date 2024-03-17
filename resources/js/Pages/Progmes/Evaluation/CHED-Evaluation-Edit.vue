@@ -156,7 +156,7 @@
                             <div class="w-full h-full">
                                 <select ref="evaluationStatus" v-model="item.evaluationStatus"
                                     :id="'evaluationStatus' + index" :name="'evaluationStatus' + index"
-                                    @change="handleChangeStatus()" class="p-1 rounded w-36 border-gray-400">
+                                    @change="handleChangeStatus(item.id)" class="p-1 rounded w-36 border-gray-400">
                                     <option value="Complied">Complied</option>
                                     <option value="Not complied">Not complied</option>
                                     <option value="Not applicable">Not applicable</option>
@@ -275,8 +275,9 @@
         }
     }
 
-    function handleChangeStatus() {
+    function handleChangeStatus(id) {
         hasUpdate.value = true;
+        getRowsWithUpdates(id);
     };
 
 

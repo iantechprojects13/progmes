@@ -20,6 +20,7 @@ use App\Http\Controllers\InstitutionProgramController;
 use App\Http\Controllers\AdminSettingsController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\EvidenceController;
+use App\Http\Controllers\PDFController;
 
 
 /*
@@ -156,6 +157,8 @@ Route::get('/admin/CMOs/deactivate/{id?}', [CMOController::class, 'deactivate'])
 Route::get('/admin/settings', [AdminSettingsController::class, 'index'])->middleware(['auth'])->name('admin.settings');
 
 
+//Generate Report
+Route::get('/report/deficiency/{tool}/download', [PDFController::class, 'generateDeficiencyReport'])->middleware(['auth'])->name('report.defieciency.create');
 
 Route::get('/chart', function () {
     return Inertia::render('Progmes/Shared/Charts/DoughnutChart');

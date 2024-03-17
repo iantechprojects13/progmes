@@ -46,16 +46,18 @@ class EvaluationController extends Controller
         ->when($request->query('search'), function ($query) use ($request) {
             $query->whereHas('institution_program.program', function ($searchQuery) use ($request) {
                 $searchQuery->where('program', 'like', '%' . $request->query('search') . '%')
-               ->where('status', 'Submitted')->orWhere('status', 'In progress');
+               ->where('status', 'Submitted');
+            //    ->orWhere('status', 'In progress');
             })
             ->orWhereHas('institution_program.institution', function ($searchQuery) use ($request) {
                 $searchQuery->where('name', 'like', '%' . $request->query('search') . '%')
-               ->where('status', 'Submitted')->orWhere('status', 'In progress');
+               ->where('status', 'Submitted');
+            //    ->orWhere('status', 'In progress');
             });
         })
         ->whereIn('disciplineId', $disciplineIds)
         ->where('status', 'Submitted')
-        ->orWhere('status', 'In progress')
+        // ->orWhere('status', 'In progress')
         ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_applicable');
 
         $count = $complianceTools->count();
@@ -70,6 +72,7 @@ class EvaluationController extends Controller
             'program' => $item->institution_program->program->program,
             'itemComplied' => $item->complied->count(),
             'applicableItems' => $item->item->count() - $item->not_applicable->count(),
+            'progress' => $item->item->count() - $item->not_applicable->count() != 0 ? intval(round(($item->complied->count() / ($item->item->count() - $item->not_applicable->count()))*100)) : 0,
         ])
         ->withQueryString();
 

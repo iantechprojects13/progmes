@@ -1,7 +1,7 @@
 <template>
 
     <Head title="Program Self-Evaluation" />
-    <page-title title="Program Self-Evaluation" />
+    <page-title title="Program Evaluation" />
     <div class="md:mx-8 mx-3 mt-8">
         <div class="flex flex-col w-full rounded bg-white p-5">
             <!-- <div class="w-auto flex flex-col md:flex-row">
@@ -58,7 +58,7 @@
                                 {{ item.program }}
                             </div>
                             <div class="font-bold">
-                                {{ item.institution }} -->
+                                {{ item.institution }}
                             </div>
                         </td>
                         <td class="p-3">
@@ -67,9 +67,17 @@
                             </div>
                         </td>
                         <td class="p-3">
-                            <progress :value="item.itemComplied" :max="item.applicableItems"></progress>
+                            <div class="px-1 bg-gray-400 font-bold text-sm rounded w-fit">
+                                {{ item.progress }}%
+                            </div>
                         </td>
                         <td class="p-3 text-right">
+                            <a :href="'/report/deficiency/' + item.id + '/download'" target="_blank">
+                                <button :disabled="processing" v-show="item.status == 'Submitted'"
+                                    class="w-auto text-sm select-none px-2 h-10 bg-white hover:text-blue-500 border-2 border-gray-500 active:text-white active:bg-blue-600 rounded mr-1">
+                                    <i class="fas fa-download mr-1"></i>Deficiency Report
+                                </button>
+                            </a>
                             <button @click="edit(item.id)" v-show="item.status == 'Submitted'"
                                 class="w-auto text-sm select-none px-2 h-10 bg-white hover:text-blue-500 border-2 border-gray-500 active:text-white active:bg-blue-600 rounded mr-1">
                                 <i class="fas fa-edit mr-1"></i>Evaluate
@@ -77,18 +85,20 @@
                             <button
                                 class="w-auto text-sm select-none px-2 h-10 bg-white hover:text-blue-500 border-2 border-gray-500 active:text-white active:bg-blue-600 rounded">
                                 <i class="fas fa-eye mr-1"></i>View
-
                             </button>
                         </td>
                     </tr>
                 </template>
             </content-table>
+            <Notification :message="$page.props.flash.success" type="success" />
+            <Notification v-show="processing" message="Downloading report" type="processing" />
         </template>
     </content-container>
 </template>
 
 <script setup>
     import { router, useForm } from '@inertiajs/vue3';
+    import { ref } from 'vue';
 
     const props = defineProps([
         'disciplines',
@@ -98,6 +108,8 @@
         'filters',
     ]);
 
+    const processing = ref(false);
+
     const query = useForm({
         search: props.filters.search,
         sort: props.filters.sort,
@@ -105,7 +117,6 @@
     });
 
     function edit(tool) {
-        console.log(tool);
         router.get('/ched/evaluation/' + tool + '/evaluate');
     }
 
@@ -119,6 +130,11 @@
             });
         }
     }
+
+    function downloadReport(tool) {
+        router.get('/report/deficiency/' + tool + '/download')
+    }
+
 </script>
 
 <script>

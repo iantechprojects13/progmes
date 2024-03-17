@@ -10,12 +10,12 @@
             </Link>
         </template>
         <template v-slot:search>
-            <div class="w-full flex justify-end">
+            <div class="w-full flex justify-end relative">
                 <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
-                    placeholder="Search a Higher Education Institution"
-                    class="rounded border-2 w-full border-gray-400 h-10 bg-white text-base placeholder-gray-400" />
+                    placeholder="Search"
+                    class="w-full rounded-full bg-slate-100 h-10 border-none indent-3 text-base placeholder-gray-400 pr-11 mr-2" />
                 <button @click="submit"
-                    class="hover:bg-gray-300 border-2 active:bg-blue-600 active:text-white h-10 w-12 border-gray-400 relative right-0.5 bg-white rounded-r">
+                    class="hover:bg-gray-300 active:text-blue-500 h-10 w-10 rounded-full absolute right-3">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
@@ -33,23 +33,23 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="py-2">HEI Name</th>
-                    <th v-show="canEdit" class="py-2 text-right">
+                    <th class="p-3">HEI Name</th>
+                    <th v-show="canEdit" class="p-3 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="institution_list.data.length == 0">
-                        <td class="text-center py-10 italic" colspan="3">
+                        <td class="text-center py-10" colspan="3">
                             No HEI found
                         </td>
                     </tr>
                     <tr v-else v-for="(hei, index) in institution_list.data" :key="hei.id" class="hover:bg-gray-100"
                         :class="{'bg-slate-200': index % 2 == 0}">
-                        <td class="p-2">
+                        <td class="p-3">
                             {{ hei.name }}
                         </td>
-                        <td class="p-2 text-right">
+                        <td class="p-3 text-right">
                             <button @click="deleteModal = true; selected = hei;"
                                 class="h-8 px-2 rounded bg-red-500 hover:bg-red-600 text-white">Delete</button>
                         </td>

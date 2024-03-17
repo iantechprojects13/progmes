@@ -2,7 +2,7 @@
 
     <Head title="Login" />
     <!-- Header -->
-    <div
+    <!-- <div
         class="md:hidden fixed top-0 w-full bg-blue-900 text-white flex justify-between text-center h-16 items-center shadow-md z-90 px-4">
         <div class="cursor-pointer" @click="toggleSideBar">
             <i class="fas fa-bars text-xl"></i>
@@ -29,7 +29,7 @@
                 </template>
             </dropdown-option>
         </div>
-    </div>
+    </div> -->
 
     <!-- Body -->
     <div class="flex flex-col md:flex-row h-full bg-gray-200">
@@ -174,7 +174,35 @@
         </div>
 
         <!-- Page Content -->
-        <div class="w-full h-auto relative bg-gray-300 overflow-x-auto pt-16 md:pt-0">
+        <div class="w-full h-auto relative bg-gray-200 overflow-x-auto md:pt-0">
+            <div
+                class="md:hidden sticky top-0 w-full bg-blue-900 text-white flex justify-between text-center h-16 items-center shadow-md z-80 px-4">
+                <div class="cursor-pointer" @click="toggleSideBar">
+                    <i class="fas fa-bars text-xl"></i>
+                </div>
+                <div>
+                    <dropdown-option position="right">
+                        <template v-slot:button>
+                            <img :src="$page.props.auth.user.avatar" width="35"
+                                class=" border-2 bg-white rounded-full cursor-pointer" />
+                        </template>
+                        <template v-slot:options>
+                            <div class="w-52">
+                                <Link :href="'/myaccount/' + $page.props.auth.user.id">
+                                <button class="block py-2 indent-3 hover:bg-gray-200 w-full text-left">
+                                    <i class="fas fa-user mr-3"></i>My Account
+                                </button>
+                                </Link>
+                                <Link href="/logout" method="post" as="button" class="w-full">
+                                <button class="block py-2 indent-3 hover:bg-gray-200 w-full text-left">
+                                    <i class="fas fa-sign-out mr-3"></i>Log out
+                                </button>
+                                </Link>
+                            </div>
+                        </template>
+                    </dropdown-option>
+                </div>
+            </div>
             <slot />
         </div>
     </div>

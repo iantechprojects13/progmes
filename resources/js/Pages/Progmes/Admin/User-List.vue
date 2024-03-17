@@ -23,9 +23,9 @@
             <div class="w-full flex justify-end relative">
                 <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
                     placeholder="Search a user"
-                    class="w-full rounded-full bg-slate-100 h-10 border-none indent-3 text-base placeholder-gray-400 pr-11" />
+                    class="w-full rounded-full bg-slate-100 h-10 border-none indent-3 text-base placeholder-gray-400 pr-11 mr-2" />
                 <button @click="submit"
-                    class="hover:bg-gray-300 active:text-blue-500 h-10 w-10 rounded-full absolute right-1">
+                    class="hover:bg-gray-300 active:text-blue-500 h-10 w-10 rounded-full absolute right-3">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
@@ -82,7 +82,7 @@
                     </template>
                 </dropdown-option>
             </div>
-            <div>
+            <!-- <div>
                 <dropdown-option position="right">
                     <template v-slot:button>
                         <button
@@ -121,7 +121,7 @@
                         </div>
                     </template>
                 </dropdown-option>
-            </div>
+            </div> -->
         </template>
         <template v-slot:main-content>
             <content-table>
@@ -165,16 +165,16 @@
                         <td class="p-3">
                             {{ user.type }}
                         </td>
-                        <td class="p-3">
+                        <td class="p-3 whitespace-normal">
                             {{ user.role }}
                         </td>
-                        <td class="p-3">
+                        <td class="p-3 whitespace-normal">
                             <div v-for="(role, index) in user.user_role" :key="role.id">
                                 {{ role.discipline?.discipline }}
                                 {{ role.program?.program }}
                             </div>
                         </td>
-                        <td class="p-3">
+                        <td class="p-3 whitespace-normal">
                             <div v-for="(role, index) in user.user_role" :key="role.id">
                                 {{ role.institution?.name }}
                             </div>

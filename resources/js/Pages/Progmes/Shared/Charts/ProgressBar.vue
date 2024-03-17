@@ -1,5 +1,7 @@
 <template>
-    <Bar id="my-chart-id" :options="chartOptions" :data="chartData" />
+    <div class="h-32">
+        <Bar id="my-chart-id" :options="chartOptions" :data="chartData" />
+    </div>
 </template>
 
 <script>
@@ -14,17 +16,25 @@
         data() {
             return {
                 chartData: {
-                    labels: ['Complied'],
+                    labels: ['Complied', 'Not complied', 'Not applicable'],
                     datasets: [
-                        { data: [40] }
+                        {
+                            data: [48, 5, 16],
+                            backgroundColor: [
+                                'green',
+                                'red',
+                                'gray',
+                            ],
+                        }
                     ]
                 },
                 chartOptions: {
                     responsive: true,
-                    indexAxis: 'y', // Set the index axis to 'y' for horizontal bar chart
+                    indexAxis: 'y',
                     elements: {
                         bar: {
-                            borderWidth: 5,
+                            borderWidth: 1,
+                            borderColor: 'black',
                         },
                     },
                     scales: {

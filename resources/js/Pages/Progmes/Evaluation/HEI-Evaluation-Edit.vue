@@ -2,76 +2,102 @@
 
     <Head title="Evaluation Form" />
     <page-title title="Program Self-Evaluation" />
-    <div class="md:mx-8 mx-3 mt-8 flex flex-col lg:flex-row justify-between rounded bg-white p-8  align-top">
-        <div class="flex flex-col w-auto rounded">
+    <div class="mt-5 md:mx-8 mx-3 flex flex-col md:flex-row justify-between">
+        <div>
+            <Link href="/hei/evaluation">
+            <button class="w-fit h-10 hover:bg-gray-300 bg-white px-3 border-2 border-gray-500 rounded"><i
+                    class="fas fa-arrow-left mr-2"></i>Back
+            </button>
+            </Link>
+        </div>
+        <div class="flex">
+            <div class="flex flex-row justify-between">
+                <div class="text-gray-500 h-10 lg:ml-1 flex items-center mr-5">
+                    <div v-if="hasUpdate" class="text-red-500">
+                        *Changes unsaved.
+                    </div>
+                    <div v-else-if="$page.props.flash.updated">
+                        <i class="fas fa-check-circle text-green-500 mr-1"></i>
+                        {{ $page.props.flash.updated }}
+                    </div>
+                    <div v-else></div>
+                </div>
+            </div>
+            <div>
+                <button @click="readyForVisitModal = true" v-show="canSubmit && !hasUpdate"
+                    class="px-3 w-fit text-white bg-blue-500 hover:bg-blue-600 h-10 rounded mr-1">
+                    Ready for visit
+                </button>
+            </div>
+            <button @click="update" ref="saveBtn"
+                class="select-none cursor-pointer bg-blue-500 text-white px-2 w-fit h-10 rounded"
+                :class="{'text-gray-300 bg-gray-700' : !hasUpdate}" :disabled="!hasUpdate">Save
+                Changes
+            </button>
+        </div>
+    </div>
+    <div
+        class="md:mx-8 mx-3 mt-5 flex flex-col-reverse lg:flex-row items-center justify-between rounded bg-white p-1 px-3">
+        <div class="flex flex-col-reverse md:flex-row">
+            <div class="flex flex-wrap">
+                <div class="h-fit mt-1 flex flex-wrap border border-gray-400 rounded py-2 text-sm">
+                    <div class="px-3 md:mt-0 mt-2">
+                        Complied<br>
+                        <span class="font-bold text-blue-500">{{ progress.complied }}</span>
+                    </div>
+                    <div class="px-3 md:mt-0 mt-2">
+                        Not complied<br>
+                        <span class="font-bold text-blue-500">{{ progress.notComplied }}</span>
+                    </div>
+                    <div class="px-3 md:mt-0 mt-2">
+                        Not applicable<br>
+                        <span class="font-bold text-blue-500">{{ progress.notApplicable }}</span>
+                    </div>
+                </div>
+                <div class="h-fit m-1 flex flex-wrap border border-gray-400 rounded py-2 text-sm">
+                    <div class="px-3 md:mt-0 mt-2">
+                        Progress<br>
+                        <span class="font-bold text-blue-500">{{ progress.percentage }}%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="md:mx-8 mx-3 mt-5 flex flex-col-reverse lg:flex-row justify-between rounded bg-white p-5 align-top">
+        <div class="flex flex-col w-auto rounded md:mt-0 mt-5">
             <div class="w-auto flex flex-col md:flex-row">
-                <div class="mr-2 font-bold">
+                <div class="mr-2 font-bold tracking-tight">
                     HEI Name:
                 </div>
-                <div>
+                <div class="tracking-tight">
                     {{ evaluation.institution_program.institution.name }}
                 </div>
             </div>
             <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
                 <div class="w-auto flex flex-col md:flex-row">
-                    <div class="mr-2 font-bold">
+                    <div class="mr-2 font-bold tracking-tight">
                         Program:
                     </div>
-                    <div>
+                    <div class="tracking-tight">
                         {{ evaluation.institution_program.program.program }}
                     </div>
                 </div>
             </div>
             <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
                 <div class="w-auto flex flex-col md:flex-row">
-                    <div class="mr-2 font-bold">
+                    <div class="mr-2 font-bold tracking-tight">
                         Effectivity:
                     </div>
-                    <div>
+                    <div class="tracking-tight">
                         A.Y. {{ evaluation.effectivity }}
                     </div>
                 </div>
             </div>
         </div>
-        <div>
-            <button @click="readyForVisitModal = true" v-show="canSubmit && !hasUpdate"
-                class="px-3 w-fit text-white bg-blue-500 hover:bg-blue-600 h-10 rounded mr-1">
-                Ready for visit
-            </button>
-        </div>
     </div>
-    <content-container hasTopButton="true" hasBackButton="true">
-        <template v-slot:back-button>
-            <Link href="/hei/evaluation">
-            <button class="w-10 h-10 mr-2 rounded-full hover:bg-gray-300 tooltipForActions" data-tooltip="Back">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            </Link>
-        </template>
-        <template v-slot:top-button>
-            <div class="flex justify-between">
-                <div class="text-gray-500 h-10 lg:ml-1 flex items-center mr-5">
-                    <div v-if="hasUpdate" class="text-red-500">
-                        *Changes unsaved.
-                    </div>
-                    <div v-else-if="$page.props.flash.updated">
-                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                        {{ $page.props.flash.updated }}
-                    </div>
-                    <div v-else></div>
-                </div>
-                <div>
-                    <button @click="update" ref="saveBtn"
-                        class="select-none cursor-pointer px-2 w-fit h-10 rounded text-white"
-                        :class="[{'bg-gray-500' : !hasUpdate}, {'bg-green-600 hover:bg-green-700': hasUpdate}]"
-                        :disabled="!hasUpdate">Save Changes
-                    </button>
-                </div>
-            </div>
-        </template>
-        <template v-slot:sticky-div>
-            <div>sadasdasd</div>
-        </template>
+    <content-container>
         <template v-slot:main-content>
             <content-table v-show="itemsLayout === 'list'">
                 <template v-slot:table-head>
@@ -256,7 +282,8 @@
     const props = defineProps([
         'evaluation',
         'items',
-        'canSubmit'
+        'progress',
+        'canSubmit',
     ]);
 
     const handleBeforeUnload = (event) => {
@@ -307,7 +334,9 @@
     const saveBtn = ref(null);
     const saving = ref(false);
 
-    const refs = { actualSituationInput, selfEvaluationStatus, actionButtons, evidenceFiles, saveBtn, texteditor, inputEvidenceFile };
+    const container = ref([]);
+
+    const refs = { actualSituationInput, selfEvaluationStatus, actionButtons, evidenceFiles, saveBtn, texteditor, inputEvidenceFile, container };
 
     // Functions
     function handleTextInput(index, id) {

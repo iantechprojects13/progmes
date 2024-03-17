@@ -31,9 +31,7 @@ class UserController extends Controller
         $userlist = User::query()
         ->when($request->query('search'), function ($query) use ($request, $role, $list) {
             $query->where(function ($query) use ($request) {
-                $query->where('name', 'like', '%' . $request->query('search') . '%')
-                    ->orWhere('type', 'like', '%' . $request->query('search') . '%')
-                    ->orWhere('role', 'like', '%' . $request->query('search') . '%');
+                $query->where('name', 'like', '%' . $request->query('search') . '%');
             })
             ->where([
                 'isVerified' => 1,

@@ -31,10 +31,10 @@
         <template v-slot:search>
             <div class="w-full flex justify-end relative">
                 <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
-                    placeholder="Search a discipline"
-                    class="rounded border-2 w-full border-gray-400 h-10 bg-white text-base placeholder-gray-400" />
+                    placeholder="Search"
+                    class="w-full rounded-full bg-slate-100 h-10 border-none indent-3 text-base placeholder-gray-400 pr-11 mr-2" />
                 <button @click="submit"
-                    class="hover:text-black text-gray-700 absolute right-0 active:text-blue-500 h-10 w-10 rounded-full">
+                    class="hover:bg-gray-300 active:text-blue-500 h-10 w-10 rounded-full absolute right-3">
                     <i class="fas fa-search"></i>
                 </button>
             </div>

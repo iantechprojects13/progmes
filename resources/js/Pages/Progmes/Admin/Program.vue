@@ -27,12 +27,12 @@
             </div>
         </template>
         <template v-slot:search>
-            <div class="w-full flex justify-end">
+            <div class="w-full flex justify-end relative">
                 <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
-                    placeholder="Search a program"
-                    class="rounded border-2 w-full border-gray-500 h-10 bg-white text-base placeholder-gray-400" />
+                    placeholder="Search"
+                    class="w-full rounded-full bg-slate-100 h-10 border-none indent-3 text-base placeholder-gray-400 pr-11 mr-2" />
                 <button @click="submit"
-                    class="hover:bg-gray-300 border-2 active:bg-blue-600 active:text-white h-10 w-12 border-gray-500 relative right-0.5 bg-white rounded-r">
+                    class="hover:bg-gray-300 active:text-blue-500 h-10 w-10 rounded-full absolute right-3">
                     <i class="fas fa-search"></i>
                 </button>
             </div>

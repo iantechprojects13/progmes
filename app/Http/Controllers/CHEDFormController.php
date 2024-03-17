@@ -40,6 +40,7 @@ class CHEDFormController extends Controller
 
 
     public function update(Request $request) {
+        
         foreach ($request->items as $item) {
             if (in_array($item['id'], $request->rows)) {
                 
@@ -51,6 +52,7 @@ class CHEDFormController extends Controller
                         'recommendations' => $item['recommendations'],
                         'evaluationStatus' => $item['evaluationStatus'],
                     ]);
+                    
                 }
             }   
         }

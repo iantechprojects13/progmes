@@ -21,12 +21,12 @@
             <div class="ml-3">( A.Y. {{ effectivity }} )</div>
         </template>
         <template v-slot:search>
-            <div class="w-full flex justify-end">
+            <div class="w-full flex justify-end relative">
                 <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
                     placeholder="Search"
-                    class="rounded border-2 w-full border-gray-400 h-10 bg-white text-base placeholder-gray-400" />
+                    class="w-full rounded-full bg-slate-100 h-10 border-none indent-3 text-base placeholder-gray-400 pr-11 mr-2" />
                 <button @click="submit"
-                    class="hover:bg-gray-300 border-2 active:bg-blue-600 active:text-white h-10 w-12 border-gray-400 relative right-0.5 bg-white rounded-r">
+                    class="hover:bg-gray-300 active:text-blue-500 h-10 w-10 rounded-full absolute right-3">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
@@ -96,10 +96,10 @@
                             </div>
                         </td>
                         <td v-show="canEdit" class="p-3 text-right">
-                            <button v-show="program.evaluation_form[0]?.status == 'In progress'"
+                            <!-- <button v-show="program.evaluation_form[0]?.status == 'In progress'"
                                 class="border-2 border-gray-500 hover:text-blue-500 bg-white rounded h-10 px-2">
                                 <i class="fas fa-lock mr-1"></i>Lock
-                            </button>
+                            </button> -->
                             <!-- <button v-show="program.evaluation_form[0]?.status == 'In progress'">
                                 <i class="fas fa-lock"></i>
                             </button> -->

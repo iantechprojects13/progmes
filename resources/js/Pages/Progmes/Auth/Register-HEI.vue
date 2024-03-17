@@ -80,17 +80,6 @@
             </div>
         </div>
     </div>
-    <div>
-        <pre>
-            {{ institution }}
-        </pre>
-        <pre>
-            {{ discipline_list }}
-        </pre>
-        <pre>
-            {{ program_list }}
-        </pre>
-    </div>
 </template>
 
 <script setup>
