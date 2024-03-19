@@ -78,6 +78,7 @@ class InstitutionController extends Controller
                 InstitutionProgramModel::create([
                     'institutionId' => $institution->id,
                     'programId' => $id,
+                    'isActive' => 1,
                 ]);
             }
         }
@@ -87,23 +88,72 @@ class InstitutionController extends Controller
 
     public function view(InstitutionModel $institution)
     {
-        $row = InstitutionModel::where('id', $institution->id)->with('institutionProgram.program')->first();
+        $institutionModel = InstitutionModel::where('id', $institution->id)->with('institutionProgram.program')->first();
 
         return Inertia::render('Progmes/Admin/HEI-View', [
-            'institution' => $row,
+            'institution' => $institutionModel,
         ]);
         
     }
 
     public function edit(InstitutionModel $institution) {
+
+        $institutionModel = InstitutionModel::where('id', $institution->id)->with('institution_program.program')->first();
+        $programsOffered = [];
+
+        foreach($institutionModel->institution_program as $program) {
+            if($program->isActive == 1) {
+                array_push($programsOffered, $program->programId);
+            }
+        }
+
+        // dd($programsOffered);
+
         return Inertia::render('Progmes/Admin/HEI-Edit', [
-            'institution' => InstitutionModel::where('id', $institution->id)->with('institutionProgram.program')->first(),
+            'institution' => $institutionModel,
+            'programsOffered' => $programsOffered,
             'program_list' => ProgramModel::all(),
         ]);
     }
 
     public function update(InstitutionValidationRequest $request) {
         $validatedData = $request->validated();
+
+        $institutionModel = InstitutionModel::where('id', $validatedData['id'])->with('institution_program')->first();
+
+        $currentProgramList = [];
+
+        foreach($institutionModel->institution_program as $program) {
+            array_push($currentProgramList, $program->programId);
+        }
+
+        // dd($currentProgramList);
+
+        foreach($validatedData['programs'] as $program) {
+            $updatedRow = InstitutionProgramModel::updateOrCreate(
+                [
+                    'institutionId' => $validatedData['id'],
+                    'programId' => $program,
+                ],
+            [
+                'institutionId' => $validatedData['id'],
+                'programId' => $program,
+                'isActive' => 1,
+            ]);
+        }
+
+        // $inactiveProg = [];
+
+        foreach($currentProgramList as $program) {
+            if(!in_array($program, $validatedData['programs'])) {
+                $inactiveProgram = InstitutionProgramModel::where('institutionId', $validatedData['id'])
+                ->where('programId', $program)->update([
+                    'isActive' => 0,
+                ]);
+            }
+        }
+
+        
     }
 
     public function delete(Request $request) {

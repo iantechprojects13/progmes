@@ -174,7 +174,7 @@
         </div>
 
         <!-- Page Content -->
-        <div class="w-full h-auto relative bg-gray-200 overflow-x-auto md:pt-0">
+        <div class="w-full h-auto overflow-y-hidden relative bg-gray-200 overflow-x-auto md:pt-0">
             <div
                 class="md:hidden sticky top-0 w-full bg-blue-900 text-white flex justify-between text-center h-16 items-center shadow-md z-80 px-4">
                 <div class="cursor-pointer" @click="toggleSideBar">

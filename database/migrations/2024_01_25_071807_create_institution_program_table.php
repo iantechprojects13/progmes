@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('institutionId')->nullable();
             $table->foreignId('programId')->nullable();
+            $table->boolean('isActive')->nullable();
             $table->timestamps();
         });
     }

@@ -120,6 +120,7 @@
                     <option :value="null">Select program</option>
                     <option v-for="program in program_list" :key="program.id" :value="program">
                         {{ program.program }}
+                        <span v-if="program.major != null"> - {{ program.major }}</span>
                     </option>
                 </select>
                 <FormErrorMessage :message="$page.props.errors.program" theme="dark" />

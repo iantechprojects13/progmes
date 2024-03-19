@@ -8,9 +8,6 @@
                 <div class="tracking-tight font-bold text-lg text-gray-600">
                     {{ pageTitle }}
                 </div>
-                <div v-show="hasResultCount" class="tracking-tight font-bold text-lg text-gray-600">
-                    <slot name="result-count"></slot>
-                </div>
             </div>
             <div v-show="hasTopButton" class="mt-3 md:mt-0">
                 <slot name="top-button"></slot>
@@ -49,7 +46,6 @@
         "hasAction",
         "hasPagination",
         "hasTopButton",
-        "hasResultCount",
         "hasSearch",
         "hasFilters",
         "hasNavigation",

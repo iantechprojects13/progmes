@@ -72,12 +72,6 @@
                             </div>
                         </td>
                         <td class="p-3 text-right">
-                            <a :href="'/report/deficiency/' + item.id + '/download'" target="_blank">
-                                <button :disabled="processing" v-show="item.status == 'Submitted'"
-                                    class="w-auto text-sm select-none px-2 h-10 bg-white hover:text-blue-500 border-2 border-gray-500 active:text-white active:bg-blue-600 rounded mr-1">
-                                    <i class="fas fa-download mr-1"></i>Deficiency Report
-                                </button>
-                            </a>
                             <button @click="edit(item.id)" v-show="item.status == 'Submitted'"
                                 class="w-auto text-sm select-none px-2 h-10 bg-white hover:text-blue-500 border-2 border-gray-500 active:text-white active:bg-blue-600 rounded mr-1">
                                 <i class="fas fa-edit mr-1"></i>Evaluate

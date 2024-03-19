@@ -15,6 +15,7 @@ class InstitutionProgramModel extends Model
         'institutionId',
         'disciplineId',
         'programId',
+        'isActive',
     ];
 
     protected $hidden = [

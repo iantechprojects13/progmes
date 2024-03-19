@@ -13,9 +13,14 @@
     <div class="flex flex-row">
         <div class="mr-2">HEI Name: <b>{{ $tool->institution_program->institution->name }}</b></div>
         <div class="mr-2">Program: <b>{{ $tool->institution_program->program->program }}</b></div>
+        <div class="mr-2">Evaluation Date: <b></b></div>
+        <div class="mr-2">Occular Visit Date: <b></b></div>
+        <div class="mr-2">Evaluated by: <b></b></div>
+        <div class="mr-2">Reviewed by: <b></b></div>
+        <div class="mr-2">Noted by: <b></b></div>
     </div>
 
-    <table class="p-2 text-left mt-5" style="border-collapse: collapse;">
+    <table style="border-collapse: collapse; margin-top: 20px;">
         <thead>
             <tr>
                 <th style="border: 1px solid black; padding: 5px; text-align: left;">Area</th>

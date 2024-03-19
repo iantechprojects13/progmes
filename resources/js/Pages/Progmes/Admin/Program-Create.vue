@@ -5,7 +5,7 @@
     <content-container pageTitle="Create Program" hasBackButton="true">
         <template v-slot:back-button>
             <Link href="/admin/program">
-            <button class="w-10 h-10 mr-2 rounded-full hover:bg-gray-300">
+            <button class="w-10 h-10 mr-2 rounded-full hover:bg-gray-300 tooltipForActions" data-tooltip="Back">
                 <i class="fas fa-arrow-left"></i>
             </button>
             </Link>
@@ -15,14 +15,6 @@
                 <div>
                     <span class="text-red-500">*</span>
                     <span class="italic text-sm"> indicates required field</span>
-                </div>
-                <div class="mt-3">
-                    <label for="program" class="font-bold text-gray-600">Program</label>
-                    <span class="text-red-500">*</span>
-                    <input v-model="form.program" type="text" id="program"
-                        class="rounded text-sm border-gray-400 w-full my-0.5 placeholder-gray-500"
-                        placeholder="Program">
-                    <FormErrorMessage :message="$page.props.errors.program" theme="dark" />
                 </div>
                 <div class="mt-3">
                     <label for="discipline" class="font-bold text-gray-600">Discipline</label>
@@ -40,13 +32,24 @@
                 </div>
 
                 <div class="mt-3">
+                    <label for="program" class="font-bold text-gray-600">Program</label>
+                    <span class="text-red-500">*</span>
+                    <input v-model="form.program" type="text" id="program"
+                        class="rounded text-sm border-gray-400 w-full my-0.5 placeholder-gray-500"
+                        placeholder="Program">
+                    <FormErrorMessage :message="$page.props.errors.program" theme="dark" />
+                </div>
+                <div class="mt-3">
                     <label for="major" class="font-bold text-gray-600">Major</label>
                     <input v-model="form.major" type="text" id="major"
                         class="rounded text-sm border-gray-400 w-full my-0.5 placeholder-gray-500" placeholder="Major">
                 </div>
-                <div class="text-right mt-5">
-                    <button @click="submit"
-                        class="rounded text-white bg-blue-500 hover:bg-blue-600 py-2 px-4">Create</button>
+                <div class="mt-5">
+                    <button :disabled="processing" @click="submit"
+                        class="rounded w-full text-white bg-blue-500 hover:bg-blue-600 py-2 px-4">
+                        <span v-if="processing"><i class="fas fa-spinner animate-spin"></i></span>
+                        <span v-else>Create</span>
+                    </button>
                 </div>
             </div>
         </template>
@@ -54,19 +57,30 @@
 </template>
 
 <script setup>
-    import { useForm } from '@inertiajs/vue3';
+    import { useForm, router } from '@inertiajs/vue3';
+    import { ref, reactive } from 'vue';
 
     const props = defineProps({
         'discipline_list': Array,
     });
-    const form = useForm({
+
+    const processing = ref(false);
+
+    const form = reactive({
         discipline: null,
         program: null,
         major: null,
     })
 
     function submit() {
-        form.post('/admin/program/store', form);
+        router.post('/admin/program/store', form, {
+            onStart: () => {
+                processing.value = true;
+            },
+            onFinish: () => {
+                processing.value = false;
+            },
+        });
     }
 
 </script>

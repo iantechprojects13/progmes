@@ -5,7 +5,7 @@
     <content-container pageTitle="Update Discipline" hasBackButton="true">
         <template v-slot:back-button>
             <Link href="/admin/program/discipline">
-            <button class="w-10 h-10 mr-2 rounded-full hover:bg-gray-300 tooltipForActions" data-tooltip="asd">
+            <button class="w-10 h-10 mr-2 rounded-full hover:bg-gray-300 tooltipForActions" data-tooltip="Back">
                 <i class="fas fa-arrow-left"></i>
             </button>
             </Link>

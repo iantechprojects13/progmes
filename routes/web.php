@@ -69,7 +69,7 @@ Route::get('/myaccount/{id?}',[RegistrationController::class, 'viewMyAccount'])-
 
 
 //dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth', 'user.verified')->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth','registered', 'user.verified')->name('dashboard');
 Route::get('/admin/dashboard', [DashboardController::class, 'dashboardForAdmin'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.admin');
 Route::get('/CHED/dashboard', [DashboardController::class, 'dashboardForCHED'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.ched');
 Route::get('/HEI/dashboard', [DashboardController::class, 'dashboardForHEI'])->middleware(['auth', 'type.hei', 'user.verified'])->name('dashboard.hei');

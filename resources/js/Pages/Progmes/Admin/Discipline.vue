@@ -3,15 +3,12 @@
     <Head title="Discipline List" />
     <AdminPanel />
     <content-container pageTitle="Discipline List" hasTopButton="true" hasNavigation="true" hasSearch="true"
-        hasResultCount="true" hasFilters="true" :data_list="discipline_list">
+        hasFilters="true" :data_list="discipline_list">
         <template v-slot:top-button>
             <Link :href="route('admin.discipline.create')">
             <button class="select-none bg-blue-500 hover:bg-blue-600 h-10 px-2 rounded text-white mr-1">Add
                 Discipline</button>
             </Link>
-        </template>
-        <template v-slot:result-count>
-            <div class="ml-5 text-base text-gray-500">( {{ count }} Result<span v-if="count > 1">s</span> )</div>
         </template>
         <template v-slot:navigation>
             <div>
@@ -43,7 +40,8 @@
             <div class="mr-1">
                 <Link href="/admin/program/discipline">
                 <button
-                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-700 hover:text-black border-gray-500">
+                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-700 hover:text-black border-gray-500 tooltipForActions"
+                    data-tooltip="Refresh page">
                     <i class="fas fa-refresh"></i>
                 </button>
                 </Link>
@@ -70,12 +68,14 @@
                         </td>
                         <td v-show="canEdit" class="p-3 text-right">
                             <button @click="deleteModal = true; selected = discipline;"
-                                class="select-none h-10 px-2 rounded bg-white text-gray-700 hover:text-black active:text-red-500 border-2 border-gray-500">
-                                <i class="fas fa-trash mr-0.5"></i>Delete
+                                class="select-none h-10 w-10 rounded bg-white text-gray-700 hover:text-black active:text-red-500 border-2 border-gray-500 tooltipForActions"
+                                data-tooltip="Delete">
+                                <i class="fas fa-trash mr-0.5"></i>
                             </button>
                             <button @click="edit(discipline.id)"
-                                class="ml-1 select-none h-10 px-2 rounded bg-white text-gray-700 hover:text-black active:text-blue-500 border-2 border-gray-500">
-                                <i class="fas fa-edit mr-0.5"></i>Edit
+                                class="ml-1 select-none h-10 w-10 rounded bg-white text-gray-700 hover:text-black active:text-blue-500 border-2 border-gray-500 tooltipForActions"
+                                data-tooltip="Edit">
+                                <i class="fas fa-edit mr-0.5"></i>
                             </button>
                         </td>
                     </tr>
@@ -107,7 +107,7 @@
     import { useForm, router } from "@inertiajs/vue3";
     import { ref } from "vue";
 
-    const props = defineProps(['discipline_list', 'canEdit', 'filters', 'count']);
+    const props = defineProps(['discipline_list', 'canEdit', 'filters']);
     const selected = ref(null);
     const deleteProcessing = ref(false);
 

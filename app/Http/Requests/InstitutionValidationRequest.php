@@ -22,6 +22,7 @@ class InstitutionValidationRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'id' => 'nullable',
             'code' => 'required',
             'name' => 'required',
             'programs' => 'nullable',

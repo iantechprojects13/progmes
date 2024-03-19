@@ -2,11 +2,8 @@
 
     <Head title="Program List" />
     <AdminPanel />
-    <content-container pageTitle="Program List" hasResultCount="true" hasTopButton="true" hasNavigation="true"
-        hasSearch="true" hasFilters="true" :data_list="program_list">
-        <template v-slot:result-count>
-            <div class="ml-5 text-base text-gray-500">( {{ count }} Result<span v-if="count > 1">s</span> )</div>
-        </template>
+    <content-container pageTitle="Program List" hasTopButton="true" hasNavigation="true" hasSearch="true"
+        hasFilters="true" :data_list="program_list">
         <template v-slot:top-button>
             <Link href="/admin/program/create">
             <button class="bg-blue-500 hover:bg-blue-600 h-10 px-2 rounded text-white">Add program</button>
@@ -41,7 +38,8 @@
             <div class="mr-1">
                 <Link href="/admin/program">
                 <button
-                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
+                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500 tooltipForActions"
+                    data-tooltip="Refresh page">
                     <i class="fas fa-refresh"></i>
                 </button>
                 </Link>
@@ -76,10 +74,17 @@
                         </td>
                         <td class="p-2 px-3 text-right">
                             <button @click="deleteModal = true; selected = program;"
-                                class="h-8 px-2 rounded bg-red-500 hover:bg-red-600 text-white">Delete</button>
+                                class="select-none h-10 w-10 rounded bg-white text-gray-700 hover:text-black active:text-red-500 border-2 border-gray-500 tooltipForActions"
+                                data-tooltip="Delete">
+                                <i class="fas fa-trash mr-0.5"></i>
+                            </button>
+                            <button @click="edit(program.id)"
+                                class="ml-1 select-none h-10 w-10 rounded bg-white text-gray-700 hover:text-black active:text-blue-500 border-2 border-gray-500 tooltipForActions"
+                                data-tooltip="Edit">
+                                <i class="fas fa-edit mr-0.5"></i>
+                            </button>
                         </td>
                     </tr>
-
                 </template>
             </content-table>
         </template>
@@ -101,15 +106,15 @@
         </template>
     </DeleteModal>
 
-    <Notification :message="$page.props.flash.success" />
-    <Notification :message="$page.props.flash.failed" />
+    <Notification :message="$page.props.flash.success" type="success" />
+    <Notification :message="$page.props.flash.failed" type="failed" />
 </template>
 
 <script setup>
     import { useForm, router } from "@inertiajs/vue3";
     import { ref, reactive } from "vue";
 
-    const props = defineProps(['program_list', 'count', 'canEdit', 'filters']);
+    const props = defineProps(['program_list', 'canEdit', 'filters']);
     const id = ref(null);
     const deleteProcessing = ref(false);
     const selected = ref(null);
@@ -127,6 +132,10 @@
                 preserveScroll: true,
             });
         }
+    }
+
+    function edit(id) {
+        router.get('/admin/program/' + id + '/edit');
     }
 
     function deleteProgram() {

@@ -12,56 +12,53 @@
             </Link>
         </template>
         <template v-slot:main-content>
-            <div>
-                <div
-                    class="px-5 py-7 mx-auto lg:shadow lg:shadow-gray-500 lg:border lg:border-gray-500 rounded max-w-xl">
-                    <div class="flex flex-col justify-center">
-                        <div>
-                            <span class="text-red-500">*</span>
-                            <span class="italic text-sm"> indicates required field</span>
-                        </div>
-                        <div class="w-full mt-5">
-                            <label for="code" class="font-bold text-gray-700">Institutional
-                                Code</label>
-                            <span class="text-base text-red-500 italic">*</span>
-                            <input type="text" v-model="form.code" id="code" placeholder="HEI Code"
-                                class="w-full rounded placeholder-gray-400 py-2 text-base border-gray-500">
-                            <FormErrorMessage :message="$page.props.errors.code" theme="dark" />
-                        </div>
-                        <div class="w-full mt-3">
-                            <label for="name" class="font-bold text-gray-700">HEI
-                                Name</label>
-                            <span class="text-base text-red-500 italic">*</span>
-                            <input type="text" v-model="form.name" id="name" placeholder="HEI Name"
-                                class="w-full rounded placeholder-gray-400 py-2 px-4 text-base border-gray-500">
-                            <FormErrorMessage :message="$page.props.errors.name" theme="dark" />
-                        </div>
-                        <div class="font-bold mt-5 text-gray-700 text-base">Programs</div>
-                        <div v-if="program_list.length == 0" class="italic text-sm">
-                            No programs found
-                        </div>
-                        <div v-else
-                            class="h-auto max-h-96 overflow-y-auto border border-gray-500 rounded lg:max-w-xl w-full mx-auto p-3">
+            <div class="px-5 py-7 mx-auto lg:shadow lg:shadow-gray-500 lg:border lg:border-gray-500 rounded max-w-xl">
+                <div class="flex flex-col justify-center">
+                    <div>
+                        <span class="text-red-500">*</span>
+                        <span class="italic text-sm"> indicates required field</span>
+                    </div>
+                    <div class="w-full mt-5">
+                        <label for="code" class="font-bold text-gray-700">Institutional
+                            Code</label>
+                        <span class="text-base text-red-500 italic">*</span>
+                        <input type="text" v-model="form.code" id="code" placeholder="HEI Code"
+                            class="w-full rounded placeholder-gray-400 py-2 text-base border-gray-500">
+                        <FormErrorMessage :message="$page.props.errors.code" theme="dark" />
+                    </div>
+                    <div class="w-full mt-3">
+                        <label for="name" class="font-bold text-gray-700">HEI
+                            Name</label>
+                        <span class="text-base text-red-500 italic">*</span>
+                        <input type="text" v-model="form.name" id="name" placeholder="HEI Name"
+                            class="w-full rounded placeholder-gray-400 py-2 px-4 text-base border-gray-500">
+                        <FormErrorMessage :message="$page.props.errors.name" theme="dark" />
+                    </div>
+                    <div class="font-bold mt-5 text-gray-700 text-base">Programs</div>
+                    <div v-if="program_list.length == 0" class="italic text-sm">
+                        No programs found
+                    </div>
+                    <div v-else
+                        class="h-auto max-h-96 overflow-y-auto border border-gray-500 rounded lg:max-w-xl w-full mx-auto p-3">
 
-                            <div v-for="(  program, index  ) in   program_list  " :key="program.id" class="p-2">
-                                <div class="mr-2 flex flex-row items-center">
-                                    <input type="checkbox" :id="'programCheck' + index" class="mr-2 text-blue-500"
-                                        @change="addProgram(program.id)">
-                                    <label class="cursor-pointer text-sm" :for="'programCheck' + index">
-                                        {{ program.program }}
-                                        <span v-if="program.major"> - {{ program.major }}</span>
-                                    </label>
-                                </div>
+                        <div v-for="(  program, index  ) in   program_list  " :key="program.id" class="p-2">
+                            <div class="mr-2 flex flex-row items-center">
+                                <input type="checkbox" :id="'programCheck' + index" class="mr-2 text-blue-500"
+                                    @change="addProgram(program.id)">
+                                <label class="cursor-pointer text-sm" :for="'programCheck' + index">
+                                    {{ program.program }}
+                                    <span v-if="program.major"> - {{ program.major }}</span>
+                                </label>
                             </div>
                         </div>
                     </div>
-                    <div class="mt-5 w-full text-center">
-                        <button @click="submit" :disabled="processing"
-                            class="mx-auto w-full bg-blue-500 rounded hover:bg-blue-600 text-white py-2 px-4">
-                            <span v-if="!processing">Register</span>
-                            <span v-else><i class="fas fa-spinner animate-spin"></i></span>
-                        </button>
-                    </div>
+                </div>
+                <div class="mt-5 w-full text-center">
+                    <button @click="submit" :disabled="processing"
+                        class="mx-auto w-full bg-blue-500 rounded hover:bg-blue-600 text-white py-2 px-4">
+                        <span v-if="!processing">Register</span>
+                        <span v-else><i class="fas fa-spinner animate-spin"></i></span>
+                    </button>
                 </div>
             </div>
         </template>
@@ -73,16 +70,16 @@
     import { ref, reactive } from 'vue';
     import { router } from '@inertiajs/vue3';
 
+    const props = defineProps([
+        'program_list',
+    ]);
+
     const programChecked = [];
     const processing = ref(false);
 
     const form = reactive({
         code: null,
         name: null,
-        address: null,
-        cityOrMunicipality: '',
-        cityOrProvince: '',
-        zipCode: null,
         programs: ref(programChecked),
     });
 
@@ -112,9 +109,7 @@
         }
     }
 
-    defineProps([
-        'program_list',
-    ]);
+
 
 
 </script>

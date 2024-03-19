@@ -80,6 +80,7 @@
                                             form.discipline
                                         ">
                                         {{ program.program }}
+                                        <span v-if="program.major != null"> - {{ program.major }}</span>
                                     </option>
                                 </select>
                                 <FormErrorMessage :message="$page.props.errors.program" theme="dark" />

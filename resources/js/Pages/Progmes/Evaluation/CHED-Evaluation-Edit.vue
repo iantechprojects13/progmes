@@ -2,62 +2,79 @@
 
     <Head title="Evaluation Form" />
     <page-title title="Program Evaluation" />
-    <div class="md:mx-8 mx-3 mt-8 flex flex-col lg:flex-row justify-between bg-white rounded p-5">
-        <div class="flex flex-col w-auto rounded">
-            <div class="w-auto flex flex-col md:flex-row">
-                <div class="mr-2 font-bold">
-                    HEI Name:
-                </div>
-                <div>
-                    {{ evaluation.institution_program.institution.name }}
-                </div>
-            </div>
-            <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
-                <div class="w-auto flex flex-col md:flex-row">
-                    <div class="mr-2 font-bold">
-                        Program:
-                    </div>
-                    <div>
-                        {{ evaluation.institution_program.program.program }}
-                    </div>
-                </div>
-            </div>
-            <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
-                <div class="w-auto flex flex-col md:flex-row">
-                    <div class="mr-2 font-bold">
-                        Effectivity:
-                    </div>
-                    <div>
-                        A.Y. {{ evaluation.effectivity }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <content-container hasTopButton="true">
-        <template v-slot:top-button>
-            <div class="flex justify-between">
+    <div class="mt-5 md:mx-8 mx-3 flex flex-col md:flex-row justify-between sticky top-0 z-80 p-3 items-center">
+        <div>
+            <Link href="/ched/evaluation">
+            <button class="w-fit h-10 hover:bg-gray-300 bg-white px-3 border-2 border-gray-500 rounded"><i
+                    class="fas fa-arrow-left mr-2"></i>Back
+            </button>
+            </Link>
+        </div>
+        <div class="flex">
+            <div class="flex flex-row justify-between">
                 <div class="text-gray-500 h-10 lg:ml-1 flex items-center mr-5">
                     <div v-if="hasUpdate" class="text-red-500">
                         *Changes unsaved.
                     </div>
                     <div v-else-if="$page.props.flash.updated">
-                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                        <i class="fas fa-check-circle text-green-500 mr-1"></i>
                         {{ $page.props.flash.updated }}
                     </div>
                     <div v-else></div>
                 </div>
-                <div>
-                    <button @click="update" ref="saveBtn"
-                        class="select-none cursor-pointer px-2 w-fit h-10 rounded text-white"
-                        :class="[{'bg-gray-500' : !hasUpdate}, {'bg-green-600 hover:bg-green-700': hasUpdate}]"
-                        :disabled="!hasUpdate">Save Changes
-                    </button>
-                </div>
             </div>
+            <button @click="update" ref="saveBtn"
+                class="select-none cursor-pointer bg-blue-500 text-white px-2 w-fit h-10 rounded"
+                :class="{'text-gray-300 bg-gray-700' : !hasUpdate}" :disabled="!hasUpdate">Save
+                Changes
+            </button>
+        </div>
+    </div>
+
+    <content-container hasTopButton="true">
+        <template v-slot:top-button>
+            <a :href="'/report/deficiency/' + evaluation.id + '/download'" target="_blank">
+                <button
+                    class="w-auto text-sm select-none px-2 h-10 bg-white hover:text-blue-500 border-2 border-gray-500 active:text-white active:bg-blue-600 rounded mr-1">
+                    <i class="fas fa-download mr-1"></i>Deficiency Report
+                </button>
+            </a>
         </template>
         <template v-slot:main-content>
+            <div class="flex flex-col lg:flex-row justify-between bg-white rounded p-2">
+                <div class="flex flex-col w-auto rounded">
+                    <div class="w-auto flex flex-col md:flex-row">
+                        <div class="mr-2 font-bold">
+                            HEI Name:
+                        </div>
+                        <div>
+                            {{ evaluation.institution_program.institution.name }}
+                        </div>
+                    </div>
+                    <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
+                        <div class="w-auto flex flex-col md:flex-row">
+                            <div class="mr-2 font-bold">
+                                Program:
+                            </div>
+                            <div>
+                                {{ evaluation.institution_program.program.program }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
+                        <div class="w-auto flex flex-col md:flex-row">
+                            <div class="mr-2 font-bold">
+                                Effectivity:
+                            </div>
+                            <div>
+                                A.Y. {{ evaluation.effectivity }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <content-table>
                 <template v-slot:table-head>
                     <th class="p-3 align-bottom whitespace-normal">Area /<br>Minimum Requirement</th>

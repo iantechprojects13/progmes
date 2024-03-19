@@ -51,10 +51,17 @@
                         </td>
                         <td class="p-3 text-right">
                             <button @click="deleteModal = true; selected = hei;"
-                                class="h-8 px-2 rounded bg-red-500 hover:bg-red-600 text-white">Delete</button>
+                                class="h-10 w-10 rounded border-2 border-gray-500 bg-white text-gray-700 hover:text-black active:text-red-500 tooltipForActions"
+                                data-tooltip="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button @click="edit(hei.id)"
+                                class="ml-1 h-10 w-10 rounded border-2 border-gray-500 bg-white text-gray-700 hover:text-black active:text-blue-500 tooltipForActions"
+                                data-tooltip="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
                         </td>
                     </tr>
-
                 </template>
             </content-table>
         </template>
@@ -74,7 +81,8 @@
                 class="h-10 w-16 rounded bg-red-500 hover:bg-red-600 text-white">Delete</button>
         </template>
     </DeleteModal>
-    <Notification :message="$page.props.flash.success" />
+    <Notification :message="$page.props.flash.success" type="success" />
+    <Notification :message="$page.props.flash.failed" type="failed" />
 </template>
 
 <script setup>
@@ -98,6 +106,10 @@
                 preserveScroll: true,
             });
         }
+    }
+
+    function edit(id) {
+        router.get('/admin/higher-education-institutions/' + id + '/edit');
     }
 
     function deleteHEI() {

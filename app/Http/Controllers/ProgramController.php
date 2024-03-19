@@ -26,17 +26,12 @@ class ProgramController extends Controller
             $query->where('program', 'like', '%' . $request->query('search') . '%');
         })
         ->with('discipline')
-        ->orderBy('program');
-
-        $count = $programlist->count();
-
-        $programlist = $programlist
+        ->orderBy('program')
         ->paginate(10)
         ->withQueryString();
 
         return Inertia::render('Progmes/Admin/Program', [
             'program_list' => $programlist,
-            'count' => $count,
             'canEdit' => $canEdit,
             'filters' => $request->only(['search']),
         ]);
@@ -61,17 +56,24 @@ class ProgramController extends Controller
     }
 
     public function edit($program) {
+        
         $programModel = ProgramModel::find($program);
-        return Inertia::render('Progmes/Admin/Program-Edit', [
-            'discipline_list' => DisciplineModel::all(),
-            'program' => $programModel,
-        ]);
+
+        if($programModel) {
+            return Inertia::render('Progmes/Admin/Program-Edit', [
+                'discipline_list' => DisciplineModel::all(),
+                'program' => $programModel,
+            ]);
+        }
+
+        return redirect()->back()->with('failed', 'No program found.');
     }
 
     public function update(ProgramRequest $request) {
-        $programModel = ProgramModel::find($request->id);
-
+        
         $validatedData = $request->validated();
+
+        $programModel = ProgramModel::find($request->id);
 
         $programModel->update([
             'disciplineId' => $validatedData['discipline'],

@@ -2,13 +2,35 @@
 
     <Head title="Evaluation Form" />
     <page-title title="Program Self-Evaluation" />
-    <div class="mt-5 md:mx-8 mx-3 flex flex-col md:flex-row justify-between">
+    <div class="mt-5 md:mx-8 mx-3 flex flex-col md:flex-row justify-between sticky top-0 z-80 p-3 items-center">
         <div>
             <Link href="/hei/evaluation">
             <button class="w-fit h-10 hover:bg-gray-300 bg-white px-3 border-2 border-gray-500 rounded"><i
                     class="fas fa-arrow-left mr-2"></i>Back
             </button>
             </Link>
+        </div>
+        <div class="flex flex-wrap">
+            <div class="h-fit mt-1 flex flex-wrap border border-gray-400 rounded py-2 text-sm bg-white">
+                <div class="px-3 md:mt-0 mt-2">
+                    Complied<br>
+                    <span class="font-bold text-blue-500">{{ progress.complied }}</span>
+                </div>
+                <div class="px-3 md:mt-0 mt-2">
+                    Not complied<br>
+                    <span class="font-bold text-blue-500">{{ progress.notComplied }}</span>
+                </div>
+                <div class="px-3 md:mt-0 mt-2">
+                    Not applicable<br>
+                    <span class="font-bold text-blue-500">{{ progress.notApplicable }}</span>
+                </div>
+            </div>
+            <div class="h-fit m-1 flex flex-wrap border border-gray-400 rounded py-2 text-sm bg-white">
+                <div class="px-3 md:mt-0 mt-2">
+                    Progress<br>
+                    <span class="font-bold text-blue-500">{{ progress.percentage }}%</span>
+                </div>
+            </div>
         </div>
         <div class="flex">
             <div class="flex flex-row justify-between">
@@ -36,69 +58,43 @@
             </button>
         </div>
     </div>
-    <div
-        class="md:mx-8 mx-3 mt-5 flex flex-col-reverse lg:flex-row items-center justify-between rounded bg-white p-1 px-3">
-        <div class="flex flex-col-reverse md:flex-row">
-            <div class="flex flex-wrap">
-                <div class="h-fit mt-1 flex flex-wrap border border-gray-400 rounded py-2 text-sm">
-                    <div class="px-3 md:mt-0 mt-2">
-                        Complied<br>
-                        <span class="font-bold text-blue-500">{{ progress.complied }}</span>
-                    </div>
-                    <div class="px-3 md:mt-0 mt-2">
-                        Not complied<br>
-                        <span class="font-bold text-blue-500">{{ progress.notComplied }}</span>
-                    </div>
-                    <div class="px-3 md:mt-0 mt-2">
-                        Not applicable<br>
-                        <span class="font-bold text-blue-500">{{ progress.notApplicable }}</span>
-                    </div>
-                </div>
-                <div class="h-fit m-1 flex flex-wrap border border-gray-400 rounded py-2 text-sm">
-                    <div class="px-3 md:mt-0 mt-2">
-                        Progress<br>
-                        <span class="font-bold text-blue-500">{{ progress.percentage }}%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
 
-    <div class="md:mx-8 mx-3 mt-5 flex flex-col-reverse lg:flex-row justify-between rounded bg-white p-5 align-top">
-        <div class="flex flex-col w-auto rounded md:mt-0 mt-5">
-            <div class="w-auto flex flex-col md:flex-row">
-                <div class="mr-2 font-bold tracking-tight">
-                    HEI Name:
-                </div>
-                <div class="tracking-tight">
-                    {{ evaluation.institution_program.institution.name }}
-                </div>
-            </div>
-            <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
-                <div class="w-auto flex flex-col md:flex-row">
-                    <div class="mr-2 font-bold tracking-tight">
-                        Program:
-                    </div>
-                    <div class="tracking-tight">
-                        {{ evaluation.institution_program.program.program }}
-                    </div>
-                </div>
-            </div>
-            <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
-                <div class="w-auto flex flex-col md:flex-row">
-                    <div class="mr-2 font-bold tracking-tight">
-                        Effectivity:
-                    </div>
-                    <div class="tracking-tight">
-                        A.Y. {{ evaluation.effectivity }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <content-container>
         <template v-slot:main-content>
+            <div class="flex flex-col-reverse lg:flex-row justify-between rounded bg-white p-2 align-top">
+                <div class="flex flex-col w-auto rounded md:mt-0 mt-5">
+                    <div class="w-auto flex flex-col md:flex-row">
+                        <div class="mr-2 font-bold tracking-tight">
+                            HEI Name:
+                        </div>
+                        <div class="tracking-tight">
+                            {{ evaluation.institution_program.institution.name }}
+                        </div>
+                    </div>
+                    <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
+                        <div class="w-auto flex flex-col md:flex-row">
+                            <div class="mr-2 font-bold tracking-tight">
+                                Program:
+                            </div>
+                            <div class="tracking-tight">
+                                {{ evaluation.institution_program.program.program }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
+                        <div class="w-auto flex flex-col md:flex-row">
+                            <div class="mr-2 font-bold tracking-tight">
+                                Effectivity:
+                            </div>
+                            <div class="tracking-tight">
+                                A.Y. {{ evaluation.effectivity }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <content-table v-show="itemsLayout === 'list'">
                 <template v-slot:table-head>
                     <!-- <th class="p-3 max-w-8">Item</th> -->
@@ -334,9 +330,7 @@
     const saveBtn = ref(null);
     const saving = ref(false);
 
-    const container = ref([]);
-
-    const refs = { actualSituationInput, selfEvaluationStatus, actionButtons, evidenceFiles, saveBtn, texteditor, inputEvidenceFile, container };
+    const refs = { actualSituationInput, selfEvaluationStatus, actionButtons, evidenceFiles, saveBtn, texteditor, inputEvidenceFile };
 
     // Functions
     function handleTextInput(index, id) {
@@ -422,6 +416,8 @@
         file: null,
     });
 
+
+
     function update() {
         router.post('/hei/evaluation/update', {
             id: props.evaluation.id,
@@ -434,8 +430,8 @@
             onFinish: () => {
                 saving.value = false;
             },
-            preserveState: false,
             preserveScroll: true,
+            preserveState: false,
         });
     }
 
