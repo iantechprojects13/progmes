@@ -98,6 +98,7 @@
                 processing.value = false;
             },
             preserveState: true,
+            replace: true,
         });
     }
 

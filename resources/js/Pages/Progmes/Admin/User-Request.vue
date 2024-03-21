@@ -2,21 +2,23 @@
 
     <Head title="Users Request" />
     <AdminPanel />
-    <content-container @submit="submit" pageTitle="Request List" hasPageDescription="true" hasNavigation="true"
-        hasSearch="true" hasFilters="true" :data_list="user_list">
-        <template v-slot:page-description>
-            <div class="ml-5 text-base text-gray-500">( {{ count }} Result<span v-if="count > 1">s</span> )</div>
-        </template>
+    <content-container @submit="submit" pageTitle="Request List" hasNavigation="true" hasSearch="true" hasFilters="true"
+        :data_list="user_list">
         <template v-slot:navigation>
             <div>
                 <Link :href="route('admin.users.list')">
-                <button class="text-gray-500 hover:text-blackh-10 mr-8">
-                    Active users
+                <button class="text-gray-500 hover:text-black h-10 mr-7">
+                    Active
                 </button>
                 </Link>
-                <button class="text-blue-500 h-10 border-b-2 font-bold border-blue-500">
+                <button class="text-blue-500 h-10 border-b-2 font-bold border-blue-500 mr-7">
                     Request
                 </button>
+                <Link :href="route('admin.users.inactive')">
+                <button class="text-gray-500 hover:text-black h-10 mr-7">
+                    Inactive
+                </button>
+                </Link>
             </div>
         </template>
         <template v-slot:search>
@@ -82,46 +84,6 @@
                     </template>
                 </dropdown-option>
             </div>
-            <!-- <div>
-                <dropdown-option position="right">
-                    <template v-slot:button>
-                        <button
-                            class="px-2 border-2 whitespace-nowrap rounded h-8 text-gray-600 hover:text-black border-gray-500">
-                            Sort by
-
-                            <i class="fas fa-caret-down ml-2"></i>
-                        </button>
-                    </template>
-                    <template v-slot:options>
-                        <div class="w-40">
-                            <button preserve-state @click="
-                                        query.sort = 'name';
-                                        submit();
-                                    " class="w-full py-1 text-left indent-5 hover:bg-gray-200" :class="{
-                                        'bg-gray-300': props.filters.sort == 'name',
-                                    }">
-                                Name
-                            </button>
-                            <button @click="
-                                        query.sort = 'type';
-                                        submit();
-                                    " class="w-full py-1 text-left indent-5 hover:bg-gray-200" :class="{
-                                        'bg-gray-300': props.filters.sort == 'type',
-                                    }">
-                                Type
-                            </button>
-                            <button @click="
-                                        query.sort = 'role';
-                                        submit();
-                                    " class="w-full py-1 text-left indent-5 hover:bg-gray-200" :class="{
-                                        'bg-gray-300': props.filters.sort == 'role',
-                                    }">
-                                Role
-                            </button>
-                        </div>
-                    </template>
-                </dropdown-option>
-            </div> -->
         </template>
         <template v-slot:main-content>
             <content-table>
@@ -131,6 +93,9 @@
                     <th class="p-3">Role</th>
                     <th class="p-3">Discipline/Program</th>
                     <th class="p-3">HEI Name</th>
+                    <th class="p-3 text-right" v-show="canEdit">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </th>
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="user_list.data.length == 0">
@@ -172,13 +137,13 @@
                                 {{ role.institution?.name }}
                             </div>
                         </td>
-                        <td class="p-3 text-right px-3" v-if="canEdit">
+                        <td class="p-3 text-right px-3" v-show="canEdit">
                             <button @click="toggleModal(user, 'reject', 'Reject User')"
-                                class="h-8 px-2 text-white bg-red-500 hover:bg-red-600 rounded mr-1">
+                                class="h-10 px-2 text-white bg-red-500 hover:bg-red-600 rounded mr-1">
                                 Reject
                             </button>
                             <button @click="toggleModal(user, 'accept', 'Accept User')"
-                                class="h-8 px-2 text-white bg-blue-500 hover:bg-blue-600 rounded">
+                                class="h-10 px-2 text-white bg-blue-500 hover:bg-blue-600 rounded">
                                 Accept
                             </button>
                         </td>
@@ -187,7 +152,8 @@
             </content-table>
         </template>
     </content-container>
-    <Notification :message="$page.props.flash.success" />
+    <Notification :message="$page.props.flash.success" type="success" />
+    <Notification :message="$page.props.flash.failed" type="failed" />
     <div v-if="modal">
         <Confirmation @close="closeModal" :title="title" :modaltype="modaltype" :selected="selectedUser" />
     </div>

@@ -38,14 +38,14 @@
                     </button>
                     </Link>
 
-                    <Link :href="route('admin.hei.list')" v-show="$page.props.auth.user.role == 'Super Admin'">
+                    <Link :href="route('admin.hei.list')">
                     <button class="h-12 md:w-auto md:px-5 w-full md:hover:bg-gray-600 hover:bg-stone-600  rounded"
                         :class="{ 'text-blue-500 md:border-b-blue-500 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-stone-700 md:hover:text-blue-500': highlight('institution') }">
                         HEI
                     </button>
                     </Link>
 
-                    <Link :href="route('admin.program.list')" v-show="$page.props.auth.user.role == 'Super Admin'">
+                    <Link :href="route('admin.program.list')">
                     <button class="h-12 md:w-auto md:px-5 w-full md:hover:bg-gray-600 hover:bg-stone-600  rounded"
                         :class="{ 'text-blue-500 md:border-b-blue-500 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-stone-700 md:hover:text-blue-500': highlight('program') }">
                         Program

@@ -28,7 +28,7 @@
                         <form-error-message :message="$page.props.errors.institution" theme="dark" />
                     </div>
                     <!-- role -->
-                    <div class="mt-4" v-show="props.institution">
+                    <div class="mt-4" v-show="form.institution">
                         <label for="role" class="block font-bold text-gray-800 dark:text-white">Role</label>
                         <select id="role" v-model="form.role" @change="checkRole()"
                             class="border border-gray-500 rounded block w-full p-2"
@@ -108,6 +108,7 @@
             },
             preserveScroll: true,
             preserveState: false,
+            replace: true,
         });
     });
 
@@ -125,7 +126,6 @@
 
 
 
-    // submit
     function submit() {
         router.post('/register/hei', form, {
             onStart: () => {
@@ -135,6 +135,7 @@
                 processing.value = false;
             },
             preserveState: true,
+            replace: true,
         });
     }
 

@@ -23,6 +23,9 @@
                 <div v-if="modaltype == 'deactivateUser'">
                     Are you sure you want to deactivate <b>{{ selected.name }} </b>'s account?
                 </div>
+                <div v-if="modaltype == 'deleteUser'">
+                    Are you sure you want to delete <b>{{ selected.name }} </b>'s account?
+                </div>
                 <div v-if="modaltype == 'deleteCMO'">
                     Are you sure you want to delete this CMO? This action can't be undone.
                 </div>
@@ -51,19 +54,47 @@
             </div>
             <div class="py-4 px-5 border-t-2 border-gray-100 text-right">
                 <button
-                    class=" text-gray-500 hover:text-black hover:bg-stone-200 p-2 px-3 rounded border border-stone-300 mr-1"
+                    class="select-none text-gray-500 hover:text-black hover:bg-stone-200 p-2 px-3 rounded border border-stone-300 mr-1"
                     @click="closeModal">
                     Cancel
                 </button>
-                <Link v-if="modaltype == 'accept'" :href="route('register.accept', [selected])" @click="closeModal"
-                    class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border"
-                    preserve-scroll>
-                Accept
-                </Link>
-                <Link v-if="modaltype == 'reject'" :href="route('register.reject', [selected])" @click="closeModal"
-                    class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border"
+
+                <button :disabled="processing" v-if="modaltype == 'accept'"
+                    @click="submit('/register/'+selected.id+ '/accept')"
+                    class="select-none text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 h-10 w-20 rounded border">
+                    <span v-if="processing">
+                        <i class="fas fa-spinner animate-spin"></i>
+                    </span>
+                    <span v-else>Accept</span>
+                </button>
+
+                <button :disabled="processing" v-if="modaltype == 'reject'"
+                    @click="submit('/register/'+selected.id+ '/reject')"
+                    class="select-none text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 h-10 w-20 rounded border">
+                    <span v-if="processing">
+                        <i class="fas fa-spinner animate-spin"></i>
+                    </span>
+                    <span v-else>Reject</span>
+                </button>
+
+
+                <!-- <Link v-if="modaltype == 'reject'" :href="route('register.reject', [selected])" @click="closeModal"
+                    class="select-none text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border"
                     preserve-scroll>
                 Reject
+                </Link> -->
+                <button :disabled="processing" v-if="modaltype == 'deleteUser'"
+                    @click="submit('/register/'+selected.id+ '/delete')"
+                    class="select-none text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 h-10 w-20 rounded border">
+                    <span v-if="processing">
+                        <i class="fas fa-spinner animate-spin"></i>
+                    </span>
+                    <span v-else>Delete</span>
+                </button>
+                <Link v-if="modaltype == 'activateUser'" :href="route('user.active', [selected])" @click="closeModal"
+                    class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border"
+                    preserve-scroll>
+                Activate
                 </Link>
                 <Link v-if="modaltype == 'deactivateUser'" :href="route('user.deactivate', [selected])"
                     @click="closeModal"
@@ -108,11 +139,28 @@
 </template>
 
 <script setup>
+    import { router } from '@inertiajs/vue3';
+    import { ref } from 'vue';
+
     const props = defineProps({
         'title': String,
         'modaltype': String,
         'selected': Object,
     });
+
+    const processing = ref(false);
+
+    function submit(link) {
+        router.get(link, props.selected, {
+            onStart: () => {
+                processing.value = true;
+            },
+            onFinish: () => {
+                processing.value = false;
+            },
+            preserveState: false,
+        });
+    }
 
 </script>
 

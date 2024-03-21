@@ -1,4 +1,5 @@
 <template>
+
     <Head title="Register" />
     <div class="w-full flex justify-center mt-20 select-none">
         <div
@@ -23,3 +24,6 @@
         </div>
     </div>
 </template>
+
+<script setup>
+</script>

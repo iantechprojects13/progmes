@@ -1,36 +1,5 @@
 <template>
 
-    <Head title="Login" />
-    <!-- Header -->
-    <!-- <div
-        class="md:hidden fixed top-0 w-full bg-blue-900 text-white flex justify-between text-center h-16 items-center shadow-md z-90 px-4">
-        <div class="cursor-pointer" @click="toggleSideBar">
-            <i class="fas fa-bars text-xl"></i>
-        </div>
-        <div>
-            <dropdown-option position="right">
-                <template v-slot:button>
-                    <img :src="$page.props.auth.user.avatar" width="35"
-                        class=" border-2 bg-white rounded-full cursor-pointer" />
-                </template>
-                <template v-slot:options>
-                    <div class="w-52">
-                        <Link :href="'/myaccount/' + $page.props.auth.user.id">
-                        <button class="block py-2 indent-3 hover:bg-gray-200 w-full text-left">
-                            <i class="fas fa-user mr-3"></i>My Account
-                        </button>
-                        </Link>
-                        <Link href="/logout" method="post" as="button" class="w-full">
-                        <button class="block py-2 indent-3 hover:bg-gray-200 w-full text-left">
-                            <i class="fas fa-sign-out mr-3"></i>Log out
-                        </button>
-                        </Link>
-                    </div>
-                </template>
-            </dropdown-option>
-        </div>
-    </div> -->
-
     <!-- Body -->
     <div class="flex flex-col md:flex-row h-full bg-gray-200">
         <!-- Navigation -->
@@ -56,12 +25,6 @@
                                 <img src="/assets/ched-logo.png" width="50" class="mr-3" />
                                 <div class="text-2xl">ProgMES</div>
                             </div>
-
-                            <!-- <div
-                                class="text-center py-3 border-t border-b border-blue-400"
-                            >
-                                <div>{{ $page.props.auth.user.role }}</div>
-                            </div> -->
 
                             <!-- Searchbox -->
                             <div class="bg-gray-700 my-7 h-10 rounded-md relative">
@@ -107,10 +70,6 @@
                                 <i class="fa fa-edit mr-4 text-xl"></i>
                                 Evaluation
                                 </Link>
-                                <!-- <Link href="" class="block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700">
-                                <i class="fa fa-archive mr-4 text-xl"></i>
-                                Archive
-                                </Link> -->
                             </div>
                         </div>
 
@@ -239,6 +198,7 @@
                     dashboard: [
                         "Progmes/Dashboard/Dashboard-CHED",
                         "Progmes/Dashboard/Dashboard-HEI",
+                        "Progmes/Dashboard/CHED-ES-Dashboard",
                     ],
                     adminpanel: [
                         "Progmes/Admin/User-List",

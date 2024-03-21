@@ -42,6 +42,7 @@ class RegistrationController extends Controller
             $program_list = InstitutionProgramModel::where('institutionId', $request->institution)->with('program', 'program.discipline')->get();
 
             foreach ($program_list as $program) {
+
                 $disciplineId = $program->program->discipline->id;
                 
                 if (!in_array($disciplineId, array_column($discipline_list, 'id'))) {
@@ -60,13 +61,6 @@ class RegistrationController extends Controller
             'program_list' => $program_list,
             'institution' => $request->institution ? $request->institution : null,
         ]);
-
-        // return Inertia::render('Progmes/Auth/Register-HEI', [
-        //     'institution_list' => InstitutionModel::select('id', 'name')->get(),
-        //     'discipline_list' => DisciplineModel::select('id', 'discipline')->orderBy('discipline', 'asc')->get(),
-        //     'program_list' => ProgramModel::select('id','disciplineId', 'program', 'major')->orderBy('program', 'asc')->get(),
-        //     'institution' => $request->institution ? $request->institution : null,
-        // ]);
     }
 
     // register ched account
@@ -260,6 +254,16 @@ class RegistrationController extends Controller
         }
 
         return redirect()->back()->with('success', $rejectedUser->name .'\'s registration has been rejected.');
+    }
+
+    public function destroy(User $user) {
+
+        $deleteUser = User::where('id', $user->id)->first();
+
+        $deleteUser->userRole()->delete();
+        $deleteUser->delete();
+        
+        return redirect()->back()->with('success', 'User has been deleted.');
     }
 
 

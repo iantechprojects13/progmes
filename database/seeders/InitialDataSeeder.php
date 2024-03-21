@@ -83,33 +83,33 @@ class InitialDataSeeder extends Seeder
         ]);
 
         //institution_program
-        for($i = 1; $i <= 6; $i++) {
-            DB::table('institution_program')->insert([
-            'institutionId' => 1,
-            'programId' => $i,
-            ]);
-        }
+        // for($i = 1; $i <= 6; $i++) {
+        //     DB::table('institution_program')->insert([
+        //     'institutionId' => 1,
+        //     'programId' => $i,
+        //     ]);
+        // }
 
-        for($i = 5; $i <= 6; $i++) {
-            DB::table('institution_program')->insert([
-            'institutionId' => 2,
-            'programId' => $i,
-            ]);
-        }
+        // for($i = 5; $i <= 6; $i++) {
+        //     DB::table('institution_program')->insert([
+        //     'institutionId' => 2,
+        //     'programId' => $i,
+        //     ]);
+        // }
 
-        for($i = 1; $i <= 6; $i++) {
-            DB::table('institution_program')->insert([
-            'institutionId' => 3,
-            'programId' => $i,
-            ]);
-        }
+        // for($i = 1; $i <= 6; $i++) {
+        //     DB::table('institution_program')->insert([
+        //     'institutionId' => 3,
+        //     'programId' => $i,
+        //     ]);
+        // }
 
-        for($i = 1; $i <= 6; $i++) {
-            DB::table('institution_program')->insert([
-            'institutionId' => 4,
-            'programId' => $i,
-            ]);
-        }
+        // for($i = 1; $i <= 6; $i++) {
+        //     DB::table('institution_program')->insert([
+        //     'institutionId' => 4,
+        //     'programId' => $i,
+        //     ]);
+        // }
 
         DB::table('admin_settings')->insert([
             'currentAcademicYear' => '2024-2025',

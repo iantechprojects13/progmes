@@ -2,19 +2,21 @@
 
     <Head title="Users List" />
     <AdminPanel />
-    <content-container @submit="submit" pageTitle="Active Users List" hasPageDescription="true" hasNavigation="true"
-        hasSearch="true" hasFilters="true" :data_list="user_list">
-        <template v-slot:page-description>
-            <div class="ml-5 text-base text-gray-500">( {{ count }} Result<span v-if="count > 1">s</span> )</div>
-        </template>
+    <content-container @submit="submit" pageTitle="Active Users List" hasNavigation="true" hasSearch="true"
+        hasFilters="true" :data_list="user_list">
         <template v-slot:navigation>
             <div>
-                <button class="text-blue-500 h-10 mr-8 border-b-2 relative font-bold border-blue-500">
-                    Active users
+                <button class="select-none text-blue-500 h-10 mr-7 border-b-2 relative font-bold border-blue-500">
+                    Active
                 </button>
                 <Link :href="route('admin.users.request')">
-                <button class="text-gray-500 hover:text-black">
+                <button class="mr-7 select-none text-gray-500 hover:text-black">
                     Request
+                </button>
+                </Link>
+                <Link :href="route('admin.users.inactive')">
+                <button class="select-none text-gray-500 hover:text-black mr-7">
+                    Inactive
                 </button>
                 </Link>
             </div>
@@ -39,7 +41,7 @@
                 </button>
                 </Link>
             </div>
-            <div class="mr-1">
+            <div v-show="canFilter" class="mr-1">
                 <dropdown-option position="right">
                     <template v-slot:button>
                         <button
@@ -82,46 +84,6 @@
                     </template>
                 </dropdown-option>
             </div>
-            <!-- <div>
-                <dropdown-option position="right">
-                    <template v-slot:button>
-                        <button
-                            class="px-2 border-2 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
-                            Sort by
-
-                            <i class="fas fa-caret-down ml-2"></i>
-                        </button>
-                    </template>
-                    <template v-slot:options>
-                        <div class="w-40">
-                            <button preserve-state @click="
-                                    query.sort = 'name';
-                                    submit();
-                                " class="w-full py-1 text-left indent-5 hover:bg-gray-200" :class="{
-                                    'bg-gray-300': props.filters.sort == 'name',
-                                }">
-                                Name
-                            </button>
-                            <button @click="
-                                    query.sort = 'type';
-                                    submit();
-                                " class="w-full py-1 text-left indent-5 hover:bg-gray-200" :class="{
-                                    'bg-gray-300': props.filters.sort == 'type',
-                                }">
-                                Type
-                            </button>
-                            <button @click="
-                                    query.sort = 'role';
-                                    submit();
-                                " class="w-full py-1 text-left indent-5 hover:bg-gray-200" :class="{
-                                    'bg-gray-300': props.filters.sort == 'role',
-                                }">
-                                Role
-                            </button>
-                        </div>
-                    </template>
-                </dropdown-option>
-            </div> -->
         </template>
         <template v-slot:main-content>
             <content-table>
@@ -131,7 +93,7 @@
                     <th class="p-3">Role</th>
                     <th class="p-3">Discipline/Program</th>
                     <th class="p-3">HEI Name</th>
-                    <th class="p-3 text-right">
+                    <th v-show="canEdit" class="p-3 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
@@ -179,14 +141,14 @@
                                 {{ role.institution?.name }}
                             </div>
                         </td>
-                        <td class="p-3 text-right" v-if="canEdit">
+                        <td class="p-3 text-right" v-show="canEdit">
                             <button @click="
                                     toggleModal(
                                         user,
                                         'deactivateUser',
                                         'Deactivate User'
                                     )
-                                " class="h-8 px-2 text-white bg-red-500 hover:bg-red-600 rounded mr-1">
+                                " class="h-10 px-2 text-white bg-red-500 hover:bg-red-600 rounded mr-1">
                                 Deactivate
                             </button>
                         </td>
@@ -195,7 +157,8 @@
             </content-table>
         </template>
     </content-container>
-    <Notification :message="$page.props.flash.success" />
+    <Notification :message="$page.props.flash.success" type="success" />
+    <Notification :message="$page.props.flash.failed" type="failed" />
     <div v-if="modal">
         <Confirmation @close="closeModal" :title="title" :modaltype="modaltype" :selected="selectedUser" />
     </div>
@@ -205,11 +168,10 @@
     import { useForm, router } from "@inertiajs/vue3";
     import { ref, computed } from "vue";
 
-    const props = defineProps(["user_list", "count", "canEdit", "filters"]);
+    const props = defineProps(["user_list", "canEdit", 'canFilter', "filters"]);
 
     const query = useForm({
         search: props.filters.search,
-        sort: props.filters.sort,
         type: props.filters.type,
     });
 
@@ -219,7 +181,7 @@
     }
 
     function submit() {
-        if (query.search == "" && query.sort == "" && query.filter == "") {
+        if (query.search == "" && query.filter == "") {
             router.get("/admin/users/list");
         } else {
             query.get("/admin/users/list", {

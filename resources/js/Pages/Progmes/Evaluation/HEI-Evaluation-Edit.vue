@@ -210,7 +210,7 @@
     <confirmation @close="closeReadyForVisitConfirmation" v-show="readyForVisitModal" title="Ready For Visit">
 
         <template v-slot:message>
-            Are you sure you want to submit this compliant tool? You won't be able to make changes after submitting.
+            Are you sure you want to submit this compliance tool? You won't be able to make changes after submitting.
         </template>
 
         <template v-slot:buttons>

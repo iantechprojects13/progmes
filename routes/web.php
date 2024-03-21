@@ -45,15 +45,14 @@ Route::get('/unauthorized', function () {
 
 // google login
 Route::controller(App\Http\Controllers\Auth\GoogleAuthController::class)->group(function () {
-    Route::get('social/google', 'redirect')->name('auth.google');
-    Route::get('social/google/callback', 'callback');
+    Route::get('/social/google', 'redirect')->name('auth.google');
+    Route::get('/social/google/callback', 'callback');
 });
 
 
 // registration
 Route::post('/register/ched', [RegistrationController::class, 'registerCHED']);
 Route::post('/register/hei', [RegistrationController::class, 'registerHEI']);
-
 
 Route::get('/register', [RegistrationController::class, 'index'])->middleware(['auth', 'unregistered'])->name('register.select');
 Route::get('/register/commission-on-higher-education', [RegistrationController::class, 'accountCHED'])->middleware('unregistered')->name('register.ched');
@@ -63,6 +62,7 @@ Route::get('/register/for-verification', [RegistrationController::class, 'pendin
 Route::get('/register/{user}/accept', [RegistrationController::class, 'accept'])->name('register.accept');
 Route::get('/register/{user}/reject', [RegistrationController::class, 'reject'])->name('register.reject');
 Route::get('/register/{user}/deactivate', [RegistrationController::class, 'deactivate'])->name('user.deactivate');
+Route::get('/register/{user}/delete', [RegistrationController::class, 'destroy'])->name('user.delete');
 
 //Profile
 Route::get('/myaccount/{id?}',[RegistrationController::class, 'viewMyAccount'])->middleware(['auth', 'user.verified'])->name('my.account'); 
@@ -97,8 +97,10 @@ Route::post('/hei/evaluation/link/delete', [HEIFormController::class, 'deleteLin
 Route::post('/ched/evaluation/update', [CHEDFormController::class, 'update'])->name('form.ched.update');
 
 //admin-panel
+//user management
 Route::get('/admin/users/list', [UserController::class, 'index'])->middleware(['auth','user.verified', 'type.ched'])->name('admin.users.list');
-Route::get('/admin/users/request', [UserController::class, 'request'])->middleware('auth')->name('admin.users.request');
+Route::get('/admin/users/request', [UserController::class, 'request'])->middleware(['auth','user.verified', 'type.ched'])->name('admin.users.request');
+Route::get('/admin/users/inactive', [UserController::class, 'inactive'])->middleware(['auth','user.verified', 'type.ched'])->name('admin.users.inactive');
 
 //HEI
 Route::get('/admin/higher-education-institutions', [InstitutionController::class, 'index'])->middleware(['auth'])->name('admin.hei.list');

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('disciplineId')->nullable();
             $table->foreignId('programId')->nullable();
+            $table->foreignId('createdBy')->nullable();
             $table->string('number')->nullable();
             $table->string('series')->nullable();
             $table->string('version')->nullable();
