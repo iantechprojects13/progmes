@@ -23,7 +23,11 @@ class ProgramController extends Controller
 
         $programlist = ProgramModel::query()
         ->when($request->query('search'), function ($query) use ($request) {
-            $query->where('program', 'like', '%' . $request->query('search') . '%');
+            $query->where('program', 'like', '%' . $request->query('search') . '%')
+            ->orWhere('major', 'like', '%' . $request->query('search') . '%')
+            ->orWhereHas('discipline', function ($programQuery) use ($request) {
+                $programQuery->where('discipline', 'like', '%' . $request->query('search') . '%');
+            });
         })
         ->with('discipline')
         ->orderBy('program')
@@ -86,16 +90,18 @@ class ProgramController extends Controller
         return redirect()->route('admin.program.list')->with('success', 'Program successfully edited.');
     }
 
-    public function delete(Request $request) {
+    public function delete($program) {
 
-        $program = ProgramModel::where('id', $request->id)->first();
+        $programModel = ProgramModel::find($program);
 
-        if($program) {
-            ProgramModel::destroy($request->id);
-            return redirect()->back()->with('success', 'Deleted successfully.');
+        if(!$programModel) {
+            return redirect()->back()->with('failed', 'Failed to delete program.');
         }
 
-        return redirect()->back()->with('failed', 'Failed to delete program.');
+        $programModel->institutionProgram()->delete();
+        $programModel->delete();
+
+        return redirect()->back()->with('success', 'CMO deleted successfully.');
 
         
     }

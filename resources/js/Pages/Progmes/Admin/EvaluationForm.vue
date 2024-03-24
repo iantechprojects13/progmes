@@ -2,23 +2,35 @@
 
     <Head title="Evaluation Forms" />
     <AdminPanel />
+    <pre>
+        {{ academicYear }}
+    </pre>
     <content-container pageTitle="Compliance Tool" hasTopButton="true" hasSearch="true" hasFilters="true"
-        hasResultCount="true" :data_list="institutionProgramList">
+        :hasNavigation="true" :data_list="institutionProgramList">
         <template v-slot:top-button>
-            <div class="flex md:flex-row flex-col">
+            <div class="flex md:flex-row flex-col text-sm">
                 <div class="w-full mr-1 md:mb-0 mb-1">
                     <button @click="deployToolModal = true"
                         class="px-3 w-fit rounded h-10 bg-blue-500 hover:bg-blue-600 text-white group">
+                        <i class="fas fa-rocket mr-2"></i>
                         Deploy tool
                     </button>
                 </div>
             </div>
         </template>
-        <template v-slot:result-count>
-            <div class="ml-5 text-base text-gray-500">( {{ count }} Result<span v-if="count > 1">s</span> )</div>
-        </template>
-        <template v-slot:page-description>
-            <div class="ml-3">( A.Y. {{ effectivity }} )</div>
+        <template v-slot:navigation>
+            <div class="text-sm mb-2 flex items-center">
+                <div class="mr-2 font-bold">Academic Year:</div>
+                <select name="" id="" class="text-sm rounded border-2 border-gray-500">
+                    <option value="2023-2024">2023-2024</option>
+                    <option value="2023-2024">2024-2025</option>
+                    <option value="2023-2024">2025-2026</option>
+                    <option value="2023-2024">2026-2027</option>
+                    <option value="2023-2024">2027-2028</option>
+                    <option value="2023-2024">2028-2029</option>
+                    <option value="2023-2024">2029-2030</option>
+                </select>
+            </div>
         </template>
         <template v-slot:search>
             <div class="w-full flex justify-end relative">
@@ -54,7 +66,7 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="institutionProgramList.data.length == 0">
-                        <td class="text-center py-10 italic" colspan="5">
+                        <td class="text-center py-10" colspan="5">
                             No institution or program found
                         </td>
                     </tr>
@@ -145,7 +157,7 @@
                 <FormErrorMessage :message="$page.props.errors.cmo" theme="dark" />
             </div>
             <div class="mt-3">
-                <label class="font-bold text-gray-700" for="toolEffectivity">Effective A.Y</label>
+                <label class="font-bold text-gray-700" for="toolEffectivity">Effective A.Y.</label>
                 <input v-model="deployment.effectivity" id="toolEffectivity" type="text" disabled
                     class="w-full text-sm rounded border-gray-400 my-0.5" />
             </div>
@@ -156,7 +168,7 @@
 
 <script setup>
     import { useForm, router } from "@inertiajs/vue3";
-    import { ref } from "vue";
+    import { ref, watch, reactive } from "vue";
 
     let deployToolModal = ref(false);
 
@@ -166,10 +178,9 @@
 
     const props = defineProps([
         "institutionProgramList",
-        "count",
         "effectivity",
         "program_list",
-        "defaultAcademicYear",
+        "academicYear",
         "canEdit",
         "filters",
     ]);
@@ -224,14 +235,17 @@
         data() {
             return {
                 openSelectPageDropdown: false,
-                academicYear: ["2023-2024", "2024-2025", "2025-2026"],
+                academicYearDropdown: [
+                    '2023-2024',
+                    '2024-2025',
+                    '2025-2026',
+                    '2026-2027',
+                    '2027-2028',
+                    '2028-2029',
+                    '2029-2030',
+                ],
             };
         },
         layout: Layout,
-        methods: {
-            toggleBg() {
-                this.ishidden = !this.ishidden;
-            },
-        },
     };
 </script>

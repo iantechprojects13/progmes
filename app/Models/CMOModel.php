@@ -14,6 +14,7 @@ class CMOModel extends Model
     protected $fillable = [
         'disciplineId',
         'programId',
+        'createdBy',
         'number',
         'series',
         'version',
@@ -34,6 +35,11 @@ class CMOModel extends Model
     public function program()
     {
         return $this->belongsTo(ProgramModel::class, 'programId', 'id');
+    }
+
+    public function created_by()
+    {
+        return $this->belongsTo(User::class, 'createdBy', 'id');
     }
 
     public function criteria()

@@ -5,21 +5,23 @@
     <content-container pageTitle="CMO Draft List" hasTopButton="true" hasSearch="true" hasFilters="true"
         hasNavigation="true" :data_list="cmo_list">
         <template v-slot:top-button>
-            <input ref="uploadfile" hidden type="file" @change="cmo_file = $event.target.files[0]">
-            <button @click.prevent="$refs.uploadfile.click()" :disabled="importing"
-                class="bg-blue-500 hover:bg-blue-600 h-10 px-2 rounded text-white">
-                <span v-if="importing"><i class="fas fa-spinner animate-spin mr-2"></i>Importing...</span>
-                <span v-else>Import CMO</span>
-            </button>
+            <div v-show="canEdit">
+                <input ref="uploadfile" hidden type="file" @change="cmo_file = $event.target.files[0]">
+                <button @click.prevent="$refs.uploadfile.click()" :disabled="importing"
+                    class="select-none bg-blue-500 hover:bg-blue-600 h-10 w-32 rounded text-white text-sm">
+                    <span v-if="importing"><i class="fas fa-spinner animate-spin"></i></span>
+                    <span v-else><i class="fas fa-file-import mr-2 text-base"></i>Import CMO</span>
+                </button>
+            </div>
         </template>
         <template v-slot:navigation>
             <div>
                 <Link :href="route('admin.cmo.list')">
-                <button class="text-gray-500 h-10 mr-8  hover:text-black">
-                    CMO List
+                <button class="select-none text-gray-500 h-10 mr-7  hover:text-black">
+                    CMO
                 </button>
                 </Link>
-                <button class="text-blue-500 font-bold border-b-2 h-10 border-blue-500">
+                <button class="select-none text-blue-500 font-bold border-b-2 h-10 border-blue-500">
                     Draft
                 </button>
             </div>
@@ -39,7 +41,8 @@
             <div class="mr-1">
                 <Link href="/admin/CMOs/draft">
                 <button
-                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
+                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500 tooltipForActions"
+                    data-tooltip="Refresh page">
                     <i class="fas fa-refresh"></i>
                 </button>
                 </Link>
@@ -48,36 +51,54 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="py-2">CHED Memorandum Order</th>
-                    <th class="py-2">Program</th>
-                    <th v-show="canEdit" class="py-2 text-right">
+                    <th class="p-3">CMO</th>
+                    <th class="p-3">Program</th>
+                    <th class="p-3"
+                        v-show="$page.props.auth.user.role == 'Super Admin' || $page.props.auth.user.role == 'Admin'">
+                        Imported by</th>
+                    <th v-show="canEdit" class="p-3 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
                 <template v-slot:table-body>
-                    <tr v-for="(cmo, index) in cmo_list.data" :key="cmo.id" class="hover:bg-gray-100"
-                        :class="{'bg-slate-200': index % 2 == 0}">
-                        <td class="p-2">
-                            CMO No.{{ cmo.number }} Series of {{cmo.series}}, Version {{cmo.version}}
-                        </td>
-                        <td class="p-2">
-                            {{ cmo.program?.program }}
-                        </td>
-                        <td class="p-2 text-right">
-                            <button @click="toggleConfirmationModal(cmo.id, 'deleteCMO', 'Delete Draft')"
-                                class="h-8 px-2 mr-1 rounded bg-red-500 hover:bg-red-600 text-white">Delete
-                            </button>
-                            <button @click="edit(cmo.id)"
-                                class="h-8 px-2 mr-1 rounded bg-yellow-500 hover:bg-yellow-600 text-white">Edit
-                            </button>
-                            <button @click="toggleConfirmationModal(cmo.id, 'publish', 'Publish CMO')"
-                                class="h-8 px-2 rounded bg-blue-500 hover:bg-blue-600 text-white">Publish
-                            </button>
+                    <tr v-if="cmo_list.data.length == 0">
+                        <td class="text-center py-10" colspan="4">
+                            No draft found
                         </td>
                     </tr>
-                    <tr v-if="cmo_list.data.length == 0">
-                        <td class="text-center py-10" colspan="3">
-                            No draft found
+                    <tr v-else v-for="(cmo, index) in cmo_list.data" :key="cmo.id" class="hover:bg-gray-100"
+                        :class="{'bg-slate-200': index % 2 == 0}">
+                        <td class="p-3 whitespace-normal min-w-12">
+                            <div v-if="cmo.number != null && cmo.series != null && cmo.version != null">
+                                CMO No.{{ cmo.number }} Series of {{cmo.series}}, Version {{cmo.version}}
+                            </div>
+                            <div v-else>
+                                -
+                            </div>
+                        </td>
+                        <td class="p-3 whitespace-normal min-w-12">
+                            {{ cmo.program?.program }}
+                        </td>
+                        <td class="p-3"
+                            v-show="$page.props.auth.user.role == 'Super Admin'|| $page.props.auth.user.role == 'Admin'">
+                            {{ cmo.created_by.name }}
+                        </td>
+                        <td class="p-3 text-right">
+                            <button @click="edit(cmo.id)"
+                                class="select-none h-10 w-10 mr-1 rounded bg-blue-500 hover:bg-blue-600 text-white tooltipForActions"
+                                data-tooltip="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button @click="toggleConfirmationModal(cmo.id, 'publish', 'Publish CMO')"
+                                class="select-none h-10 w-10 mr-1 rounded bg-green-600 hover:bg-green-700 text-white tooltipForActions"
+                                data-tooltip="Publish">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                            <button @click="toggleConfirmationModal(cmo.id, 'deleteCMO', 'Delete Draft')"
+                                class="select-none h-10 w-10 rounded bg-red-500 hover:bg-red-600 text-white tooltipForActions"
+                                data-tooltip="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </td>
                     </tr>
                 </template>

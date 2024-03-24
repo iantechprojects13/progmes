@@ -19,6 +19,7 @@ class DashboardController extends Controller
 
         if (
             $userRole == 'Super Admin' ||
+            $userRole == 'Admin' ||
             $userRole == 'Regional Director' ||
             $userRole == 'Chief Education Program Specialist' ||
             $userRole == 'Supervising Education Program Specialist'

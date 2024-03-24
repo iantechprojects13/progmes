@@ -1,7 +1,7 @@
 <template>
     <div ref="container" class="h-auto mx-3 md:mx-8 mt-8 pb-10 mb-5 bg-white p-5 rounded relative">
         <div class="flex flex-col md:flex-row justify-between">
-            <div class="flex items-center">
+            <div class="flex items-center my-3">
                 <div v-show="hasBackButton" class="mr-2">
                     <slot name="back-button"></slot>
                 </div>

@@ -78,6 +78,9 @@ class Kernel extends HttpKernel
         'toverify' => \App\Http\Middleware\ProgmesMiddleware\ForVerification::class,
         'active' => \App\Http\Middleware\ProgmesMiddleware\ActiveUser::class,
         'user.verified' => \App\Http\Middleware\ProgmesMiddleware\VerifiedUser::class,
+        'action.user.accept' => \App\Http\Middleware\ProgmesMiddleware\CanAcceptUsers::class,
+        'action.user.activate' => \App\Http\Middleware\ProgmesMiddleware\CanActivateUsers::class,
+        'cmo.draft' => \App\Http\Middleware\ProgmesMiddleware\CMODraft::class,
     ];
 
 }

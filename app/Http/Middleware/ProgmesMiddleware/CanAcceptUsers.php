@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Auth;
 
-class Admin
+class CanAcceptUsers
 {
     /**
      * Handle an incoming request.
@@ -16,11 +16,10 @@ class Admin
      */
     public function handle(Request $request, Closure $next): Response
     {
-
-        if (Auth::user()->role == 'Super Admin' || Auth::user()->role == 'Admin') {
+        if (Auth::user()->role == 'Super Admin' || Auth::user()->role == 'Admin' || Auth::user()->role == 'Education Supervisor') {
             return $next($request);
         }
-        
-        return redirect()->route('/unauthorized');
+
+        return redirect('/unauthorized');
     }
 }

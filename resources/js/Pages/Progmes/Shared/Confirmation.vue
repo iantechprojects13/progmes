@@ -23,6 +23,9 @@
                 <div v-if="modaltype == 'deactivateUser'">
                     Are you sure you want to deactivate <b>{{ selected.name }} </b>'s account?
                 </div>
+                <div v-if="modaltype == 'activateUser'">
+                    Are you sure you want to activate <b>{{ selected.name }} </b>'s account?
+                </div>
                 <div v-if="modaltype == 'deleteUser'">
                     Are you sure you want to delete <b>{{ selected.name }} </b>'s account?
                 </div>
@@ -44,9 +47,14 @@
                 <div v-if="modaltype == 'deleteHEI'">
                     Are you sure you want to delete <b>{{ selected.name }}</b>? This action can't be undone.
                 </div>
-                <div v-if="modaltype == 'deleteHEI'">
-                    Are you sure you want to delete <b>{{ selected.name }}</b>? This action can't be undone.
+                <div v-if="modaltype == 'deleteProgram'">
+                    Are you sure you want to delete <b>{{ selected.program }}</b>? This action can't be undone.
                 </div>
+
+                <div v-if="modaltype == 'deleteDiscipline'">
+                    Are you sure you want to delete <b>{{ selected.discipline }}</b>? This action can't be undone.
+                </div>
+
                 <div v-if="modaltype == 'confirmDeleteEvidence'">
                     Are you sure you want to delete this evidence file/link? This action can't be undone.
                 </div>
@@ -54,14 +62,14 @@
             </div>
             <div class="py-4 px-5 border-t-2 border-gray-100 text-right">
                 <button
-                    class="select-none text-gray-500 hover:text-black hover:bg-stone-200 p-2 px-3 rounded border border-stone-300 mr-1"
+                    class="select-none text-gray-700 hover:text-black hover:bg-stone-100 active:text-blue-500 w-20 h-10 rounded border border-gray-300 mr-1"
                     @click="closeModal">
                     Cancel
                 </button>
 
                 <button :disabled="processing" v-if="modaltype == 'accept'"
                     @click="submit('/register/'+selected.id+ '/accept')"
-                    class="select-none text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 h-10 w-20 rounded border">
+                    class="select-none text-white bg-blue-500 hover:text-white hover:bg-blue-600 h-10 w-20 rounded border">
                     <span v-if="processing">
                         <i class="fas fa-spinner animate-spin"></i>
                     </span>
@@ -70,65 +78,94 @@
 
                 <button :disabled="processing" v-if="modaltype == 'reject'"
                     @click="submit('/register/'+selected.id+ '/reject')"
-                    class="select-none text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 h-10 w-20 rounded border">
+                    class="select-none text-white bg-red-500 hover:text-white hover:bg-red-600 h-10 w-20 rounded border">
                     <span v-if="processing">
                         <i class="fas fa-spinner animate-spin"></i>
                     </span>
                     <span v-else>Reject</span>
                 </button>
 
-
-                <!-- <Link v-if="modaltype == 'reject'" :href="route('register.reject', [selected])" @click="closeModal"
-                    class="select-none text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border"
-                    preserve-scroll>
-                Reject
-                </Link> -->
                 <button :disabled="processing" v-if="modaltype == 'deleteUser'"
                     @click="submit('/register/'+selected.id+ '/delete')"
-                    class="select-none text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 h-10 w-20 rounded border">
+                    class="select-none text-white bg-red-500 hover:text-white hover:bg-red-600 h-10 w-20 rounded border">
                     <span v-if="processing">
                         <i class="fas fa-spinner animate-spin"></i>
                     </span>
                     <span v-else>Delete</span>
                 </button>
-                <Link v-if="modaltype == 'activateUser'" :href="route('user.active', [selected])" @click="closeModal"
-                    class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border"
-                    preserve-scroll>
-                Activate
-                </Link>
-                <Link v-if="modaltype == 'deactivateUser'" :href="route('user.deactivate', [selected])"
-                    @click="closeModal"
-                    class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border"
-                    preserve-scroll>
-                Deactivate
-                </Link>
+
+                <button :disabled="processing" v-if="modaltype == 'activateUser'"
+                    @click="submit('/register/'+selected.id+ '/activate')"
+                    class="select-none text-white bg-blue-500 hover:text-white hover:bg-blue-600 h-10 w-20 rounded border">
+                    <span v-if="processing">
+                        <i class="fas fa-spinner animate-spin"></i>
+                    </span>
+                    <span v-else>Activate</span>
+                </button>
+
+
+                <button :disabled="processing" v-if="modaltype == 'deactivateUser'"
+                    @click="submit('/register/'+selected.id+ '/deactivate')"
+                    class="select-none text-white bg-red-500 hover:text-white hover:bg-red-600 h-10 w-24 rounded border">
+                    <span v-if="processing">
+                        <i class="fas fa-spinner animate-spin"></i>
+                    </span>
+                    <span v-else>Deactivate</span>
+                </button>
+
+
+                <button :disabled="processing" v-if="modaltype == 'deleteProgram'"
+                    @click="submit('/admin/program/'+selected.id+ '/delete')"
+                    class="select-none text-white bg-red-500 hover:text-white hover:bg-red-600 h-10 w-24 rounded border">
+                    <span v-if="processing">
+                        <i class="fas fa-spinner animate-spin"></i>
+                    </span>
+                    <span v-else>Delete</span>
+                </button>
+
+
+                <button :disabled="processing" v-if="modaltype == 'deleteDiscipline'"
+                    @click="submit('/admin/discipline/'+selected.id+ '/delete')"
+                    class="select-none text-white bg-red-500 hover:text-white hover:bg-red-600 h-10 w-24 rounded border">
+                    <span v-if="processing">
+                        <i class="fas fa-spinner animate-spin"></i>
+                    </span>
+                    <span v-else>Delete</span>
+                </button>
+
+
+                <button :disabled="processing" v-if="modaltype == 'deleteHEI'"
+                    @click="submit('/admin/higher-education-institutions/'+selected.id+ '/delete')"
+                    class="select-none text-white bg-red-500 hover:text-white hover:bg-red-600 h-10 w-24 rounded border">
+                    <span v-if="processing">
+                        <i class="fas fa-spinner animate-spin"></i>
+                    </span>
+                    <span v-else>Delete</span>
+                </button>
+
+
                 <Link method="get" v-if="modaltype == 'deleteCMO'" @click="closeModal"
                     :href="'/admin/CMOs/delete/' + selected"
-                    class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border cursor-pointer"
+                    class=" text-white bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border cursor-pointer"
                     preserve-scroll>
                 Delete
                 </Link>
-                <Link method="get" v-if="modaltype == 'deleteHEI'" @click="closeModal"
-                    :href="'/admin/CMOs/delete/' + selected"
-                    class=" text-gray-100 bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border cursor-pointer"
-                    preserve-scroll>
-                Delete
-                </Link>
+
                 <Link method="get" v-if="modaltype == 'publish'" :href="'/admin/CMOs/publish/' + selected"
                     @class="closeModal"
-                    class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border cursor-pointer"
+                    class=" text-white bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border cursor-pointer"
                     preserve-scroll>
                 Publish
                 </Link>
                 <Link method="get" v-if="modaltype == 'activate'" :href="'/admin/CMOs/activate/' + selected.id"
                     @click="closeModal"
-                    class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border cursor-pointer"
+                    class=" text-white bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border cursor-pointer"
                     preserve-scroll>
                 Confirm
                 </Link>
                 <Link method="get" v-if="modaltype == 'deactivate'" :href="'/admin/CMOs/deactivate/' + selected.id"
                     @click="closeModal"
-                    class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border cursor-pointer"
+                    class=" text-white bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border cursor-pointer"
                     preserve-scroll>
                 Confirm
                 </Link>
@@ -159,6 +196,7 @@
                 processing.value = false;
             },
             preserveState: false,
+            replace: true,
         });
     }
 

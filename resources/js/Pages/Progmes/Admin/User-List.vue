@@ -2,8 +2,8 @@
 
     <Head title="Users List" />
     <AdminPanel />
-    <content-container @submit="submit" pageTitle="Active Users List" hasNavigation="true" hasSearch="true"
-        hasFilters="true" :data_list="user_list">
+    <content-container @submit="submit" :pageTitle="canEdit ? 'Active Users List' : 'Users List'"
+        :hasNavigation="canEdit" hasSearch="true" hasFilters="true" :data_list="user_list">
         <template v-slot:navigation>
             <div>
                 <button class="select-none text-blue-500 h-10 mr-7 border-b-2 relative font-bold border-blue-500">
@@ -14,7 +14,7 @@
                     Request
                 </button>
                 </Link>
-                <Link :href="route('admin.users.inactive')">
+                <Link :href="route('admin.users.inactive')" v-show="showInactive">
                 <button class="select-none text-gray-500 hover:text-black mr-7">
                     Inactive
                 </button>
@@ -36,7 +36,8 @@
             <div class="mr-1">
                 <Link href="/admin/users/list">
                 <button
-                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
+                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500 tooltipForActions"
+                    data-tooltip="Refresh page">
                     <i class="fas fa-refresh"></i>
                 </button>
                 </Link>
@@ -47,7 +48,9 @@
                         <button
                             class="flex justify-between items-center px-2 min-w-6 border-2 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
                             <span v-if="props.filters.type == null">Type</span>
-                            <span v-else>{{ props.filters.type }}</span>
+                            <span v-else-if="props.filters.type == 'CHED'">CHED</span>
+                            <span v-else-if="props.filters.type == 'HEI'">HEI</span>
+                            <span v-else>Type</span>
                             <i class="fas fa-caret-down ml-2"></i>
                         </button>
                     </template>
@@ -91,7 +94,8 @@
                     <th class="p-3">Name/Email</th>
                     <th class="p-3">Type</th>
                     <th class="p-3">Role</th>
-                    <th class="p-3">Discipline/Program</th>
+                    <th class="p-3">Discipline</th>
+                    <th class="p-3">Program</th>
                     <th class="p-3">HEI Name</th>
                     <th v-show="canEdit" class="p-3 text-right">
                         <i class="fas fa-ellipsis-v"></i>
@@ -99,7 +103,7 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="user_list.data.length==0">
-                        <td class="py-10 text-center" colspan="6">
+                        <td class="py-10 text-center" colspan="7">
                             No users found
                         </td>
                     </tr>
@@ -133,6 +137,10 @@
                         <td class="p-3 whitespace-normal">
                             <div v-for="(role, index) in user.user_role" :key="role.id">
                                 {{ role.discipline?.discipline }}
+                            </div>
+                        </td>
+                        <td class="p-3 whitespace-normal">
+                            <div v-for="(role, index) in user.user_role" :key="role.id">
                                 {{ role.program?.program }}
                             </div>
                         </td>
@@ -148,7 +156,7 @@
                                         'deactivateUser',
                                         'Deactivate User'
                                     )
-                                " class="h-10 px-2 text-white bg-red-500 hover:bg-red-600 rounded mr-1">
+                                " class="select-none h-10 px-2 text-white bg-blue-500 hover:bg-blue-600 rounded mr-1">
                                 Deactivate
                             </button>
                         </td>
@@ -168,7 +176,14 @@
     import { useForm, router } from "@inertiajs/vue3";
     import { ref, computed } from "vue";
 
-    const props = defineProps(["user_list", "canEdit", 'canFilter', "filters"]);
+    const props = defineProps([
+        'user_list',
+        'canEdit',
+        'canFilter',
+        'showRequest',
+        'showInactive',
+        'filters',
+    ]);
 
     const query = useForm({
         search: props.filters.search,

@@ -1,6 +1,6 @@
 <template>
 
-    <Head title="Users List" />
+    <Head title="Inactive Users List" />
     <AdminPanel />
     <content-container @submit="submit" pageTitle="Inactive Users List" hasNavigation="true" hasSearch="true"
         hasFilters="true" :data_list="user_list">
@@ -47,7 +47,9 @@
                         <button
                             class="flex justify-between items-center px-2 min-w-6 border-2 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
                             <span v-if="props.filters.type == null">Type</span>
-                            <span v-else>{{ props.filters.type }}</span>
+                            <span v-else-if="props.filters.type == 'CHED'">CHED</span>
+                            <span v-else-if="props.filters.type == 'HEI'">HEI</span>
+                            <span v-else>Type</span>
                             <i class="fas fa-caret-down ml-2"></i>
                         </button>
                     </template>
@@ -91,7 +93,8 @@
                     <th class="p-3">Name/Email</th>
                     <th class="p-3">Type</th>
                     <th class="p-3">Role</th>
-                    <th class="p-3">Discipline/Program</th>
+                    <th class="p-3">Discipline</th>
+                    <th class="p-3">Program</th>
                     <th class="p-3">HEI Name</th>
                     <th v-show="canEdit" class="p-3 text-right">
                         <i class="fas fa-ellipsis-v"></i>
@@ -99,7 +102,7 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="user_list.data.length==0">
-                        <td class="py-10 text-center" colspan="6">
+                        <td class="py-10 text-center" colspan="7">
                             No users found
                         </td>
                     </tr>
@@ -133,6 +136,10 @@
                         <td class="p-3 whitespace-normal">
                             <div v-for="(role, index) in user.user_role" :key="role.id">
                                 {{ role.discipline?.discipline }}
+                            </div>
+                        </td>
+                        <td class="p-3 whitespace-normal">
+                            <div v-for="(role, index) in user.user_role" :key="role.id">
                                 {{ role.program?.program }}
                             </div>
                         </td>
@@ -143,11 +150,11 @@
                         </td>
                         <td class="p-3 text-right" v-show="canEdit">
                             <button @click="toggleModal(user, 'deleteUser', 'Delete User')"
-                                class="h-10 px-2 text-white bg-red-500 hover:bg-red-600 rounded mr-1">
+                                class="select-none h-10 px-2 text-white bg-red-500 hover:bg-red-600 rounded mr-1">
                                 Delete
                             </button>
                             <button @click="toggleModal(user, 'activateUser', 'Activate User')"
-                                class="h-10 px-2 text-white bg-blue-500 hover:bg-blue-600 rounded mr-1">
+                                class="select-none h-10 px-2 text-white bg-blue-500 hover:bg-blue-600 rounded mr-1">
                                 Activate
                             </button>
                         </td>

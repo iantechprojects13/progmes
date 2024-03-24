@@ -18,35 +18,40 @@
                 :class="[{ 'border-none invisible': !isMenuOpen }, { 'h-60': isMenuOpen }]">
                 <div class="w-full sm:flex-row md:block md:text-gray-300 text-gray-200">
                     <Link :href="route('admin.users.list')" preserved-state>
-                    <button class="h-12 md:w-auto md:px-5 w-full md:hover:bg-gray-600 hover:bg-stone-600  rounded"
+                    <button
+                        class="select-none h-12 md:w-auto md:px-5 w-full md:hover:bg-gray-600 hover:bg-stone-600  rounded"
                         :class="{ 'text-blue-500 md:border-b-blue-500 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-stone-700 md:hover:text-blue-500': highlight('user') }">
                         Users
                     </button>
                     </Link>
 
                     <Link :href="route('admin.cmo.list')" preserved-state>
-                    <button class="h-12 md:w-auto md:px-5 w-full md:hover:bg-gray-600 hover:bg-stone-600  rounded"
+                    <button
+                        class="select-none h-12 md:w-auto md:px-5 w-full md:hover:bg-gray-600 hover:bg-stone-600  rounded"
                         :class="{ 'text-blue-500 md:border-b-blue-500 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-stone-700 md:hover:text-blue-500': highlight('cmo') }">
                         CMO
                     </button>
                     </Link>
 
                     <Link href="/admin/tool" preserved-state>
-                    <button class="h-12 md:w-auto md:px-5 w-full md:hover:bg-gray-600 hover:bg-stone-600  rounded"
+                    <button
+                        class="select-none h-12 md:w-auto md:px-5 w-full md:hover:bg-gray-600 hover:bg-stone-600  rounded"
                         :class="{ 'text-blue-500 md:border-b-blue-500 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-stone-700 md:hover:text-blue-500': highlight('form') }">
                         Compliance Tool
                     </button>
                     </Link>
 
                     <Link :href="route('admin.hei.list')">
-                    <button class="h-12 md:w-auto md:px-5 w-full md:hover:bg-gray-600 hover:bg-stone-600  rounded"
+                    <button
+                        class="select-none h-12 md:w-auto md:px-5 w-full md:hover:bg-gray-600 hover:bg-stone-600  rounded"
                         :class="{ 'text-blue-500 md:border-b-blue-500 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-stone-700 md:hover:text-blue-500': highlight('institution') }">
                         HEI
                     </button>
                     </Link>
 
                     <Link :href="route('admin.program.list')">
-                    <button class="h-12 md:w-auto md:px-5 w-full md:hover:bg-gray-600 hover:bg-stone-600  rounded"
+                    <button
+                        class="select-none h-12 md:w-auto md:px-5 w-full md:hover:bg-gray-600 hover:bg-stone-600  rounded"
                         :class="{ 'text-blue-500 md:border-b-blue-500 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-stone-700 md:hover:text-blue-500': highlight('program') }">
                         Program
                     </button>

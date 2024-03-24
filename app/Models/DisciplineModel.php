@@ -19,4 +19,14 @@ class DisciplineModel extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function program()
+    {
+        return $this->hasMany(ProgramModel::class, 'disciplineId', 'id');
+    }
+
+    public function institution_program()
+    {
+        return $this->hasManyThrough(InstitutionProgramModel::class, ProgramModel::class, 'disciplineId', 'programId', 'id', 'id');
+    }
 }

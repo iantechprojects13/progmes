@@ -21,7 +21,7 @@
                             </div>
 
                             <!-- App Name -->
-                            <div class="p-2 my-3 flex flex-row items-center">
+                            <div class="p-2 my-3 flex flex-row items-center select-none">
                                 <img src="/assets/ched-logo.png" width="50" class="mr-3" />
                                 <div class="text-2xl">ProgMES</div>
                             </div>

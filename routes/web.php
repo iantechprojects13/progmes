@@ -61,31 +61,28 @@ Route::get('/register/for-verification', [RegistrationController::class, 'pendin
 
 Route::get('/register/{user}/accept', [RegistrationController::class, 'accept'])->name('register.accept');
 Route::get('/register/{user}/reject', [RegistrationController::class, 'reject'])->name('register.reject');
+Route::get('/register/{user}/activate', [RegistrationController::class, 'activate'])->name('user.activate');
 Route::get('/register/{user}/deactivate', [RegistrationController::class, 'deactivate'])->name('user.deactivate');
 Route::get('/register/{user}/delete', [RegistrationController::class, 'destroy'])->name('user.delete');
 
 //Profile
-Route::get('/myaccount/{id?}',[RegistrationController::class, 'viewMyAccount'])->middleware(['auth', 'user.verified'])->name('my.account'); 
+Route::get('/myaccount/{id?}',[RegistrationController::class, 'viewMyAccount'])->middleware(['auth', 'user.verified'])->name('my.account');
 
 
 //dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth','registered', 'user.verified')->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth','registered', 'user.verified', 'active')->name('dashboard');
 Route::get('/admin/dashboard', [DashboardController::class, 'dashboardForAdmin'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.admin');
 Route::get('/CHED/dashboard', [DashboardController::class, 'dashboardForCHED'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.ched');
-Route::get('/HEI/dashboard', [DashboardController::class, 'dashboardForHEI'])->middleware(['auth', 'type.hei', 'user.verified'])->name('dashboard.hei');
-
+Route::get('/HEI/dashboard', [DashboardController::class, 'dashboardForHEI'])->middleware(['auth', 'type.hei', 'user.verified', 'active'])->name('dashboard.hei');
 
 //evaluation
 Route::get('/evaluation', [EvaluationController::class, 'index'])->middleware('auth', 'user.verified')->name('evaluation');
 Route::get('/ched/evaluation', [EvaluationController::class, 'evaluationForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('evaluation.ched');
 Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware(['auth','type.hei'])->name('evaluation.hei.programhead');
 Route::get('/admin/evaluation', [EvaluationController::class, 'evaluationForAdmin'])->middleware('type.ched')->name('evaluation.admin');
-
 Route::get('hei/evaluation/{tool}/edit', [HEIFormController::class, 'edit'])->middleware('auth', 'type.hei')->name('form.hei.key');
-
 Route::get('ched/evaluation/{tool}/view', [CHEDFormController::class, 'view'])->middleware('auth', 'type.ched')->name('evaluation.ched.view');
 Route::get('ched/evaluation/{tool}/evaluate', [CHEDFormController::class, 'evaluate'])->middleware('auth', 'type.ched')->name('form.ched.evaluate');
-
 
 
 Route::post('/hei/evaluation/update', [HEIFormController::class, 'update'])->name('form.hei.update');
@@ -97,26 +94,38 @@ Route::post('/hei/evaluation/link/delete', [HEIFormController::class, 'deleteLin
 Route::post('/ched/evaluation/update', [CHEDFormController::class, 'update'])->name('form.ched.update');
 
 //admin-panel
-//user management
+//USERS
 Route::get('/admin/users/list', [UserController::class, 'index'])->middleware(['auth','user.verified', 'type.ched'])->name('admin.users.list');
-Route::get('/admin/users/request', [UserController::class, 'request'])->middleware(['auth','user.verified', 'type.ched'])->name('admin.users.request');
-Route::get('/admin/users/inactive', [UserController::class, 'inactive'])->middleware(['auth','user.verified', 'type.ched'])->name('admin.users.inactive');
+Route::get('/admin/users/request', [UserController::class, 'request'])->middleware(['auth','user.verified', 'type.ched', 'action.user.accept'])->name('admin.users.request');
+Route::get('/admin/users/inactive', [UserController::class, 'inactive'])->middleware(['auth','user.verified', 'type.ched', 'action.user.activate'])->name('admin.users.inactive');
 
 //HEI
 Route::get('/admin/higher-education-institutions', [InstitutionController::class, 'index'])->middleware(['auth'])->name('admin.hei.list');
 Route::get('/admin/higher-education-institutions/create', [InstitutionController::class, 'create'])->middleware(['auth'])->name('admin.hei.create');
 Route::get('/admin/higher-education-institutions/{institution}/edit', [InstitutionController::class, 'edit'])->middleware(['auth'])->name('admin.hei.edit');
 Route::get('/admin/higher-education-institutions/{institution}/view', [InstitutionController::class, 'view'])->middleware(['auth'])->name('admin.hei.show');
-Route::post('/admin/higher-education-institutions/delete', [InstitutionController::class, 'delete'])->middleware(['auth'])->name('admin.hei.show');
+Route::get('/admin/higher-education-institutions/{institution}/delete', [InstitutionController::class, 'delete'])->middleware(['auth'])->name('admin.hei.show');
+Route::post('/admin/higher-education-institutions/register', [InstitutionController::class, 'store']);
+Route::post('/admin/higher-education-institutions/update', [InstitutionController::class, 'update']);
 
+// CMO
 Route::get('/admin/CMOs', [CMOController::class, 'index'])->middleware('auth', 'type.ched')->name('admin.cmo.list');
-Route::get('/admin/CMOs/draft', [CMOController::class, 'draft'])->middleware('auth', 'type.ched')->name('admin.cmo.draft');
+Route::get('/admin/CMOs/draft', [CMOController::class, 'draft'])->middleware('auth', 'type.ched', 'cmo.draft')->name('admin.cmo.draft');
 Route::get('admin/CMOs/{cmo}/view', [CMOController::class, 'view'])->middleware('auth', 'type.ched')->name('admin.cmo.show');
+Route::post('/admin/CMOs/create/import', [ExcelController::class, 'importExcel'])->name('admin.cmo.import');
+Route::get('/admin/CMOs/draft/{id}/edit', [CMOController::class, 'edit'])->name('admin.cmo.edit');
+Route::post('/admin/CMOs/store', [CMOController::class, 'store'])->middleware('auth')->name('admin.cmo.store');
+Route::post('/admin/CMOs/save-and-publish', [CMOController::class, 'saveAndPublish'])->middleware('auth')->name('admin.cmo.save.publish');
+Route::post('/admin/CMOs/save-as-draft', [CMOController::class, 'saveAsDraft'])->middleware('auth')->name('admin.cmo.save.draft');
+Route::get('/admin/CMOs/publish/{cmo}', [CMOController::class, 'publish'])->middleware('auth')->name('admin.cmo.publish');
+Route::get('/admin/CMOs/delete/{id?}', [CMOController::class, 'destroy'])->middleware('auth')->name('admin.cmo.delete');
+Route::get('/admin/CMOs/activate/{id?}', [CMOController::class, 'activate'])->middleware('auth')->name('admin.cmo.activate');
+Route::get('/admin/CMOs/deactivate/{id?}', [CMOController::class, 'deactivate'])->middleware('auth')->name('admin.cmo.deactivate');
 
-Route::get('admin/tool', [EvaluationFormController::class, 'index'])->middleware('auth', 'type.ched')->name('admin.form.list');
-Route::get('admin/tool/{evaluation}/view', [EvaluationFormController::class, 'view'])->middleware('auth')->name('admin.form.view');
+//Evaluation Tool
+Route::get('/admin/tool', [EvaluationFormController::class, 'index'])->middleware('auth', 'type.ched')->name('admin.form.list');
+Route::get('/admin/tool/{evaluation}/view', [EvaluationFormController::class, 'view'])->middleware('auth')->name('admin.form.view');
 Route::post('/admin/form/deploy', [EvaluationFormController::class, 'deploy'])->middleware('auth')->name('admin.form.deploy');
-
 Route::post('hei/tool/create', [HEIFormController::class, 'store'])->middleware('auth')->name('hei.tool.store');
 Route::get('/hei/evaluation/{tool}/view', [HEIFormController::class, 'view'])->middleware(['auth', 'type.hei'])->name('hei.evaluation.view');
 
@@ -126,7 +135,7 @@ Route::get('/admin/program/create', [ProgramController::class, 'create'])->middl
 Route::post('/admin/program/store', [ProgramController::class, 'store'])->middleware(['auth'])->name('admin.program.store');
 Route::get('/admin/program/{program?}/edit', [ProgramController::class, 'edit'])->middleware(['auth'])->name('admin.program.edit');
 Route::post('/admin/program/update', [ProgramController::class, 'update'])->middleware(['auth'])->name('admin.program.update');
-Route::post('/admin/program/delete', [ProgramController::class, 'delete'])->middleware(['auth', 'type.ched'])->name('admin.program.delete');
+Route::get('/admin/program/{program}/delete', [ProgramController::class, 'delete'])->middleware(['auth', 'type.ched'])->name('admin.program.delete');
 
 
 //Discipline
@@ -135,27 +144,12 @@ Route::get('/admin/program/discipline/create', [DisciplineController::class, 'cr
 Route::get('/admin/program/discipline/{id}/edit', [DisciplineController::class, 'edit'])->middleware(['auth'])->name('admin.discipline.edit');
 Route::post('/admin/program/discipline/store', [DisciplineController::class, 'store'])->middleware(['auth'])->name('admin.discipline.store');
 Route::post('/admin/program/discipline/update', [DisciplineController::class, 'update'])->middleware(['auth'])->name('admin.discipline.update');
-Route::post('/admin/discipline/delete', [DisciplineController::class, 'delete'])->middleware(['auth'])->name('admin.discipline.delete');
-
-Route::post('/admin/higher-education-institutions/register', [InstitutionController::class, 'store']);
-Route::post('/admin/higher-education-institutions/update', [InstitutionController::class, 'update']);
+Route::get('/admin/discipline/{discipline}/delete', [DisciplineController::class, 'delete'])->middleware(['auth'])->name('admin.discipline.delete');
 
 
-// CMO
-Route::post('/admin/CMOs/create/import', [ExcelController::class, 'importExcel'])->name('admin.cmo.import');
 
-Route::get('/admin/CMOs/draft/{id}/edit', [CMOController::class, 'edit'])->name('admin.cmo.edit');
 
-Route::post('/admin/CMOs/store', [CMOController::class, 'store'])->middleware('auth')->name('admin.cmo.store');
-Route::post('/admin/CMOs/save-and-publish', [CMOController::class, 'saveAndPublish'])->middleware('auth')->name('admin.cmo.save.publish');
-Route::post('/admin/CMOs/save-as-draft', [CMOController::class, 'saveAsDraft'])->middleware('auth')->name('admin.cmo.save.draft');
-Route::get('/admin/CMOs/publish/{cmo}', [CMOController::class, 'publish'])->middleware('auth')->name('admin.cmo.publish');
-
-Route::get('/admin/CMOs/delete/{id?}', [CMOController::class, 'destroy'])->middleware('auth')->name('admin.cmo.delete');
-
-Route::get('/admin/CMOs/activate/{id?}', [CMOController::class, 'activate'])->middleware('auth')->name('admin.cmo.activate');
-Route::get('/admin/CMOs/deactivate/{id?}', [CMOController::class, 'deactivate'])->middleware('auth')->name('admin.cmo.deactivate');
-
+//Admin Settings
 Route::get('/admin/settings', [AdminSettingsController::class, 'index'])->middleware(['auth'])->name('admin.settings');
 
 

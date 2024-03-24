@@ -14,7 +14,7 @@
                     </template>
                     <template v-slot:options>
                         <div class="w-44">
-                            <button class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
+                            <button class="py-1.5 hover:bg-gray-200 w-full text-left indent-7" ref="saveBtn"
                                 @click.prevent="saveAsDraft">
                                 Save as draft
                             </button>
@@ -146,9 +146,32 @@
 
 <script setup>
     import { useForm } from "@inertiajs/vue3";
-    import { ref, computed } from "vue";
+    import { ref, computed, onUnmounted, onMounted } from "vue";
+
+    onMounted(() => {
+        window.addEventListener('keydown', handleKeyDown);
+    });
+
+    onUnmounted(() => {
+        window.removeEventListener('keydown', handleKeyDown);
+    });
+
+    const handleKeyDown = (event) => {
+        if (event.ctrlKey || event.metaKey) {
+            if (event.key === 's' || event.key === 'S') {
+                event.preventDefault();
+                refs.saveBtn.value.click();
+            }
+        }
+    };
 
     const props = defineProps(["cmo", "discipline_list", "program_list"]);
+
+
+    const saveBtn = ref([]);
+
+    const refs = { saveBtn };
+
 
     const areaArray = computed(() => {
         let area = [];

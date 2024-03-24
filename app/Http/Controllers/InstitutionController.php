@@ -123,11 +123,13 @@ class InstitutionController extends Controller
 
         $currentProgramList = [];
 
+        if (!$institutionModel) {
+            return redirect()->back()->with('failed', 'Update failed.');
+        }
+
         foreach($institutionModel->institution_program as $program) {
             array_push($currentProgramList, $program->programId);
         }
-
-        // dd($currentProgramList);
 
         foreach($validatedData['programs'] as $program) {
             $updatedRow = InstitutionProgramModel::updateOrCreate(
@@ -142,8 +144,6 @@ class InstitutionController extends Controller
             ]);
         }
 
-        // $inactiveProg = [];
-
         foreach($currentProgramList as $program) {
             if(!in_array($program, $validatedData['programs'])) {
                 $inactiveProgram = InstitutionProgramModel::where('institutionId', $validatedData['id'])
@@ -153,26 +153,19 @@ class InstitutionController extends Controller
             }
         }
 
-        
+        return redirect('/admin/higher-education-institutions')->with('success', 'HEI updated successfully.');
     }
 
-    public function delete(Request $request) {
+    public function delete($institution) {
+        $institutionModel = InstitutionModel::find($institution);
 
-        $institution = InstitutionModel::find($request->id);
-
-        if($institution) {
-
-            $institution->institution_program()->delete();
-
-            InstitutionModel::destroy($request->id);
-
-            return redirect()->back()->with('success', 'Deleted successfully.');
+        if(!$institutionModel) {
+            return redirect()->back()->with('failed', 'Failed to delete HEI.');
         }
 
-        return redirect()->back()->with('failed', 'Failed to delete program.');
+        $institutionModel->institution_program()->delete();
+        $institutionModel->delete();
 
-        
+        return redirect()->back()->with('success', 'HEI deleted successfully.');
     }
-
-    
 }

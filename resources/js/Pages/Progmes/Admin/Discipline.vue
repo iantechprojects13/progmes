@@ -21,7 +21,6 @@
                     <button class="text-blue-500 h-10 border-b-2 font-bold border-blue-500">
                         Discipline
                     </button>
-
                 </div>
             </div>
         </template>
@@ -67,15 +66,16 @@
                             {{ discipline.discipline }}
                         </td>
                         <td v-show="canEdit" class="p-3 text-right">
-                            <button @click="deleteModal = true; selected = discipline;"
-                                class="select-none h-10 w-10 rounded bg-white text-gray-700 hover:text-black active:text-red-500 border-2 border-gray-500 tooltipForActions"
-                                data-tooltip="Delete">
-                                <i class="fas fa-trash mr-0.5"></i>
-                            </button>
                             <button @click="edit(discipline.id)"
-                                class="ml-1 select-none h-10 w-10 rounded bg-white text-gray-700 hover:text-black active:text-blue-500 border-2 border-gray-500 tooltipForActions"
+                                class="mr-1 select-none h-10 w-10 rounded bg-blue-500 hover:bg-blue-600 text-white tooltipForActions"
                                 data-tooltip="Edit">
                                 <i class="fas fa-edit mr-0.5"></i>
+                            </button>
+                            <button
+                                @click="toggleConfirmationModal(discipline, 'deleteDiscipline', 'Delete Discipline')"
+                                class="select-none h-10 w-10 rounded text-white bg-red-500 hover:bg-red-600 tooltipForActions"
+                                data-tooltip="Delete">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </td>
                     </tr>
@@ -84,21 +84,10 @@
             </content-table>
         </template>
     </content-container>
-    <DeleteModal title="Delete Discipline" @close="deleteModal = false" :showModal="deleteModal">
-        <template v-slot:message>
-            <div v-if="deleteProcessing" class="py-5 w-full text-center">
-                Deleting
-                <i class="fas fa-spinner animate-spin ml-2"></i>
-            </div>
-            <div v-else class="py-5">Are you sure you want to delete <b>{{ selected?.discipline }}</b>? This action
-                can't be
-                undone.</div>
-        </template>
-        <template v-slot:buttons>
-            <button @click="deleteDiscipline" :disabled="deleteProcessing"
-                class="select-none h-10 w-16 rounded bg-red-500 hover:bg-red-600 text-white">Delete</button>
-        </template>
-    </DeleteModal>
+    <div v-if="confirmationModal">
+        <Confirmation @close="closeModal" :title="title" :modaltype="modaltype" :selected="selectedDiscipline" />
+    </div>
+
     <Notification :message="$page.props.flash.success" type="success" />
     <Notification :message="$page.props.flash.failed" type="failed" />
 </template>
@@ -150,10 +139,25 @@
     export default {
         data() {
             return {
-                deleteModal: false,
-                message: '',
+                confirmationModal: false,
+                selectedDiscipline: '',
+                modaltype: '',
+                title: '',
             }
         },
         layout: Layout,
+        methods: {
+            toggleConfirmationModal(id, type, title) {
+                this.confirmationModal = !this.confirmationModal;
+                this.selectedDiscipline = id;
+                this.modaltype = type;
+                this.title = title;
+            },
+
+            closeModal() {
+                this.confirmationModal = false;
+                this.uploadModal = false;
+            }
+        }
     };
 </script>

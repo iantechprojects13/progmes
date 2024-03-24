@@ -18,8 +18,15 @@ use Auth;
 
 class EvaluationFormController extends Controller
 {
-    public function index(Request $request) {
-        $defaultAcademicYear = AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
+    public function index(Request $request, $academicYear = null) {
+
+        if (!$academicYear) {
+            $defaultAcademicYear = AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
+        } else {
+            $defaultAcademicYear = $academicYear;
+        }
+
+        
         $program_list = ProgramModel::with('active_cmo')->get();
 
         $role = Auth::user()->role;
@@ -35,39 +42,27 @@ class EvaluationFormController extends Controller
                 $programQuery->where('name', 'like', '%' . $request->query('search') . '%');
             });
         })
-        ->with(['program', 'institution', 'evaluationForm' => function ($evalFormQuery) {
-            $evalFormQuery->where('effectivity', AdminSettingsModel::where('id', 1)->value('currentAcademicYear'));
-        }, 'evaluationForm.cmo']);
-
-        $count = $allinstitutionprograms->count();
-
-        $allinstitutionprograms = $allinstitutionprograms
+        ->with(['program', 'institution', 'evaluationForm' => function ($evalFormQuery) use ($defaultAcademicYear) {
+            $evalFormQuery->where('effectivity', $defaultAcademicYear);
+        }, 'evaluationForm.cmo'])
+        ->where('isActive', 1)
+        ->whereHas('evaluationForm')
         ->paginate(10)
         ->withQueryString();
         
         return Inertia::render('Progmes/Admin/EvaluationForm', [
             'program_list' => $program_list,
             'effectivity' => $defaultAcademicYear,
+            'academicYear' => $defaultAcademicYear,
             'institutionProgramList' => $allinstitutionprograms,
-            'count' => $count,
             'canEdit' => $canEdit,
             'filters' => $request->only(['search']),
         ]);
     }
 
     public function create(EvaluationFormRequest $request) {
-        // $validatedData = $request->validated();
-
-        // if ($validatedData) {
-        //     $evaluationForm = EvaluationFormModel::create([
-        //         'institutionProgramId' => $validatedData['institutionProgram'],
-        //         'cmoId' => $validatedData['cmo'],
-        //         'effectivity' => $validatedData['effectivity'],
-        //     ]);
-        // }
 
         $criteria = CriteriaModel::where('cmoId', $validatedData['cmo'])->orderBy('itemNo', 'asc')->get();
-
 
         foreach($criteria as $item) {
             EvaluationItemModel::create([
@@ -103,6 +98,7 @@ class EvaluationFormController extends Controller
         ]);
 
         $institutionProgram = InstitutionProgramModel::where('programId', $validatedData['program']['id'])
+        ->where('isActive', 1)
         ->whereNotExists(function ($query) use ($validatedData) {
             $query->select(DB::raw(1))
                 ->from('evaluation_form')

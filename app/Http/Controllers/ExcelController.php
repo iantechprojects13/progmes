@@ -10,10 +10,13 @@ use App\Models\DisciplineModel;
 use App\Models\ProgramModel;
 use App\Models\CriteriaModel;
 use App\Models\CMOModel;
+use Auth;
 
 class ExcelController extends Controller
 {
     public function importExcel(Request $request) {
+
+        $user = Auth::user();
         
        $request->validate([
         'file' => 'required|mimes:xlsx,xls',
@@ -35,7 +38,8 @@ class ExcelController extends Controller
         }
 
         $newCMO = CMOModel::create([
-            'status' => 'draft',
+            'createdBy' => $user->id,
+            'status' => 'Draft',
             'isActive' => 0,
         ]);
         

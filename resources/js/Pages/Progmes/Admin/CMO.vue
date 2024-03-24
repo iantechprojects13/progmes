@@ -3,19 +3,21 @@
     <Head title="CHED Memorandum Order List" />
     <AdminPanel />
     <content-container pageTitle="CHED Memorandum Order List" hasTopButton="true" hasSearch="true" hasFilters="true"
-        hasNavigation="true" :data_list="cmo_list">
+        :hasNavigation="canDraft" :data_list="cmo_list">
         <template v-slot:top-button>
-            <input ref="uploadfile" hidden type="file" @change="evidence_file = $event.target.files[0]" />
-            <button @click="$refs.uploadfile.click()" :disabled="importing"
-                class="bg-blue-500 hover:bg-blue-600 h-10 px-2 rounded text-white">
-                <span v-if="importing"><i class="fas fa-spinner animate-spin mr-2"></i>Importing...</span>
-                <span v-else>Import CMO</span>
-            </button>
+            <div v-show="canImport">
+                <input ref="uploadfile" hidden type="file" @change="evidence_file = $event.target.files[0]" />
+                <button @click.prevent="$refs.uploadfile.click()" :disabled="importing"
+                    class="select-none bg-blue-500 hover:bg-blue-600 h-10 w-32 rounded text-white text-sm">
+                    <span v-if="importing"><i class="fas fa-spinner animate-spin"></i></span>
+                    <span v-else><i class="fas fa-file-import mr-2 text-base"></i>Import CMO</span>
+                </button>
+            </div>
         </template>
         <template v-slot:navigation>
             <div>
-                <button class="text-blue-500 h-10 mr-8 border-b-2 font-bold border-blue-500">
-                    CMO List
+                <button class="text-blue-500 h-10 mr-7 border-b-2 font-bold border-blue-500">
+                    CMO
                 </button>
                 <Link :href="route('admin.cmo.draft')">
                 <button class="text-gray-500 hover:text-black">
@@ -39,7 +41,8 @@
             <div class="mr-1">
                 <Link href="/admin/CMOs">
                 <button
-                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
+                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500 tooltipForActions"
+                    data-tooltip="Refresh page">
                     <i class="fas fa-refresh"></i>
                 </button>
                 </Link>
@@ -48,24 +51,29 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="py-2">CHED Memorandum Order</th>
-                    <th class="py-2">Program</th>
-                    <th class="py-2">Active Status</th>
-                    <th v-show="canEdit" class="py-2 text-right">
+                    <th class="p-3">CHED Memorandum Order</th>
+                    <th class="p-3">Program</th>
+                    <th class="p-3">Active Status</th>
+                    <th v-show="canEdit" class="p-3 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
                 <template v-slot:table-body>
-                    <tr v-for="(cmo, index) in cmo_list.data" :key="cmo.id" class="hover:bg-gray-100"
+                    <tr v-if="cmo_list.data.length == 0">
+                        <td class="text-center py-10" colspan="3">
+                            No CMO found
+                        </td>
+                    </tr>
+                    <tr v-else v-for="(cmo, index) in cmo_list.data" :key="cmo.id" class="hover:bg-gray-100"
                         :class="{ 'bg-slate-200': index % 2 == 0 }">
-                        <td class="p-2">
+                        <td class="p-3">
                             CMO No.{{ cmo.number }} Series of {{ cmo.series }},
                             Version {{ cmo.version }}
                         </td>
-                        <td class="p-2">
+                        <td class="p-3">
                             {{ cmo.program?.program }}
                         </td>
-                        <td class="p-2">
+                        <td class="p-3">
                             <div v-if="cmo.isActive" class="w-fit text-xs px-1 rounded bg-green-600 text-white">
                                 Active
                             </div>
@@ -73,41 +81,30 @@
                                 Not Active
                             </div>
                         </td>
-                        <td class="p-2 text-right">
-                            <button @click="
-                                    toggleConfirmationModal(
-                                        cmo,
-                                        'deleteCMO',
-                                        'Delete Published CMO'
-                                    )
-                                " class="h-8 px-2 mr-1 rounded bg-red-500 hover:bg-red-600 text-white">
-                                Delete
+                        <td class="p-3 text-right">
+                            <button @click="view(cmo.id)"
+                                class="h-10 w-10 mr-1 rounded bg-green-600 hover:bg-green-700 text-white tooltipForActions"
+                                data-tooltip="View">
+                                <i class="fas fa-eye"></i>
                             </button>
-                            <button v-if="!cmo.isActive"
-                                class="h-8 px-2 w-24 rounded bg-blue-500 hover:bg-blue-600 text-white" @click="
-                                    toggleConfirmationModal(
-                                        cmo,
-                                        'activate',
-                                        'Activate CMO'
-                                    )
-                                ">
-                                Activate
+                            <button v-show="canEdit" v-if="!cmo.isActive"
+                                @click="toggleConfirmationModal(cmo, 'activate', 'Activate CMO')"
+                                class="h-10 w-10 mr-1 rounded bg-blue-500 hover:bg-blue-600 text-white tooltipForActions"
+                                data-tooltip="Activate">
+                                <i class="fas fa-toggle-on"></i>
                             </button>
-                            <button v-else class="h-8 px-2 w-24 rounded bg-blue-500 hover:bg-blue-600 text-white"
-                                @click="
-                                    toggleConfirmationModal(
-                                        cmo,
-                                        'deactivate',
-                                        'Deactivate CMO'
-                                    )
-                                ">
-                                Deactivate
+                            <button v-show="canEdit" v-else
+                                @click="toggleConfirmationModal(cmo, 'deactivate', 'Deactivate CMO')"
+                                class="h-10 w-10 mr-1 rounded bg-blue-500 hover:bg-blue-600 text-white tooltipForActions"
+                                data-tooltip="Deactivate">
+                                <i class="fas fa-toggle-off"></i>
                             </button>
-                        </td>
-                    </tr>
-                    <tr v-if="cmo_list.data.length == 0">
-                        <td class="text-center py-10" colspan="3">
-                            No CMO found
+                            <button v-show="canEdit"
+                                @click="toggleConfirmationModal(cmo, 'deleteCMO', 'Delete Published CMO')"
+                                class="h-10 w-10 rounded bg-red-500 hover:bg-red-600 text-white tooltipForActions"
+                                data-tooltip="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </td>
                     </tr>
                 </template>
@@ -141,11 +138,17 @@
         router.get("/admin/CMOs/draft/" + id + "/edit");
     }
 
-    function viewValue() {
-        console.log(refs.toggleBtn.value);
+    function view(id) {
+        router.get('/admin/CMOs/' + id + '/view');
     }
 
-    const props = defineProps(["cmo_list", "canEdit", "filters"]);
+    const props = defineProps([
+        'cmo_list',
+        'canEdit',
+        'canImport',
+        'canDraft',
+        'filters',
+    ]);
 
     const query = useForm({
         search: props.filters.search,

@@ -19,19 +19,35 @@ class UserSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        for ($i = 0; $i < 10; $i++) {
-            $name = $faker->name;
-            $email = strtolower(str_replace(' ', '.', $name)) . '@gmail.com';
-            $password = Hash::make('randompassword');
-            $type = $faker->randomElement(['HEI', 'CHED']);
+        // for ($i = 0; $i < 10; $i++) {
+        //     $name = $faker->name;
+        //     $email = strtolower(str_replace(' ', '.', $name)) . '@gmail.com';
+        //     $password = Hash::make('randompassword');
+        //     $type = $faker->randomElement(['HEI', 'CHED']);
             
-            DB::table('users')->insert([
-                'name' => $name,
-                'email' => $email,
-                'password' => $password,
-                'type' => $type,
-            ]);
-        }
-        
+        //     DB::table('users')->insert([
+        //         'name' => $name,
+        //         'email' => $email,
+        //         'password' => $password,
+        //         'type' => $type,
+        //     ]);
+        // }
+
+        DB::table('users')->insert([
+            'name' => $faker->name,
+            'email' => strtolower(str_replace(' ', '.', $name)) . '@gmail.com',
+            'password' => Hash::make('randompassword'),
+            'role' => 'Program Head',
+            'type' => 'HEI',
+        ]);
+
+        DB::table('users')->insert([
+            'name' => $faker->name,
+            'email' => strtolower(str_replace(' ', '.', $name)) . '@gmail.com',
+            'password' => Hash::make('randompassword'),
+            'role' => 'Dean',
+            'type' => 'HEI',
+        ]);
+
     }
 }

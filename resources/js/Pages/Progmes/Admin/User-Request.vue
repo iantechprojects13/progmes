@@ -1,6 +1,6 @@
 <template>
 
-    <Head title="Users Request" />
+    <Head title="Users Registration" />
     <AdminPanel />
     <content-container @submit="submit" pageTitle="Request List" hasNavigation="true" hasSearch="true" hasFilters="true"
         :data_list="user_list">
@@ -14,7 +14,7 @@
                 <button class="text-blue-500 h-10 border-b-2 font-bold border-blue-500 mr-7">
                     Request
                 </button>
-                <Link :href="route('admin.users.inactive')">
+                <Link :href="route('admin.users.inactive')" v-show="showInactive">
                 <button class="text-gray-500 hover:text-black h-10 mr-7">
                     Inactive
                 </button>
@@ -36,18 +36,21 @@
             <div class="mr-1">
                 <Link href="/admin/users/request">
                 <button
-                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
+                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500 tooltipForActions"
+                    data-tooltip="Refresh page">
                     <i class="fas fa-refresh"></i>
                 </button>
                 </Link>
             </div>
-            <div class="mr-1">
+            <div class="mr-1" v-show="canFilter">
                 <dropdown-option position="right">
                     <template v-slot:button>
                         <button
                             class="flex justify-between items-center px-2 min-w-6 border-2 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
                             <span v-if="props.filters.type == null">Type</span>
-                            <span v-else>{{ props.filters.type }}</span>
+                            <span v-else-if="props.filters.type == 'CHED'">CHED</span>
+                            <span v-else-if="props.filters.type == 'HEI'">HEI</span>
+                            <span v-else>Type</span>
                             <i class="fas fa-caret-down ml-2"></i>
                         </button>
                     </template>
@@ -91,7 +94,8 @@
                     <th class="p-3">Name/Email</th>
                     <th class="p-3">Type</th>
                     <th class="p-3">Role</th>
-                    <th class="p-3">Discipline/Program</th>
+                    <th class="p-3">Discipline</th>
+                    <th class="p-3">Program</th>
                     <th class="p-3">HEI Name</th>
                     <th class="p-3 text-right" v-show="canEdit">
                         <i class="fas fa-ellipsis-v"></i>
@@ -99,7 +103,7 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="user_list.data.length == 0">
-                        <td class="py-10 text-center" colspan="5">
+                        <td class="py-10 text-center" colspan="7">
                             No users found
                         </td>
                     </tr>
@@ -129,6 +133,10 @@
                         <td class="p-3 whitespace-normal">
                             <div v-for="(role, index) in user.user_role" :key="role.id">
                                 {{ role.discipline?.discipline }}
+                            </div>
+                        </td>
+                        <td class="p-3 whitespace-normal">
+                            <div v-for="(role, index) in user.user_role" :key="role.id">
                                 {{ role.program?.program }}
                             </div>
                         </td>
@@ -139,11 +147,11 @@
                         </td>
                         <td class="p-3 text-right px-3" v-show="canEdit">
                             <button @click="toggleModal(user, 'reject', 'Reject User')"
-                                class="h-10 px-2 text-white bg-red-500 hover:bg-red-600 rounded mr-1">
+                                class="select-none h-10 w-16 text-white bg-red-500 hover:bg-red-600 rounded mr-1">
                                 Reject
                             </button>
                             <button @click="toggleModal(user, 'accept', 'Accept User')"
-                                class="h-10 px-2 text-white bg-blue-500 hover:bg-blue-600 rounded">
+                                class="select-none h-10 w-16 text-white bg-blue-500 hover:bg-blue-600 rounded">
                                 Accept
                             </button>
                         </td>
@@ -163,16 +171,21 @@
     import { useForm, router } from "@inertiajs/vue3";
     import { ref } from "vue";
 
-    const props = defineProps(["user_list", "count", "canEdit", "filters"]);
+    const props = defineProps([
+        'user_list',
+        'showInactive',
+        'canEdit',
+        'canFilter',
+        'filters',
+    ]);
 
     const query = useForm({
         search: props.filters.search,
-        sort: props.filters.sort,
         type: props.filters.type,
     });
 
     function submit() {
-        if (query.search == "" && query.sort == "" && query.filter == "") {
+        if (query.search == "" && query.filter == "") {
             router.get("/admin/users/request");
         } else {
             query.get("/admin/users/request", {

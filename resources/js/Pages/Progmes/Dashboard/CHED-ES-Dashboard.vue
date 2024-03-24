@@ -2,7 +2,7 @@
 
     <Head title="My Dashboard" />
     <!-- <page-title title="Dashboard for ES" /> -->
-    <div class="w-auto h-screen">
+    <div class="w-full h-screen">
         <embed type="text/html" class="w-full h-full" src="assets/index.html">
     </div>
 </template>

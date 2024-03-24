@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Exceptions\Handler;
 use Inertia\Inertia;
 use App\Models\CMOModel;
+use App\Models\RoleModel;
 use App\Models\CriteriaModel;
 use App\Models\DisciplineModel;
 use App\Models\ProgramModel;
@@ -16,86 +17,112 @@ use Auth;
 
 class CMOController extends Controller
 {
-    // public function index($list = 'published') {
-        
-    //     $order = $list == 'published' ? 'number' : 'updated_at';
-    //     $sort = $order == 'number' ? 'asc' : 'desc';
-
-    //     return Inertia::render('Progmes/Admin/CMO',[
-    //     'cmo_list' => CMOModel::where('status', $list)
-    //         ->orderByRaw("CAST($order AS UNSIGNED) $sort")
-    //         ->paginate(50)
-    //         ->through(fn($cmo) => [
-    //             'id' => $cmo->id,
-    //             'number' => $cmo->number,
-    //             'series' => $cmo->series,
-    //             'version' => $cmo->version,
-    //             'status' => $cmo->status,
-    //             'active' => $cmo->isActive,
-    //             'modified' => Carbon::parse($cmo->updated_at)->timezone('Asia/Manila')->format('M d, Y h:i:sa'),
-    //             'discipline' => DisciplineModel::where('id', $cmo->disciplineId)->value('discipline'),
-    //             'program' => ProgramModel::where('id', $cmo->programId)->value('program'),
-    //         ]),
-    //     'listItems' => $list,
-    //     ]);
-    // }
-
     public function index(Request $request) {
-
+        
         $role = Auth::user()->role;
-        $canEdit = true;
+        $canImport = false;
+        $canDraft = false;
+        $canEdit = false;
+        $disciplineList = [];
+
+        if ($role == 'Super Admin' || $role == 'Education Supervisor') {
+            $canImport = true;
+            $canDraft = true;
+            $canEdit = true;
+        }
+
+        if ($role == 'Admin') {
+            $canEdit = true;
+        }
+
+        if ($role == 'Education Supervisor') {
+
+            $discipline = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->get();
+            foreach($discipline as $item) {
+                array_push($disciplineList, $item->disciplineId);
+            }
+        }
 
         $activelist = CMOModel::query()
         ->when($request->query('search'), function ($query) use ($request) {
-            $query->where('number', 'like', '%' . $request->query('search') . '%')
-            ->orWhere('series', 'like', '%' . $request->query('search') . '%')
-            ->orWhere('version', 'like', '%' . $request->query('search') . '%')
-            ->orWhereHas('program', function ($programQuery) use ($request) {
-                $programQuery->where('program', 'like', '%' . $request->query('search') . '%');
+            $query->where(function ($query) use ($request) {
+                $query->where('number', 'like', '%' . $request->query('search') . '%')
+                ->orWhere('series', 'like', '%' . $request->query('search') . '%')
+                ->orWhere('version', 'like', '%' . $request->query('search') . '%')
+                ->orWhereHas('program', function ($programQuery) use ($request) {
+                    $programQuery->where('program', 'like', '%' . $request->query('search') . '%');
+                });
             });
         })
         ->where([
-            'status' => 'published',
+            'status' => 'Published',
         ])
+        ->orderBy('number', 'asc')
+        ->when($role == 'Education Supervisor', function ($query) use ($disciplineList) {
+            $query->whereHas('program', function ($q) use ($disciplineList) {
+                $q->whereIn('disciplineId', $disciplineList);
+            });
+        })
         ->with('program')
         ->paginate(10)
         ->withQueryString();
 
         return Inertia::render('Progmes/Admin/CMO', [
             'cmo_list' => $activelist,
+            'canImport' => $canImport,
+            'canDraft' => $canDraft,
             'canEdit' => $canEdit,
             'filters' => $request->only(['search']),
         ]);
-
     }
 
     public function draft(Request $request) {
 
         $role = Auth::user()->role;
-        $canEdit = true;
+        $canEdit = false;
+        $disciplineList = [];
+
+        if ($role == 'Super Admin' || $role == 'Education Supervisor') {
+            $canEdit = true;
+        }
+
+        if ($role == 'Education Supervisor') {
+            $discipline = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->get();
+            foreach($discipline as $item) {
+                array_push($disciplineList, $item->disciplineId);
+            }
+        }
 
         $draftlist = CMOModel::query()
-        ->when($request->query('search'), function ($query) use ($request) {
-            $query->where('number', 'like', '%' . $request->query('search') . '%')
-            ->orWhere('series', 'like', '%' . $request->query('search') . '%')
-            ->orWhere('version', 'like', '%' . $request->query('search') . '%')
-            ->orWhereHas('program', function ($programQuery) use ($request) {
-                $programQuery->where('program', 'like', '%' . $request->query('search') . '%');
+        ->when($request->query('search'), function ($query) use ($request, $role) {
+            $query->where(function ($query) use ($request, $role) {
+                 $query->where('number', 'like', '%' . $request->query('search') . '%')
+                ->orWhere('series', 'like', '%' . $request->query('search') . '%')
+                ->orWhere('version', 'like', '%' . $request->query('search') . '%')
+                ->orWhereHas('program', function ($programQuery) use ($request) {
+                    $programQuery->where('program', 'like', '%' . $request->query('search') . '%');
+                });
+            })
+            ->when($role == 'Education Supervisor', function ($query) {
+                $query->where('createdBy', Auth::user()->id);
             });
         })
+        ->when($role == 'Education Supervisor', function ($query) {
+            $query->where('createdBy', Auth::user()->id);
+        })
         ->where([
-            'status' => 'draft',
+            'status' => 'Draft',
         ])
-        ->with('program')
+        ->orderBy('number', 'asc')
+        ->with('program', 'created_by')
         ->paginate(10)
         ->withQueryString();
-
+        
         return Inertia::render('Progmes/Admin/CMO-Draft', [
             'cmo_list' => $draftlist,
             'canEdit' => $canEdit,
             'filters' => $request->only(['search']),
         ]);
-
     }
 
 
@@ -111,9 +138,23 @@ class CMOController extends Controller
     }
 
     public function edit(Request $request) {
+        
+        $user = Auth::user();
+        $disciplineList = [];
+
+        if ($user->role == 'Education Supervisor') {
+            $disciplines = RoleModel::where('userId', $user->id)->with('discipline')->get();
+            foreach($disciplines as $discipline) {
+                array_push($disciplineList, $discipline->discipline);
+            }
+        } else {
+            $disciplineList = DisciplineModel::all();
+        }
+
+
         return Inertia::render('Progmes/Admin/CMO-Edit', [
             'cmo' => CMOModel::where('id', $request->id)->with('criteria')->first(),
-            'discipline_list' => DisciplineModel::all(),
+            'discipline_list' => $disciplineList,
             'program_list' => ProgramModel::all(),
         ]);
     }
@@ -128,7 +169,7 @@ class CMOController extends Controller
             'number' => $validated['number'],
             'series' => $validated['series'],
             'version' => $validated['version'],
-            'status' => 'published',
+            'status' => 'Published',
         ]);
 
         $criteria = CriteriaModel::where('cmoId', $request->id)->get();
@@ -199,7 +240,7 @@ class CMOController extends Controller
         }
 
         $cmoModel->update([
-            'status' => 'published',
+            'status' => 'Published',
         ]);
 
         $cmoModel->save();

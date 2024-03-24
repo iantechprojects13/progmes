@@ -22,6 +22,7 @@ class DisciplineController extends Controller
         ->when($request->query('search'), function ($query) use ($request) {
             $query->where('discipline', 'like', '%' . $request->query('search') . '%');
         })->orderBy('discipline')
+        ->with('institution_program')
         ->paginate(10)
         ->withQueryString();
 
@@ -85,16 +86,19 @@ class DisciplineController extends Controller
     }
 
 
-    public function delete(Request $request) {
+    public function delete($discipline) {
 
-        $discipline = DisciplineModel::where('id', $request->id)->first();
+        $disciplineModel = DisciplineModel::find($discipline);
 
-        if($discipline) {
-            DisciplineModel::destroy($request->id);
-            return redirect()->back()->with('success', 'Deleted successfully.');
+        if(!$disciplineModel) {
+           return redirect()->back()->with('failed', 'Failed to delete program.');
         }
+        
+        $disciplineModel->institution_program()->delete();
+        $disciplineModel->program()->delete();
+        $disciplineModel->delete();
 
-        return redirect()->back()->with('failed', 'Failed to delete program.');
+        return redirect()->back()->with('success', 'Deleted successfully.');
     }
 
 }

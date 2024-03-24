@@ -206,6 +206,18 @@ class RegistrationController extends Controller
         return redirect()->back()->with('success', $user->name .'\'s account has been deactivated.');
     }
 
+    public function activate(User $user) {
+        $user = User::where('id', $user->id)->first();
+        
+        $user->update([
+            'isActive' => 1,
+        ]);
+
+        $user->save();
+
+        return redirect()->back()->with('success', $user->name .'\'s account has been activated.');
+    }
+
 
     public function accept(User $user) {
 

@@ -19,16 +19,24 @@ class UserController extends Controller
         $role = Auth::user()->role;
         $canEdit = false;
         $canFilter = false;
+        $showRequest = false;
+        $showInactive = false;
         $disciplineList = [];
         $list = ['type' => 'HEI'];
         
+        if($role == 'Super Admin') {
+            $canFilter = true;
+            $showInactive = true;
+        }
+
         if ($role == 'Super Admin' || $role == 'Admin') {
             $canEdit = true;
-            $canFilter = true;
+            $showRequest = true;
         }
 
         if ($role == 'Education Supervisor') {
             $canEdit = true;
+            $showRequest = true;
             $discipline = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->get();
             foreach($discipline as $item) {
                 array_push($disciplineList, $item->disciplineId);
@@ -67,8 +75,6 @@ class UserController extends Controller
         ->when($role == 'Education Supervisor', function ($query) use ($disciplineList) {
             $query->whereHas('userRole.program', function ($q) use ($disciplineList) {
                 $q->whereIn('disciplineId', $disciplineList);
-            })->whereHas('userRole.program', function ($q) use ($disciplineList) {
-                $q->whereIn('disciplineId', $disciplineList);
             });
         })
         ->with('userRole', 'userRole.discipline', 'userRole.program', 'userRole.institution')
@@ -79,6 +85,8 @@ class UserController extends Controller
             'user_list' => $userlist,
             'canEdit' => $canEdit,
             'canFilter' => $canFilter,
+            'showRequest' => $showRequest,
+            'showInactive' => $showInactive,
             'filters' => $request->only(['search', 'type']),
         ]);
     }
@@ -88,13 +96,18 @@ class UserController extends Controller
     public function request(Request $request) {
 
         $role = Auth::user()->role;
+        $showInactive = false;
         $canEdit = false;
         $canFilter = false;
         $disciplineList = [];
 
-        if ($role == 'Super Admin' || $role == 'Education Supervisor') {
-            $canEdit = true;
+        if ($role == 'Super Admin') {
             $canFilter = true;
+            $showInactive = true;
+        }
+
+        if ($role == 'Super Admin' || $role == 'Admin') {
+            $canEdit = true;
         }
 
         if ($role == 'Education Supervisor') {
@@ -140,6 +153,7 @@ class UserController extends Controller
             'user_list' => $userlist,
             'canEdit' => $canEdit,
             'canFilter' => $canFilter,
+            'showInactive' => $showInactive,
             'filters' => $request->only(['search', 'type']),
         ]);
     }
@@ -159,7 +173,6 @@ class UserController extends Controller
         }
         
         if ($role == 'Education Supervisor') {
-            $canEdit = true;
             $discipline = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->get();
             foreach($discipline as $item) {
                 array_push($disciplineList, $item->disciplineId);
@@ -175,7 +188,7 @@ class UserController extends Controller
                 'isVerified' => 1,
                 'isActive' => 0,
             ])
-            ->when($role != 'Super Admin', function ($query) use ($list) {
+            ->when($role != 'Super Admin' || $role != 'Admin', function ($query) use ($list) {
                 $query->where($list);
             })
             ->orderBy('name', 'asc');
@@ -183,7 +196,7 @@ class UserController extends Controller
         ->when($request->query('type'), function ($query) use ($request) {
             $query->where('type', $request->query('type'));
         })
-        ->when($role != 'Super Admin', function ($query) use ($list) {
+        ->when($role != 'Super Admin' || $role != 'Admin', function ($query) use ($list) {
             $query->where($list);
         })
         ->where([
@@ -191,7 +204,7 @@ class UserController extends Controller
             'isActive' => 0,
         ])
         ->whereNot('role', 'Super Admin')
-        ->when($role != 'Super Admin', function ($query) use ($list) {
+        ->when($role != 'Super Admin' || $role != 'Admin', function ($query) use ($list) {
                 $query->where($list);
             })
         ->orderBy('name', 'asc')
