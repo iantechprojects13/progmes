@@ -7,16 +7,16 @@
         <template v-slot:navigation>
             <div>
                 <Link :href="route('admin.users.list')">
-                <button class="text-gray-500 hover:text-black h-10 mr-7">
+                <button class="select-none text-gray-700 hover:text-black h-10 mr-7">
                     Active
                 </button>
                 </Link>
                 <Link :href="route('admin.users.request')">
-                <button class="mr-7 select-none text-gray-500 hover:text-black">
+                <button class="select-none mr-7 text-gray-700 hover:text-black">
                     Request
                 </button>
                 </Link>
-                <button class="text-blue-500 h-10 border-b-2 font-bold border-blue-500 mr-7">
+                <button class="select-none text-blue-500 h-10 border-b-2 font-bold border-blue-500 mr-7">
                     Inactive
                 </button>
             </div>
@@ -36,7 +36,8 @@
             <div class="mr-1">
                 <Link href="/admin/users/list">
                 <button
-                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
+                    class="w-10 h-10 whitespace-nowrap rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
+                    data-tooltip="Refresh page">
                     <i class="fas fa-refresh"></i>
                 </button>
                 </Link>
@@ -45,7 +46,7 @@
                 <dropdown-option position="right">
                     <template v-slot:button>
                         <button
-                            class="flex justify-between items-center px-2 min-w-6 border-2 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
+                            class="flex justify-between items-center px-2 min-w-6 border whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
                             <span v-if="props.filters.type == null">Type</span>
                             <span v-else-if="props.filters.type == 'CHED'">CHED</span>
                             <span v-else-if="props.filters.type == 'HEI'">HEI</span>
@@ -90,7 +91,7 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="p-3">Name/Email</th>
+                    <th class="p-3 pl-5">Name/Email</th>
                     <th class="p-3">Type</th>
                     <th class="p-3">Role</th>
                     <th class="p-3">Discipline</th>
@@ -107,8 +108,8 @@
                         </td>
                     </tr>
                     <tr v-else v-for="(user, index) in user_list.data" :key="user.id"
-                        :class="{ 'bg-slate-200': index % 2 == 0 }">
-                        <td class="p-3">
+                        class="hover:bg-slate-300 align-top" :class="{ 'bg-slate-200': index % 2 == 0 }">
+                        <td class="p-3 pl-5">
                             <div class="flex flex-row">
                                 <div class="mr-3 w-10">
                                     <img :src="
@@ -150,17 +151,30 @@
                         </td>
                         <td class="p-3 text-right" v-show="canEdit">
                             <button @click="toggleModal(user, 'deleteUser', 'Delete User')"
-                                class="select-none h-10 px-2 text-white bg-red-500 hover:bg-red-600 rounded mr-1">
-                                Delete
+                                class="select-none h-10 w-10 text-white bg-red-500 hover:bg-red-600 rounded tooltipForActions mr-1"
+                                data-tooltip="Delete">
+                                <i class="fas fa-trash"></i>
                             </button>
                             <button @click="toggleModal(user, 'activateUser', 'Activate User')"
-                                class="select-none h-10 px-2 text-white bg-blue-500 hover:bg-blue-600 rounded mr-1">
-                                Activate
+                                class="select-none h-10 w-10 text-white bg-blue-500 hover:bg-blue-600 rounded tooltipForActions mr-1"
+                                data-tooltip="Activate">
+                                <i class="fas fa-unlock"></i>
                             </button>
                         </td>
                     </tr>
                 </template>
             </content-table>
+        </template>
+        <template v-slot:show-item>
+            <div class="mr-2">Items per page</div>
+            <select v-model="query.show" id="showResultCount" @change="changeResultCount"
+                class="select-none rounded h-8 w-20 p-1 text-sm">
+                <option value="25">25</option>
+                <option :value="50">50</option>
+                <option :value="75">75</option>
+                <option :value="100">100</option>
+                <option :value="200">200</option>
+            </select>
         </template>
     </content-container>
     <Notification :message="$page.props.flash.success" type="success" />
@@ -177,6 +191,7 @@
     const props = defineProps(["user_list", "canEdit", 'canFilter', "filters"]);
 
     const query = useForm({
+        show: props.filters.show,
         search: props.filters.search,
         type: props.filters.type,
     });
@@ -187,15 +202,19 @@
     }
 
     function submit() {
-        if (query.search == "" && query.filter == "") {
-            router.get("/admin/users/inactive");
-        } else {
-            query.get("/admin/users/inactive", {
-                preserveState: true,
-                preserveScroll: true,
-            });
-        }
+        query.get("/admin/users/inactive", {
+            preserveState: true,
+            preserveScroll: true,
+        });
     }
+
+    function changeResultCount() {
+        query.get("/admin/users/inactive", {
+            preserveScroll: false,
+            preserveState: false,
+        });
+    }
+
 </script>
 
 <script>

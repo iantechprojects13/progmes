@@ -1,10 +1,10 @@
 <template>
 
     <Head title="My Dashboard" />
-    <!-- <page-title title="Dashboard for ES" /> -->
-    <div class="w-full h-screen">
+    <page-title title="Dashboard" />
+    <!-- <div class="w-full h-screen">
         <embed type="text/html" class="w-full h-full" src="assets/index.html">
-    </div>
+    </div> -->
 </template>
 
 <script>

@@ -141,13 +141,13 @@ class InitialDataSeeder extends Seeder
         ];
 
         $allDiscipline = [
-            'Business Administration and Related',
             'IT-Related Disciplines',
+            'Business Administration and Related',
             'Education Science and Teacher Training',
+            'Engineering and Technology',
             'Criminal Justice Education',
             'Religion and Theology',
             'Maritime',
-            'Engineering and Technology',
             'Service Trades',
             'Medical and Allied',
             'Other Disciplines',
@@ -175,25 +175,29 @@ class InitialDataSeeder extends Seeder
                 'discipline' => $discipline,
             ]);
         }
+
+        DB::table('admin_settings')->insert([
+            'currentAcademicYear' => '2023-2024',
+        ]);
 		
         // PROGRAMS
         DB::table('program')->insert([
-            'disciplineId' => 2,
+            'disciplineId' => 1,
             'program' => 'Bachelor of Science in Information Technology',
         ]);
 
         DB::table('program')->insert([
-            'disciplineId' => 2,
+            'disciplineId' => 1,
             'program' => 'Bachelor of Science in Computer Science',
         ]);
 
         DB::table('program')->insert([
-            'disciplineId' => 1,
+            'disciplineId' => 2,
             'program' => 'Bachelor of Science in Business Administration',
         ]);
 
         DB::table('program')->insert([
-            'disciplineId' => 1,
+            'disciplineId' => 2,
             'program' => 'Bachelor of Science in Hospitality Management',
         ]);
 
@@ -207,8 +211,100 @@ class InitialDataSeeder extends Seeder
             'program' => 'Bachelor of Secondary Education',
         ]);
 
-        DB::table('admin_settings')->insert([
-            'currentAcademicYear' => '2023-2024',
+        DB::table('program')->insert([
+            'disciplineId' => 4,
+            'program' => 'Bachelor of Science in Electrical Engineering',
+        ]);
+
+        DB::table('program')->insert([
+            'disciplineId' => 4,
+            'program' => 'Bachelor of Science in Civil Engineering',
+        ]);        
+        
+        // Test users
+        DB::table('users')->insert([
+            'id' => 1001,
+            'name' => 'Admin Test-user',
+            'email' => 'admin@gmail.com',
+            'role' => 'Admin',
+            'type' => 'CHED',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1002,
+            'name' => 'RD Test-user',
+            'email' => 'regionaldirector@gmail.com',
+            'role' => 'Regional Director',
+            'type' => 'CHED',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1003,
+            'name' => 'ES1 Test-user',
+            'email' => 'educationsupervisor1@gmail.com',
+            'role' => 'Education Supervisor',
+            'type' => 'CHED',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1004,
+            'name' => 'ES2 Test-user',
+            'email' => 'educationsupervisor2@gmail.com',
+            'role' => 'Education Supervisor',
+            'type' => 'CHED',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1005,
+            'name' => 'PH1 Test-user',
+            'email' => 'programhead1@gmail.com',
+            'role' => 'Program Head',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1006,
+            'name' => 'PH2 Test-user',
+            'email' => 'programhead2@gmail.com',
+            'role' => 'Program Head',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        
+        DB::table('role')->insert([
+            'userId' => 1003,
+            'disciplineId' => 1,
+        ]);
+
+        DB::table('role')->insert([
+            'userId' => 1003,
+            'disciplineId' => 2,
+        ]);
+
+        DB::table('role')->insert([
+            'userId' => 1004,
+            'disciplineId' => 3,
+        ]);
+
+        DB::table('role')->insert([
+            'userId' => 1004,
+            'disciplineId' => 4,
+        ]);
+
+        DB::table('role')->insert([
+            'userId' => 1005,
+            'institutionId' => 100,
+            'programId' => 1,
+        ]);
+
+        DB::table('role')->insert([
+            'userId' => 1006,
+            'institutionId' => 100,
+            'programId' => 5,
         ]);
     }
 }

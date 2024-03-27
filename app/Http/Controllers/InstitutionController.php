@@ -25,33 +25,36 @@ class InstitutionController extends Controller
 
         $role = Auth::user()->role;
         $canEdit = false;
+        $canDelete = false;
+        $canAdd = false;
+        
+        $show = $request->query('show') ? $request->query('show') : 25;
 
         if ($role == 'Super Admin') {
             $canEdit = true;
+            $canDelete = true;
+            $canAdd = true;
+        }
+
+        if ($role == 'Admin') {
+            $canEdit = true;
+            $canAdd = true;
         }
 
         $institutionlist = InstitutionModel::query()
         ->when($request->query('search'), function ($query) use ($request) {
             $query->where('name', 'like', '%' . $request->query('search') . '%');
         })
-        ->paginate(10)
+        ->paginate($show)
         ->withQueryString();
 
         return Inertia::render('Progmes/Admin/HEI', [
             'institution_list' => $institutionlist,
             'canEdit' => $canEdit,
-            'filters' => $request->only(['search']),
+            'canAdd' => $canAdd,
+            'canDelete' => $canDelete,
+            'filters' => $request->only(['search']) + ['show' => $show ],
         ]);
-        
-        // return Inertia::render('Progmes/Admin/Program',[
-        //     'program_list' => ProgramModel::orderBy('program', 'asc')->paginate(20)
-        //         ->through(fn($program) => [
-        //             'id' => $program->id,
-        //             'discipline' => DisciplineModel::where('id', $program->disciplineId)->value('discipline'),
-        //             'program' => $program->program,
-        //             'major' => $program->major,
-        //         ]),
-        //     ]);
     }
 
     public function create()
@@ -88,7 +91,7 @@ class InstitutionController extends Controller
 
     public function view(InstitutionModel $institution)
     {
-        $institutionModel = InstitutionModel::where('id', $institution->id)->with('institutionProgram.program')->first();
+        $institutionModel = InstitutionModel::where('id', $institution->id)->with('institution_program.program')->first();
 
         return Inertia::render('Progmes/Admin/HEI-View', [
             'institution' => $institutionModel,

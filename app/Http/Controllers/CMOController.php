@@ -24,6 +24,7 @@ class CMOController extends Controller
         $canDraft = false;
         $canEdit = false;
         $disciplineList = [];
+        $show = $request->query('show') ? $request->query('show') : 25;
 
         if ($role == 'Super Admin' || $role == 'Education Supervisor') {
             $canImport = true;
@@ -64,7 +65,7 @@ class CMOController extends Controller
             });
         })
         ->with('program')
-        ->paginate(10)
+        ->paginate($show)
         ->withQueryString();
 
         return Inertia::render('Progmes/Admin/CMO', [
@@ -72,7 +73,7 @@ class CMOController extends Controller
             'canImport' => $canImport,
             'canDraft' => $canDraft,
             'canEdit' => $canEdit,
-            'filters' => $request->only(['search']),
+            'filters' => $request->only(['search']) + ['show' => $show ],
         ]);
     }
 
@@ -81,6 +82,7 @@ class CMOController extends Controller
         $role = Auth::user()->role;
         $canEdit = false;
         $disciplineList = [];
+        $show = $request->query('show') ? $request->query('show') : 25;
 
         if ($role == 'Super Admin' || $role == 'Education Supervisor') {
             $canEdit = true;
@@ -115,13 +117,13 @@ class CMOController extends Controller
         ])
         ->orderBy('number', 'asc')
         ->with('program', 'created_by')
-        ->paginate(10)
+        ->paginate($show)
         ->withQueryString();
         
         return Inertia::render('Progmes/Admin/CMO-Draft', [
             'cmo_list' => $draftlist,
             'canEdit' => $canEdit,
-            'filters' => $request->only(['search']),
+            'filters' => $request->only(['search']) + ['show' => $show ],
         ]);
     }
 
@@ -141,21 +143,26 @@ class CMOController extends Controller
         
         $user = Auth::user();
         $disciplineList = [];
+        $disciplineArray = [];
 
         if ($user->role == 'Education Supervisor') {
-            $disciplines = RoleModel::where('userId', $user->id)->with('discipline')->get();
+            $disciplines = RoleModel::where('userId', $user->id)->where('isActive', 1)->with('discipline')->get();
             foreach($disciplines as $discipline) {
-                array_push($disciplineList, $discipline->discipline);
+                array_push($disciplineArray, $discipline->discipline->id);
             }
+            $disciplineList = DisciplineModel::whereIn('id', $disciplineArray)->orderBy('discipline', 'asc')->get();
+            $programList = ProgramModel::whereIn('disciplineId', $disciplineArray)->orderBy('program', 'asc')->get();
+
         } else {
-            $disciplineList = DisciplineModel::all();
+            $disciplineList = DisciplineModel::orderBy('discipline')->get();
+            $programList = ProgramModel::orderBy('program')->get();
         }
 
 
         return Inertia::render('Progmes/Admin/CMO-Edit', [
             'cmo' => CMOModel::where('id', $request->id)->with('criteria')->first(),
             'discipline_list' => $disciplineList,
-            'program_list' => ProgramModel::all(),
+            'program_list' => $programList,
         ]);
     }
 

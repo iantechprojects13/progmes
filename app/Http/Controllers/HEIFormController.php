@@ -29,8 +29,8 @@ class HEIFormController extends Controller
             EvaluationItemModel::create([
                 'evaluationFormId' => $tool->id,
                 'criteriaId' => $item->id,
-                'selfEvaluationStatus' => 'Not complied',
-                'evaluationStatus' => 'Not complied',
+                'selfEvaluationStatus' => null,
+                'evaluationStatus' => null,
             ]);
         }
 
@@ -44,17 +44,22 @@ class HEIFormController extends Controller
     }
 
     public function view($tool) {
-        $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.program', 'institution_program.institution')->first();
+        $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.program', 'institution_program.institution', 'complied', 'not_complied', 'not_applicable', 'item', 'item.criteria', 'item.evidence')->first();
         
         if (!$evaluationTool) {
             return redirect('/hei/evaluation')->with('failed', 'Evaluation tool not found.');
         }
 
-        $evaluationItems = EvaluationItemModel::where('evaluationFormId', $evaluationTool->id)->with('criteria', 'evidence')->get();
+        $compliedCount = $evaluationTool->complied->count();
+        $notCompliedCount = $evaluationTool->not_complied->count();
+        $notApplicableCount = $evaluationTool->not_applicable->count();
+        $percentage = intval(round((($compliedCount + $notCompliedCount + $notApplicableCount)/$evaluationTool->item->count())*100));
+        $progress = [$compliedCount, $notCompliedCount, $notApplicableCount, $percentage];
+        
 
         return Inertia::render('Progmes/Evaluation/HEI-Evaluation-View', [
             'evaluation_tool' => $evaluationTool,
-            'evaluation_items' => $evaluationItems,
+            'progress' => $progress,
         ]);
     }
 
@@ -73,13 +78,8 @@ class HEIFormController extends Controller
         $notComplied = $items->where('selfEvaluationStatus', 'Not complied')->count();
         $notApplicable = $items->where('selfEvaluationStatus', 'Not applicable')->count();
         $totalItems = $totalItems - $notApplicable;
-        $percentage = intval(round(($complied/$totalItems) * 100));
-        $progress = [
-            'complied' => $complied,
-            'notComplied' => $notComplied,
-            'notApplicable' => $notApplicable,
-            'percentage' => $percentage,
-        ];
+        $percentage = intval(round((($complied + $notComplied + $notApplicable)/$items->count())*100));
+        $progress = [ $complied, $notComplied, $notApplicable, $percentage];
 
         $canSubmit = true;
         
@@ -98,7 +98,6 @@ class HEIFormController extends Controller
             }
         }
 
-        
         if($tool->status == 'In progress') {
             return Inertia::render('Progmes/Evaluation/HEI-Evaluation-Edit', [
                 'evaluation' => $tool,

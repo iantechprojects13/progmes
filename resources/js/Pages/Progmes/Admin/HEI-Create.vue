@@ -12,7 +12,8 @@
             </Link>
         </template>
         <template v-slot:main-content>
-            <div class="px-5 py-7 mx-auto lg:shadow lg:shadow-gray-500 lg:border lg:border-gray-500 rounded max-w-xl">
+            <div
+                class="px-5 my-7 py-7 mx-auto lg:shadow lg:shadow-gray-500 lg:border lg:border-gray-500 rounded max-w-xl">
                 <div class="flex flex-col justify-center">
                     <div>
                         <span class="text-red-500">*</span>

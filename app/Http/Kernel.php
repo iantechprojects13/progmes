@@ -81,6 +81,8 @@ class Kernel extends HttpKernel
         'action.user.accept' => \App\Http\Middleware\ProgmesMiddleware\CanAcceptUsers::class,
         'action.user.activate' => \App\Http\Middleware\ProgmesMiddleware\CanActivateUsers::class,
         'cmo.draft' => \App\Http\Middleware\ProgmesMiddleware\CMODraft::class,
+        'superadmin' => \App\Http\Middleware\ProgmesMiddleware\SuperAdmin::class,
+        'admin' => \App\Http\Middleware\ProgmesMiddleware\Admin::class,
     ];
 
 }

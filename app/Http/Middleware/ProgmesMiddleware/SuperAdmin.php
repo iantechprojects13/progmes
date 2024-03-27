@@ -5,6 +5,7 @@ namespace App\Http\Middleware\ProgmesMiddleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Auth;
 
 class SuperAdmin
 {
@@ -19,6 +20,6 @@ class SuperAdmin
             return $next($request);
         }
 
-        return redirect()->route('/unauthorized');
+        return redirect('/unauthorized');
     }
 }

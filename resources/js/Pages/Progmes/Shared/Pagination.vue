@@ -1,11 +1,10 @@
 <template>
-    <div v-if="data_list.links.length > 3 && data_list != null"
-        class="  bg-gray-200 px-3 py-2 my-1 rounded select-none">
-        <div class="h-10 text-gray-600 flex items-center justify-center w-fit">
+    <div class="select-none max-w-xs lg:max-w-full items-end overflow-auto">
+        <div class="text-blue-500 flex items-center justify-center w-fit rounded">
             <Link v-for="link in data_list.links" :key="link.id" preserve-state
-                :class="{ 'font-bold underline text-blue-500': link.active }"
-                class=" h-full flex items-center px-2 border-collapse" :href="link.url"><span
-                v-html="link.label"></span>
+                :class="{ 'font-bold bg-blue-600 text-white': link.active }"
+                class=" h-full flex items-center py-0.5 px-2" :href="link.url">
+            <span class="whitespace-nowrap" v-html="link.label"></span>
             </Link>
         </div>
     </div>

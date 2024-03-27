@@ -4,23 +4,13 @@
     <AdminPanel />
     <content-container pageTitle="CHED Memorandum Order List" hasTopButton="true" hasSearch="true" hasFilters="true"
         :hasNavigation="canDraft" :data_list="cmo_list">
-        <template v-slot:top-button>
-            <div v-show="canImport">
-                <input ref="uploadfile" hidden type="file" @change="evidence_file = $event.target.files[0]" />
-                <button @click.prevent="$refs.uploadfile.click()" :disabled="importing"
-                    class="select-none bg-blue-500 hover:bg-blue-600 h-10 w-32 rounded text-white text-sm">
-                    <span v-if="importing"><i class="fas fa-spinner animate-spin"></i></span>
-                    <span v-else><i class="fas fa-file-import mr-2 text-base"></i>Import CMO</span>
-                </button>
-            </div>
-        </template>
         <template v-slot:navigation>
             <div>
-                <button class="text-blue-500 h-10 mr-7 border-b-2 font-bold border-blue-500">
+                <button class="select-none text-blue-500 h-10 mr-7 border-b-2 font-bold border-blue-500">
                     CMO
                 </button>
                 <Link :href="route('admin.cmo.draft')">
-                <button class="text-gray-500 hover:text-black">
+                <button class="select-none text-gray-500 hover:text-black">
                     Draft
                 </button>
                 </Link>
@@ -37,11 +27,21 @@
                 </button>
             </div>
         </template>
+        <template v-slot:top-button>
+            <div v-show="canImport">
+                <input ref="uploadfile" hidden type="file" @change="evidence_file = $event.target.files[0]" />
+                <button @click.prevent="$refs.uploadfile.click()" :disabled="importing"
+                    class="select-none bg-blue-500 hover:bg-blue-600 h-10 w-32 rounded text-white text-sm whitespace-nowrap">
+                    <span v-if="importing"><i class="fas fa-spinner animate-spin"></i></span>
+                    <span v-else><i class="fas fa-file-import mr-2 text-base"></i>Import CMO</span>
+                </button>
+            </div>
+        </template>
         <template v-slot:options>
             <div class="mr-1">
                 <Link href="/admin/CMOs">
                 <button
-                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500 tooltipForActions"
+                    class="w-10 h-10 whitespace-nowrap rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
                     data-tooltip="Refresh page">
                     <i class="fas fa-refresh"></i>
                 </button>
@@ -51,7 +51,7 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="p-3">CHED Memorandum Order</th>
+                    <th class="p-3 pl-5">CHED Memorandum Order</th>
                     <th class="p-3">Program</th>
                     <th class="p-3">Active Status</th>
                     <th v-show="canEdit" class="p-3 text-right">
@@ -64,9 +64,9 @@
                             No CMO found
                         </td>
                     </tr>
-                    <tr v-else v-for="(cmo, index) in cmo_list.data" :key="cmo.id" class="hover:bg-gray-100"
+                    <tr v-else v-for="(cmo, index) in cmo_list.data" :key="cmo.id" class="hover:bg-slate-300"
                         :class="{ 'bg-slate-200': index % 2 == 0 }">
-                        <td class="p-3">
+                        <td class="p-3 pl-5">
                             CMO No.{{ cmo.number }} Series of {{ cmo.series }},
                             Version {{ cmo.version }}
                         </td>
@@ -110,6 +110,17 @@
                 </template>
             </content-table>
         </template>
+        <template v-slot:show-item>
+            <div class="mr-2">Items per page</div>
+            <select v-model="query.show" id="showResultCount" @change="changeResultCount"
+                class="select-none rounded h-8 w-20 p-1 text-sm">
+                <option value="25">25</option>
+                <option :value="50">50</option>
+                <option :value="75">75</option>
+                <option :value="100">100</option>
+                <option :value="200">200</option>
+            </select>
+        </template>
     </content-container>
     <div v-if="confirmationModal">
         <Confirmation @close="closeModal" :title="title" :modaltype="modaltype" :selected="selectedCMO" />
@@ -151,17 +162,21 @@
     ]);
 
     const query = useForm({
+        show: props.filters.show,
         search: props.filters.search,
     });
 
+    function changeResultCount() {
+        query.get("/admin/CMOs", {
+            preserveScroll: false,
+            preserveState: false,
+        });
+    }
+
     function submit() {
-        if (query.search == "") {
-            router.get("/admin/CMOs");
-        } else {
-            query.get("/admin/CMOs", {
-                preserveScroll: true,
-            });
-        }
+        query.get("/admin/CMOs", {
+            preserveScroll: true,
+        });
     }
 
     watch(evidence_file, (value) => {

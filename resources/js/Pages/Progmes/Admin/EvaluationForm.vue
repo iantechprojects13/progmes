@@ -2,34 +2,19 @@
 
     <Head title="Evaluation Forms" />
     <AdminPanel />
-    <pre>
-        {{ academicYear }}
-    </pre>
-    <content-container pageTitle="Compliance Tool" hasTopButton="true" hasSearch="true" hasFilters="true"
+    <content-container pageTitle="Compliance Evaluation Tool" hasTopButton="true" hasSearch="true" hasFilters="true"
         :hasNavigation="true" :data_list="institutionProgramList">
-        <template v-slot:top-button>
-            <div class="flex md:flex-row flex-col text-sm">
-                <div class="w-full mr-1 md:mb-0 mb-1">
-                    <button @click="deployToolModal = true"
-                        class="px-3 w-fit rounded h-10 bg-blue-500 hover:bg-blue-600 text-white group">
-                        <i class="fas fa-rocket mr-2"></i>
-                        Deploy tool
-                    </button>
-                </div>
-            </div>
-        </template>
         <template v-slot:navigation>
             <div class="text-sm mb-2 flex items-center">
                 <div class="mr-2 font-bold">Academic Year:</div>
-                <select name="" id="" class="text-sm rounded border-2 border-gray-500">
-                    <option value="2023-2024">2023-2024</option>
-                    <option value="2023-2024">2024-2025</option>
-                    <option value="2023-2024">2025-2026</option>
-                    <option value="2023-2024">2026-2027</option>
-                    <option value="2023-2024">2027-2028</option>
-                    <option value="2023-2024">2028-2029</option>
-                    <option value="2023-2024">2029-2030</option>
+                <select v-model="query.ay" id="academicYearDd" @change.prevent="changeAcademicYear"
+                    class="select-none text-sm rounded border-2 border-gray-500">
+                    <option v-for="(item, index) in academicYearDropdown" :key="index" :value="item">{{ item }}</option>
                 </select>
+                <div class="absolute right-8" v-show="$page.props.auth.user.role == 'Super Admin'">
+                    <button class="h-10 px-3 rounded bg-gray-500 hover:bg-gray-600 text-white">Set as default
+                        AY</button>
+                </div>
             </div>
         </template>
         <template v-slot:search>
@@ -43,11 +28,23 @@
                 </button>
             </div>
         </template>
+        <template v-slot:top-button>
+            <div class="flex md:flex-row flex-col text-sm">
+                <div class="w-full">
+                    <button @click="deployToolModal = true"
+                        class="select-none whitespace-nowrap px-3 w-fit rounded h-10 bg-blue-500 hover:bg-blue-600 text-white group">
+                        <i class="fas fa-rocket mr-2"></i>
+                        Deploy tool
+                    </button>
+                </div>
+            </div>
+        </template>
         <template v-slot:options>
-            <div class="mr-1">
+            <div>
                 <Link href="/admin/tool">
                 <button
-                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500">
+                    class="w-10 h-10 whitespace-nowrap rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
+                    data-tooltip="Refresh page">
                     <i class="fas fa-refresh"></i>
                 </button>
                 </Link>
@@ -56,8 +53,9 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="p-3">Institution</th>
+                    <th class="p-3 pl-5">Institution</th>
                     <th class="p-3">Program</th>
+                    <th class="p-3">Major</th>
                     <th class="p-3">CMO</th>
                     <th class="p-3">Status</th>
                     <th v-show="canEdit" class="p-3 text-right">
@@ -67,19 +65,22 @@
                 <template v-slot:table-body>
                     <tr v-if="institutionProgramList.data.length == 0">
                         <td class="text-center py-10" colspan="5">
-                            No institution or program found
+                            No compliance evaluation tool found
                         </td>
                     </tr>
                     <tr v-else v-for="(program, index) in institutionProgramList.data" :key="program.id"
-                        :class="{ 'bg-slate-200': index % 2 == 0 }">
-                        <td class="p-3">
+                        class="hover:bg-slate-300" :class="{ 'bg-slate-200': index % 2 == 0 }">
+                        <td class="p-3 pl-5">
                             {{ program.institution?.name }}
                         </td>
                         <td class="p-3">
                             {{ program.program?.program }}
                         </td>
                         <td class="p-3">
-                            <div v-if="program.evaluation_form[0]?.status == 'Deployed'">
+                            {{ program.program?.major }}
+                        </td>
+                        <td class="p-3">
+                            <div>
                                 CMO No.{{ program.evaluation_form[0]?.cmo?.number }}
                                 Series of {{ program.evaluation_form[0]?.cmo?.series }},
                                 Version {{ program.evaluation_form[0]?.cmo?.version }}
@@ -120,6 +121,17 @@
                 </template>
             </content-table>
         </template>
+        <template v-slot:show-item>
+            <div class="mr-2">Items per page</div>
+            <select v-model="query.show" id="showResultCount" @change="changeResultCount"
+                class="select-none rounded h-8 w-16 p-1 text-sm">
+                <option :value="25">25</option>
+                <option :value="50">50</option>
+                <option :value="75">75</option>
+                <option :value="100">100</option>
+                <option :value="200">200</option>
+            </select>
+        </template>
     </content-container>
 
     <modal :showModal="deployToolModal" @close="closeModal" @submit="deploy" type="deploy"
@@ -135,7 +147,6 @@
                         <span v-if="program.major != null"> - {{ program.major }}</span>
                     </option>
                 </select>
-                <FormErrorMessage :message="$page.props.errors.program" theme="dark" />
             </div>
             <div class="mt-3">
                 <div :class="{
@@ -154,16 +165,28 @@
                                 : 'No Active CMO'
                         " />
                 </div>
-                <FormErrorMessage :message="$page.props.errors.cmo" theme="dark" />
             </div>
             <div class="mt-3">
                 <label class="font-bold text-gray-700" for="toolEffectivity">Effective A.Y.</label>
-                <input v-model="deployment.effectivity" id="toolEffectivity" type="text" disabled
-                    class="w-full text-sm rounded border-gray-400 my-0.5" />
+                <select v-model="deployment.effectivity" id="toolEffectivity"
+                    class="w-full text-sm rounded border-gray-400 my-0.5">
+                    <option v-for="(year, index) in academicYearDropdown" :key="index" :value="year">{{ year }}</option>
+                </select>
             </div>
         </div>
+        <template v-slot:custom-button>
+            <button @click="deploy" class="text-white bg-blue-600 hover:bg-blue-700 h-10 w-20 rounded border">
+                <span v-if="deploying">
+                    <i class="fas fa-spinner animate-spin"></i>
+                </span>
+                <span v-else>Deploy</span>
+            </button>
+        </template>
     </modal>
-    <Notification :message="$page.props.flash.success" />
+    <Notification :message="$page.props.flash.success" type="success" />
+    <Notification :message="$page.props.flash.failed" type="failed" />
+    <Notification v-if="$page.props.errors.program" :message="$page.props.errors.program" type="failed" />
+    <Notification v-else :message="$page.props.errors.cmo" type="failed" />
 </template>
 
 <script setup>
@@ -171,6 +194,7 @@
     import { ref, watch, reactive } from "vue";
 
     let deployToolModal = ref(false);
+    const deploying = ref(false);
 
     const closeModal = () => {
         deployToolModal.value = false;
@@ -185,11 +209,7 @@
         "filters",
     ]);
 
-    const form = useForm({
-        effectivity: ref(props.effectivity),
-    });
-
-    const deployment = useForm({
+    const deployment = reactive({
         program: null,
         cmo: null,
         effectivity: ref(props.effectivity),
@@ -202,30 +222,47 @@
             deployment.cmo = null;
         }
 
-        if (deployment.program != null && deployment.cmo != null) {
-            closeModal();
-        }
-
-        deployment.post("/admin/form/deploy", deployment);
-    }
-
-    function changeAcademicYear(year) {
-        router.get("/admin/tool/" + year);
+        router.post("/admin/form/deploy", deployment, {
+            onStart: () => {
+                deploying.value = true;
+            },
+            onFinish: () => {
+                deploying.value = false;
+            },
+            preserveState: false,
+        });
     }
 
     const query = useForm({
+        ay: props.filters.academicYear,
+        show: props.filters.show,
         search: props.filters.search,
     });
 
+
     function submit() {
-        if (query.search == "") {
-            router.get("/admin/tool");
-        } else {
-            query.get("/admin/tool", {
-                preserveScroll: true,
-            });
-        }
+        query.get("/admin/tool", {
+            preserveScroll: true,
+            preserveState: false,
+        });
     }
+
+    function changeAcademicYear() {
+        query.search = '';
+        query.get("/admin/tool", {
+            preserveScroll: true,
+            preserveState: false,
+        });
+    }
+
+    function changeResultCount() {
+        query.get("/admin/tool", {
+            preserveScroll: false,
+            preserveState: true,
+        });
+    }
+
+
 </script>
 
 <script>

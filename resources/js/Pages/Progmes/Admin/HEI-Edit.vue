@@ -95,6 +95,8 @@
             onFinish: () => {
                 processing.value = false;
             },
+            replace: true,
+            preserveState: true,
         });
     }
 
@@ -115,15 +117,5 @@
     import Layout from '../Shared/Layout.vue';
     export default {
         layout: Layout,
-        data() {
-            return {
-                city_municipality: [
-                    'Davao City', 'Digos City', 'Panabo City', 'Tagum City', 'Mati City', 'Island Garden City of Samal',
-                ],
-                province: [
-                    'Davao City', 'Davao del Sur', 'Davao Oriental',
-                ],
-            }
-        },
     }
 </script>

@@ -10,7 +10,7 @@
                 </div>
                 <div>
                     <button @click="closeModal" class="hover:bg-gray-200 rounded-full relative left-2">
-                        <i class="fas fa-times cursor-pointer text-gray-400 py-2.5 px-3 hover:text-black"></i>
+                        <i class="fas fa-times cursor-pointer text-gray-700 py-2.5 px-3 hover:text-black"></i>
                     </button>
                 </div>
             </div>
@@ -19,7 +19,7 @@
             </div>
             <div class="py-4 px-5 border-t-2 border-gray-100 text-right">
                 <button
-                    class=" text-gray-600 hover:text-black hover:bg-stone-200 p-2 px-3 rounded border border-gray-400 mr-1"
+                    class=" text-gray-700 hover:text-black hover:bg-stone-200 h-10 w-20 rounded border border-gray-400 mr-1"
                     @click="closeModal">
                     Cancel
                 </button>
@@ -31,10 +31,10 @@
                     class="text-white bg-blue-600 hover:bg-blue-700 py-2 px-3 rounded border">
                     Import
                 </button>
-                <button v-if="type == 'deploy'" @click="submit"
+                <!-- <button v-if="type == 'deploy'" @click="submit"
                     class="text-white bg-blue-600 hover:bg-blue-700 py-2 px-3 rounded border">
                     Deploy
-                </button>
+                </button> -->
                 <Link v-if="type == 'create'" @click="save"
                     class="text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 rounded border">
                 Create

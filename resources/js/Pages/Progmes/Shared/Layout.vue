@@ -28,7 +28,7 @@
 
                             <!-- Searchbox -->
                             <div class="bg-gray-700 my-7 h-10 rounded-md relative">
-                                <form class="h-full">
+                                <div class="h-full">
                                     <span
                                         class="w-1/6 h-full text-gray-400 p-1 absolute left-1 bg-inherit rounded flex justify-center items-center">
                                         <i class="fas fa-search ye"></i>
@@ -36,7 +36,7 @@
                                     <input type="text"
                                         class="inline-block w-full h-full bg-inherit border-none rounded-md placeholder-gray-400 text-sm indent-10"
                                         name="search" placeholder="Search" />
-                                </form>
+                                </div>
                             </div>
 
                             <!-- Navigation Buttons -->
@@ -133,7 +133,7 @@
         </div>
 
         <!-- Page Content -->
-        <div class="w-full h-auto overflow-y-hidden relative bg-gray-200 overflow-x-auto md:pt-0">
+        <div class="w-full h-auto overflow-y-hidden relative bg-gray-100 overflow-x-auto md:pt-0">
             <div
                 class="md:hidden sticky top-0 w-full bg-blue-900 text-white flex justify-between text-center h-16 items-center shadow-md z-80 px-4">
                 <div class="cursor-pointer" @click="toggleSideBar">
@@ -203,21 +203,28 @@
                     adminpanel: [
                         "Progmes/Admin/User-List",
                         "Progmes/Admin/User-Request",
-                        "Progmes/Admin/HEI",
-                        "Progmes/Admin/HEI-Create",
-                        "Progmes/Admin/HEI-View",
+                        "Progmes/Admin/User-Inactive",
                         "Progmes/Admin/CMO",
                         "Progmes/Admin/CMO-Edit",
-                        "Progmes/Admin/CMO-Upload",
-                        "Progmes/Admin/Settings",
+                        "Progmes/Admin/CMO-Draft",
+                        "Progmes/Admin/CMO-View",
                         "Progmes/Admin/EvaluationForm",
+                        "Progmes/Admin/HEI",
+                        "Progmes/Admin/HEI-Create",
+                        "Progmes/Admin/HEI-Edit",
+                        "Progmes/Admin/HEI-View",
                         "Progmes/Admin/Program",
                         "Progmes/Admin/Program-Create",
+                        "Progmes/Admin/Program-Edit",
+                        "Progmes/Admin/Discipline",
+                        "Progmes/Admin/Discipline-Create",
+                        "Progmes/Admin/Discipline-Edit",
                     ],
                     evaluation: [
                         "Progmes/Evaluation/Evaluation-CHED",
                         "Progmes/Evaluation/Evaluation-HEI",
                         "Progmes/Evaluation/HEI-Evaluation-Edit",
+                        "Progmes/Evaluation/HEI-Evaluation-View",
                         "Progmes/Evaluation/HEI-Evaluation-PH-Select",
                         "Progmes/Evaluation/CHED-Evaluation-ES-Select",
                         "Progmes/Evaluation/CHED-Evaluation-Admin-Select",

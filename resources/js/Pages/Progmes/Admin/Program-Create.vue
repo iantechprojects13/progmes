@@ -16,7 +16,7 @@
                     <span class="text-red-500">*</span>
                     <span class="italic text-sm"> indicates required field</span>
                 </div>
-                <div class="mt-3">
+                <div class="mt-7">
                     <label for="discipline" class="font-bold text-gray-600">Discipline</label>
                     <span class="text-red-500">*</span>
                     <select v-model="form.discipline" id="discipline"

@@ -43,6 +43,9 @@
                         Sign in with Google
                     </button>
                 </a>
+                <!-- <div class="mt-5">
+                    <Link href="/login-testuser" class="hover:underline">Test-user login</Link>
+                </div> -->
             </div>
         </div>
     </div>

@@ -1,10 +1,10 @@
 <template>
 
-    <Head title="View Program Self-Evaluation" />
-    <page-title title="View Program Self-Evaluation" />
+    <Head title="View Program Evaluation" />
+    <page-title title="View Program Evaluation" />
     <div class="md:mx-8 mx-3 mt-8 flex flex-col lg:flex-row justify-between rounded relative">
         <div>
-            <Link href="/hei/evaluation">
+            <Link href="/ched/evaluation">
             <button class="w-24 h-10 border border-gray-500 rounded bg-white">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Back
@@ -31,7 +31,7 @@
         </div>
     </div>
     <div
-        class="md:mx-8 mx-3 mt-5 flex flex-col lg:flex-row justify-between rounded bg-white p-8 border border-gray-400">
+        class="md:mx-8 mx-3 mt-8 flex flex-col lg:flex-row justify-between rounded bg-white p-3 px-5 border border-gray-400">
         <div class="flex flex-col w-auto rounded">
             <div class="w-auto flex flex-col md:flex-row">
                 <div class="mr-2 font-bold">
@@ -70,7 +70,7 @@
                     <th class="p-3">Area</th>
                     <th class="p-3">Minimum Requirement</th>
                     <th class="p-3">Actual Situation</th>
-                    <th class="p-3">Self-Evaluation Status</th>
+                    <th class="p-3 whitespace-normal">Self-Evaluation Status</th>
                     <th class="p-3">Evidence</th>
                 </template>
                 <template v-slot:table-body>
@@ -78,7 +78,7 @@
                         <td colspan="5">No Data</td>
                     </tr>
                     <tr v-else v-for="(item, index) in evaluation_tool.item" :key="item.id"
-                        class="border-b border-gray-400 align-top" :class="{'bg-slate-200': index % 2 == 0 }">
+                        class="border-b border-gray-400 align-top text-base" :class="{'bg-slate-200': index % 2 == 0 }">
                         <td class="p-3 whitespace-normal">{{ item.criteria.area }}</td>
                         <td class="p-3 whitespace-normal text-justify max-w-xl">{{ item.criteria.minimumRequirement }}
                         </td>

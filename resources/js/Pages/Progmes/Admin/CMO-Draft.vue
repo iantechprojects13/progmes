@@ -4,16 +4,6 @@
     <AdminPanel />
     <content-container pageTitle="CMO Draft List" hasTopButton="true" hasSearch="true" hasFilters="true"
         hasNavigation="true" :data_list="cmo_list">
-        <template v-slot:top-button>
-            <div v-show="canEdit">
-                <input ref="uploadfile" hidden type="file" @change="cmo_file = $event.target.files[0]">
-                <button @click.prevent="$refs.uploadfile.click()" :disabled="importing"
-                    class="select-none bg-blue-500 hover:bg-blue-600 h-10 w-32 rounded text-white text-sm">
-                    <span v-if="importing"><i class="fas fa-spinner animate-spin"></i></span>
-                    <span v-else><i class="fas fa-file-import mr-2 text-base"></i>Import CMO</span>
-                </button>
-            </div>
-        </template>
         <template v-slot:navigation>
             <div>
                 <Link :href="route('admin.cmo.list')">
@@ -37,11 +27,21 @@
                 </button>
             </div>
         </template>
+        <template v-slot:top-button>
+            <div v-show="canEdit">
+                <input ref="uploadfile" hidden type="file" @change="cmo_file = $event.target.files[0]">
+                <button @click.prevent="$refs.uploadfile.click()" :disabled="importing"
+                    class="select-none bg-blue-500 hover:bg-blue-600 h-10 w-32 rounded text-white text-sm whitespace-nowrap">
+                    <span v-if="importing"><i class="fas fa-spinner animate-spin"></i></span>
+                    <span v-else><i class="fas fa-file-import mr-2 text-base"></i>Import CMO</span>
+                </button>
+            </div>
+        </template>
         <template v-slot:options>
             <div class="mr-1">
                 <Link href="/admin/CMOs/draft">
                 <button
-                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-600 hover:text-black border-gray-500 tooltipForActions"
+                    class="w-10 h-10 whitespace-nowrap rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
                     data-tooltip="Refresh page">
                     <i class="fas fa-refresh"></i>
                 </button>
@@ -51,7 +51,7 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="p-3">CMO</th>
+                    <th class="p-3 pl-5">CMO</th>
                     <th class="p-3">Program</th>
                     <th class="p-3"
                         v-show="$page.props.auth.user.role == 'Super Admin' || $page.props.auth.user.role == 'Admin'">
@@ -66,9 +66,9 @@
                             No draft found
                         </td>
                     </tr>
-                    <tr v-else v-for="(cmo, index) in cmo_list.data" :key="cmo.id" class="hover:bg-gray-100"
+                    <tr v-else v-for="(cmo, index) in cmo_list.data" :key="cmo.id" class="hover:bg-slate-300"
                         :class="{'bg-slate-200': index % 2 == 0}">
-                        <td class="p-3 whitespace-normal min-w-12">
+                        <td class="p-3 pl-5 whitespace-normal min-w-12">
                             <div v-if="cmo.number != null && cmo.series != null && cmo.version != null">
                                 CMO No.{{ cmo.number }} Series of {{cmo.series}}, Version {{cmo.version}}
                             </div>
@@ -84,15 +84,15 @@
                             {{ cmo.created_by.name }}
                         </td>
                         <td class="p-3 text-right">
-                            <button @click="edit(cmo.id)"
-                                class="select-none h-10 w-10 mr-1 rounded bg-blue-500 hover:bg-blue-600 text-white tooltipForActions"
-                                data-tooltip="Edit">
-                                <i class="fas fa-edit"></i>
-                            </button>
                             <button @click="toggleConfirmationModal(cmo.id, 'publish', 'Publish CMO')"
                                 class="select-none h-10 w-10 mr-1 rounded bg-green-600 hover:bg-green-700 text-white tooltipForActions"
                                 data-tooltip="Publish">
                                 <i class="fas fa-paper-plane"></i>
+                            </button>
+                            <button @click="edit(cmo.id)"
+                                class="select-none h-10 w-10 mr-1 rounded bg-blue-500 hover:bg-blue-600 text-white tooltipForActions"
+                                data-tooltip="Edit">
+                                <i class="fas fa-edit"></i>
                             </button>
                             <button @click="toggleConfirmationModal(cmo.id, 'deleteCMO', 'Delete Draft')"
                                 class="select-none h-10 w-10 rounded bg-red-500 hover:bg-red-600 text-white tooltipForActions"
@@ -103,6 +103,17 @@
                     </tr>
                 </template>
             </content-table>
+        </template>
+        <template v-slot:show-item>
+            <div class="mr-2">Items per page</div>
+            <select v-model="query.show" id="showResultCount" @change="changeResultCount"
+                class="select-none rounded h-8 w-20 p-1 text-sm">
+                <option value="25">25</option>
+                <option :value="50">50</option>
+                <option :value="75">75</option>
+                <option :value="100">100</option>
+                <option :value="200">200</option>
+            </select>
         </template>
     </content-container>
 
@@ -140,17 +151,22 @@
     const props = defineProps(['cmo_list', 'canEdit', 'filters']);
 
     const query = useForm({
+        show: props.filters.show,
         search: props.filters.search,
     });
 
     function submit() {
-        if (query.search == "") {
-            router.get("/admin/CMOs/draft");
-        } else {
-            query.get("/admin/CMOs/draft", {
-                preserveScroll: true,
-            });
-        }
+        query.get("/admin/CMOs/draft", {
+            preserveScroll: true,
+        });
+
+    }
+
+    function changeResultCount() {
+        query.get("/admin/CMOs/draft", {
+            preserveScroll: false,
+            preserveState: false,
+        });
     }
 
     watch(cmo_file, value => {

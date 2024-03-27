@@ -22,15 +22,15 @@ class UserController extends Controller
         $showRequest = false;
         $showInactive = false;
         $disciplineList = [];
-        $list = ['type' => 'HEI'];
+        $show = $request->query('show') ? $request->query('show') : 25;
         
         if($role == 'Super Admin') {
-            $canFilter = true;
             $showInactive = true;
         }
 
         if ($role == 'Super Admin' || $role == 'Admin') {
             $canEdit = true;
+            $canFilter = true;
             $showRequest = true;
         }
 
@@ -44,7 +44,7 @@ class UserController extends Controller
         }
         
         $userlist = User::query()
-        ->when($request->query('search'), function ($query) use ($request, $role, $list) {
+        ->when($request->query('search'), function ($query) use ($request, $role) {
             $query->where(function ($query) use ($request) {
                 $query->where('name', 'like', '%' . $request->query('search') . '%');
             })
@@ -52,25 +52,16 @@ class UserController extends Controller
                 'isVerified' => 1,
                 'isActive' => 1,
             ])
-            ->when($role != 'Super Admin', function ($query) use ($list) {
-                $query->where($list);
-            })
             ->orderBy('name', 'asc');
         })
         ->when($request->query('type'), function ($query) use ($request) {
             $query->where('type', $request->query('type'));
-        })
-        ->when($role != 'Super Admin', function ($query) use ($list) {
-            $query->where($list);
         })
         ->where([
             'isVerified' => 1,
             'isActive' => 1,
         ])
         ->whereNot('role', 'Super Admin')
-        ->when($role != 'Super Admin', function ($query) use ($list) {
-                $query->where($list);
-            })
         ->orderBy('name', 'asc')
         ->when($role == 'Education Supervisor', function ($query) use ($disciplineList) {
             $query->whereHas('userRole.program', function ($q) use ($disciplineList) {
@@ -78,7 +69,7 @@ class UserController extends Controller
             });
         })
         ->with('userRole', 'userRole.discipline', 'userRole.program', 'userRole.institution')
-        ->paginate(10)
+        ->paginate($show)
         ->withQueryString();
 
         return Inertia::render('Progmes/Admin/User-List', [
@@ -87,7 +78,7 @@ class UserController extends Controller
             'canFilter' => $canFilter,
             'showRequest' => $showRequest,
             'showInactive' => $showInactive,
-            'filters' => $request->only(['search', 'type']),
+            'filters' => $request->only(['search', 'type']) + ['show' => $show ],
         ]);
     }
 
@@ -100,13 +91,14 @@ class UserController extends Controller
         $canEdit = false;
         $canFilter = false;
         $disciplineList = [];
+        $show = $request->query('show') ? $request->query('show') : 25;
 
         if ($role == 'Super Admin') {
-            $canFilter = true;
             $showInactive = true;
         }
 
         if ($role == 'Super Admin' || $role == 'Admin') {
+            $canFilter = true;
             $canEdit = true;
         }
 
@@ -146,7 +138,7 @@ class UserController extends Controller
             });
         })
         ->with('userRole', 'userRole.discipline', 'userRole.program', 'userRole.institution')
-        ->paginate(10)
+        ->paginate($show)
         ->withQueryString();
 
         return Inertia::render('Progmes/Admin/User-Request', [
@@ -154,7 +146,7 @@ class UserController extends Controller
             'canEdit' => $canEdit,
             'canFilter' => $canFilter,
             'showInactive' => $showInactive,
-            'filters' => $request->only(['search', 'type']),
+            'filters' => $request->only(['search', 'type']) + ['show' => $show ],
         ]);
     }
 
@@ -165,22 +157,15 @@ class UserController extends Controller
         $canEdit = false;
         $canFilter = false;
         $disciplineList = [];
-        $list = ['type' => 'HEI'];
+        $show = $request->query('show') ? $request->query('show') : 25;
         
-        if ($role == 'Super Admin' || $role == 'Admin') {
+        if ($role == 'Super Admin') {
             $canEdit = true;
             $canFilter = true;
         }
         
-        if ($role == 'Education Supervisor') {
-            $discipline = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->get();
-            foreach($discipline as $item) {
-                array_push($disciplineList, $item->disciplineId);
-            }
-        }
-        
         $userlist = User::query()
-        ->when($request->query('search'), function ($query) use ($request, $role, $list) {
+        ->when($request->query('search'), function ($query) use ($request, $role) {
             $query->where(function ($query) use ($request) {
                 $query->where('name', 'like', '%' . $request->query('search') . '%');
             })
@@ -188,43 +173,41 @@ class UserController extends Controller
                 'isVerified' => 1,
                 'isActive' => 0,
             ])
-            ->when($role != 'Super Admin' || $role != 'Admin', function ($query) use ($list) {
-                $query->where($list);
-            })
             ->orderBy('name', 'asc');
         })
         ->when($request->query('type'), function ($query) use ($request) {
             $query->where('type', $request->query('type'));
-        })
-        ->when($role != 'Super Admin' || $role != 'Admin', function ($query) use ($list) {
-            $query->where($list);
         })
         ->where([
             'isVerified' => 1,
             'isActive' => 0,
         ])
         ->whereNot('role', 'Super Admin')
-        ->when($role != 'Super Admin' || $role != 'Admin', function ($query) use ($list) {
-                $query->where($list);
-            })
         ->orderBy('name', 'asc')
-        ->when($role == 'Education Supervisor', function ($query) use ($disciplineList) {
-            $query->whereHas('userRole.program', function ($q) use ($disciplineList) {
-                $q->whereIn('disciplineId', $disciplineList);
-            })->whereHas('userRole.program', function ($q) use ($disciplineList) {
-                $q->whereIn('disciplineId', $disciplineList);
-            });
-        })
         ->with('userRole', 'userRole.discipline', 'userRole.program', 'userRole.institution')
-        ->paginate(10)
+        ->paginate($show)
         ->withQueryString();
 
         return Inertia::render('Progmes/Admin/User-Inactive', [
             'user_list' => $userlist,
             'canEdit' => $canEdit,
             'canFilter' => $canFilter,
-            'filters' => $request->only(['search', 'type']),
+            'filters' => $request->only(['search', 'type']) + ['show' => $show ],
         ]);
     }
 
+
+
+    public function userLogin() {
+        return Inertia::render('Progmes/Auth/TestLogin', [
+            'users' => User::all(),
+        ]);
+    }
+
+    public function testUserLogin(Request $request) {
+        $testuser = User::find($request->user);
+        Auth::login($testuser);
+        
+        return redirect('/dashboard');
+    }
 }

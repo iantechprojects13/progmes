@@ -13,9 +13,19 @@ class DisciplineController extends Controller
 
         $role = Auth::user()->role;
         $canEdit = false;
+        $canDelete = false;
+        $canAdd = false;
+        $show = $request->query('show') ? $request->query('show') : 25;
 
         if ($role == 'Super Admin') {
             $canEdit = true;
+            $canDelete = true;
+            $canAdd = true;
+        }
+
+        if ($role == 'Admin') {
+            $canEdit = true;
+            $canAdd = true;
         }
 
         $disciplinelist = DisciplineModel::query()
@@ -23,14 +33,16 @@ class DisciplineController extends Controller
             $query->where('discipline', 'like', '%' . $request->query('search') . '%');
         })->orderBy('discipline')
         ->with('institution_program')
-        ->paginate(10)
+        ->paginate($show)
         ->withQueryString();
 
         
         return Inertia::render('Progmes/Admin/Discipline', [
             'discipline_list' => $disciplinelist,
             'canEdit' => $canEdit,
-            'filters' => $request->only(['search']),
+            'canAdd' => $canAdd,
+            'canDelete' => $canDelete,
+            'filters' => $request->only(['search']) + ['show' => $show ],
         ]);
 
     }

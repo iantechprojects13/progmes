@@ -12,6 +12,25 @@ use Auth;
 
 class CHEDFormController extends Controller
 {
+    public function view($tool) {
+        
+        $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.program', 'institution_program.institution','complied', 'not_complied', 'not_applicable', 'item', 'item.criteria', 'item.evidence')->first();
+
+        if (!$evaluationTool) {
+            return redirect('/ched/evaluation')->with('failed', 'Evaluation tool not found.');
+        }
+
+        $compliedCount = $evaluationTool->complied->count();
+        $notCompliedCount = $evaluationTool->not_complied->count();
+        $notApplicableCount = $evaluationTool->not_applicable->count();
+        $percentage = intval(round((($compliedCount + $notCompliedCount + $notApplicableCount)/$evaluationTool->item->count())*100));
+        $progress = [$compliedCount, $notCompliedCount, $notApplicableCount, $percentage];
+
+        return Inertia::render('Progmes/Evaluation/CHED-Evaluation-View', [
+            'evaluation_tool' => $evaluationTool,
+            'progress' => $progress,
+        ]);
+    }
     
     public function evaluate($evaluation) {
         $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program')->first();

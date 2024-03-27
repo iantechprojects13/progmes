@@ -9,6 +9,7 @@ use App\Models\InstitutionProgramModel;
 use App\Models\InstitutionModel;
 use App\Models\ProgramModel;
 use App\Models\CMOModel;
+use App\Models\RoleModel;
 use App\Models\CriteriaModel;
 use App\Http\Requests\EvaluationFormRequest;
 use Inertia\Inertia;
@@ -18,36 +19,59 @@ use Auth;
 
 class EvaluationFormController extends Controller
 {
-    public function index(Request $request, $academicYear = null) {
+    public function index(Request $request) {
 
-        if (!$academicYear) {
-            $defaultAcademicYear = AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
-        } else {
-            $defaultAcademicYear = $academicYear;
-        }
-
-        
-        $program_list = ProgramModel::with('active_cmo')->get();
-
+        $program_list = ProgramModel::with('active_cmo')->orderBy('program', 'asc')->get();
         $role = Auth::user()->role;
         $canEdit = true;
+        $defaultAcademicYear = '';
+        $disciplineList = [];
+
+        $show = $request->query('show') ? $request->query('show') : 25;
+
+        if ($request->query('ay')) {
+            $defaultAcademicYear = $request->query('ay');
+        } else {
+            $defaultAcademicYear = AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
+        }
+        
+        if ($role == 'Education Supervisor') {
+            $discipline = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->get();
+            foreach($discipline as $item) {
+                array_push($disciplineList, $item->disciplineId);
+            }
+            $program_list = ProgramModel::whereIn('disciplineId', $disciplineList)->orderBy('program', 'asc')->with('active_cmo')->get();
+        }
 
         $allinstitutionprograms = InstitutionProgramModel::query()
-        ->when($request->query('search'), function ($query) use ($request) {
-            $query->where('id', 'like', '%' . $request->query('search') . '%')
-            ->orWhereHas('program', function ($programQuery) use ($request) {
-                $programQuery->where('program', 'like', '%' . $request->query('search') . '%');
+        ->when($request->query('search'), function ($query) use ($request, $defaultAcademicYear) {
+            $query->where(function ($query) use ($request) {
+                $query->where('id', 'like', '%' . $request->query('search') . '%')
+                ->orWhereHas('program', function ($programQuery) use ($request) {
+                    $programQuery->where('program', 'like', '%' . $request->query('search') . '%');
+                })
+                ->orWhereHas('institution', function ($programQuery) use ($request) {
+                    $programQuery->where('name', 'like', '%' . $request->query('search') . '%');
+                });
             })
-            ->orWhereHas('institution', function ($programQuery) use ($request) {
-                $programQuery->where('name', 'like', '%' . $request->query('search') . '%');
+            ->whereHas('evaluationForm', function ($query) use ($defaultAcademicYear) {
+                $query->where('effectivity', $defaultAcademicYear);
             });
+            
         })
         ->with(['program', 'institution', 'evaluationForm' => function ($evalFormQuery) use ($defaultAcademicYear) {
             $evalFormQuery->where('effectivity', $defaultAcademicYear);
         }, 'evaluationForm.cmo'])
         ->where('isActive', 1)
-        ->whereHas('evaluationForm')
-        ->paginate(10)
+        ->whereHas('evaluationForm', function ($query) use ($defaultAcademicYear) {
+            $query->where('effectivity', $defaultAcademicYear);
+        })
+        ->when($role == 'Education Supervisor', function ($query) use ($disciplineList) {
+            $query->whereHas('evaluationForm', function ($q) use ($disciplineList) {
+                $q->whereIn('disciplineId', $disciplineList);
+            });
+        })
+        ->paginate($show)
         ->withQueryString();
         
         return Inertia::render('Progmes/Admin/EvaluationForm', [
@@ -56,7 +80,8 @@ class EvaluationFormController extends Controller
             'academicYear' => $defaultAcademicYear,
             'institutionProgramList' => $allinstitutionprograms,
             'canEdit' => $canEdit,
-            'filters' => $request->only(['search']),
+            'filters' => $request->only(['search']) + ['academicYear' => $defaultAcademicYear ]
+            + ['show' => $show ],
         ]);
     }
 
@@ -68,8 +93,8 @@ class EvaluationFormController extends Controller
             EvaluationItemModel::create([
                 'evaluationFormId' => $evaluationForm->id,
                 'criteriaId' => $item->id,
-                'selfEvaluationStatus' => 'Not Complied',
-                'evaluationStatus' => 'Not Complied',
+                'selfEvaluationStatus' => null,
+                'evaluationStatus' => null,
             ]);
         }
 
@@ -108,7 +133,7 @@ class EvaluationFormController extends Controller
 
         $cmo = $validatedData['cmo']['id'];
         $discipline = $validatedData['program']['disciplineId'];
-
+        
         foreach($institutionProgram as $item) {
             EvaluationFormModel::create([
                 'institutionProgramId' => $item->id,
@@ -119,7 +144,7 @@ class EvaluationFormController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', 'Compliance tool for ' . $validatedData['program']['program'] . ' program has been deployed.');
+        return redirect()->back()->with('success', 'Compliance evaluation tool for ' . $validatedData['program']['program'] . ' program has been deployed.');
     }
 
 }

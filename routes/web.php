@@ -77,13 +77,13 @@ Route::get('/HEI/dashboard', [DashboardController::class, 'dashboardForHEI'])->m
 
 //evaluation
 Route::get('/evaluation', [EvaluationController::class, 'index'])->middleware('auth', 'user.verified')->name('evaluation');
-Route::get('/ched/evaluation', [EvaluationController::class, 'evaluationForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('evaluation.ched');
+Route::get('/ched/evaluation', [EvaluationController::class, 'evaluationForES'])->middleware(['auth', 'registered', 'type.ched'])->name('evaluation.ched');
 Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware(['auth','type.hei'])->name('evaluation.hei.programhead');
 Route::get('/admin/evaluation', [EvaluationController::class, 'evaluationForAdmin'])->middleware('type.ched')->name('evaluation.admin');
 Route::get('hei/evaluation/{tool}/edit', [HEIFormController::class, 'edit'])->middleware('auth', 'type.hei')->name('form.hei.key');
 Route::get('ched/evaluation/{tool}/view', [CHEDFormController::class, 'view'])->middleware('auth', 'type.ched')->name('evaluation.ched.view');
 Route::get('ched/evaluation/{tool}/evaluate', [CHEDFormController::class, 'evaluate'])->middleware('auth', 'type.ched')->name('form.ched.evaluate');
-
+Route::get('/hei/evaluation/{tool}/view', [HEIFormController::class, 'view'])->middleware(['auth', 'type.hei'])->name('hei.evaluation.view');
 
 Route::post('/hei/evaluation/update', [HEIFormController::class, 'update'])->name('form.hei.update');
 Route::post('/hei/evaluation/upload', [HEIFormController::class, 'upload'])->name('form.hei.upload');
@@ -125,28 +125,24 @@ Route::get('/admin/CMOs/deactivate/{id?}', [CMOController::class, 'deactivate'])
 //Evaluation Tool
 Route::get('/admin/tool', [EvaluationFormController::class, 'index'])->middleware('auth', 'type.ched')->name('admin.form.list');
 Route::get('/admin/tool/{evaluation}/view', [EvaluationFormController::class, 'view'])->middleware('auth')->name('admin.form.view');
-Route::post('/admin/form/deploy', [EvaluationFormController::class, 'deploy'])->middleware('auth')->name('admin.form.deploy');
+Route::post('/admin/form/deploy', [EvaluationFormController::class, 'deploy'])->middleware('auth', 'type.ched')->name('admin.form.deploy');
 Route::post('hei/tool/create', [HEIFormController::class, 'store'])->middleware('auth')->name('hei.tool.store');
-Route::get('/hei/evaluation/{tool}/view', [HEIFormController::class, 'view'])->middleware(['auth', 'type.hei'])->name('hei.evaluation.view');
 
 //Program
-Route::get('/admin/program', [ProgramController::class, 'index'])->middleware(['auth'])->name('admin.program.list');
-Route::get('/admin/program/create', [ProgramController::class, 'create'])->middleware(['auth'])->name('admin.program.create');
-Route::post('/admin/program/store', [ProgramController::class, 'store'])->middleware(['auth'])->name('admin.program.store');
-Route::get('/admin/program/{program?}/edit', [ProgramController::class, 'edit'])->middleware(['auth'])->name('admin.program.edit');
-Route::post('/admin/program/update', [ProgramController::class, 'update'])->middleware(['auth'])->name('admin.program.update');
-Route::get('/admin/program/{program}/delete', [ProgramController::class, 'delete'])->middleware(['auth', 'type.ched'])->name('admin.program.delete');
-
+Route::get('/admin/program', [ProgramController::class, 'index'])->middleware(['auth', 'type.ched'])->name('admin.program.list');
+Route::get('/admin/program/create', [ProgramController::class, 'create'])->middleware(['auth', 'type.ched', 'admin'])->name('admin.program.create');
+Route::post('/admin/program/store', [ProgramController::class, 'store'])->middleware(['auth', 'type.ched', 'admin'])->name('admin.program.store');
+Route::get('/admin/program/{program?}/edit', [ProgramController::class, 'edit'])->middleware(['auth', 'type.ched', 'admin'])->name('admin.program.edit');
+Route::post('/admin/program/update', [ProgramController::class, 'update'])->middleware(['auth', 'type.ched', 'admin'])->name('admin.program.update');
+Route::get('/admin/program/{program}/delete', [ProgramController::class, 'delete'])->middleware(['auth', 'type.ched', 'superadmin'])->name('admin.program.delete');
 
 //Discipline
-Route::get('/admin/program/discipline', [DisciplineController::class,'index'])->middleware('auth')->name('admin.discipline.list');
-Route::get('/admin/program/discipline/create', [DisciplineController::class, 'create'])->middleware(['auth'])->name('admin.discipline.create');
-Route::get('/admin/program/discipline/{id}/edit', [DisciplineController::class, 'edit'])->middleware(['auth'])->name('admin.discipline.edit');
-Route::post('/admin/program/discipline/store', [DisciplineController::class, 'store'])->middleware(['auth'])->name('admin.discipline.store');
-Route::post('/admin/program/discipline/update', [DisciplineController::class, 'update'])->middleware(['auth'])->name('admin.discipline.update');
-Route::get('/admin/discipline/{discipline}/delete', [DisciplineController::class, 'delete'])->middleware(['auth'])->name('admin.discipline.delete');
-
-
+Route::get('/admin/program/discipline', [DisciplineController::class,'index'])->middleware('auth', 'type.ched')->name('admin.discipline.list');
+Route::get('/admin/program/discipline/create', [DisciplineController::class, 'create'])->middleware(['auth', 'type.ched', 'admin'])->name('admin.discipline.create');
+Route::get('/admin/program/discipline/{id}/edit', [DisciplineController::class, 'edit'])->middleware(['auth', 'type.ched', 'admin'])->name('admin.discipline.edit');
+Route::post('/admin/program/discipline/store', [DisciplineController::class, 'store'])->middleware(['auth', 'type.ched', 'admin'])->name('admin.discipline.store');
+Route::post('/admin/program/discipline/update', [DisciplineController::class, 'update'])->middleware(['auth', 'type.ched', 'admin'])->name('admin.discipline.update');
+Route::get('/admin/discipline/{discipline}/delete', [DisciplineController::class, 'delete'])->middleware(['auth', 'type.ched', 'superadmin'])->name('admin.discipline.delete');
 
 
 //Admin Settings
@@ -164,8 +160,7 @@ Route::get('/test', function () {
     return Inertia::render('Progmes/Shared/Test');
 });
 
-
-
-
+Route::get('/login-testuser', [UserController::class, 'userLogin']);
+Route::post('/testuserlogin', [UserController::class, 'testUserLogin']);
 
 require __DIR__.'/auth.php';

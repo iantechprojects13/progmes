@@ -16,9 +16,20 @@ class ProgramController extends Controller
 
         $role = Auth::user()->role;
         $canEdit = false;
+        $canDelete = false;
+        $canAdd = false;
+        
+        $show = $request->query('show') ? $request->query('show') : 25;
 
         if ($role == 'Super Admin') {
             $canEdit = true;
+            $canDelete = true;
+            $canAdd = true;
+        }
+
+        if ($role == 'Admin') {
+            $canEdit = true;
+            $canAdd = true;
         }
 
         $programlist = ProgramModel::query()
@@ -37,13 +48,15 @@ class ProgramController extends Controller
         return Inertia::render('Progmes/Admin/Program', [
             'program_list' => $programlist,
             'canEdit' => $canEdit,
-            'filters' => $request->only(['search']),
+            'canAdd' => $canAdd,
+            'canDelete' => $canDelete,
+            'filters' => $request->only(['search']) + ['show' => $show ],
         ]);
     }
 
     public function create() {
         return Inertia::render('Progmes/Admin/Program-Create', [
-            'discipline_list' => DisciplineModel::all(),
+            'discipline_list' => DisciplineModel::orderBy('discipline', 'asc')->get(),
         ]);
     }
 
@@ -70,7 +83,7 @@ class ProgramController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('failed', 'No program found.');
+        return redirect('/admin/program')->with('failed', 'No program found.');
     }
 
     public function update(ProgramRequest $request) {
@@ -101,8 +114,7 @@ class ProgramController extends Controller
         $programModel->institutionProgram()->delete();
         $programModel->delete();
 
-        return redirect()->back()->with('success', 'CMO deleted successfully.');
-
+        return redirect()->back()->with('success', 'Program successfully deleted.');
         
     }
 

@@ -21,6 +21,6 @@ class Admin
             return $next($request);
         }
         
-        return redirect()->route('/unauthorized');
+        return redirect('/unauthorized');
     }
 }

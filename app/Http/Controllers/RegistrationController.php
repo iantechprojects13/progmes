@@ -56,13 +56,13 @@ class RegistrationController extends Controller
         }
         
         return Inertia::render('Progmes/Auth/Register-HEI', [
-            'institution_list' => InstitutionModel::select('id', 'name')->get(),
+            'institution_list' => InstitutionModel::orderBy('name', 'asc')->get(),
             'discipline_list' => $discipline_list,
             'program_list' => $program_list,
             'institution' => $request->institution ? $request->institution : null,
         ]);
     }
-
+    
     // register ched account
     public function registerCHED (Request $request) {
 

@@ -2,23 +2,17 @@
 
     <Head title="Discipline List" />
     <AdminPanel />
-    <content-container pageTitle="Discipline List" hasTopButton="true" hasNavigation="true" hasSearch="true"
+    <content-container pageTitle="Discipline List" :hasTopButton="canAdd" hasNavigation="true" hasSearch="true"
         hasFilters="true" :data_list="discipline_list">
-        <template v-slot:top-button>
-            <Link :href="route('admin.discipline.create')">
-            <button class="select-none bg-blue-500 hover:bg-blue-600 h-10 px-2 rounded text-white mr-1">Add
-                Discipline</button>
-            </Link>
-        </template>
         <template v-slot:navigation>
             <div>
                 <div>
                     <Link :href="route('admin.program.list')">
-                    <button class="text-gray-500 hover:text-black mr-8">
+                    <button class="select-none text-gray-500 hover:text-black mr-8">
                         Program
                     </button>
                     </Link>
-                    <button class="text-blue-500 h-10 border-b-2 font-bold border-blue-500">
+                    <button class="select-none text-blue-500 h-10 border-b-2 font-bold border-blue-500">
                         Discipline
                     </button>
                 </div>
@@ -35,11 +29,18 @@
                 </button>
             </div>
         </template>
+        <template v-slot:top-button>
+            <Link :href="route('admin.discipline.create')">
+            <button
+                class="select-none whitespace-nowrap bg-blue-500 hover:bg-blue-600 h-10 px-3 rounded text-white text-sm">
+                <i class="fas fa-plus mr-2"></i>Add Discipline</button>
+            </Link>
+        </template>
         <template v-slot:options>
-            <div class="mr-1">
+            <div>
                 <Link href="/admin/program/discipline">
                 <button
-                    class="px-2 border-2 w-12 whitespace-nowrap rounded h-10 text-gray-700 hover:text-black border-gray-500 tooltipForActions"
+                    class="w-10 h-10 whitespace-nowrap rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
                     data-tooltip="Refresh page">
                     <i class="fas fa-refresh"></i>
                 </button>
@@ -49,8 +50,8 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="py-2">Discipline</th>
-                    <th v-show="canEdit" class="p-2 text-right">
+                    <th class="p-3 pl-5">Discipline</th>
+                    <th v-show="canEdit" class="p-3 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
@@ -61,8 +62,8 @@
                         </td>
                     </tr>
                     <tr v-else v-for="(discipline, index) in discipline_list.data" :key="discipline.id"
-                        class="hover:bg-gray-100" :class="{'bg-slate-200': index % 2 == 0}">
-                        <td class="p-3">
+                        class="hover:bg-slate-300" :class="{'bg-slate-200': index % 2 == 0}">
+                        <td class="p-3 pl-5">
                             {{ discipline.discipline }}
                         </td>
                         <td v-show="canEdit" class="p-3 text-right">
@@ -71,7 +72,7 @@
                                 data-tooltip="Edit">
                                 <i class="fas fa-edit mr-0.5"></i>
                             </button>
-                            <button
+                            <button v-show="canDelete"
                                 @click="toggleConfirmationModal(discipline, 'deleteDiscipline', 'Delete Discipline')"
                                 class="select-none h-10 w-10 rounded text-white bg-red-500 hover:bg-red-600 tooltipForActions"
                                 data-tooltip="Delete">
@@ -79,9 +80,19 @@
                             </button>
                         </td>
                     </tr>
-
                 </template>
             </content-table>
+        </template>
+        <template v-slot:show-item>
+            <div class="mr-2">Items per page</div>
+            <select v-model="query.show" id="showResultCount" @change="changeResultCount"
+                class="select-none rounded h-8 w-20 p-1 text-sm">
+                <option value="25">25</option>
+                <option :value="50">50</option>
+                <option :value="75">75</option>
+                <option :value="100">100</option>
+                <option :value="200">200</option>
+            </select>
         </template>
     </content-container>
     <div v-if="confirmationModal">
@@ -96,23 +107,27 @@
     import { useForm, router } from "@inertiajs/vue3";
     import { ref } from "vue";
 
-    const props = defineProps(['discipline_list', 'canEdit', 'filters']);
+    const props = defineProps(['discipline_list', 'canEdit', 'canAdd', 'canDelete', 'filters']);
     const selected = ref(null);
     const deleteProcessing = ref(false);
 
     const query = useForm({
+        show: props.filters.show,
         search: props.filters.search,
     });
 
     function submit() {
-        if (query.search == "") {
-            router.get("/admin/program/discipline");
-        } else {
-            query.get("/admin/program/discipline", {
-                preserveState: true,
-                preserveScroll: true,
-            });
-        }
+        query.get("/admin/program/discipline", {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    }
+
+    function changeResultCount() {
+        query.get("/admin/program/discipline", {
+            preserveScroll: false,
+            preserveState: false,
+        });
     }
 
     function edit(id) {

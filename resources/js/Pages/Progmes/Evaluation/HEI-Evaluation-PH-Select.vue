@@ -2,7 +2,7 @@
 
     <Head title="Program Self-Evaluation" />
     <page-title title="Program Self-Evaluation" />
-    <div class="md:mx-8 mx-3 mt-8 bg-white p-5 rounded">
+    <div class="md:mx-8 mx-3 mt-8 bg-white p-5 rounded border border-gray-400">
         <div class="flex flex-col w-full rounded">
             <div class="w-auto flex flex-col md:flex-row">
                 <div class="mr-2 font-bold">
@@ -57,6 +57,9 @@
                                 <span class="p-1 bg-blue-500 rounded" v-show="item.status === 'Submitted'">
                                     Submitted
                                 </span>
+                                <span class="p-1 bg-gray-700 rounded" v-show="item.status === 'Archived'">
+                                    Submitted
+                                </span>
                             </div>
                         </td>
                         <td class="p-3 text-right">
@@ -66,16 +69,15 @@
                                 <span v-if="starting"><i class="fas fa-spinner animate-spin"></i></span>
                                 <span v-else>Start now</span>
                             </button>
-                            <button v-show="item.status === 'In progress'" @click="edit(item.id)" ref="editButton"
-                                class="rounded h-10 px-2 mr-1 text-gray-700 hover:text-black active:text-blue-500 border-2 border-gray-500 bg-stone-100">
-                                <i class="fas fa-edit"></i>
-                                Edit
-                            </button>
                             <button @click="view(item.id)"
-                                class="rounded h-10 px-2 text-gray-700 hover:text-black active:text-blue-500 border-2 border-gray-500 bg-stone-100"
-                                v-show="item.status != 'Deployed'">
+                                class="rounded h-10 w-10 mr-1 bg-green-600 hover:bg-green-700 text-white tooltipForActions"
+                                data-tooltip="View" v-show="item.status != 'Deployed'">
                                 <i class="fas fa-eye"></i>
-                                View
+                            </button>
+                            <button v-show="item.status === 'In progress'" @click="edit(item.id)" ref="editButton"
+                                class="rounded h-10 w-10 bg-blue-500 hover:bg-blue-600 text-white tooltipForActions"
+                                data-tooltip="Edit">
+                                <i class="fas fa-edit"></i>
                             </button>
                         </td>
                     </tr>

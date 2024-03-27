@@ -103,86 +103,86 @@
 </template>
 
 <script setup>
-import { useForm } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+    import { useForm } from '@inertiajs/vue3';
+    import { computed, ref } from 'vue';
 
-const props = defineProps({
-    'file': Array,
-    'file_name': String,
-    'discipline_list': Array,
-    'program_list': Array,
-});
+    const props = defineProps({
+        'file': Array,
+        'file_name': String,
+        'discipline_list': Array,
+        'program_list': Array,
+    });
 
-const areaArray = computed(() => {
-    let areaArr = [];
-    for (var i = 0; i < props.file[0].length; i++) {
-        areaArr.push(props.file[0][i][0]);
+    const areaArray = computed(() => {
+        let areaArr = [];
+        for (var i = 0; i < props.file[0].length; i++) {
+            areaArr.push(props.file[0][i][0]);
+        }
+        return areaArr;
+    });
+
+    const minReqArray = computed(() => {
+        let minReqArr = [];
+        for (var i = 0; i < props.file[0].length; i++) {
+            minReqArr.push(props.file[0][i][1]);
+        }
+        return minReqArr;
+    });
+
+    const form = useForm({
+        discipline: '',
+        program: '',
+        number: null,
+        series: null,
+        version: null,
+        area: areaArray,
+        minReq: minReqArray,
+    });
+
+
+    function submit() {
+        form.post('/admin/CMOs/store', form);
     }
-    return areaArr;
-});
-
-const minReqArray = computed(() => {
-    let minReqArr = [];
-    for (var i = 0; i < props.file[0].length; i++) {
-        minReqArr.push(props.file[0][i][1]);
-    }
-    return minReqArr;
-});
-
-const form = useForm({
-    discipline: '',
-    program: '',
-    number: null,
-    series: null,
-    version: null,
-    area: areaArray,
-    minReq: minReqArray,
-});
-
-
-function submit() {
-    form.post('/admin/CMOs/store', form);
-}
 
 </script>
 
 
 <script>
-import Layout from '../Shared/Layout.vue';
-export default {
-    data() {
-        return {
-            showItems: false,
-        }
-    },
-    layout: Layout,
+    import Layout from '../Shared/Layout.vue';
+    export default {
+        data() {
+            return {
+                showItems: false,
+            }
+        },
+        layout: Layout,
 
-    methods: {
-        handleAreaInput(index) {
-            let area = this.$refs.area[index - 1];
-            area.style.height = "18px";
-            area.style.height = area.scrollHeight + "px";
+        methods: {
+            handleAreaInput(index) {
+                let area = this.$refs.area[index - 1];
+                area.style.height = "18px";
+                area.style.height = area.scrollHeight + "px";
+            },
+
+            handleMinreqInput(index) {
+                let minreq = this.$refs.minreq[index - 1];
+                minreq.style.height = "18px";
+                minreq.style.height = minreq.scrollHeight + "px";
+            },
+
+            toggleShowItems() {
+
+                // let showItem = this.$page.refs.showItemsChk;
+
+                // if (showItem.checked) {
+                //     console.log('checked');
+                // } else {
+                //     console.log('unchecked');
+                // }
+
+                this.showItems = !this.showItems;
+            }
         },
 
-        handleMinreqInput(index) {
-            let minreq = this.$refs.minreq[index - 1];
-            minreq.style.height = "18px";
-            minreq.style.height = minreq.scrollHeight + "px";
-        },
-
-        toggleShowItems() {
-
-            // let showItem = this.$page.refs.showItemsChk;
-
-            // if (showItem.checked) {
-            //     console.log('checked');
-            // } else {
-            //     console.log('unchecked');
-            // }
-
-            this.showItems = !this.showItems;
-        }
-    },
-
-}
+    }
 </script>

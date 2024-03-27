@@ -13,17 +13,18 @@ use Auth;
 class EvaluationController extends Controller
 {
     public function index() {
-        $userRole = Auth::user()->role;
+        $role = Auth::user()->role;
         if (
-            $userRole == 'Super Admin' ||
-            $userRole == 'Regional Director' ||
-            $userRole == 'Chief Education Program Specialist' ||
-            $userRole == 'Supervising Education Program Specialist'
+            $role == 'Super Admin' ||
+            $role == 'Regional Director' ||
+            $role == 'Chief Education Program Specialist' ||
+            $role == 'Supervising Education Program Specialist' ||
+            $role == 'Admin'
         ) {
             return redirect()->route('evaluation.admin');
-        } else if ($userRole == 'Education Supervisor') {
+        } else if ($role == 'Education Supervisor') {
             return redirect()->route('evaluation.ched');
-        } else if ($userRole == 'Program Head') {
+        } else if ($role == 'Program Head') {
             return redirect()->route('evaluation.hei.programhead');
         }
     }
@@ -37,42 +38,40 @@ class EvaluationController extends Controller
         ]);
     }
 
-    public function EvaluationForCHED(Request $request) {
+    public function EvaluationForES(Request $request) {
         $user = Auth::user();
-        $disciplines = RoleModel::where('userId', Auth::user()->id)->with('discipline')->get();
+        $show = $request->query('show') ? $request->query('show') : 25;
+        $disciplines = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('discipline')->get();
         $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
 
         $complianceTools = EvaluationFormModel::query()
-        ->when($request->query('search'), function ($query) use ($request) {
-            $query->whereHas('institution_program.program', function ($searchQuery) use ($request) {
-                $searchQuery->where('program', 'like', '%' . $request->query('search') . '%')
-               ->where('status', 'Submitted');
-            //    ->orWhere('status', 'In progress');
+        ->when($request->query('search'), function ($query) use ($request, $disciplineIds) {
+            $query->where(function ($q) use ($request, $disciplineIds){
+                $q->whereHas('institution_program.program', function ($searchQuery) use ($request, $disciplineIds) {
+                    $searchQuery->where('program', 'like', '%' . $request->query('search') . '%');
+                })
+                ->orWhereHas('institution_program.institution', function ($searchQuery) use ($request, $disciplineIds) {
+                    $searchQuery->where('name', 'like', '%' . $request->query('search') . '%');
+                });
             })
-            ->orWhereHas('institution_program.institution', function ($searchQuery) use ($request) {
-                $searchQuery->where('name', 'like', '%' . $request->query('search') . '%')
-               ->where('status', 'Submitted');
-            //    ->orWhere('status', 'In progress');
+            ->whereIn('disciplineId', $disciplineIds)
+            ->where(function ($query) {
+                $query->whereNot('status', 'Deployed');
             });
         })
+        ->where(function ($query) {
+            $query->whereNot('status', 'Deployed');
+        })
         ->whereIn('disciplineId', $disciplineIds)
-        ->where('status', 'Submitted')
-        // ->orWhere('status', 'In progress')
-        ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_applicable');
-
-        $count = $complianceTools->count();
-
-        $complianceTools = $complianceTools
-        ->paginate(10)
+        ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable')
+        ->paginate($show)
         ->through(fn($item) => [
             'id' => $item->id,
             'submissionDate' => $item->submissionDate,
             'status' => $item->status,
             'institution' => $item->institution_program->institution->name,
             'program' => $item->institution_program->program->program,
-            'itemComplied' => $item->complied->count(),
-            'applicableItems' => $item->item->count() - $item->not_applicable->count(),
-            'progress' => $item->item->count() - $item->not_applicable->count() != 0 ? intval(round(($item->complied->count() / ($item->item->count() - $item->not_applicable->count()))*100)) : 0,
+            'progress' => intval(round((($item->complied->count() + $item->not_complied->count() + $item->not_applicable->count())/$item->item->count())*100)),
         ])
         ->withQueryString();
 
@@ -81,8 +80,7 @@ class EvaluationController extends Controller
                 'role' => $user->role,
                 'disciplines' => $disciplines,
                 'complianceTools' => $complianceTools,
-                'count' => $count,
-                'filters' => $request->only(['search']),
+                'filters' => $request->only(['search']) + ['show' => $show ],
             ]);
         }
     }
@@ -90,12 +88,12 @@ class EvaluationController extends Controller
 
     public function evaluationForProgramHead() {
 
-        $role = RoleModel::where('userId', Auth::user()->id)->first();
+        $role = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->first();
         
         $institutionProgram = InstitutionProgramModel::where([
             'institutionId' => $role->institutionId,
             'programId' => $role->programId,
-        ])->with('institution', 'program', 'evaluationForm')->first();
+        ])->with('institution', 'program', 'evaluationForm', 'evaluationForm.item')->first();
         
         return Inertia::render('Progmes/Evaluation/HEI-Evaluation-PH-Select', [
             'program' => $institutionProgram,
