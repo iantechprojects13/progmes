@@ -11,16 +11,20 @@
             </button>
             </Link>
         </div>
-        <a :href="'/report/deficiency/' + evaluation.id + '/download'" target="_blank">
+        <!-- <a :href="'/report/deficiency/' + evaluation.id + '/download'" target="_blank">
             <button
                 class="md:mt-0 mt-3 w-auto text-sm select-none px-3 h-10 bg-white hover:text-blue-500 border border-gray-500 active:text-white active:bg-blue-600 rounded mr-1">
                 <i class="fas fa-download mr-1"></i>Deficiency Report
             </button>
-        </a>
+        </a> -->
+         <button v-show="$page.props.auth.user.role == 'Education Supervisor'" @click="reportModal = true;"
+            class="md:mt-0 mt-3 w-auto select-none px-3 h-10 bg-white hover:text-blue-500 border border-gray-500 active:text-white active:bg-blue-600 rounded mr-1">
+            <i class="fas fa-download mr-3"></i>Deficiency Report
+        </button>
     </div>
 
     <div class="mx-3 md:mx-8 mt-5 flex flex-col w-auto rounded bg-white p-3 border border-gray-400">
-        <div class="w-auto flex flex-col md:flex-row">
+        <div class="w-auto mt-1 flex flex-col md:flex-row">
             <div class="mr-2 font-bold">
                 HEI Name:
             </div>
@@ -28,24 +32,28 @@
                 {{ evaluation.institution_program.institution.name }}
             </div>
         </div>
-        <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
-            <div class="w-auto flex flex-col md:flex-row">
-                <div class="mr-2 font-bold">
-                    Program:
-                </div>
-                <div>
-                    {{ evaluation.institution_program.program.program }}
-                </div>
+        <div class="w-auto mt-1 flex flex-col md:flex-row">
+            <div class="mr-2 font-bold">
+                Program:
+            </div>
+            <div>
+                {{ evaluation.institution_program.program.program }}
             </div>
         </div>
-        <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
-            <div class="w-auto flex flex-col md:flex-row">
-                <div class="mr-2 font-bold">
-                    Effectivity:
-                </div>
-                <div>
-                    A.Y. {{ evaluation.effectivity }}
-                </div>
+        <div class="w-auto mt-1 flex flex-col md:flex-row">
+            <div class="mr-2 font-bold">
+                Effectivity:
+            </div>
+            <div>
+                {{ evaluation.effectivity }}
+            </div>
+        </div>
+        <div class="w-auto mt-1 flex flex-col md:flex-row">
+            <div class="mr-2 font-bold">
+                Evaluated by:
+            </div>
+            <div>
+                <input type="text" :value="$page.props.auth.user.name">
             </div>
         </div>
     </div>
@@ -111,7 +119,7 @@
                             <div class="flex flex-col"
                                 :class="{ 'hidden': item.selfEvaluationStatus == 'Not applicable' }"
                                 ref="evidenceFiles">
-                                <div v-for="(file, index) in item.evidence" :key="file.id" class="w-full">
+                                <div v-for="file in item.evidence" :key="file.id" class="w-full">
                                     <a class="px-1 text-gray-600 hover:text-blue-500 m-1 rounded" :href="file.url"
                                         target="_blank">
                                         <span v-if="file.type == 'file'">
@@ -184,6 +192,25 @@
             </content-table>
         </template>
     </content-container>
+    <!-- <modal :showModal="reportModal" @close="closeReportModal" title="Download Deficiency Report">
+        <div>
+            <div>
+                <label for="evaluatedBy" class="font-bold">Evaluated by</label><br>
+                <input type="text" class="w-full rounded" :value="$page.props.auth.user.name">
+            </div>
+            <div class="mt-3">
+                <label for="evaluatedBy" class="font-bold">Reviewed by</label><br>
+                <input type="text" class="w-full rounded" :value="$page.props.auth.user.name">
+            </div>
+            <div class="mt-3">
+                <label for="evaluatedBy" class="font-bold">Evaluated by</label><br>
+                <input type="text" class="w-full rounded" :value="$page.props.auth.user.name">
+            </div>
+        </div>
+        <template v-slot:custom-button>
+            <button class="h-10 px-2 rounded bg-blue-500 hover:bg-blue-600 text-white">Download</button>
+        </template>
+    </modal> -->
     <Notification :message="$page.props.flash.success" type="success" />
     <Notification :message="$page.props.flash.updated" type="success" />
     <Notification :message="$page.props.flash.deleted" type="success" />
@@ -227,7 +254,7 @@
     const findingstexteditor = ref([]);
     const recommendationstexteditor = ref([]);
     const textEditorIndex = ref('');
-    const readyForVisitModal = ref(false);
+    const reportModal = ref(false);
 
     const findingsInput = ref([]);
     const recommendationsInput = ref([]);
@@ -237,7 +264,6 @@
     const hasUpdate = ref(false);
 
     const saving = ref(false);
-    const readyForVisitIndicator = ref(null);
     const saveBtn = ref(null);
     const updatedRows = ref([]);
 
@@ -314,6 +340,10 @@
 
     function closeRecommendationsEditor() {
         isRecommendationsEditorOpen.value = false;
+    }
+
+function closeReportModal() {
+    reportModal.value = false;
     }
 
     // CTRL + S function

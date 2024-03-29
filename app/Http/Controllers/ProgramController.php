@@ -42,7 +42,7 @@ class ProgramController extends Controller
         })
         ->with('discipline')
         ->orderBy('program')
-        ->paginate(10)
+        ->paginate($show)
         ->withQueryString();
 
         return Inertia::render('Progmes/Admin/Program', [

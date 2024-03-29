@@ -2,7 +2,7 @@
     <div v-show="showModal"
         class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-70 z-100 p-2 flex items-center overflow-y-auto select-none"
         @click.self="bgClicked">
-        <div class="bg-white w-full mx-auto max-w-md rounded-md shadow-md shadow-gray-500 md:mb-24 opacity-100 select-none"
+        <div class="bg-white w-full mx-auto max-w-lg rounded-md shadow-md shadow-gray-500 md:mb-24 opacity-100 select-none"
             ref="modalContainer">
             <div class="border-b-2 border-gray-100 p-3 px-5 flex justify-between items-center text-lg">
                 <div class="font-bold">

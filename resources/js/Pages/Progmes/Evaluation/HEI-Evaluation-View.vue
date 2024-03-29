@@ -4,7 +4,7 @@
     <page-title title="View Program Self-Evaluation" />
     <div class="md:mx-8 mx-3 mt-8 flex flex-col lg:flex-row justify-between rounded relative">
         <div>
-            <Link href="/hei/evaluation">
+            <Link href="/evaluation">
             <button class="w-24 h-10 border border-gray-500 rounded bg-white">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Back
@@ -85,7 +85,7 @@
                         <td class="p-3 whitespace-normal text-justify max-w-xl">{{ item.actualSituation }}</td>
                         <td class="p-3">{{ item.selfEvaluationStatus }}</td>
                         <td class="p-3">
-                            <div v-for="(file, index) in item.evidence" :key="file.id" class="w-full">
+                            <div v-for="file in item.evidence" :key="file.id" class="w-full">
                                 <a class="px-1 text-gray-600 hover:text-blue-500 m-1 rounded" :href="file.url"
                                     target="_blank">
                                     <span v-if="file.type == 'file'">

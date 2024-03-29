@@ -72,13 +72,15 @@ Route::get('/myaccount/{id?}',[RegistrationController::class, 'viewMyAccount'])-
 //dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth','registered', 'user.verified', 'active')->name('dashboard');
 Route::get('/admin/dashboard', [DashboardController::class, 'dashboardForAdmin'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.admin');
-Route::get('/CHED/dashboard', [DashboardController::class, 'dashboardForCHED'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.ched');
-Route::get('/HEI/dashboard', [DashboardController::class, 'dashboardForHEI'])->middleware(['auth', 'type.hei', 'user.verified', 'active'])->name('dashboard.hei');
+Route::get('/ched/dashboard', [DashboardController::class, 'dashboardForCHED'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.ched');
+Route::get('/hei/dashboard', [DashboardController::class, 'dashboardForHEI'])->middleware(['auth', 'type.hei', 'user.verified', 'active'])->name('dashboard.hei');
 
 //evaluation
 Route::get('/evaluation', [EvaluationController::class, 'index'])->middleware('auth', 'user.verified')->name('evaluation');
 Route::get('/ched/evaluation', [EvaluationController::class, 'evaluationForES'])->middleware(['auth', 'registered', 'type.ched'])->name('evaluation.ched');
-Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware(['auth','type.hei'])->name('evaluation.hei.programhead');
+Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware(['auth','type.hei'])->name('evaluation.hei');
+Route::get('/hei/dean/evaluation', [EvaluationController::class, 'evaluationForDean'])->middleware(['auth','type.hei'])->name('evaluation.dean');
+Route::get('/hei/vpacad/evaluation', [EvaluationController::class, 'evaluationForVPAcad'])->middleware(['auth','type.hei'])->name('evaluation.vpacad');
 Route::get('/admin/evaluation', [EvaluationController::class, 'evaluationForAdmin'])->middleware('type.ched')->name('evaluation.admin');
 Route::get('hei/evaluation/{tool}/edit', [HEIFormController::class, 'edit'])->middleware('auth', 'type.hei')->name('form.hei.key');
 Route::get('ched/evaluation/{tool}/view', [CHEDFormController::class, 'view'])->middleware('auth', 'type.ched')->name('evaluation.ched.view');

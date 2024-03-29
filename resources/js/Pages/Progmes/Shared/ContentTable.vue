@@ -6,7 +6,7 @@
             >
                 <slot name="table-head"></slot>
             </tr>
-            <tbody class="px-2 text-sm">
+            <tbody class="px-2">
                 <slot name="table-body"></slot>
             </tbody>
         </table>

@@ -44,32 +44,7 @@ class DashboardController extends Controller
     public function DashboardForHEI() {
 
         return Inertia::render('Progmes/Dashboard/Dashboard-HEI');
-
-        // $role = $this->getHEIRole(Auth::user()->id);
-
-        // if($role->institutionId && $role->programId) {
-        //     $evaluationForm = $this->getEvaluationForm($role->institutionId, $role->programId);
-
-        //     if($evaluationForm) {
-
-        //         $complied = $evaluationForm->item->where('selfEvaluationStatus', 'Complied');
-        //         $notComplied = $evaluationForm->item->where('selfEvaluationStatus', 'Not complied');
-
-        //         $compliedPercentage = $this->getPercentage($complied->count(), $evaluationForm->item->count());
-        //         $notCompliedPercentage = $this->getPercentage($notComplied->count(), $evaluationForm->item->count());
-
-        //         return Inertia::render('Progmes/Dashboard/Dashboard-HEI', [
-        //             'complied' => [$complied->count(), $notComplied->count()],
-        //             'compliedPercentage' => $compliedPercentage,
-        //             'notComplied' => [$notComplied->count(), $complied->count()],
-        //             'notCompliedPercentage' => $notCompliedPercentage,
-        //             'totalItem' => $evaluationForm->item->count(),
-        //         ]);
-
-        //     } else {
-        //         // render dashboard with no data - no evaluation form yet
-        //     }
-        // }
+        
     }
 
 

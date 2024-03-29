@@ -4,7 +4,7 @@
     <div class="w-full flex h-screen select-none">
         <div class="w-full h-screen flex text-center items-center justify-center"
             style="background-size: cover; background-position: center; background-image: linear-gradient(#252525c7, #252525c7), url(assets/ched-office.jpg); background-size: auto 100%;">
-            <div>
+            <div class="-mt-10 md:mt-5">
                 <div class="w-full text-white">
                     <img src="assets/ched-logo.png" width="100" class="mx-auto mb-5 lg:hidden">
                     <p class="text-3xl lg:text-5xl font-bold">CHED RO XI</p>
@@ -43,9 +43,9 @@
                         Sign in with Google
                     </button>
                 </a>
-                <!-- <div class="mt-5">
+                <div class="mt-5">
                     <Link href="/login-testuser" class="hover:underline">Test-user login</Link>
-                </div> -->
+                </div>
             </div>
         </div>
     </div>

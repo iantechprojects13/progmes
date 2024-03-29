@@ -11,22 +11,22 @@
             </button>
             </Link>
         </div>
-        <div class="flex flex-wrap mt-3 lg:mt-0">
-            <div class=" flex-col lg:mt-0 mt-2 text-center mx-1 p-2 px-4 rounded border border-gray-500 bg-white">
+        <div class="flex mt-3 lg:mt-0 md:w-auto w-full">
+            <div class=" flex-col xl:mt-0 mt-2 lg:w-fit text-center mx-1 p-2 w-1/4 rounded border border-gray-500 bg-white">
                 <div class="w-full font-bold text-blue-500">{{ progress[0] }}</div>
-                <div class="font-bold text-gray-700 text-sm">Complied</div>
+                <div class="font-bold text-gray-700 whitespace-nowrap text-sm">Complied</div>
             </div>
-            <div class=" flex-col lg:mt-0 mt-2 text-center mx-1 p-2 px-4 rounded border border-gray-500 bg-white">
+            <div class=" flex-col xl:mt-0 mt-2 lg:w-fit text-center mx-1 p-2 w-1/4 rounded border border-gray-500 bg-white">
                 <div class="w-full font-bold text-blue-500">{{ progress[1] }}</div>
-                <div class="font-bold text-gray-700 text-sm">Not Complied</div>
+                <div class="font-bold text-gray-700 whitespace-nowrap text-sm">Not Complied</div>
             </div>
-            <div class=" flex-col lg:mt-0 mt-2 text-center mx-1 p-2 px-4 rounded border border-gray-500 bg-white">
+            <div class=" flex-col xl:mt-0 mt-2 lg:w-fit text-center mx-1 p-2 w-1/4 rounded border border-gray-500 bg-white">
                 <div class="w-full font-bold text-blue-500">{{ progress[2] }}</div>
-                <div class="font-bold text-gray-700 text-sm">Not Applicable</div>
+                <div class="font-bold text-gray-700 whitespace-nowrap text-sm">Not Applicable</div>
             </div>
-            <div class=" flex-col lg:mt-0 mt-2 text-center mx-1 p-2 px-4 rounded border border-gray-500 bg-white">
+            <div class=" flex-col xl:mt-0 mt-2 lg:w-fit text-center mx-1 p-2 w-1/4 rounded border border-gray-500 bg-white">
                 <div class="w-full font-bold text-blue-500">{{ progress[3] }}%</div>
-                <div class="font-bold text-gray-700 text-sm">Progress</div>
+                <div class="font-bold text-gray-700 whitespace-nowrap text-sm">Progress</div>
             </div>
         </div>
     </div>
@@ -141,7 +141,7 @@
                             <div class="flex flex-col"
                                 :class="{ 'hidden': item.selfEvaluationStatus == 'Not applicable' }"
                                 ref="evidenceFiles">
-                                <div v-for="(file, index) in item.evidence" :key="file.id" class="w-full">
+                                <div v-for="file in item.evidence" :key="file.id" class="w-full">
                                     <a class="px-1 text-gray-600 hover:text-blue-500 m-1 rounded" :href="file.url"
                                         target="_blank">
                                         <span v-if="file.type == 'file'">
@@ -212,7 +212,6 @@
             </button>
         </template>
     </confirmation>
-
 
     <!-- Select evidence file -->
     <div>

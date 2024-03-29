@@ -1,0 +1,1 @@
+import s from"./Layout-688c6e41.js";import{A as e,o as n,f as _,a as t,F as r}from"./app-612f8f79.js";const c={layout:s},f=Object.assign(c,{__name:"Dashboard-HEI",props:[],setup(p){return(l,m)=>{const a=e("Head"),o=e("page-title");return n(),_(r,null,[t(a,{title:"Dashboard"}),t(o,{title:"Dashboard"})],64)}}});export{f as default};

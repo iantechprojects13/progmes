@@ -1,1 +1,0 @@
-import n from"./Layout-713aa5ab.js";import{_ as s,A as e,o as r,f as c,a as t,F as _}from"./app-f4d80686.js";const p={layout:n};function l(m,d,i,f,u,$){const o=e("Head"),a=e("page-title");return r(),c(_,null,[t(o,{title:"Dashboard"}),t(a,{title:"Dashboard"})],64)}const g=s(p,[["render",l]]);export{g as default};

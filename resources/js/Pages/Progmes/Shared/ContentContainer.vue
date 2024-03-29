@@ -40,7 +40,7 @@
             </div>
             <div class="w-full p-5 flex justify-between xl:flex-row flex-col items-center border-t border-gray-300"
                 v-if="data_list">
-                <div class="flex items-center text-sm mb-5 xl:mb-0">
+                <div class="flex items-center mb-5 xl:mb-0">
                     <slot name="show-item"></slot>
                 </div>
                 <Pagination v-if="data_list.links.length > 3 && data_list != null" :data_list="data_list" />

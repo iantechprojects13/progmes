@@ -226,6 +226,7 @@
                         "Progmes/Evaluation/HEI-Evaluation-Edit",
                         "Progmes/Evaluation/HEI-Evaluation-View",
                         "Progmes/Evaluation/HEI-Evaluation-PH-Select",
+                        "Progmes/Evaluation/HEI-Evaluation-Dean-Select",
                         "Progmes/Evaluation/CHED-Evaluation-ES-Select",
                         "Progmes/Evaluation/CHED-Evaluation-Admin-Select",
                         "Progmes/Evaluation/CHED-Evaluation-Edit",
