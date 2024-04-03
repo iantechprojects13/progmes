@@ -14,12 +14,12 @@
                     class="flex-col h-screen w-64 bg-neutral-900 md:w-64 pt-1 pb-3 px-4 text-gray-200 md:block top-0 left-0 fixed">
                     <div class="flex flex-col justify-between h-full md:sticky md:top-0">
                         <div class="flex-shrink-0">
-                            <div class="md:hidden w-full text-right pt-2">
+                            <!-- <div class="md:hidden w-full text-right pt-2">
                                 <button @click="toggleSideBar" class="border px-2.5 py-0.5 hover:bg-stone-800">
                                     <i class="fas fa-angle-left"></i>
                                 </button>
-                            </div>
-
+                            </div> -->
+                            <div class="md:hidden mt-5"></div>
                             <!-- App Name -->
                             <div class="p-2 my-3 flex flex-row items-center select-none">
                                 <img src="/assets/ched-logo.png" width="50" class="mr-3" />

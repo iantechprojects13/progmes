@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\EvaluationFormModel;
+use App\Models\User;
 use App\Models\EvaluationItemModel;
 use App\Models\CMOModel;
 use Inertia\Inertia;
@@ -35,7 +36,7 @@ class CHEDFormController extends Controller
     public function evaluate($evaluation) {
         $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program')->first();
         $items = EvaluationItemModel::where('evaluationFormId', $evaluation)->with('criteria', 'evidence')->get();
-        
+
         if($tool->status == 'Submitted') {
             return Inertia::render('Progmes/Evaluation/CHED-Evaluation-Edit', [
                 'evaluation' => $tool,
@@ -51,6 +52,10 @@ class CHEDFormController extends Controller
                     'recommendations' => $item->recommendations,
                     'evidence' => $item->evidence,
                 ]),
+                'visitDate' => $tool->visitDate != null ? $tool->visitDate : null,
+                'evaluatedBy' => $tool->evaluatedBy != null ? $tool->evaluatedBy : Auth::user()->name,
+                'reviewedBy' => $tool->reviewedBy != null ? $tool->reviewedBy : 'Dr. Christopher Pio O. Pulido',
+                'notedBy' =>  $tool->notedBy != null ? $tool->notedBy : 'Dr. Luis D. Perez',
             ]);
         } else {
             return redirect()->back()->with('failed', 'This tool can\'t be accessed.');

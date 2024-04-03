@@ -20,7 +20,7 @@
         <template v-slot:search>
             <div class="w-full flex justify-end relative">
                 <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
-                    placeholder="Search a user"
+                    placeholder="Search by HEI or program"
                     class="w-full rounded-full bg-slate-100 h-10 border-none indent-3 text-base placeholder-gray-400 pr-11 mr-2" />
                 <button @click="submit"
                     class="hover:bg-gray-300 active:text-blue-500 h-10 w-10 rounded-full absolute right-3">
@@ -76,12 +76,25 @@
                             </div>
                         </td>
                         <td class="p-3">
-                            <div class="px-1 bg-blue-500 text-white rounded w-fit">
-                                {{ item.status }}
+                            <div v-if="
+                                    item.status ==
+                                    'Locked'
+                                " class="bg-red-500 text-white w-fit px-1 rounded text-xs">
+                                Locked
+                            </div>
+                            <div v-if="
+                                    item.status ==
+                                    'In progress'
+                                " class="bg-blue-500 text-white w-fit px-1 rounded text-xs">
+                                In Progress
+                            </div>
+                            <div v-if="item.status == 'Submitted'"
+                                class="bg-emerald-500 text-white w-fit px-1 rounded text-xs">
+                                Ready for visit
                             </div>
                         </td>
                         <td class="p-3">
-                            <div class="px-1 bg-gray-300 font-bold text-sm rounded w-fit">
+                            <div class="px-1 bg-gray-800 text-white font-bold text-sm rounded w-fit">
                                 {{ item.progress }}%
                             </div>
                         </td>

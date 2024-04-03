@@ -47,6 +47,7 @@ class HandleInertiaRequests extends Middleware
                 'updated' => session('updated'),
                 'deleted' => session('deleted'),
                 'uploaded' => session('uploaded'),
+                'generated' => session('generated'),
             ],
         ];
     }

@@ -18,10 +18,12 @@ return new class extends Migration
             $table->foreignId('cmoId')->nullable();
             $table->string('effectivity')->nullable();
             $table->date('evaluationDate')->nullable();
+            $table->date('visitDate')->nullable();
             $table->date('submissionDate')->nullable();
             $table->string('programHead')->nullable();
-            $table->string('evaluator')->nullable();
-            $table->string('conforme')->nullable();
+            $table->string('evaluatedBy')->nullable();
+            $table->string('reviewedBy')->nullable();
+            $table->string('notedBy')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();
         });

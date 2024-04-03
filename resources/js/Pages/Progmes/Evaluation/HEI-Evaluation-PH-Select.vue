@@ -44,8 +44,8 @@
                             <i class="fas fa-file text-lg mr-2"></i>{{ item.effectivity }}
                         </td>
                         <td class="p-3 align-middle">
-                            <div class="text-white text-sm">
-                                <span class="p-1 bg-green-600 rounded" v-show="item.status === 'Deployed'">
+                            <div class="text-white text-xs">
+                                <span class="p-1 bg-gray-700 rounded" v-show="item.status === 'Deployed'">
                                     Deployed
                                 </span>
                                 <span class="p-1 bg-blue-500 rounded" v-show="item.status === 'In progress'">
@@ -54,7 +54,7 @@
                                 <span class="p-1 bg-red-500 rounded" v-show="item.status === 'Locked'">
                                     Locked
                                 </span>
-                                <span class="p-1 bg-blue-500 rounded" v-show="item.status === 'Submitted'">
+                                <span class="p-1 bg-green-600 rounded" v-show="item.status === 'Submitted'">
                                     Submitted
                                 </span>
                                 <span class="p-1 bg-gray-700 rounded" v-show="item.status === 'Archived'">

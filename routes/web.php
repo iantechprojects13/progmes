@@ -152,7 +152,9 @@ Route::get('/admin/settings', [AdminSettingsController::class, 'index'])->middle
 
 
 //Generate Report
-Route::get('/report/deficiency/{tool}/download', [PDFController::class, 'generateDeficiencyReport'])->middleware(['auth'])->name('report.defieciency.create');
+Route::post('/report/deficiency/generate', [PDFController::class, 'generateDeficiencyReport'])->middleware(['auth'])->name('report.deficiency.generate');
+Route::get('/report/deficiency/view/{tool}', [PDFController::class, 'viewDeficiencyReport'])->middleware(['auth'])->name('report.deficiency.view');
+Route::get('/report/deficiency/download/{tool}', [PDFController::class, 'downloadDeficiencyReport'])->middleware(['auth'])->name('report.deficiency.download');
 
 Route::get('/chart', function () {
     return Inertia::render('Progmes/Shared/Charts/DoughnutChart');

@@ -17,10 +17,12 @@ class EvaluationFormModel extends Model
         'cmoId',
         'effectivity',
         'evaluationDate',
+        'visitDate',
         'submissionDate',
         'programHead',
-        'evaluator',
-        'conforme',
+        'evaluatedBy',
+        'reviewedBy',
+        'notedBy',
         'status',
     ];
 

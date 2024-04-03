@@ -78,8 +78,11 @@
                         </td>
                         <td class="p-3 whitespace-normal min-w-12">
                             {{ cmo.program?.program }}
+                            <span v-if="cmo.program?.major">
+                                - {{ cmo.program?.major }}
+                            </span>
                         </td>
-                        <td class="p-3"
+                        <td class="p-3 whitespace-normal"
                             v-show="$page.props.auth.user.role == 'Super Admin'|| $page.props.auth.user.role == 'Admin'">
                             {{ cmo.created_by.name }}
                         </td>

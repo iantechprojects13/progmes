@@ -7,10 +7,26 @@ use App\Models\User;
 use App\Models\EvaluationFormModel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Response;
+use Carbon\Carbon;
 
 class PDFController extends Controller
 {
-    public function generateDeficiencyReport(Request $request, $tool) {
+
+    public function generateDeficiencyReport(Request $request) {
+        
+        $complianceTool = EvaluationFormModel::where('id', $request->id)->first();
+
+        $complianceTool->update([
+            'visitDate' => $request->visitDate,
+            'evaluatedBy' => $request->evaluatedBy,
+            'reviewedBy' => $request->reviewedBy,
+            'notedBy' => $request->notedBy,
+        ]);
+
+        return redirect()->back()->with('generated', 'Changes saved.');
+   }
+
+    public function downloadDeficiencyReport($tool) {
 
         $complianceTool = EvaluationFormModel::where('id', $tool)
         ->with(['item' => function ($toolQuery) {
@@ -20,17 +36,46 @@ class PDFController extends Controller
         
         // dd($complianceTool);
 
-        $data = [
+       $data = [
             'tool' => $complianceTool,
-        ];
+       ];
         
         // return view('report.deficiency', $data);
         
 
         $fileName = time() . '.pdf';
         $report = Pdf::loadView('report.deficiency', $data);
+        
+        return $report->download($fileName);
+
+   }
+
+
+   public function viewDeficiencyReport($tool) {
+        
+        $complianceTool = EvaluationFormModel::where('id', $tool)
+        ->with(['item' => function ($toolQuery) {
+            $toolQuery->where('evaluationStatus', 'Not complied');
+        }, 'cmo', 'item.criteria', 'institution_program.program', 'institution_program.institution'])
+        ->first();
+        
+
+        $data = [
+            'tool' => $complianceTool,
+        ];
+        
+        
+        $fileName = time() . '.pdf';
+        $report = Pdf::loadView('report.deficiency', $data);
+        
+        
+
+
+
+
+
+        
         return $report->stream($fileName);
 
-        // redirect()->back()->with('success', 'Deficiency report has been downloaded.');
    }
 }

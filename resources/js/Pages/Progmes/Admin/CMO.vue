@@ -66,14 +66,14 @@
                     </tr>
                     <tr v-else v-for="(cmo, index) in cmo_list.data" :key="cmo.id" class="hover:bg-slate-300"
                         :class="{ 'bg-slate-200': index % 2 == 0 }">
-                        <td class="p-3 pl-5">
+                        <td class="p-3 whitespace-normal pl-5">
                             CMO No.{{ cmo.number }} Series of {{ cmo.series }},
                             Version {{ cmo.version }}
                         </td>
-                        <td class="p-3">
+                        <td class="p-3 whitespace-normal">
                             {{ cmo.program?.program }}
                         </td>
-                        <td class="p-3">
+                        <td class="p-3 whitespace-normal">
                             <div v-if="cmo.isActive" class="w-fit text-xs px-1 rounded bg-green-600 text-white">
                                 Active
                             </div>

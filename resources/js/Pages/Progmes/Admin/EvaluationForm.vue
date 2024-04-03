@@ -5,7 +5,7 @@
     <content-container pageTitle="Compliance Evaluation Tool" hasTopButton="true" hasSearch="true" hasFilters="true"
         :hasNavigation="true" :data_list="institutionProgramList">
         <template v-slot:navigation>
-            <div class="text-sm mb-2 flex items-center">
+            <div class="mb-2 flex items-center">
                 <div class="mr-2 font-bold">Academic Year:</div>
                 <select v-model="query.ay" id="academicYearDd" @change.prevent="changeAcademicYear"
                     class="select-none text-sm rounded border-2 border-gray-500">
@@ -70,16 +70,16 @@
                     </tr>
                     <tr v-else v-for="(program, index) in institutionProgramList.data" :key="program.id"
                         class="hover:bg-slate-300" :class="{ 'bg-slate-200': index % 2 == 0 }">
-                        <td class="p-3 pl-5">
+                        <td class="p-3 whitespace-normal pl-5">
                             {{ program.institution?.name }}
                         </td>
-                        <td class="p-3">
+                        <td class="p-3 whitespace-normal">
                             {{ program.program?.program }}
                         </td>
-                        <td class="p-3">
+                        <td class="p-3 whitespace-normal">
                             {{ program.program?.major }}
                         </td>
-                        <td class="p-3">
+                        <td class="p-3 whitespace-normal">
                             <div>
                                 CMO No.{{ program.evaluation_form[0]?.cmo?.number }}
                                 Series of {{ program.evaluation_form[0]?.cmo?.series }},
@@ -88,23 +88,23 @@
                         </td>
                         <td class="p-3">
                             <div v-if="program.evaluation_form.length == 0"
-                                class="bg-gray-600 text-white w-fit px-1 rounded">
+                                class="bg-gray-600 text-white w-fit px-1 rounded text-xs">
                                 Pending
                             </div>
                             <div v-if="
                                     program.evaluation_form[0]?.status ==
                                     'Deployed'
-                                " class="bg-green-600 text-white w-fit px-1 rounded">
+                                " class="bg-gray-700 text-white w-fit px-1 rounded text-xs">
                                 Deployed
                             </div>
                             <div v-if="
                                     program.evaluation_form[0]?.status ==
                                     'In progress'
-                                " class="bg-blue-500 text-white w-fit px-1 rounded">
+                                " class="bg-blue-500 text-white w-fit px-1 rounded text-xs">
                                 In Progress
                             </div>
                             <div v-if="program.evaluation_form[0]?.status == 'Submitted'"
-                                class="bg-emerald-500 text-white w-fit px-1 rounded">
+                                class="bg-emerald-500 text-white w-fit px-1 rounded text-xs">
                                 Submitted
                             </div>
                         </td>
