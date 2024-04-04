@@ -23,7 +23,7 @@ class EvaluationFormController extends Controller
 
         $program_list = ProgramModel::with('active_cmo')->orderBy('program', 'asc')->get();
         $role = Auth::user()->role;
-        $canEdit = true;
+        $canEdit = false;
         $defaultAcademicYear = '';
         $disciplineList = [];
 
@@ -35,7 +35,12 @@ class EvaluationFormController extends Controller
             $defaultAcademicYear = AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
         }
         
+        if ($role == 'Super Admin' || $role == 'Admin') {
+            $canEdit = true;
+        }
+
         if ($role == 'Education Supervisor') {
+            $canEdit = true;
             $discipline = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->get();
             foreach($discipline as $item) {
                 array_push($disciplineList, $item->disciplineId);

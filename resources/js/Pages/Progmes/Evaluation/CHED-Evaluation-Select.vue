@@ -2,20 +2,6 @@
 
     <Head title="Program Self-Evaluation" />
     <page-title title="Program Evaluation" />
-    <div class="md:mx-8 mx-3 mt-8 border border-gray-400 p-3 bg-white rounded">
-        <div class="flex flex-col w-full">
-            <div class="w-auto flex flex-col md:flex-row">
-                <div class="font-bold w-32">
-                    Discipline(s)
-                </div>
-                <ul>
-                    <li v-for="discipline in disciplines" :key="discipline.id">
-                        {{ discipline.discipline.discipline }}
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
     <content-container hasSearch="true" :hasTopButton="true" hasFilters="true" :data_list="complianceTools">
         <template v-slot:search>
             <div class="w-full flex justify-end relative">
@@ -29,7 +15,7 @@
             </div>
         </template>
         <template v-slot:top-button>
-            <select id="academicYearSelect" class="h-10 rounded text-sm">
+            <select @change="changeAcademicYear" v-model="query.academicYear" id="academicYearSelect" class="h-10 rounded text-sm">
                 <option value="2023-2024">A.Y. 2023-2024</option>
                 <option value="2024-2025">A.Y. 2024-2025</option>
                 <option value="2025-2026">A.Y. 2025-2026</option>
@@ -79,27 +65,27 @@
                             <div v-if="
                                     item.status ==
                                     'Locked'
-                                " class="bg-red-500 text-white w-fit px-1 rounded text-xs">
+                                " class="bg-red-500 text-white w-fit px-2 py-0.5 text-xs">
                                 Locked
                             </div>
                             <div v-if="
                                     item.status ==
                                     'In progress'
-                                " class="bg-blue-500 text-white w-fit px-1 rounded text-xs">
+                                " class="bg-blue-500 text-white w-fit px-2 py-0.5 text-xs">
                                 In Progress
                             </div>
                             <div v-if="item.status == 'Submitted'"
-                                class="bg-emerald-500 text-white w-fit px-1 rounded text-xs">
+                                class="bg-emerald-500 text-white w-fit px-2 py-0.5 text-xs">
                                 Ready for visit
                             </div>
                         </td>
                         <td class="p-3">
-                            <div class="px-1 bg-gray-800 text-white font-bold text-sm rounded w-fit">
+                            <div class="bg-gray-700 text-white font-bold text-sm px-2 py-0.5 w-fit">
                                 {{ item.progress }}%
                             </div>
                         </td>
                         <td class="p-3 text-right">
-                            <button @click="edit(item.id)" v-show="item.status == 'Submitted'"
+                            <button v-show="canEvaluate && item.status == 'Submitted'" @click="edit(item.id)"
                                 class="select-none w-10 h-10 text-white bg-blue-500 hover:bg-blue-600 rounded mr-1 tooltipForActions"
                                 data-tooltip="Evaluate">
                                 <i class="fas fa-edit"></i>
@@ -134,15 +120,13 @@
     import { ref } from 'vue';
 
     const props = defineProps([
-        'disciplines',
-        'role',
         'complianceTools',
         'filters',
+        'canEvaluate',
     ]);
 
-    const processing = ref(false);
-
     const query = useForm({
+        academicYear: props.filters.academicYear,
         show: props.filters.show,
         search: props.filters.search,
     });
@@ -156,20 +140,24 @@
     }
 
     function submit() {
-        if (query.search == "") {
-            router.get("/ched/evaluation");
-        } else {
-            query.get("/ched/evaluation", {
-                preserveState: true,
-                preserveScroll: true,
-            });
-        }
+        query.get("/ched/evaluation", {
+            preserveState: true,
+            preserveScroll: true,
+        });
     }
 
     function changeResultCount() {
         query.get("/ched/evaluation", {
-            preserveScroll: false,
-            preserveState: false,
+            preserveScroll: true,
+            preserveState: true,
+        });
+    }
+
+
+    function changeAcademicYear() {
+        query.get("/ched/evaluation", {
+            preserveScroll: true,
+            preserveState: true,
         });
     }
 </script>
@@ -181,10 +169,3 @@
         layout: Layout,
     }
 </script>
-
-<style scoped>
-    .progress-bar {
-        height: 20px;
-        border-radius: 50%;
-    }
-</style>

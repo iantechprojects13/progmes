@@ -8,44 +8,35 @@ use App\Models\InstitutionProgramModel;
 use App\Models\InstitutionModel;
 use App\Models\EvaluationFormModel;
 use App\Models\ProgramModel;
+use App\Models\AdminSettingsModel;
 use Inertia\Inertia;
 use Auth;
 
 class EvaluationController extends Controller
 {
     public function index() {
-        $role = Auth::user()->role;
-        if (
-            $role == 'Super Admin' ||
-            $role == 'Regional Director' ||
-            $role == 'Chief Education Program Specialist' ||
-            $role == 'Supervising Education Program Specialist' ||
-            $role == 'Admin'
-        ) {
-            return redirect()->route('evaluation.admin');
-        } else if ($role == 'Education Supervisor') {
+        $user = Auth::user();
+
+        if ($user->type == 'CHED') {
             return redirect()->route('evaluation.ched');
-        } else if ($role == 'Program Head') {
+        } else if ($user->role == 'Program Head') {
             return redirect()->route('evaluation.hei');
-        } else if ($role == 'Dean') {
+        } else if ($$user->role == 'Dean') {
             return redirect()->route('evaluation.dean');
         }
     }
 
-    public function EvaluationForAdmin() {
-        $role = Auth::user()->role;
-
-        return Inertia::render('Progmes/Evaluation/CHED-Evaluation-Admin-Select', [
-            'data' => "Hello World",
-            'role' => $role,
-        ]);
-    }
-
-    public function EvaluationForES(Request $request) {
+    public function EvaluationForCHED(Request $request) {
         $user = Auth::user();
         $show = $request->query('show') ? $request->query('show') : 25;
+        $acadYear = $request->query('academicYear') ? $request->query('academicYear') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
         $disciplines = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('discipline')->get();
         $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+        $canEvaluate = false;
+
+        if ($user->role == 'Super Admin' || $user->role == 'Education Supervisor') {
+            $canEvaluate = true;
+        }
 
         $complianceTools = EvaluationFormModel::query()
         ->when($request->query('search'), function ($query) use ($request, $disciplineIds) {
@@ -57,15 +48,17 @@ class EvaluationController extends Controller
                     $searchQuery->where('name', 'like', '%' . $request->query('search') . '%');
                 });
             })
-            ->whereIn('disciplineId', $disciplineIds)
             ->where(function ($query) {
                 $query->whereNot('status', 'Deployed');
             });
         })
+        ->when($user->role == 'Education Supervisor', function ($query) use ($disciplineIds) {
+            $query->whereIn('disciplineId', $disciplineIds);
+        })
+        ->where('effectivity', $acadYear)
         ->where(function ($query) {
             $query->whereNot('status', 'Deployed');
         })
-        ->whereIn('disciplineId', $disciplineIds)
         ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable')
         ->paginate($show)
         ->through(fn($item) => [
@@ -78,14 +71,12 @@ class EvaluationController extends Controller
         ])
         ->withQueryString();
 
-        if ($user->role == 'Education Supervisor') {
-            return Inertia::render('Progmes/Evaluation/CHED-Evaluation-ES-Select', [
-                'role' => $user->role,
-                'disciplines' => $disciplines,
-                'complianceTools' => $complianceTools,
-                'filters' => $request->only(['search']) + ['show' => $show ],
-            ]);
-        }
+        return Inertia::render('Progmes/Evaluation/CHED-Evaluation-Select', [
+            'complianceTools' => $complianceTools,
+            'filters' => $request->only(['search']) + ['show' => $show, 'academicYear' => $acadYear ],
+            'canEvaluate' => $canEvaluate,
+        ]);
+        
     }
 
 

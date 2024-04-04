@@ -150,21 +150,21 @@
                     <div>Evaluated by:</div>
                     <div style="margin: 8px 20px;">
                         <div>{{ $tool->evaluatedBy }}</div>
-                        <div>ES II</div>
+                        <div>{{ $tool->evaluatedByTitle }}</div>
                     </div>
                 </div>
                 <div style="margin-left: 10px; margin-top: 30px;">
                     <div>Reviewed by:</div>
                     <div style="margin: 8px 20px;">
                         <div>{{ $tool->reviewedBy }}</div>
-                        <div>SEPS</div>
+                        <div>{{ $tool->reviewedByTitle }}</div>
                     </div>
                 </div>
                 <div style="margin-left: 10px; margin-top: 30px;">
                     <div>Noted by:</div>
                     <div style="margin: 8px 20px;">
                         <div>{{ $tool->notedBy }}</div>
-                        <div>CEPS</div>
+                        <div>{{ $tool->notedByTitle }}</div>
                     </div>
                 </div>
             </div>

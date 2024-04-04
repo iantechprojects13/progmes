@@ -19,8 +19,11 @@ class PDFController extends Controller
         $complianceTool->update([
             'visitDate' => $request->visitDate,
             'evaluatedBy' => $request->evaluatedBy,
+            'evaluatedByTitle' => $request->evaluatedByTitle,
             'reviewedBy' => $request->reviewedBy,
+            'reviewedByTitle' => $request->reviewedByTitle,
             'notedBy' => $request->notedBy,
+            'notedByTitle' => $request->notedByTitle,
         ]);
 
         return redirect()->back()->with('generated', 'Changes saved.');

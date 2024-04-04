@@ -21,8 +21,11 @@ class EvaluationFormModel extends Model
         'submissionDate',
         'programHead',
         'evaluatedBy',
+        'evaluatedByTitle',
         'reviewedBy',
+        'reviewedByTitle',
         'notedBy',
+        'notedByTitle',
         'status',
     ];
 

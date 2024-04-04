@@ -22,8 +22,11 @@ return new class extends Migration
             $table->date('submissionDate')->nullable();
             $table->string('programHead')->nullable();
             $table->string('evaluatedBy')->nullable();
+            $table->string('evaluatedByTitle')->nullable();
             $table->string('reviewedBy')->nullable();
+            $table->string('reviewedByTitle')->nullable();
             $table->string('notedBy')->nullable();
+            $table->string('notedByTitle')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();
         });

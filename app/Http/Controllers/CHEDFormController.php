@@ -52,10 +52,6 @@ class CHEDFormController extends Controller
                     'recommendations' => $item->recommendations,
                     'evidence' => $item->evidence,
                 ]),
-                'visitDate' => $tool->visitDate != null ? $tool->visitDate : null,
-                'evaluatedBy' => $tool->evaluatedBy != null ? $tool->evaluatedBy : Auth::user()->name,
-                'reviewedBy' => $tool->reviewedBy != null ? $tool->reviewedBy : 'Dr. Christopher Pio O. Pulido',
-                'notedBy' =>  $tool->notedBy != null ? $tool->notedBy : 'Dr. Luis D. Perez',
             ]);
         } else {
             return redirect()->back()->with('failed', 'This tool can\'t be accessed.');
@@ -82,5 +78,15 @@ class CHEDFormController extends Controller
         }
 
         return redirect()->back()->with('updated', 'All changes saved.');
+    }
+
+    public function deficiencyReport($tool) {
+        $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.institution', 'institution_program.program')->first();
+        
+        return Inertia::render('Progmes/Evaluation/CHED-Evaluation-Deficiency-Report', [
+            'tool' => $evaluationTool,
+            'evaluatedBy' => $evaluationTool->evaluatedBy != null ? $evaluationTool->evaluatedBy : Auth::user()->name,
+            'evaluatedByTitle' => $evaluationTool->evaluatedByTitle != null ? $evaluationTool->evaluatedByTitle : Auth::user()->role,
+        ]);
     }
 }

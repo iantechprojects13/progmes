@@ -2,7 +2,7 @@
 
     <Head title="Evaluation Forms" />
     <AdminPanel />
-    <content-container pageTitle="Compliance Evaluation Tool" hasTopButton="true" hasSearch="true" hasFilters="true"
+    <content-container pageTitle="Compliance Evaluation Tool" :hasTopButton="canEdit" hasSearch="true" hasFilters="true"
         :hasNavigation="true" :data_list="institutionProgramList">
         <template v-slot:navigation>
             <div class="mb-2 flex items-center">

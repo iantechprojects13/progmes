@@ -10,58 +10,41 @@
             </button>
             </Link>
         </div>
-         <button v-show="$page.props.auth.user.role == 'Education Supervisor'" @click="reportModal = true"
-            class="md:mt-0 mt-3 w-auto select-none px-2 bg-gray-600 hover:bg-gray-700 text-white h-10  rounded">
-            <i class="fas fa-download mr-2"></i>Deficiency Report
-        </button>
+        <Link :href="'/ched/evaluation/' + evaluation.id + '/deficiency-report'">
+        <button class="select-none px-2 rounded bg-white border border-gray-500 hover:bg-gray-700 hover:text-white h-10">Deficiency Report</button>
+        </Link>
     </div>
-
-    <content-container :hasTopButton="true">
-        <template v-slot:top-button>
-            <button @click="generate" class="select-none bg-blue-500 hover:bg-blue-600 text-white px-3 h-10 rounded">Save</button>
-            <div class="flex flex-row justify-between ml-2">
-                    <div class="text-gray-500 h-10 lg:ml-1 flex items-center mr-5">
-                        <div v-if="$page.props.flash.generated">
-                            <i class="fas fa-check-circle text-green-500 mr-1"></i>
-                            {{ $page.props.flash.generated }}
-                        </div>
-                    </div>
+    
+    <div class="flex flex-col w-auto rounded border border-gray-400 bg-white mx-3 md:mx-8 mt-5 p-3">
+        <div class="w-auto flex flex-col md:flex-row">
+            <div class="mr-2 font-bold tracking-tight">
+                HEI Name:
+            </div>
+            <div class="tracking-tight">
+                {{ evaluation.institution_program.institution.name }}
+            </div>
+        </div>
+        <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
+            <div class="w-auto flex flex-col md:flex-row">
+                <div class="mr-2 font-bold tracking-tight">
+                    Program:
                 </div>
-        </template>
-        <template v-slot:main-content>
-            <div class="p-5 text-left">
-                <div class="flex items-center lg:flex-row flex-col">
-                    <label for="institution" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">HEI Name</label>
-                    <input type="text" id="institution" class="w-full rounded" :value="evaluation.institution_program.institution.name" disabled>
-                </div>
-                <div class="mt-3 flex items-center lg:flex-row flex-col">
-                    <label for="program" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Program</label>
-                    <input type="text" id="program" class="w-full rounded" :value="evaluation.institution_program.program.program" disabled>
-                </div>
-                <div class="mt-3 flex items-center lg:flex-row flex-col">
-                    <label for="effectivity" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Effectivity</label>
-                    <input type="text" id="effectivity" class="w-full rounded" :value="evaluation.effectivity" disabled>
-                </div>
-                <div class="mt-3 flex items-center lg:flex-row flex-col">
-                    <label for="visitDate" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Evaluation Date</label>
-                    <input type="date" id="visitDate" class="w-full rounded" v-model="deficiencyReport.visitDate">
-                </div>
-                <div class="mt-3 flex items-center lg:flex-row flex-col">
-                    <label for="evaluatedBy" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Evaluated by</label>
-                    <input type="text" id="evaluatedBy" class="w-full rounded" v-model="deficiencyReport.evaluatedBy">
-                </div>
-                <div class="mt-3 flex items-center lg:flex-row flex-col">
-                    <label for="reviewedBy" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Reviewed by</label>
-                    <input type="text" id="reviewedBy" class="w-full rounded" v-model="deficiencyReport.reviewedBy">
-                </div>
-                <div class="mt-3 flex items-center lg:flex-row flex-col">
-                    <label for="notedBy" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Noted by</label>
-                    <input type="text" id="notedBy" class="w-full rounded" v-model="deficiencyReport.notedBy">
+                <div class="tracking-tight">
+                    {{ evaluation.institution_program.program.program }}
                 </div>
             </div>
-        </template>
-    </content-container>
-
+        </div>
+        <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
+            <div class="w-auto flex flex-col md:flex-row">
+                <div class="mr-2 font-bold tracking-tight">
+                    Effectivity:
+                </div>
+                <div class="tracking-tight">
+                    A.Y. {{ evaluation.effectivity }}
+                </div>
+            </div>
+        </div>
+    </div>
 
     <content-container :hasTopButton="true">
         <template v-slot:top-button>
@@ -196,17 +179,6 @@
             </content-table>
         </template>
     </content-container>
-    <modal v-show="reportModal" @close="closeReportModal" title="Download Deficiency Report">
-        <div>
-            Deficiency Report has been generated.
-            <a :href="'/report/deficiency/view/' + evaluation.id" target="_blank" class="underline">View</a>
-        </div>
-        <template v-slot:custom-button>
-            <a :href="'/report/deficiency/download/' + evaluation.id" target="_blank">
-                <button class="select-none bg-blue-500 hover:bg-blue-600 text-white h-10 px-2 rounded">Download</button>
-            </a>
-        </template>
-    </modal>
     <Notification :message="$page.props.flash.success" type="success" />
     <Notification :message="$page.props.flash.updated" type="success" />
     <Notification :message="$page.props.flash.deleted" type="success" />
@@ -231,13 +203,13 @@
         'auth',
     ]);
 
-    const deficiencyReport = reactive({
-        id: ref(props.evaluation.id),
-        visitDate: ref(props.visitDate),
-        evaluatedBy: ref(props.evaluatedBy),
-        reviewedBy: ref(props.reviewedBy),
-        notedBy: ref(props.notedBy),
-    });
+    // const deficiencyReport = reactive({
+    //     id: ref(props.evaluation.id),
+    //     visitDate: ref(props.visitDate),
+    //     evaluatedBy: ref(props.evaluatedBy),
+    //     reviewedBy: ref(props.reviewedBy),
+    //     notedBy: ref(props.notedBy),
+    // });
 
     const handleBeforeUnload = (event) => {
         if (hasUpdate.value) {
@@ -274,7 +246,7 @@
     const hasUpdate = ref(false);
 
     const saving = ref(false);
-    const generatingReport = ref(false);
+    // const generatingReport = ref(false);
     const saveBtn = ref(null);
     const updatedRows = ref([]);
 
@@ -386,18 +358,18 @@ function closeReportModal() {
 }
 
 
-function generate() {
-    router.post('/report/deficiency/generate', deficiencyReport, {
-        onStart: () => {
-            generatingReport.value = true;
-        },
-        onFinish: () => {
-            generatingReport.value = false;
-        },
-        preserveScroll: true,
-        preserveState: true,
-    });
-}
+// function generate() {
+//     router.post('/report/deficiency/generate', deficiencyReport, {
+//         onStart: () => {
+//             generatingReport.value = true;
+//         },
+//         onFinish: () => {
+//             generatingReport.value = false;
+//         },
+//         preserveScroll: true,
+//         preserveState: true,
+//     });
+// }
 
 </script>
 
