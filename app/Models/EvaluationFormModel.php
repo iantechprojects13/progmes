@@ -66,6 +66,12 @@ class EvaluationFormModel extends Model
         ->where('selfEvaluationStatus', '=', 'Not complied');
     }
 
+    public function no_status()
+    {
+        return $this->hasMany(EvaluationItemModel::class, 'evaluationFormId', 'id')
+        ->where('selfEvaluationStatus', '=', null);
+    }
+
     public function evaluated_complied()
     {
         return $this->hasMany(EvaluationItemModel::class, 'evaluationFormId', 'id')

@@ -196,8 +196,10 @@
             return {
                 component: {
                     dashboard: [
-                        "Progmes/Dashboard/Dashboard-CHED",
+                        "Progmes/Dashboard/Dashboard-Admin-Progress",
+                        "Progmes/Dashboard/Dashboard-Admin-Overview",
                         "Progmes/Dashboard/Dashboard-HEI",
+                        "Progmes/Dashboard/Dashboard-CHED",
                         "Progmes/Dashboard/CHED-ES-Dashboard",
                     ],
                     adminpanel: [
@@ -226,7 +228,7 @@
                         "Progmes/Evaluation/HEI-Evaluation-Edit",
                         "Progmes/Evaluation/HEI-Evaluation-View",
                         "Progmes/Evaluation/HEI-Evaluation-PH-Select",
-                        "Progmes/Evaluation/HEI-Evaluation-Dean-Select",
+                        "Progmes/Evaluation/HEI-Evaluation-Select",
                         "Progmes/Evaluation/CHED-Evaluation-Select",
                         "Progmes/Evaluation/CHED-Evaluation-Edit",
                         "Progmes/Evaluation/CHED-Evaluation-View",

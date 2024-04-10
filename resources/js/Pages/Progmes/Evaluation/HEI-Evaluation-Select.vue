@@ -93,7 +93,7 @@
                             <button @click="view(item.id)"
                                 class="select-none w-10 h-10 bg-green-600 hover:bg-green-700 text-white rounded tooltipForActions"
                                 data-tooltip="View">
-                                <i class="fas fa-eye"></i>
+                                <i class="fas fa-eye mr-1"></i>
                             </button>
                         </td>
                     </tr>
@@ -122,7 +122,6 @@
     const props = defineProps([
         'complianceTools',
         'filters',
-        'canEvaluate',
     ]);
 
     const query = useForm({
@@ -131,16 +130,12 @@
         search: props.filters.search,
     });
 
-    function edit(tool) {
-        router.get('/ched/evaluation/' + tool + '/evaluate');
-    }
-
     function view(tool) {
-        router.get('/ched/evaluation/' + tool + '/view');
+        router.get('/hei/evaluation/' + tool + '/view');
     }
 
     function submit() {
-        query.get("/ched/evaluation", {
+        query.get("/hei/evaluation", {
             preserveState: true,
             preserveScroll: true,
         });

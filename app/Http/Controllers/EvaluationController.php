@@ -19,10 +19,14 @@ class EvaluationController extends Controller
 
         if ($user->type == 'CHED') {
             return redirect()->route('evaluation.ched');
-        } else if ($user->role == 'Program Head') {
+        }
+
+        if ($user->role == 'Program Head') {
+            return redirect()->route('evaluation.ph');
+        }
+
+        if ($user->type == 'HEI') {
             return redirect()->route('evaluation.hei');
-        } else if ($$user->role == 'Dean') {
-            return redirect()->route('evaluation.dean');
         }
     }
 
@@ -87,7 +91,9 @@ class EvaluationController extends Controller
         $institutionProgram = InstitutionProgramModel::where([
             'institutionId' => $role->institutionId,
             'programId' => $role->programId,
-        ])->with('institution', 'program', 'evaluationForm', 'evaluationForm.item')->first();
+        ])->with(['institution', 'program', 'evaluationForm' => function ($evalFormQuery) {
+            $evalFormQuery->orderBy('effectivity', 'asc');
+        }, 'evaluationForm.item'])->first();
         
         return Inertia::render('Progmes/Evaluation/HEI-Evaluation-PH-Select', [
             'program' => $institutionProgram,
@@ -96,51 +102,106 @@ class EvaluationController extends Controller
 
 
 
-    public function evaluationForDean(Request $request) {
-        $user = Auth::user();
-        $disciplines = RoleModel::where('userId', $user->id)->where('isActive', 1)->with('discipline')->get();
-        $institution = RoleModel::where('userId', $user->id)->where('isActive', 1)->value('institutionId');
+    public function evaluationForHEI(Request $request) {
+        // $user = Auth::user();
+        // $disciplines = [];
+        // $show = $request->query('show') ? $request->query('show') : 25;
+        // $acadYear = $request->query('academicYear') ? $request->query('academicYear') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
+        // $institution = RoleModel::where('userId', $user->id)->where('isActive', 1)->value('institutionId');
 
-        $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+        // if ($user->role == 'Dean') {
+        //     $disciplines = RoleModel::where('userId', $user->id)->where('isActive', 1)->with('discipline')->get();
+        //     $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+        // }
+        
+        
+        // $complianceTools = EvaluationFormModel::query()
+        // ->when($request->query('search'), function ($query) use ($request, $disciplineIds, $institution) {
+        //     $query->where(function ($q) use ($request, $disciplineIds, $institution){
+        //         $q->whereHas('institution_program.program', function ($searchQuery) use ($request, $disciplineIds) {
+        //             $searchQuery->where('program', 'like', '%' . $request->query('search') . '%');
+        //         });
+        //         $q->whereHas('institution_program.institution', function ($searchQuery) use ($request, $institution) {
+        //             $searchQuery->where('id', $institution);
+        //         });
+        //     })
+        //     ->whereIn('disciplineId', $disciplineIds)
+        //     ->where(function ($query) {
+        //         $query->whereNot('status', 'Deployed');
+        //     });
+        // })
+        // ->where(function ($query) {
+        //     $query->whereNot('status', 'Deployed');
+        // })
+        // ->whereHas('institution_program.institution', function ($searchQuery) use ($institution) {
+        //     $searchQuery->where('id', $institution);
+        // })
+        // ->whereIn('disciplineId', $disciplineIds)
+        // ->where('effectivity', $acadYear)
+        // ->with('institution_program.institution', 'institution_program.program', 'item', 'complied', 'not_complied', 'not_applicable')
+        // ->paginate($show)
+        // ->through(fn($item) => [
+        //     'id' => $item->id,
+        //     'submissionDate' => $item->submissionDate,
+        //     'status' => $item->status,
+        //     'program' => $item->institution_program->program->program,
+        //     'progress' => intval(round((($item->complied->count() + $item->not_complied->count() + $item->not_applicable->count())/$item->item->count())*100)),
+        // ])
+        // ->withQueryString();
+
+        // return Inertia::render('Progmes/Evaluation/HEI-Evaluation-Select', [
+        //     'evaluation_tool' => $complianceTools,
+        //     'role' => $disciplines,
+        //     'filters' => $request->only(['search']) + ['show' => $show, 'acadYear' => $acadYear ],
+        // ]);
+
+
+        $user = Auth::user();
         $show = $request->query('show') ? $request->query('show') : 25;
+        $acadYear = $request->query('academicYear') ? $request->query('academicYear') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
+        $disciplines = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('discipline')->get();
+        $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+        $institution = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->value('institutionId');
 
         $complianceTools = EvaluationFormModel::query()
-        ->when($request->query('search'), function ($query) use ($request, $disciplineIds, $institution) {
-            $query->where(function ($q) use ($request, $disciplineIds, $institution){
+        ->when($request->query('search'), function ($query) use ($request, $disciplineIds) {
+            $query->where(function ($q) use ($request, $disciplineIds){
                 $q->whereHas('institution_program.program', function ($searchQuery) use ($request, $disciplineIds) {
                     $searchQuery->where('program', 'like', '%' . $request->query('search') . '%');
-                });
-                $q->whereHas('institution_program.institution', function ($searchQuery) use ($request, $institution) {
-                    $searchQuery->where('id', $institution);
+                })
+                ->orWhereHas('institution_program.institution', function ($searchQuery) use ($request, $disciplineIds) {
+                    $searchQuery->where('name', 'like', '%' . $request->query('search') . '%');
                 });
             })
-            ->whereIn('disciplineId', $disciplineIds)
             ->where(function ($query) {
                 $query->whereNot('status', 'Deployed');
             });
         })
+        ->when($user->role == 'Dean', function ($query) use ($disciplineIds) {
+            $query->whereIn('disciplineId', $disciplineIds);
+        })
+        ->where('effectivity', $acadYear)
+        ->whereHas('institution_program.institution', function($query) use ($institution) {
+            $query->where('id', $institution);
+        })
         ->where(function ($query) {
             $query->whereNot('status', 'Deployed');
         })
-        ->whereHas('institution_program.institution', function ($searchQuery) use ($institution) {
-            $searchQuery->where('id', $institution);
-        })
-        ->whereIn('disciplineId', $disciplineIds)
-        ->with('institution_program.institution', 'institution_program.program', 'item', 'complied', 'not_complied', 'not_applicable')
+        ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable')
         ->paginate($show)
         ->through(fn($item) => [
             'id' => $item->id,
             'submissionDate' => $item->submissionDate,
             'status' => $item->status,
+            'institution' => $item->institution_program->institution->name,
             'program' => $item->institution_program->program->program,
             'progress' => intval(round((($item->complied->count() + $item->not_complied->count() + $item->not_applicable->count())/$item->item->count())*100)),
         ])
         ->withQueryString();
 
-        return Inertia::render('Progmes/Evaluation/HEI-Evaluation-Dean-Select', [
-            'evaluation_tool' => $complianceTools,
-            'role' => $disciplines,
-            'filters' => $request->only(['search']) + ['show' => $show ],
+        return Inertia::render('Progmes/Evaluation/HEI-Evaluation-Select', [
+            'complianceTools' => $complianceTools,
+            'filters' => $request->only(['search']) + ['show' => $show, 'academicYear' => $acadYear ],
         ]);
     }
     

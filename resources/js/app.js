@@ -27,6 +27,7 @@ import PageTitle from './Pages/Progmes/Shared/PageTitle.vue';
 import TextEditor from './Pages/Progmes/Shared/TextEditor.vue';
 import DoughnutChart from './Pages/Progmes/Shared/Charts/DoughnutChart.vue';
 import ComplianceProgress from './Pages/Progmes/Shared/Charts/ComplianceProgress.vue';
+import ComplianceStatus from './Pages/Progmes/Shared/Charts/ComplianceStatus.vue';
 import ProgressBar from './Pages/Progmes/Shared/Charts/ProgressBar.vue';
 
 
@@ -60,6 +61,7 @@ createInertiaApp({
             .component('TextEditor', TextEditor)
             .component('DoughnutChart', DoughnutChart)
             .component('ComplianceProgress', ComplianceProgress)
+            .component('ComplianceStatus', ComplianceStatus)
             .component('ProgressBar', ProgressBar)
             .mount(el);
     },

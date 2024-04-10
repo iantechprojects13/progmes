@@ -11,10 +11,6 @@
                     class="select-none text-sm rounded border-2 border-gray-500">
                     <option v-for="(item, index) in academicYearDropdown" :key="index" :value="item">{{ item }}</option>
                 </select>
-                <div class="absolute right-8" v-show="$page.props.auth.user.role == 'Super Admin'">
-                    <button class="h-10 px-3 rounded bg-gray-500 hover:bg-gray-600 text-white">Set as default
-                        AY</button>
-                </div>
             </div>
         </template>
         <template v-slot:search>

@@ -4,7 +4,7 @@
     <page-title title="Program Self-Evaluation" />
     <div class="md:mx-8 mx-3 mt-8 flex flex-col lg:flex-row justify-between rounded relative">
         <div>
-            <Link href="/hei/evaluation">
+            <Link href="/evaluation">
             <button class="w-24 h-10 border border-gray-500 rounded bg-white">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Back
