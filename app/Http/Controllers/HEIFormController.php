@@ -45,9 +45,14 @@ class HEIFormController extends Controller
 
     public function view($tool) {
         $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.program', 'institution_program.institution', 'complied', 'not_complied', 'not_applicable', 'item', 'item.criteria', 'item.evidence')->first();
+        $showEvaluation = false;
         
         if (!$evaluationTool) {
             return redirect('/hei/evaluation')->with('failed', 'Evaluation tool not found.');
+        }
+
+        if ($evaluationTool->status != 'In progress') {
+            $showEvaluation = true;
         }
 
         $compliedCount = $evaluationTool->complied->count();
@@ -60,6 +65,7 @@ class HEIFormController extends Controller
         return Inertia::render('Progmes/Evaluation/HEI-Evaluation-View', [
             'evaluation_tool' => $evaluationTool,
             'progress' => $progress,
+            'showEvaluation' => $showEvaluation,
         ]);
     }
 
@@ -146,13 +152,24 @@ class HEIFormController extends Controller
             'file.required' => 'Please select a file.',
         ]);
 
+        $formModel = EvaluationFormModel::where('id', $request->id)->with('institution_program.institution', 'institution_program.program')->first();
+        $institution = $formModel->institution_program->institution->name;
+        $program = $formModel->institution_program->program->program;
+        $acadYear = $formModel->effectivity;
+
         if($request->hasFile('file')) {
             $evidenceFile = $request->file('file');
             $itemId = $request->itemId;
             $toolId = $request->id;
-            $filename = $evidenceFile->getClientOriginalName();
+            $filename = $acadYear.'/'.$institution.'/'.$program.'/'.$itemId.'/'.$evidenceFile->getClientOriginalName();
             $user = Auth::user();
             $effectivity = EvaluationFormModel::where('id', $toolId)->value('effectivity');
+
+            $exist = EvidenceModel::where('text', $filename)->first();
+
+            if ($exist) {
+                return redirect()->back()->with('failed', 'File already exist.');
+            }
 
 
             $storage = Firebase::storage();
@@ -195,10 +212,22 @@ class HEIFormController extends Controller
         return redirect()->back()->with('uploaded', 'Link successfully posted.');
     }
 
+
     public function deleteLink(Request $request) {
 
         $evidenceModel = EvidenceModel::where('id', $request->item)->first();
-        
+
+        if ($evidenceModel->type == 'file') {
+
+            $storage = Firebase::storage();
+            $bucket = $storage->getBucket();
+            $file = $bucket->object($evidenceModel->text);
+
+            if ($file->exists()) {
+                $file->delete();
+            }
+        }
+
         $evidenceModel->delete();
 
         return redirect()->back()->with('deleted', 'File/Link deleted successfully.');

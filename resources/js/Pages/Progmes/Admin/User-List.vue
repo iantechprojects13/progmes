@@ -135,22 +135,29 @@
                             {{ user.role }}
                         </td>
                         <td class="p-3 whitespace-normal">
-                            <div v-for="(role, index) in user.user_role" :key="role.id">
+                            <div v-for="role in user.user_role" :key="role.id">
                                 {{ role.discipline?.discipline }}
                             </div>
                         </td>
                         <td class="p-3 whitespace-normal">
-                            <div v-for="(role, index) in user.user_role" :key="role.id">
+                            <div v-for="role in user.user_role" :key="role.id">
                                 {{ role.program?.program }}
                             </div>
                         </td>
                         <td class="p-3 whitespace-normal">
-                            <div v-for="(role, index) in user.user_role" :key="role.id">
+                            <div v-for="role in user.user_role" :key="role.id">
                                 {{ role.institution?.name }}
                             </div>
                         </td>
-                        <td class="p-3 text-right" v-show="canEdit">
-                            <button @click="
+                        <td class="p-3 text-right">
+                            <Link :href="'/admin/users/list/profile/' + user.id + '/view'">
+                                <button class="select-none h-10 w-10 text-center text-white bg-green-600 hover:bg-green-700 rounded mr-1 tooltipForActions"
+                                data-tooltip="View profile"
+                                >
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </Link>
+                            <button v-show="canEdit" @click="
                                     toggleModal(
                                         user,
                                         'deactivateUser',
@@ -180,6 +187,7 @@
     </content-container>
     <Notification :message="$page.props.flash.success" type="success" />
     <Notification :message="$page.props.flash.failed" type="failed" />
+    <Notification :message="$page.props.flash.error" type="failed" />
     <div v-if="modal">
         <Confirmation @close="closeModal" :title="title" :modaltype="modaltype" :selected="selectedUser" />
     </div>

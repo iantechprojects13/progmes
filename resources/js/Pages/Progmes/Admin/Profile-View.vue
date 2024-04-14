@@ -1,8 +1,19 @@
 <template>
 
-    <Head title="My Account" />
-    <page-title title="My Account" />
-    <content-container pageTitle="Account Details">
+    <Head title="View Profile" />
+    <AdminPanel />
+    <content-container>
+        <template v-slot:content-title>
+                <div class="p-3 flex flex-row items-center justify-between border-b border-gray-400">
+                    <div class="flex flex-row">
+                        <Link href="/admin/users/list/">
+                        <button><i class="fas fa-arrow-left ml-2 mr-3"></i></button>
+                        </Link>
+                        <div class="font-bold">Profile Details</div>
+                    </div>
+                    <div v-show="$page.props.auth.user.role == 'Super Admin'"><button @click="toggleChangeRoleModal" class="h-8 px-2 bg-gray-700 text-white hover:bg-gray-800 rounded">Change role</button></div>
+                </div>
+        </template>
         <template v-slot:main-content>
             <div class="m-10">
                 <table class="border border-gray-400">
@@ -62,6 +73,14 @@
             </div>
         </template>
     </content-container>
+    <modal :showModal="showModal" @close="toggleChangeRoleModal" title="Change User Role">
+        <div>Are you sure you want to change the role for this user? This action will deactivate their current role.</div>
+        <template v-slot:custom-button>
+            <button class="h-10 w-20 rounded bg-blue-500 text-white">
+                Confirm
+            </button>
+        </template>
+    </modal>
 </template>
 
 <script setup>
@@ -102,6 +121,12 @@
         }
         return institution;
     });
+
+const showModal = ref(false);
+
+function toggleChangeRoleModal() {
+    showModal.value = !showModal.value;
+}
 
 
 </script>

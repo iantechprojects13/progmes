@@ -41,5 +41,5 @@ class ProgramModel extends Model
     {
         return $this->hasOne(CMOModel::class, 'programId', 'id')->where('isActive', 1);
     }
-
+    
 }

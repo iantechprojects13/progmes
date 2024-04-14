@@ -36,7 +36,7 @@ class InstitutionProgramModel extends Model
 
     public function program()
     {
-        return $this->belongsTo(ProgramModel::class, 'programId', 'id')->select(['id', 'disciplineId', 'program']);
+        return $this->belongsTo(ProgramModel::class, 'programId', 'id')->select(['id', 'disciplineId', 'program', 'major']);
     }
 
     public function evaluationForm()

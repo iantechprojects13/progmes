@@ -16,9 +16,14 @@ class CHEDFormController extends Controller
     public function view($tool) {
         
         $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.program', 'institution_program.institution','complied', 'not_complied', 'not_applicable', 'item', 'item.criteria', 'item.evidence')->first();
+        $showEvaluation = false;
 
         if (!$evaluationTool) {
             return redirect('/ched/evaluation')->with('failed', 'Evaluation tool not found.');
+        }
+
+        if ($evaluationTool->status != 'In progress') {
+            $showEvaluation = true;
         }
 
         $compliedCount = $evaluationTool->complied->count();
@@ -30,6 +35,7 @@ class CHEDFormController extends Controller
         return Inertia::render('Progmes/Evaluation/CHED-Evaluation-View', [
             'evaluation_tool' => $evaluationTool,
             'progress' => $progress,
+            'showEvaluation' => $showEvaluation,
         ]);
     }
     

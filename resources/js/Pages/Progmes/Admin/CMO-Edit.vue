@@ -97,11 +97,7 @@
             </div>
         </template>
     </content-container>
-    <content-container :hasTopButton="true">
-        <template v-slot:top-button>
-            <button disabled class="grayscale bg-gray-500 h-10 px-3 rounded text-white">
-                <i class="fas fa-plus mr-2"></i>Add row</button>
-        </template>
+    <content-container>
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>

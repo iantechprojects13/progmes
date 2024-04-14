@@ -65,13 +65,13 @@
                     </tr>
                     <tr v-else v-for="(program, index) in program_list.data" :key="program.id"
                         class="hover:bg-slate-300" :class="{'bg-slate-200': index % 2 == 0}">
-                        <td class="p-3 pl-5">
+                        <td class="p-3 pl-5 whitespace-normal">
                             {{ program.program }}
                         </td>
-                        <td class="p-3">
+                        <td class="p-3 whitespace-normal">
                             {{ program.major }}
                         </td>
-                        <td class="p-3">
+                        <td class="p-3 whitespace-normal">
                             {{ program.discipline?.discipline }}
                         </td>
                         <td class="p-3 text-right">

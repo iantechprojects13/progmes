@@ -1,62 +1,59 @@
 <template>
 
-    <Head title="Evaluation Form" />
+    <Head title="Program Self-Evaluation Tool" />
     <page-title title="Program Self-Evaluation" />
-    <div class="md:mx-8 mx-3 mt-8 flex flex-col lg:flex-row justify-between rounded relative">
+    <div class="md:mx-8 mx-3 mt-8 flex flex-row justify-between rounded relative">
         <div>
             <Link href="/evaluation">
-            <button class="w-24 h-10 border border-gray-500 rounded bg-white">
+            <button class="select-none w-24 h-10 border border-gray-500 rounded bg-white">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Back
             </button>
             </Link>
         </div>
-        <div class="flex mt-3 lg:mt-0 md:w-auto w-full">
-            <div class=" flex-col xl:mt-0 mt-2 lg:w-fit text-center mx-1 p-2 w-1/4 rounded border border-gray-500 bg-white">
-                <div class="w-full font-bold text-blue-500">{{ progress[0] }}</div>
-                <div class="font-bold text-gray-700 whitespace-nowrap text-sm">Complied</div>
-            </div>
-            <div class=" flex-col xl:mt-0 mt-2 lg:w-fit text-center mx-1 p-2 w-1/4 rounded border border-gray-500 bg-white">
-                <div class="w-full font-bold text-blue-500">{{ progress[1] }}</div>
-                <div class="font-bold text-gray-700 whitespace-nowrap text-sm">Not Complied</div>
-            </div>
-            <div class=" flex-col xl:mt-0 mt-2 lg:w-fit text-center mx-1 p-2 w-1/4 rounded border border-gray-500 bg-white">
-                <div class="w-full font-bold text-blue-500">{{ progress[2] }}</div>
-                <div class="font-bold text-gray-700 whitespace-nowrap text-sm">Not Applicable</div>
-            </div>
-            <div class=" flex-col xl:mt-0 mt-2 lg:w-fit text-center mx-1 p-2 w-1/4 rounded border border-gray-500 bg-white">
-                <div class="w-full font-bold text-blue-500">{{ progress[3] }}%</div>
-                <div class="font-bold text-gray-700 whitespace-nowrap text-sm">Progress</div>
-            </div>
+        <div>
+            <button @click="readyForVisitModal = true"
+                class="select-none px-3 w-fit text-white bg-gray-600 hover:bg-gray-700 h-10 rounded mr-1">
+                Ready for visit
+            </button>
         </div>
     </div>
 
-    <div class="flex flex-col w-auto rounded border border-gray-400 bg-white mx-3 md:mx-8 mt-5 p-3">
-        <div class="w-auto flex flex-col md:flex-row">
-            <div class="mr-2 font-bold tracking-tight">
-                HEI Name:
+    <div class="flex flex-col xl:flex-row items-center justify-between w-auto rounded border border-gray-400 bg-white mx-3 md:mx-8 mt-5 p-3">
+        <div class="w-full text-left">
+            <div class="w-auto flex flex-row items-center">
+                <i class="fas fa-institution mr-3 text-blue-500"></i>
+                <div>{{ evaluation.institution_program.institution.name }}</div>
             </div>
-            <div class="tracking-tight">
-                {{ evaluation.institution_program.institution.name }}
-            </div>
-        </div>
-        <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
-            <div class="w-auto flex flex-col md:flex-row">
-                <div class="mr-2 font-bold tracking-tight">
-                    Program:
-                </div>
-                <div class="tracking-tight">
+            <div class="w-auto flex flex-row items-center">
+                <i class="fas fa-book mr-3 text-blue-500"></i>
+                <div>
                     {{ evaluation.institution_program.program.program }}
+                    <span></span>
                 </div>
             </div>
+            <div class="w-auto flex flex-row items-center">
+                <i class="fas fa-calendar-check mr-3 text-blue-500"></i>
+                <div>A.Y. {{ evaluation.effectivity }}</div>
+            </div>
         </div>
-        <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
-            <div class="w-auto flex flex-col md:flex-row">
-                <div class="mr-2 font-bold tracking-tight">
-                    Effectivity:
+        <div class="xl:w-auto w-full text-right mt-5 xl:mt-0">
+            <div class="flex flex-col md:flex-row lg:mt-0 md:w-auto w-full">
+                <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-500 bg-white">
+                    <div class="w-full font-bold ">{{ progress[0] }}</div>
+                    <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Complied</div>
                 </div>
-                <div class="tracking-tight">
-                    A.Y. {{ evaluation.effectivity }}
+                <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-500 bg-white">
+                    <div class="w-full font-bold">{{ progress[1] }}</div>
+                    <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Not Complied</div>
+                </div>
+                <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-500 bg-white">
+                    <div class="w-full font-bold">{{ progress[2] }}</div>
+                    <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Not Applicable</div>
+                </div>
+                <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-500 bg-white">
+                    <div class="w-full font-bold">{{ progress[3] }}%</div>
+                    <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Progress</div>
                 </div>
             </div>
         </div>
@@ -69,10 +66,7 @@
                     class="select-none cursor-pointer bg-blue-500 hover:bg-blue-600 mr-2 text-white px-2 w-fit h-10 rounded">Save
                     Changes
                 </button>
-                <button @click="readyForVisitModal = true"
-                    class="px-3 w-fit text-white bg-green-600 hover:bg-green-700 h-10 rounded mr-1">
-                    Ready for visit
-                </button>
+                
             </div>
             <div class="whitespace-normal">
                 <div v-if="hasUpdate" class="text-red-500">
@@ -178,14 +172,14 @@
                             <div class="w-full text-right text-sm visible" ref="actionButtons"
                                 :class="{ 'invisible': item.selfEvaluationStatus == 'Not applicable' }">
                                 <button @click=" fileModal = true; fileItem = item.id; $refs.inputEvidenceFile.click()"
-                                    class="rounded bg-white h-8 mr-1 px-2 text-gray-700 hover:text-black active:text-blue-500 border-2 border-gray-500 tooltipForActions"
-                                    :class="{ 'grayscale text-gray-400': hasUpdate }" data-tooltip="Upload file"
+                                    class="rounded bg-white h-8 mr-1 px-2 border-2 tooltipForActions"
+                                    :class="[{ 'grayscale text-blue-400 border-gray-400': hasUpdate }, {'hover:text-blue-500 border-gray-500' : !hasUpdate}]" data-tooltip="Upload file"
                                     :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate">
                                     <i class="fas fa-upload mr-2"></i>File
                                 </button>
                                 <button @click="linkModal = true; evidenceLink = null; linkItem = item.id"
-                                    class="rounded bg-white h-8 px-2 text-gray-700 hover:text-black active:text-blue-500 border-2 border-gray-500 tooltipForActions"
-                                    :class="{ 'grayscale text-gray-400': hasUpdate }" data-tooltip="Drop link"
+                                    class="rounded bg-white h-8 px-2 border-2 tooltipForActions"
+                                    :class="[{ 'grayscale text-blue-400 border-gray-400': hasUpdate }, {'hover:text-blue-500 border-gray-500' : !hasUpdate}]" data-tooltip="Drop link"
                                     :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate">
                                     <i class="fas fa-upload mr-2"></i>Link
                                 </button>
@@ -251,6 +245,7 @@
 
     <!-- Notifications -->
     <Notification :message="$page.props.flash.success" type="success" />
+    <Notification :message="$page.props.flash.failed" type="failed" />
     <Notification :message="$page.props.flash.updated" type="success" />
     <Notification :message="$page.props.flash.deleted" type="success" />
     <Notification :message="$page.props.flash.uploaded" type="success" />

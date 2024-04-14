@@ -2,16 +2,19 @@
 
     <Head :title="institution.name" />
     <AdminPanel />
-    <content-container pageTitle="Update HEI" hasBackButton="true">
-        <template v-slot:back-button>
-            <Link href="/admin/higher-education-institutions">
-            <button class="w-10 h-10 mr-2 rounded-full hover:bg-gray-300 tooltipForActions" data-tooltip="Back">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            </Link>
+    <content-container>
+        <template v-slot:content-title>
+                <div class="p-3 flex flex-row items-center justify-between border-b border-gray-400">
+                    <div class="flex flex-row">
+                        <Link href="/admin/higher-education-institutions/">
+                        <button><i class="fas fa-arrow-left ml-2 mr-3"></i></button>
+                        </Link>
+                        <div class="font-bold">Edit HEI</div>
+                    </div>
+                </div>
         </template>
         <template v-slot:main-content>
-            <div class="px-5 py-7 mx-auto lg:shadow lg:shadow-gray-500 lg:border lg:border-gray-500 rounded max-w-xl">
+            <div class="px-5 py-7 mx-auto lg:shadow lg:shadow-gray-500 lg:border lg:border-gray-500 rounded max-w-xl my-8">
                 <div class="flex flex-col justify-center">
                     <div>
                         <span class="text-red-500">*</span>

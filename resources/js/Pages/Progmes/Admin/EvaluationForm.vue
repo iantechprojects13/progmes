@@ -54,9 +54,6 @@
                     <th class="p-3">Major</th>
                     <th class="p-3">CMO</th>
                     <th class="p-3">Status</th>
-                    <th v-show="canEdit" class="p-3 text-right">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </th>
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="institutionProgramList.data.length == 0">

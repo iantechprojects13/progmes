@@ -2,36 +2,61 @@
 
     <Head title="Dashboard" />
     <page-title title="Dashboard" />
+    <div class="mx-3 md:mx-8 mt-5 border-b-2 border-gray-400" v-show="$page.props.auth.user.role != 'Education Supervisor'">
+        <Link href="/ched/dashboard/progress" class="mr-7">
+            <button class="h-10 border-b-2 border-blue-500 text-blue-500 font-bold">
+                Progress
+            </button>
+        </Link>
+        <Link href="/ched/dashboard/overview">
+            <button class="h-10 text-gray-700 hover:text-black">
+                Overview
+            </button>
+        </Link>
+    </div>
     <div class="mx-3 md:mx-8 mt-5 border border-gray-400 rounded p-3 bg-white flex flex-col lg:flex-row justify-between items-center">
-        <div>
+        <div class="mb-3 lg:mb-0">
             <div v-if="!hei & !program">
-                Overall
+                <div class="flex flex-row items-center">
+                    <i class="fas fa-book mr-3 text-blue-500"></i>
+                    <div>Overall</div>
+                </div>
             </div>
-            <div v-else>
-                {{ heiName }}{{ programName }}
-                <span v-if="major != null">
-                    - {{ major }}
-                </span>
+            <div v-show="heiName">
+                <div class="flex flex-row items-center">
+                    <i class="fas fa-institution mr-3 text-blue-500"></i>
+                    <div>{{ heiName }}</div>
+                </div>
+            </div>
+            <div v-show="programName">
+                <div class="flex flex-row items-center">
+                    <i class="fas fa-book mr-3 text-blue-500"></i>
+                    <div>{{ programName }}
+                        <span v-if="major != null">
+                            - {{ major }}
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="flex flex-col lg:flex-row w-full lg:w-auto">
             <div class="flex flex-col lg:flex-row items-center lg:whitespace-nowrap w-full lg:w-auto">
                 <div class="lg:mr-2 w-full lg:w-auto">
-                    <select @change="selectAll" v-model="query.filter" id="filter" class="w-full lg:w-32 select-none h-8 py-0 rounded text-sm lg:mr-2 lg:mb-0 mb-2">
+                    <select @change="selectAll" v-model="query.filter" id="filter" class="w-full lg:w-32 select-none h-10 py-0 rounded text-sm lg:mr-2 lg:mb-0 mb-2">
                         <option :value="null">All</option>
                         <option value="hei">HEI</option>
                         <option value="program">Program</option>
                     </select>
-                    <select v-show="query.filter == null" disabled="true" id="selectall" @change="selectHEI" class="w-full lg:w-40 select-none h-8 py-0 rounded text-sm text-blue-500">
-                        <option :value="null">HEI/Program</option>
+                    <select v-show="query.filter == null" disabled="true" id="selectall" @change="selectHEI" class="w-full lg:w-40 select-none h-10 py-0 rounded text-sm text-blue-500">
+                        <option :value="null">N/A</option>
                     </select>
-                    <select v-show="query.filter == 'hei'" v-model="query.hei" id="selectHEI" @change="selectHEI" class="w-full lg:w-40 select-none h-8 py-0 rounded text-sm text-blue-500">
+                    <select v-show="query.filter == 'hei'" v-model="query.hei" id="selectHEI" @change="selectHEI" class="w-full lg:w-40 select-none h-10 py-0 rounded text-sm text-blue-500">
                         <option :value="null">Select HEI</option>
                         <option v-for="hei in hei_list" :key="hei.id" :value="hei.id">
                             {{ hei.name }}
                         </option>
                     </select>
-                    <select v-show="query.filter == 'program'" v-model="query.program" @change="selectProgram" id="selectProgram" class="w-full lg:w-40 select-none h-8 py-0 rounded text-sm text-blue-500">
+                    <select v-show="query.filter == 'program'" v-model="query.program" @change="selectProgram" id="selectProgram" class="w-full lg:w-40 select-none h-10 py-0 rounded text-sm text-blue-500">
                         <option :value="null">Select program</option>
                         <option v-for="program in program_list" :key="program.id" :value="program.id">
                             <span>{{ program.program }} </span> <span v-if="program.major != null"> - {{ program.major }}</span>
@@ -40,19 +65,19 @@
                 </div>
             </div>
             <div class="flex flex-row mt-5 lg:mt-0">
-                <select @change="submit" id="acadYearDropDown" class="select-none w-full lg:w-40 h-8 px-2 py-0 rounded text-sm mr-2" v-model="query.academicyear">
-                    <option value="2023-2024">A.Y. 2023-2024</option>
-                    <option value="2024-2025">A.Y. 2024-2025</option>
-                    <option value="2025-2026">A.Y. 2025-2026</option>
-                    <option value="2026-2027">A.Y. 2026-2027</option>
-                    <option value="2027-2028">A.Y. 2027-2028</option>
-                    <option value="2028-2029">A.Y. 2028-2029</option>
-                    <option value="2029-2030">A.Y. 2029-2030</option>
+                <select @change="submit" id="acadYearDropDown" class="select-none w-full lg:w-32 h-10 px-2 py-0 rounded text-sm mr-2" v-model="query.academicyear">
+                    <option value="2023-2024">A.Y. 2023-24</option>
+                    <option value="2024-2025">A.Y. 2024-25</option>
+                    <option value="2025-2026">A.Y. 2025-26</option>
+                    <option value="2026-2027">A.Y. 2026-27</option>
+                    <option value="2027-2028">A.Y. 2027-28</option>
+                    <option value="2028-2029">A.Y. 2028-29</option>
+                    <option value="2029-2030">A.Y. 2029-30</option>
                 </select>
                 <div v-show="$page.props.auth.user.role == 'Super Admin'">
                     <dropdown-option position="right">
                         <template v-slot:button>
-                            <button class="h-8 select-none whitespace-nowrap border border-gray-500 rounded px-2">
+                            <button class="h-10 select-none whitespace-nowrap border border-gray-500 rounded px-3">
                                 <i class="fas fa-cog mr-1"></i><i class="fas fa-caret-down"></i>
                             </button>
                         </template>
@@ -92,16 +117,24 @@
         <div class="w-full lg:w-1/2 border border-gray-400 bg-white rounded mt-3 lg:mt-0">
             <div class="p-3 border-b border-gray-400"><b>Compliance Status</b></div>
             <div class="flex items-center text-center w-full h-36">
-                <compliance-status :dataItem="[readyforvisit, inprogress, pending, archived]" :color="['#04f', '#07f', '#09f', '#0cf']"
+                <!-- <compliance-status :dataItem="[readyforvisit, inprogress, pending, archived]" :color="['#04f', '#07f', '#09f', '#0cf']"
                 :labels="['Ready for Visit', 'In progress', 'Pending', 'Complied/Archived']"
                 >
 
+                </compliance-status> -->
+                <compliance-status v-if="readyforvisit != 0 || inprogress != 0 || pending != 0 || archived != 0" :dataItem="[readyforvisit, inprogress, pending, archived]" :color="['#03d', '#07f', '#09f', '#0cf']"
+                :labels="['Ready for visit', 'In progress', 'Pending', 'Complied/Archived']"
+                >
+
                 </compliance-status>
+                <div v-else class="w-full text-gray-500">
+                    No data to display
+                </div>
             </div>
         </div>
     </div>
     <div class="mx-3 md:mx-8 mt-5 flex flex-col lg:flex-row mb-5">
-        <div class="w-full lg:w-2/3 mr-5 border border-gray-400 rounded bg-white">
+        <div class="w-full border border-gray-400 rounded bg-white">
             <div class="p-3 border-b border-gray-400"><b>Compliance Progress</b></div>
             <div class="px-3 max-h-screen overflow-y-auto">
                 <table class="w-full text-left overflow-x-auto">
@@ -157,9 +190,6 @@
                 </table>
             </div>
         </div>
-        <div class="h-fit w-full lg:w-1/3 border border-gray-400 rounded p-3 bg-white lg:mt-0 mt-3"> 
-            <div>Updates</div>
-        </div>
     </div>
     <Notification :message="$page.props.flash.success" type="success"/>
     <Notification :message="$page.props.flash.failed" type="failed"/>
@@ -195,7 +225,7 @@ const query = useForm({
 });
 
 function submit() {
-    query.get("/ched/dashboard", {
+    query.get("/ched/dashboard/progress", {
         preserveState: false,
         preserveScroll: true,
     });
@@ -205,7 +235,7 @@ function selectAll() {
     if (query.filter == null) {
         query.hei = null;
         query.program = null;
-        query.get("/ched/dashboard", {
+        query.get("/ched/dashboard/progress", {
             preserveState: false,
             preserveScroll: true,
         });
@@ -214,7 +244,7 @@ function selectAll() {
 
 function selectHEI() {
     query.program = null;
-    query.get("/ched/dashboard", {
+    query.get("/ched/dashboard/progress", {
         preserveState: false,
         preserveScroll: true,
     });
@@ -222,10 +252,14 @@ function selectHEI() {
 
 function selectProgram() {
     query.hei = null;
-    query.get("/ched/dashboard", {
+    query.get("/ched/dashboard/progress", {
         preserveState: false,
         preserveScroll: true,
     });
+}
+
+function viewTool(id) {
+    router.get('/ched/evaluation/' + id + '/view');
 }
 
 function setAcadYear() {

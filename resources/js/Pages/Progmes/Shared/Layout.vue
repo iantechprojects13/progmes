@@ -14,33 +14,31 @@
                     class="flex-col h-screen w-64 bg-neutral-900 md:w-64 pt-1 pb-3 px-4 text-gray-200 md:block top-0 left-0 fixed">
                     <div class="flex flex-col justify-between h-full md:sticky md:top-0">
                         <div class="flex-shrink-0">
-                            <!-- <div class="md:hidden w-full text-right pt-2">
-                                <button @click="toggleSideBar" class="border px-2.5 py-0.5 hover:bg-stone-800">
-                                    <i class="fas fa-angle-left"></i>
-                                </button>
-                            </div> -->
-                            <div class="md:hidden mt-5"></div>
-                            <!-- App Name -->
-                            <div class="p-2 my-3 flex flex-row items-center select-none">
-                                <img src="/assets/ched-logo.png" width="50" class="mr-3" />
+                            <div class="p-2 my-5 flex flex-row items-center select-none">
+                                <img src="/assets/ched-logo.png" width="60" class="mr-3" />
                                 <div class="text-2xl">ProgMES</div>
                             </div>
-
-                            <!-- Searchbox -->
-                            <div class="bg-gray-700 my-7 h-10 rounded-md relative">
-                                <div class="h-full">
-                                    <span
-                                        class="w-1/6 h-full text-gray-400 p-1 absolute left-1 bg-inherit rounded flex justify-center items-center">
-                                        <i class="fas fa-search ye"></i>
-                                    </span>
-                                    <input type="text"
-                                        class="inline-block w-full h-full bg-inherit border-none rounded-md placeholder-gray-400 text-sm indent-10"
-                                        name="search" placeholder="Search" />
+                            <div>
+                                <div>
+                                    <hr />
+                                    <div class="w-full h-12 rounded p-2 mt-3 relative flex items-center justify-start cursor-pointer">
+                                        <div class="inline-block mr-3">
+                                            <img :src="$page.props.auth.user.avatar" width="40" class="rounded-full" />
+                                        </div>
+                                        <div class="inline-block overflow-hidden" :title="$page.props.auth.user.name">
+                                            <div class="text-sm whitespace-nowrap overflow-hidden overflow-ellipsis">
+                                                {{ $page.props.auth.user.name }}
+                                            </div>
+                                            <p class="text-xs whitespace-nowrap overflow-hidden overflow-ellipsis">
+                                                {{ $page.props.auth.user.role }}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- Navigation Buttons -->
-                            <div class="my-4" @click="mobileSideBar">
+                            <div class="my-4 pt-5 border-t" @click="mobileSideBar">
                                 <Link :href="route('dashboard')"
                                     class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700"
                                     :class="{
@@ -70,39 +68,21 @@
                                 <i class="fa fa-edit mr-4 text-xl"></i>
                                 Evaluation
                                 </Link>
-                            </div>
-                        </div>
 
-                        <!-- Profile -->
-                        <div class="md:block flex-shrink-0 hidden relative" @click="isOpen = true">
-                            <div>
-                                <hr />
-                                <div ref="profileContainer"
-                                    class="w-full h-12 rounded p-2 mt-3 relative flex items-center justify-start hover:bg-stone-700 cursor-pointer">
-                                    <div class="inline-block mr-2">
-                                        <img :src="$page.props.auth.user.avatar" width="40" class="rounded-full" />
-                                    </div>
-                                    <div class="inline-block overflow-hidden" :title="$page.props.auth.user.name">
-                                        <div class="text-sm whitespace-nowrap overflow-hidden overflow-ellipsis">
-                                            {{ $page.props.auth.user.name }}
-                                        </div>
-                                        <p class="text-xs whitespace-nowrap overflow-hidden overflow-ellipsis">
-                                            {{ $page.props.auth.user.role }}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div v-if="isOpen"
-                                class="md:block h-auto w-full hidden absolute bottom-14 bg-stone-700 rounded py-3">
-                                <Link :href="'/myaccount/' + $page.props.auth.user.id">
-                                <button class="block py-2 indent-3 hover:bg-stone-600 w-full text-left">
-                                    <i class="fas fa-user mr-3"></i>My Account
-                                </button>
+                                <Link :href="'/myaccount/' + $page.props.auth.user.id"
+                                    class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700"
+                                    :class="{
+                                        'text-blue-400 bg-slate-800':
+                                            highlight('myaccount'),
+                                    }">
+                                <i class="fa fa-user mr-4 text-xl"></i>
+                                My Account
                                 </Link>
-                                <Link href="/logout" method="post" as="button" class="w-full">
-                                <button class="block py-2 indent-3 hover:bg-stone-600 w-full text-left">
-                                    <i class="fas fa-sign-out mr-3"></i>Log out
-                                </button>
+
+                                <Link href="/logout" method="post" as="button"
+                                    class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700">
+                                <i class="fa fa-sign-out mr-4 text-xl"></i>
+                                Log out
                                 </Link>
                             </div>
                         </div>
@@ -139,7 +119,7 @@
                 <div class="cursor-pointer" @click="toggleSideBar">
                     <i class="fas fa-bars text-xl"></i>
                 </div>
-                <div>
+                <!-- <div>
                     <dropdown-option position="right">
                         <template v-slot:button>
                             <img :src="$page.props.auth.user.avatar" width="35"
@@ -160,35 +140,12 @@
                             </div>
                         </template>
                     </dropdown-option>
-                </div>
+                </div> -->
             </div>
             <slot />
         </div>
     </div>
 </template>
-
-<script setup>
-    import { onMounted, onBeforeUnmount, ref } from 'vue';
-
-    const profileContainer = ref(null);
-    const isOpen = ref(false);
-
-
-    const closeOption = (element) => {
-        if (!profileContainer.value.contains(element.target)) {
-            isOpen.value = false;
-        }
-    }
-
-    onMounted(() => {
-        window.addEventListener('click', closeOption);
-    });
-
-    onBeforeUnmount(() => {
-        window.removeEventListener('click', closeOption);
-    });
-
-</script>
 
 <script>
     export default {
@@ -196,8 +153,8 @@
             return {
                 component: {
                     dashboard: [
-                        "Progmes/Dashboard/Dashboard-Admin-Progress",
-                        "Progmes/Dashboard/Dashboard-Admin-Overview",
+                        "Progmes/Dashboard/Dashboard-CHED-Progress",
+                        "Progmes/Dashboard/Dashboard-CHED-Overview",
                         "Progmes/Dashboard/Dashboard-HEI",
                         "Progmes/Dashboard/Dashboard-CHED",
                         "Progmes/Dashboard/CHED-ES-Dashboard",
@@ -221,6 +178,7 @@
                         "Progmes/Admin/Discipline",
                         "Progmes/Admin/Discipline-Create",
                         "Progmes/Admin/Discipline-Edit",
+                        "Progmes/Admin/Profile-View",
                     ],
                     evaluation: [
                         "Progmes/Evaluation/Evaluation-CHED",
@@ -233,6 +191,9 @@
                         "Progmes/Evaluation/CHED-Evaluation-Edit",
                         "Progmes/Evaluation/CHED-Evaluation-View",
                         "Progmes/Evaluation/CHED-Evaluation-Deficiency-Report",
+                    ],
+                    myaccount: [
+                        "Progmes/Auth/Account",
                     ],
                 },
                 closeSideBar: false,
@@ -250,6 +211,8 @@
                     return this.component.adminpanel.includes(this.$page.component);
                 } else if (btn == "evaluation") {
                     return this.component.evaluation.includes(this.$page.component);
+                } else if (btn == "myaccount") {
+                    return this.component.myaccount.includes(this.$page.component);
                 }
             },
 

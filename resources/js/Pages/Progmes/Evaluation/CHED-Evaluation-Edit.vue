@@ -2,48 +2,51 @@
 
     <Head title="Evaluation Form" />
     <page-title title="Program Evaluation" />
-    <div class="mt-8 md:mx-8 mx-3 flex flex-col md:flex-row justify-between sticky top-0 z-80">
+
+    <div class="md:mx-8 mx-3 mt-8 flex flex-row justify-between rounded relative">
         <div>
-            <Link href="/ched/evaluation">
-            <button class="h-10 w-20 hover:bg-gray-300 bg-white border border-gray-500 rounded"><i
-                    class="fas fa-arrow-left mr-2"></i>Back
+            <Link href="/evaluation">
+            <button class="select-none w-24 h-10 border border-gray-500 rounded bg-white">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back
             </button>
             </Link>
         </div>
-        <Link :href="'/ched/evaluation/' + evaluation.id + '/deficiency-report'">
-        <button class="select-none px-2 rounded bg-white border border-gray-500 hover:bg-gray-700 hover:text-white h-10">Deficiency Report</button>
-        </Link>
+        <div>
+            <Link :href="'/ched/evaluation/' + evaluation.id + '/deficiency-report'">
+                <button class="select-none px-2 rounded bg-white border border-gray-500 hover:bg-gray-700 hover:text-white h-10">Deficiency Report</button>
+            </Link>
+        </div>
     </div>
     
-    <div class="flex flex-col w-auto rounded border border-gray-400 bg-white mx-3 md:mx-8 mt-5 p-3">
-        <div class="w-auto flex flex-col md:flex-row">
-            <div class="mr-2 font-bold tracking-tight">
-                HEI Name:
+    <div class="flex flex-col xl:flex-row items-center justify-between w-auto rounded border border-gray-400 bg-white mx-3 md:mx-8 mt-5 p-3">
+        <div class="w-full text-left">
+            <div class="w-auto flex flex-row items-center">
+                <i class="fas fa-institution mr-3 text-blue-500"></i>
+                <div>{{ evaluation.institution_program.institution.name }}</div>
             </div>
-            <div class="tracking-tight">
-                {{ evaluation.institution_program.institution.name }}
-            </div>
-        </div>
-        <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
-            <div class="w-auto flex flex-col md:flex-row">
-                <div class="mr-2 font-bold tracking-tight">
-                    Program:
-                </div>
-                <div class="tracking-tight">
+            <div class="w-auto flex flex-row items-center">
+                <i class="fas fa-book mr-3 text-blue-500"></i>
+                <div>
                     {{ evaluation.institution_program.program.program }}
+                    <span></span>
                 </div>
             </div>
-        </div>
-        <div class="w-auto flex flex-col md:flex-row mt-2 md:mt-1">
-            <div class="w-auto flex flex-col md:flex-row">
-                <div class="mr-2 font-bold tracking-tight">
-                    Effectivity:
-                </div>
-                <div class="tracking-tight">
-                    A.Y. {{ evaluation.effectivity }}
-                </div>
+            <div class="w-auto flex flex-row items-center">
+                <i class="fas fa-calendar-check mr-3 text-blue-500"></i>
+                <div>A.Y. {{ evaluation.effectivity }}</div>
             </div>
         </div>
+        <!-- <div class="xl:w-auto w-full text-right mt-5 xl:mt-0">
+            <div class="flex flex-col md:flex-row lg:mt-0 md:w-auto w-full">
+                <div>Evaluation Progress</div>
+                <div>
+                    <compliance-progress>
+                        
+                    </compliance-progress>
+                </div>
+            </div>
+        </div> -->
     </div>
 
     <content-container :hasTopButton="true">
@@ -70,12 +73,12 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="p-3 align-bottom whitespace-normal">Area /<br>Minimum Requirement</th>
-                    <th class="p-3 align-bottom whitespace-normal">Self-Evaluation Status /<br>Actual
+                    <th class="p-3 align-bottom whitespace-normal">Area/<br>Minimum Requirement</th>
+                    <th class="p-3 align-bottom whitespace-normal">Self-Evaluation Status/<br>Actual
                         Situation
                     </th>
                     <th class="p-3 align-bottom">Evidence</th>
-                    <th class="p-3 align-bottom">Findings</th>
+                    <th class="p-3 align-bottom whitespace-normal">Findings</th>
                     <th class="p-3 align-bottom whitespace-normal">Comments /<br>Recommendations</th>
                     <th class="p-3 align-bottom whitespace-normal">Evaluation Status</th>
                 </template>
@@ -83,7 +86,7 @@
                 <template v-slot:table-body>
                     <tr v-for="(item, index) in items" :key="item.id" class="align-top text-base"
                         :class="{ 'bg-slate-200': index % 2 == 0 }">
-                        <td class="p-3 max-w-8 whitespace-normal text-justify">
+                        <td class="p-3 min-w-12 whitespace-normal text-justify">
                             <div class="flex flex-col">
                                 <div class="font-bold">
                                     {{ item.area }}
@@ -93,7 +96,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="p-3 max-w-8 align-top whitespace-normal text-justify">
+                        <td class="p-3 min-w-12 align-top whitespace-normal text-justify">
                             <div class="bg-gray-600 text-white w-fit rounded px-2 mb-2"
                                 :class="[{ 'bg-green-600': item.selfEvaluationStatus == 'Complied' }]">
                                 {{ item.selfEvaluationStatus }}
@@ -102,7 +105,7 @@
                                 {{ item.actualSituation }}
                             </div>
                         </td>
-                        <td class="h-auto p-3 flex flex-col justify-center">
+                        <td class="h-auto min-w-8 p-3 flex flex-col justify-center">
                             <div class="flex flex-col"
                                 :class="{ 'hidden': item.selfEvaluationStatus == 'Not applicable' }"
                                 ref="evidenceFiles">
@@ -119,10 +122,10 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="h-32 min-w-sm p-3 relative group">
+                        <td class="h-32 min-w-16 p-3 relative group">
                             <textarea ref="findingsInput" v-model="item.findings" :name="'findings' + index"
                                 :id="'findings' + index"
-                                class="w-full h-32 rounded border-gray-500 resize-none group custom-scrollbar"
+                                class="w-full min-w-md h-32 rounded border-gray-500 resize-none group custom-scrollbar"
                                 placeholder="Input findings here" @input="handleFindingsInput(index, item.id)">
                                             </textarea>
                             <button @click="openFindingsEditor(index)"
@@ -140,7 +143,7 @@
                                                 </textarea>
                             </text-editor>
                         </td>
-                        <td class="h-32 max-w-sm p-3 relative group">
+                        <td class="h-32 min-w-16 p-3 relative group">
                             <textarea ref="recommendationsInput" v-model="item.recommendations"
                                 :name="'recommendations' + index" :id="'recommendations' + index"
                                 class="w-full h-32 rounded border-gray-500 resize-none group custom-scrollbar"
@@ -162,7 +165,7 @@
                                                 </textarea>
                             </text-editor>
                         </td>
-                        <td class="h-32 p-3 max-w-xs">
+                        <td class="h-32 p-3 min-w-8">
                             <div class="w-full h-full">
                                 <select ref="evaluationStatus" v-model="item.evaluationStatus"
                                     :id="'evaluationStatus' + index" :name="'evaluationStatus' + index"

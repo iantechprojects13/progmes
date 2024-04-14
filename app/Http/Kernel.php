@@ -83,6 +83,8 @@ class Kernel extends HttpKernel
         'cmo.draft' => \App\Http\Middleware\ProgmesMiddleware\CMODraft::class,
         'superadmin' => \App\Http\Middleware\ProgmesMiddleware\SuperAdmin::class,
         'admin' => \App\Http\Middleware\ProgmesMiddleware\Admin::class,
+        'ched.admin' => \App\Http\Middleware\ProgmesMiddleware\CHEDAdmin::class,
+        'ched.es' => \App\Http\Middleware\ProgmesMiddleware\CHEDEducationSupervisor::class,
     ];
 
 }

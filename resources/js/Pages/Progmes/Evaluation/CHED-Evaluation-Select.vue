@@ -65,22 +65,22 @@
                             <div v-if="
                                     item.status ==
                                     'Locked'
-                                " class="bg-red-500 text-white w-fit px-2 py-0.5 text-xs">
+                                " class="bg-red-500 text-white w-fit px-1 py-0.5 rounded text-xs">
                                 Locked
                             </div>
                             <div v-if="
                                     item.status ==
                                     'In progress'
-                                " class="bg-blue-500 text-white w-fit px-2 py-0.5 text-xs">
+                                " class="bg-blue-500 text-white w-fit px-1 py-0.5 rounded text-xs">
                                 In Progress
                             </div>
                             <div v-if="item.status == 'Submitted'"
-                                class="bg-emerald-500 text-white w-fit px-2 py-0.5 text-xs">
+                                class="bg-emerald-500 text-white w-fit px-1 py-0.5 rounded text-xs">
                                 Ready for visit
                             </div>
                         </td>
                         <td class="p-3">
-                            <div class="bg-gray-700 text-white font-bold text-sm px-2 py-0.5 w-fit">
+                            <div class="font-bold text-sm px-1 py-0.5 rounded w-fit">
                                 {{ item.progress }}%
                             </div>
                         </td>

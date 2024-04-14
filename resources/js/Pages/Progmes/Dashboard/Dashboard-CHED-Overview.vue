@@ -2,12 +2,12 @@
     <Head title="Dashboard"/>
     <page-title title="Dashboard"/>
     <div class="mx-3 md:mx-8 mt-5 border-b-2 border-gray-400">
-        <Link href="/admin/dashboard/progress" class="mr-7">
+        <Link href="/ched/dashboard/progress" class="mr-7">
             <button class="h-10 text-gray-700 hover:text-black  ">
                 Progress
             </button>
         </Link>
-        <Link href="/admin/dashboard/overview">
+        <Link href="/ched/dashboard/overview">
             <button class="h-10 border-b-2 border-blue-500 text-blue-500 font-bold">
                 Overview
             </button>

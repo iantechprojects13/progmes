@@ -16,6 +16,7 @@
         <slot name="navigation"></slot>
     </div>
     <div class="h-auto mx-3 md:mx-8 mt-8 pb-5 mb-5 bg-white rounded relative border border-gray-400">
+        <slot name="content-title"></slot>
         <div class="flex flex-col-reverse md:flex-row md:items-center p-3 py-4 border-b border-gray-300"
             v-show="hasSearch || hasTopButton || hasFilters">
             <div v-show="hasSearch || hasFilters"

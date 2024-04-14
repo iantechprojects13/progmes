@@ -112,6 +112,7 @@ class ProgramController extends Controller
         }
 
         $programModel->institutionProgram()->delete();
+        $programModel->cmo()->delete();
         $programModel->delete();
 
         return redirect()->back()->with('success', 'Program successfully deleted.');

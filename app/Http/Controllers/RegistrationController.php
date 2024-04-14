@@ -31,7 +31,7 @@ class RegistrationController extends Controller
             'discipline_list' => DisciplineModel::select('id', 'discipline')->orderBy('discipline', 'asc')->get(),
         ]);
     }
-
+    
     
     public function accountHEI (Request $request) {
         
@@ -285,7 +285,6 @@ class RegistrationController extends Controller
     public function viewMyAccount($id) {
 
         $user = Auth::user();
-        $canChangeRole = true;
         $roles = [];
         $hasDiscipline = false;
         $hasProgram = false;
@@ -295,14 +294,17 @@ class RegistrationController extends Controller
             return redirect('/unauthorized');
         }
 
-        if ($user->role == 'Super Admin') {
-            $canChangeRole = false;
-        }
-
         if ($user->role == 'Education Supervisor') {
             $roles = RoleModel::where(['userId'=> $user->id, 'isActive' => 1])->with('discipline')->get();
             if($roles) {
                 $hasDiscipline = true;
+            }
+        }
+
+        if ($user->role == 'Vice-President for Academic Affairs') {
+            $roles = RoleModel::where(['userId' => $user->id, 'isActive' => 1])->with('institution')->get();
+            if($roles) {
+                $hasInstitution = true;
             }
         }
 
@@ -326,6 +328,65 @@ class RegistrationController extends Controller
 
         return Inertia::render('Progmes/Auth/Account', [
             'profile' => Auth::user(),
+            'roles' => $roles,
+            'hasDiscipline' => $hasDiscipline,
+            'hasProgram' => $hasProgram,
+            'hasInstitution' => $hasInstitution,
+        ]);
+    }
+
+
+    public function viewUserProfile(User $user) {
+
+        if (!$user) {
+            return redirect('/admin/users/list')->with('error', 'No user found.');
+        }
+
+        $userRole = Auth::user()->role;
+        $canChangeRole = false;
+        $roles = [];
+        $hasDiscipline = false;
+        $hasProgram = false;
+        $hasInstitution = false;
+
+        if ($userRole == 'Super Admin') {
+            $canChangeRole = true;
+        }
+
+        if ($user->role == 'Education Supervisor') {
+            $roles = RoleModel::where(['userId'=> $user->id, 'isActive' => 1])->with('discipline')->get();
+            if($roles) {
+                $hasDiscipline = true;
+            }
+        }
+        
+        if ($user->role == 'Vice-President for Academic Affairs') {
+            $roles = RoleModel::where(['userId' => $user->id, 'isActive' => 1])->with('institution')->get();
+            if($roles) {
+                $hasInstitution = true;
+            }
+        }
+
+        if ($user->role == 'Dean') {
+            $roles = RoleModel::where(['userId' => $user->id, 'isActive' => 1])->with('discipline', 'institution')->get();
+            if($roles) {
+                $hasDiscipline = true;
+                $hasInstitution = true;
+            }
+        }
+
+        if ($user->role == 'Program Head') {
+            $roles = RoleModel::where(['userId' => $user->id, 'isActive' => 1])->with('program', 'institution')->get();
+
+            if($roles) {
+                $hasProgram = true;
+                $hasInstitution = true;
+            }
+        }
+        
+
+        return Inertia::render('Progmes/Admin/Profile-View', [
+            'profile' => $user,
             'roles' => $roles,
             'canChangeRole' => $canChangeRole,
             'hasDiscipline' => $hasDiscipline,

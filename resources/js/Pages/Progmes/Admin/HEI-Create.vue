@@ -3,13 +3,16 @@
     <Head title="New HEI" />
     <AdminPanel />
 
-    <content-container pageTitle="Create HEI" hasBackButton="true">
-        <template v-slot:back-button>
-            <Link href="/admin/higher-education-institutions">
-            <button class="w-10 h-10 mr-2 rounded-full hover:bg-gray-300">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            </Link>
+    <content-container>
+        <template v-slot:content-title>
+            <div class="p-3 flex flex-row items-center justify-between border-b border-gray-400">
+                <div class="flex flex-row">
+                    <Link href="/admin/higher-education-institutions">
+                    <button><i class="fas fa-arrow-left ml-2 mr-3"></i></button>
+                    </Link>
+                    <div class="font-bold">Create HEI</div>
+                </div>
+            </div>
         </template>
         <template v-slot:main-content>
             <div

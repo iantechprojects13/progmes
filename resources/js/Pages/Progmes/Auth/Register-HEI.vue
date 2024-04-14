@@ -64,8 +64,9 @@
                             :class="{ 'text-gray-500': form.program == null }">
                             <option :value="null">Select program</option>
                             <option class="text-gray-800" v-for="program in program_list" :key="program.id"
-                                :value="program.program.id">{{
-                                program.program?.program }}<span v-if="program.major"> - {{ program.program?.major
+                                :value="program.program.id">
+                                {{ program.program?.program }}
+                                <span v-if="program.program?.major"> - {{ program.program?.major
                                     }}</span>
                             </option>
                         </select>
@@ -80,6 +81,9 @@
             </div>
         </div>
     </div>
+    <pre>
+        {{ program_list }}
+    </pre>
 </template>
 
 <script setup>

@@ -66,14 +66,14 @@ Route::get('/register/{user}/deactivate', [RegistrationController::class, 'deact
 Route::get('/register/{user}/delete', [RegistrationController::class, 'destroy'])->name('user.delete');
 
 //Profile
-Route::get('/myaccount/{id?}',[RegistrationController::class, 'viewMyAccount'])->middleware(['auth', 'user.verified'])->name('my.account');
-
+Route::get('/myaccount/{user?}',[RegistrationController::class, 'viewMyAccount'])->middleware(['auth', 'user.verified'])->name('my.account');
+Route::get('/admin/users/list/profile/{user?}/view',[RegistrationController::class, 'viewUserProfile'])->middleware(['auth', 'user.verified'])->name('profile.view');
 
 //dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth','registered', 'user.verified', 'active'])->name('dashboard');
-Route::get('/admin/dashboard/progress', [DashboardController::class, 'dashboardForAdminProgress'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.admin.progress');
-Route::get('/admin/dashboard/overview', [DashboardController::class, 'dashboardForAdminOverview'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.admin.overview');
-Route::get('/ched/dashboard', [DashboardController::class, 'dashboardForES'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.ched');
+Route::get('/ched/dashboard/progress', [DashboardController::class, 'dashboardForCHEDProgress'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.admin.progress');
+Route::get('/ched/dashboard/overview', [DashboardController::class, 'dashboardForCHEDOverview'])->middleware(['auth', 'registered', 'type.ched', 'user.verified', 'ched.admin'])->name('dashboard.admin.overview');
+Route::get('/ched/dashboard', [DashboardController::class, 'dashboardForES'])->middleware(['auth', 'registered', 'type.ched', 'user.verified', 'ched.es'])->name('dashboard.ched');
 Route::get('/hei/dashboard', [DashboardController::class, 'dashboardForHEI'])->middleware(['auth', 'type.hei', 'user.verified', 'active'])->name('dashboard.hei');
 Route::post('/set-academic-year', [DashboardController::class, 'setAcademicYear'])->middleware(['auth', 'superadmin'])->name('setacadyear');
 

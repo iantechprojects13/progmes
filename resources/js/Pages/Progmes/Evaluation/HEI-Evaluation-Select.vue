@@ -2,28 +2,31 @@
 
     <Head title="Program Self-Evaluation" />
     <page-title title="Program Evaluation" />
-    <content-container hasSearch="true" :hasTopButton="true" hasFilters="true" :data_list="complianceTools">
+    <div class="mx-3 md:mx-8 mt-8 border border-gray-400 bg-white rounded p-3 flex flex-col lg:flex-row items-center text-left justify-between">
+        <div class="text-left w-full"><i class="fas fa-institution mr-3 text-blue-500"></i>{{ institution }}</div>
+        <div class="mt-5 lg:mt-0 w-full lg:w-auto">
+            <select @change="submit" v-model="query.academicYear" id="academicYearSelect" class="w-full lg:w-40 h-10 rounded text-sm">
+                <option value="2023-2024">A.Y. 2023-24</option>
+                <option value="2024-2025">A.Y. 2024-25</option>
+                <option value="2025-2026">A.Y. 2025-26</option>
+                <option value="2026-2027">A.Y. 2026-27</option>
+                <option value="2027-2028">A.Y. 2027-28</option>
+                <option value="2028-2029">A.Y. 2028-29</option>
+                <option value="2029-2030">A.Y. 2029-30</option>
+            </select>
+        </div>
+    </div>
+    <content-container hasSearch="true" hasFilters="true" :data_list="complianceTools">
         <template v-slot:search>
             <div class="w-full flex justify-end relative">
                 <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
-                    placeholder="Search by HEI or program"
+                    placeholder="Search program"
                     class="w-full rounded-full bg-slate-100 h-10 border-none indent-3 text-base placeholder-gray-400 pr-11 mr-2" />
                 <button @click="submit"
                     class="hover:bg-gray-300 active:text-blue-500 h-10 w-10 rounded-full absolute right-3">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
-        </template>
-        <template v-slot:top-button>
-            <select @change="submit" v-model="query.academicYear" id="academicYearSelect" class="h-10 rounded text-sm">
-                <option value="2023-2024">A.Y. 2023-2024</option>
-                <option value="2024-2025">A.Y. 2024-2025</option>
-                <option value="2025-2026">A.Y. 2025-2026</option>
-                <option value="2026-2027">A.Y. 2026-2027</option>
-                <option value="2027-2028">A.Y. 2027-2028</option>
-                <option value="2028-2029">A.Y. 2028-2029</option>
-                <option value="2029-2030">A.Y. 2029-2030</option>
-            </select>
         </template>
         <template v-slot:options>
             <div class="mr-1">
@@ -39,7 +42,7 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="p-3 pl-5 border-b border-gray-400">Program/Institution</th>
+                    <th class="p-3 pl-5 border-b border-gray-400">Program</th>
                     <th class="p-3 border-b border-gray-400">Status</th>
                     <th class="p-3 border-b border-gray-400">Progress</th>
                     <th class="p-3 border-b border-gray-400 text-right">
@@ -49,38 +52,33 @@
 
                 <template v-slot:table-body>
                     <tr v-if="complianceTools.data.length == 0">
-                        <td colspan="3" class="p-3 py-10 text-center">No evaluation tool found</td>
+                        <td colspan="3" class="p-3 py-10 text-center">No compliance evaluation tool found</td>
                     </tr>
                     <tr v-else v-for="(item, index) in complianceTools.data" :key="item.id" class="hover:bg-slate-300"
                         :class="{'bg-slate-200': index % 2 ==0}">
                         <td class="p-3 pl-5">
-                            <div>
-                                {{ item.program }}
-                            </div>
-                            <div class="font-bold">
-                                {{ item.institution }}
-                            </div>
+                            {{ item.program }}
                         </td>
                         <td class="p-3">
                             <div v-if="
                                     item.status ==
                                     'Locked'
-                                " class="bg-red-500 text-white w-fit px-2 py-0.5 text-xs">
+                                " class="bg-red-500 text-white w-fit px-1 py-0.5 text-xs rounded">
                                 Locked
                             </div>
                             <div v-if="
                                     item.status ==
                                     'In progress'
-                                " class="bg-blue-500 text-white w-fit px-2 py-0.5 text-xs">
+                                " class="bg-blue-500 text-white w-fit px-1 py-0.5 text-xs rounded">
                                 In Progress
                             </div>
                             <div v-if="item.status == 'Submitted'"
-                                class="bg-emerald-500 text-white w-fit px-2 py-0.5 text-xs">
+                                class="bg-emerald-500 text-white w-fit px-1 py-0.5 text-xs rounded">
                                 Ready for visit
                             </div>
                         </td>
                         <td class="p-3">
-                            <div class="bg-gray-700 text-white font-bold text-sm px-2 py-0.5 w-fit">
+                            <div class="font-bold text-sm px-1 py-0.5 w-fit">
                                 {{ item.progress }}%
                             </div>
                         </td>
@@ -122,6 +120,7 @@
     const props = defineProps([
         'complianceTools',
         'filters',
+        'institution',
     ]);
 
     const query = useForm({

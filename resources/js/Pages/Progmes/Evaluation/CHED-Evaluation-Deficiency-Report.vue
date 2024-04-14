@@ -4,8 +4,9 @@
     <div class="mt-8 md:mx-8 mx-3 flex flex-col md:flex-row justify-between sticky top-0 z-80">
         <div>
             <Link :href="'/ched/evaluation/'+ tool.id +'/evaluate'">
-            <button class="h-10 w-20 hover:bg-gray-300 bg-white border border-gray-500 rounded"><i
-                    class="fas fa-arrow-left mr-2"></i>Back
+            <button class="select-none w-24 h-10 border border-gray-500 rounded bg-white">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back
             </button>
             </Link>
         </div>
