@@ -2,19 +2,18 @@
 
     <Head title="Evaluation Form" />
     <page-title title="Program Evaluation" />
-
     <div class="md:mx-8 mx-3 mt-8 flex flex-row justify-between rounded relative">
         <div>
             <Link href="/evaluation">
-            <button class="select-none w-24 h-10 border border-gray-500 rounded bg-white">
+            <button class="select-none w-24 h-10 border border-gray-500 rounded bg-white hover:bg-gray-700 hover:text-white">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Back
             </button>
             </Link>
         </div>
-        <div>
-            <Link :href="'/ched/evaluation/' + evaluation.id + '/deficiency-report'">
-                <button class="select-none px-2 rounded bg-white border border-gray-500 hover:bg-gray-700 hover:text-white h-10">Deficiency Report</button>
+        <div class="flex flex-row">
+            <Link :href="'/ched/evaluation/' + evaluation.id + '/report'">
+                <button class="select-none px-2 rounded text-white bg-gray-700 hover:bg-gray-800 hover:text-white h-10 text-sm">Deficiency Report</button>
             </Link>
         </div>
     </div>
@@ -29,7 +28,7 @@
                 <i class="fas fa-book mr-3 text-blue-500"></i>
                 <div>
                     {{ evaluation.institution_program.program.program }}
-                    <span></span>
+                    <span v-if="evaluation.institution_program.program.major"> - {{ evaluation.institution_program.program.major }}</span>
                 </div>
             </div>
             <div class="w-auto flex flex-row items-center">
@@ -37,16 +36,6 @@
                 <div>A.Y. {{ evaluation.effectivity }}</div>
             </div>
         </div>
-        <!-- <div class="xl:w-auto w-full text-right mt-5 xl:mt-0">
-            <div class="flex flex-col md:flex-row lg:mt-0 md:w-auto w-full">
-                <div>Evaluation Progress</div>
-                <div>
-                    <compliance-progress>
-                        
-                    </compliance-progress>
-                </div>
-            </div>
-        </div> -->
     </div>
 
     <content-container :hasTopButton="true">
@@ -79,7 +68,7 @@
                     </th>
                     <th class="p-3 align-bottom">Evidence</th>
                     <th class="p-3 align-bottom whitespace-normal">Findings</th>
-                    <th class="p-3 align-bottom whitespace-normal">Comments /<br>Recommendations</th>
+                    <th class="p-3 align-bottom whitespace-normal">Comments/<br>Recommendations</th>
                     <th class="p-3 align-bottom whitespace-normal">Evaluation Status</th>
                 </template>
 
@@ -182,11 +171,14 @@
             </content-table>
         </template>
     </content-container>
+
     <Notification :message="$page.props.flash.success" type="success" />
+    <Notification :message="$page.props.flash.failed" type="failed"/>
     <Notification :message="$page.props.flash.updated" type="success" />
     <Notification :message="$page.props.flash.deleted" type="success" />
     <Notification :message="$page.props.errors.link" type="failed" />
     <Notification v-show="saving" message="Saving..." type="processing" />
+    <Notification v-show="archiving" message="Archiving..." type="processing" />
 </template>
 
 <script setup>
@@ -205,14 +197,6 @@
         'notedBy',
         'auth',
     ]);
-
-    // const deficiencyReport = reactive({
-    //     id: ref(props.evaluation.id),
-    //     visitDate: ref(props.visitDate),
-    //     evaluatedBy: ref(props.evaluatedBy),
-    //     reviewedBy: ref(props.reviewedBy),
-    //     notedBy: ref(props.notedBy),
-    // });
 
     const handleBeforeUnload = (event) => {
         if (hasUpdate.value) {
@@ -247,9 +231,9 @@
     const actionButtons = ref([]);
     const evidenceFiles = ref([]);
     const hasUpdate = ref(false);
+    
 
     const saving = ref(false);
-    // const generatingReport = ref(false);
     const saveBtn = ref(null);
     const updatedRows = ref([]);
 
@@ -328,10 +312,6 @@
         isRecommendationsEditorOpen.value = false;
     }
 
-function closeReportModal() {
-    reportModal.value = false;
-    }
-
     // CTRL + S function
     const handleKeyDown = (event) => {
         if (event.ctrlKey || event.metaKey) {
@@ -358,21 +338,7 @@ function closeReportModal() {
             preserveState: false,
             preserveScroll: true,
         });
-}
-
-
-// function generate() {
-//     router.post('/report/deficiency/generate', deficiencyReport, {
-//         onStart: () => {
-//             generatingReport.value = true;
-//         },
-//         onFinish: () => {
-//             generatingReport.value = false;
-//         },
-//         preserveScroll: true,
-//         preserveState: true,
-//     });
-// }
+    }
 
 </script>
 
@@ -380,19 +346,5 @@ function closeReportModal() {
     import Layout from '../Shared/Layout.vue'
     export default {
         layout: Layout,
-        data() {
-            return {
-                itemsLayout: 'list',
-            }
-        },
-        methods: {
-            listLayout() {
-                this.itemsLayout = 'list';
-            },
-            gridLayout() {
-                this.itemsLayout = 'grid';
-            },
-        },
-
     }
 </script>

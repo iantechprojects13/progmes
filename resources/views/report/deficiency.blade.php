@@ -76,6 +76,10 @@
             padding: 10px 5px 10px 5px;
             vertical-align: text-top;
         }
+
+        .pagenum:before {
+            content: counter(page);
+        }
     </style>
 </head>
 
@@ -95,16 +99,20 @@
         </div>
     </header>
     <footer>
-        <div style="padding-top: 10px; border-top: 2px solid black;">
+        <div style="padding-top: 10px; border-top: 2px solid black; margin-bottom: 10px;">
             <div style="font-weight: bold; font-size: 12pt; margin-bottom: 3px;">
                 University of Southeastern Philippines Compound, Loyola St., Bo. Obrero, Davao City
             </div>
             <div>www.ro11.ched.ph | chedro11@ched.gov.ph | (082) 295-3418</div>
         </div>
+        <div class="pagenum"></div>
     </footer>
     <main>
         <div>
             <div style="width: 100%; text-align: center; margin-top: 20px;">
+                <b>MONITORING AND EVALUATION</b>
+            </div>
+            <div style="width: 100%; text-align: center; margin-top: 8px;">
                 <b>DEFICIENCY REPORT</b>
             </div>
             <div style="margin-top: 30px;">
@@ -145,8 +153,15 @@
                     @endforeach
                 </tbody>
             </table>
-            <div style="margin-top: 50px; width: 100%;">
+            <div style="margin-top: 75px; width: 100%;">
                 <div style="margin-left: 10px;">
+                    <div>Conforme:</div>
+                    <div style="margin: 8px 20px;">
+                        <div>{{ $tool->conforme }}</div>
+                        <div>{{ $tool->conformeTitle }}</div>
+                    </div>
+                </div>
+                <div style="margin-left: 10px; margin-top: 30px;">
                     <div>Evaluated by:</div>
                     <div style="margin: 8px 20px;">
                         <div>{{ $tool->evaluatedBy }}</div>

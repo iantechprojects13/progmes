@@ -57,9 +57,6 @@
             </div>
         </template>
     </content-container>
-    <pre>
-        {{ program }}
-    </pre>
 </template>
 
 <script setup>

@@ -11,7 +11,7 @@
                         </Link>
                         <div class="font-bold">Profile Details</div>
                     </div>
-                    <div v-show="$page.props.auth.user.role == 'Super Admin'"><button @click="toggleChangeRoleModal" class="h-8 px-2 bg-gray-700 text-white hover:bg-gray-800 rounded">Change role</button></div>
+                    <div v-show="$page.props.auth.user.role == 'Super Admin'"><button @click="toggleChangeRoleModal" class="h-10 px-2 bg-gray-700 text-white hover:bg-gray-800 rounded">Change role</button></div>
                 </div>
         </template>
         <template v-slot:main-content>
@@ -76,7 +76,7 @@
     <modal :showModal="showModal" @close="toggleChangeRoleModal" title="Change User Role">
         <div>Are you sure you want to change the role for this user? This action will deactivate their current role.</div>
         <template v-slot:custom-button>
-            <button class="h-10 w-20 rounded bg-blue-500 text-white">
+            <button @click="changeRole" class="h-10 w-20 rounded bg-blue-500 text-white">
                 Confirm
             </button>
         </template>
@@ -84,7 +84,8 @@
 </template>
 
 <script setup>
-    import { computed, ref } from 'vue';
+import { computed, ref } from 'vue';
+import { router } from '@inertiajs/vue3';
 
     const props = defineProps([
         'profile',
@@ -126,6 +127,10 @@ const showModal = ref(false);
 
 function toggleChangeRoleModal() {
     showModal.value = !showModal.value;
+}
+
+function changeRole() {
+    router.post('/register/change-role', { 'userId': props.profile.id })
 }
 
 

@@ -4,8 +4,14 @@
             <div v-show="hasBackButton" class="mr-2">
                 <slot name="back-button"></slot>
             </div>
-            <div class="flex items-center my-3">
-                <div class="tracking-tight font-bold text-xl text-gray-700">
+            <div class="flex items-center my-3 border border-gray-400 w-full bg-white p-3 rounded">
+                <div class="tracking-tight">
+                    <i class="fas mr-2 text-blue-500"
+                        :class="[{ 'fa-user': page == 'user' }, { 'fas fa-file': page == 'cmo' || page == 'tool' },
+                        {'fa-institution': page == 'hei'}, {'fa-book' : page == 'program' || page == 'discipline'},
+                        {'fa-edit' : page == 'evaluation'}, {'fa-archive' : page == 'archive'}
+                        ]">
+                    </i>
                     {{ pageTitle }}
                 </div>
             </div>
@@ -17,10 +23,10 @@
     </div>
     <div class="h-auto mx-3 md:mx-8 mt-8 pb-5 mb-5 bg-white rounded relative border border-gray-400">
         <slot name="content-title"></slot>
-        <div class="flex flex-col-reverse md:flex-row md:items-center p-3 py-4 border-b border-gray-300"
+        <div class="flex flex-col-reverse md:flex-row md:items-center p-3 py-4 border-b border-gray-300 relative"
             v-show="hasSearch || hasTopButton || hasFilters">
             <div v-show="hasSearch || hasFilters"
-                class="w-full flex flex-col-reverse md:flex-row justify-between mt-3 md:mt-0">
+                class="w-full flex flex-row justify-between mt-5 md:mt-0">
                 <div v-show="hasSearch" class="w-full">
                     <slot name="search"></slot>
                 </div>
@@ -54,6 +60,7 @@
 
     defineProps([
         "pageTitle",
+        "page",
         "placeholder",
         "data_list",
         "hasAction",

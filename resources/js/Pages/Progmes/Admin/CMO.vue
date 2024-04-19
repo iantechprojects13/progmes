@@ -2,7 +2,7 @@
 
     <Head title="CHED Memorandum Order List" />
     <AdminPanel />
-    <content-container pageTitle="CHED Memorandum Order List" hasTopButton="true" hasSearch="true" hasFilters="true"
+    <content-container pageTitle="CHED Memorandum Order List" page="cmo" :hasTopButton="true" :hasSearch="true" :hasFilters="true"
         :hasNavigation="canDraft" :data_list="cmo_list">
         <template v-slot:navigation>
             <div>
@@ -19,10 +19,10 @@
         <template v-slot:search>
             <div class="w-full flex justify-end relative">
                 <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
-                    placeholder="Search a CMO"
-                    class="w-full rounded-full bg-slate-100 h-10 border-none indent-3 text-base placeholder-gray-400 pr-11 mr-2" />
+                    placeholder="Search"
+                    class="w-full rounded border border-gray-400 bg-slate-100 h-10 text-base placeholder-gray-400 pr-11 mr-2" />
                 <button @click="submit"
-                    class="hover:bg-gray-300 active:text-blue-500 h-10 w-10 rounded-full absolute right-3">
+                    class="text-gray-700 hover:text-black active:text-blue-500 h-10 w-10 rounded absolute right-2">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
@@ -72,6 +72,9 @@
                         </td>
                         <td class="p-3 whitespace-normal">
                             {{ cmo.program?.program }}
+                            <span v-if="cmo.program?.major">
+                                - {{ cmo.program?.major }}
+                            </span>
                         </td>
                         <td class="p-3 whitespace-normal">
                             <div v-if="cmo.isActive" class="w-fit text-xs px-1 rounded bg-green-600 text-white">

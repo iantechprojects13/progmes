@@ -1,0 +1,1 @@
+import{A as e,o as a,f as r,a as s,b as n,F as c}from"./app-ee162bce.js";const _={class:"w-96"},i={__name:"Test",props:["evaluation","items"],setup(p){return(l,m)=>{const o=e("Head"),t=e("progress-bar");return a(),r(c,null,[s(o,{title:"Test"}),n("div",_,[s(t)])],64)}}};export{i as default};

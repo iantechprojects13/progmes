@@ -2,9 +2,19 @@
 
     <Head title="My Account" />
     <page-title title="My Account" />
-    <content-container pageTitle="Account Details">
+    <content-container>
+        <template v-slot:content-title>
+                <div class="p-3 flex flex-row items-center justify-between border-b border-gray-400">
+                    <div class="flex flex-row">
+                        <div class="ml-2 mr-3">
+                            <i class="fas fa-user text-blue-500"></i>
+                        </div>
+                        <div class="font-bold">Account Information</div>
+                    </div>
+                </div>
+        </template>
         <template v-slot:main-content>
-            <div class="m-10">
+            <div class="my-8 mx-3 md:mx-5">
                 <table class="border border-gray-400">
                     <tr>
                         <th scope="row"

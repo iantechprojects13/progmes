@@ -13,9 +13,10 @@ use App\Models\RoleModel;
 use App\Models\ProgramModel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Throwable;
 
-// use Illuminate\Support\Facades\Mail;
-// use App\Mail\NotificationEmail;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotificationEmail;
 
 
 class RegistrationController extends Controller
@@ -222,7 +223,7 @@ class RegistrationController extends Controller
     public function accept(User $user) {
 
         $acceptedUser = User::where('id', $user->id)->first();
-        $roles = RoleModel::where('userId', $acceptedUser->id)->get();
+        $roles = RoleModel::where('userId', $acceptedUser->id)->where('isActive', null)->get();
 
         $acceptedUser->update([
             'isVerified'=> 1,
@@ -238,33 +239,22 @@ class RegistrationController extends Controller
             $role->save();
         }
 
-        
+        try {
+            Mail::to($acceptedUser->email)->send(new NotificationEmail($acceptedUser->name));
+        } catch (Throwable $thr) {
+            return redirect()->back()->with('failed',  $thr->getMessage());
+        }
 
-        // try {
-        //     Mail::to($acceptedUser->email)->send(new NotificationEmail($acceptedUser->name));
-        // } catch (\Exception $e) {
-        //     Log::error('Email sending failed: ' . $e->getMessage());
-        // }
-        
-
-        return redirect()->back()->with('success', $acceptedUser->name .'\'s registration has been approved.');
+        return redirect()->back()->with('success', $acceptedUser->name .'\'s registration has been approved. Notification email has been sent.');
     }
 
     public function reject(User $user) {
 
         $rejectedUser = User::where('id', $user->id)->first();
-        $roles = RoleModel::where('userId', $rejectedUser->id)->get();
 
-        $rejectedUser->update(['isVerified'=> 0, 'isActive' => 0]);
-        $rejectedUser->save();
-
-        foreach ($roles as $role) {
-            $role->update([
-                'isActive' => 0,
-            ]);
-            $role->save();
-        }
-
+        $rejectedUser->userRole()->delete();
+        $rejectedUser->delete();
+        
         return redirect()->back()->with('success', $rejectedUser->name .'\'s registration has been rejected.');
     }
 
@@ -325,7 +315,7 @@ class RegistrationController extends Controller
             }
         }
         
-
+        
         return Inertia::render('Progmes/Auth/Account', [
             'profile' => Auth::user(),
             'roles' => $roles,
@@ -393,6 +383,27 @@ class RegistrationController extends Controller
             'hasProgram' => $hasProgram,
             'hasInstitution' => $hasInstitution,
         ]);
+    }
+
+    function changeRole(Request $request) {
+        $user = User::where('id', $request->userId)->first();
+        
+        $roles = RoleModel::where('userId', $user->id)->where('isActive', 1)->get();
+
+        $user->update([
+            'role' => null,
+            'type' => null,
+            'isActive' => null,
+            'isVerified' => null,
+        ]);
+        $user->save();
+
+        foreach($roles as $role) {
+            $role->update([
+                'isActive' => 0,
+            ]);
+            $role->save();
+        }
     }
 
 }

@@ -12,12 +12,18 @@ use Carbon\Carbon;
 class PDFController extends Controller
 {
 
-    public function generateDeficiencyReport(Request $request) {
+    public function generateReport(Request $request) {
         
         $complianceTool = EvaluationFormModel::where('id', $request->id)->first();
 
+        if (!$complianceTool) {
+            redirect()->back()->with('failed', 'Failed to save data.');
+        }
+
         $complianceTool->update([
             'visitDate' => $request->visitDate,
+            'conforme' => $request->conforme,
+            'conformeTitle' => $request->conformeTitle,
             'evaluatedBy' => $request->evaluatedBy,
             'evaluatedByTitle' => $request->evaluatedByTitle,
             'reviewedBy' => $request->reviewedBy,
@@ -26,59 +32,55 @@ class PDFController extends Controller
             'notedByTitle' => $request->notedByTitle,
         ]);
 
-        return redirect()->back()->with('generated', 'Changes saved.');
+        $complianceTool->save();
+
+        return redirect()->back()->with('success', 'Changes saved.');
    }
 
-    public function downloadDeficiencyReport($tool) {
-
-        $complianceTool = EvaluationFormModel::where('id', $tool)
-        ->with(['item' => function ($toolQuery) {
-            $toolQuery->where('evaluationStatus', 'Not complied');
-        },'item.criteria', 'institution_program.program', 'institution_program.institution'])
-        ->first();
-        
-        // dd($complianceTool);
-
-       $data = [
-            'tool' => $complianceTool,
-       ];
-        
-        // return view('report.deficiency', $data);
-        
-
-        $fileName = time() . '.pdf';
-        $report = Pdf::loadView('report.deficiency', $data);
-        
-        return $report->download($fileName);
-
-   }
-
-
-   public function viewDeficiencyReport($tool) {
+   public function deficiencyReport($tool, $type) {
         
         $complianceTool = EvaluationFormModel::where('id', $tool)
         ->with(['item' => function ($toolQuery) {
             $toolQuery->where('evaluationStatus', 'Not complied');
         }, 'cmo', 'item.criteria', 'institution_program.program', 'institution_program.institution'])
         ->first();
-        
 
         $data = [
             'tool' => $complianceTool,
         ];
         
-        
         $fileName = time() . '.pdf';
         $report = Pdf::loadView('report.deficiency', $data);
         
+        if ($type == 'view') {
+            return $report->stream($fileName);
+        } else if ($type == 'download') {
+            return $report->download($fileName);
+        } else {
+            return redirect()->back()->with('failed', 'Failed to create deficiency report.');
+        }
+   }
+
+   public function monitoringReport($tool, $type) {
+
+        $complianceTool = EvaluationFormModel::where('id', $tool)
+        ->with(['item', 'cmo', 'item.criteria', 'institution_program.program', 'institution_program.institution'])
+        ->first();
+
+        $data = [
+            'tool' => $complianceTool,
+        ];
         
-
-
-
-
-
+        $fileName = time() . '.pdf';
+        $report = Pdf::loadView('report.monitoring', $data);
         
-        return $report->stream($fileName);
+        if ($type == 'view') {
+            return $report->stream($fileName);
+        } else if ($type == 'download') {
+            return $report->download($fileName);
+        } else {
+            return redirect()->back()->with('failed', 'Failed to create monitoring/evaluation report.');
+        }
 
    }
 }

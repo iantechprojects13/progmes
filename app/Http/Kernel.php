@@ -85,6 +85,8 @@ class Kernel extends HttpKernel
         'admin' => \App\Http\Middleware\ProgmesMiddleware\Admin::class,
         'ched.admin' => \App\Http\Middleware\ProgmesMiddleware\CHEDAdmin::class,
         'ched.es' => \App\Http\Middleware\ProgmesMiddleware\CHEDEducationSupervisor::class,
+        'hei.ph' => \App\Http\Middleware\ProgmesMiddleware\HEIProgramHead::class,
+        'hei.vp.dean' => \App\Http\Middleware\ProgmesMiddleware\HEIVPandDean::class,
     ];
 
 }

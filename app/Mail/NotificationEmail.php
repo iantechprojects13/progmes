@@ -27,7 +27,7 @@ class NotificationEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'ProgMES CHEDRO-XI',
+            subject: 'Registration Notification',
         );
     }
 

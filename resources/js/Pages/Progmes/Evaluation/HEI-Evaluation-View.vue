@@ -5,7 +5,7 @@
     <div class="md:mx-8 mx-3 mt-8 flex flex-row justify-between rounded relative">
         <div>
             <Link href="/evaluation">
-            <button class="select-none w-24 h-10 border border-gray-500 rounded bg-white">
+            <button class="select-none w-24 h-10 border border-gray-500 rounded bg-white hover:bg-gray-700 hover:text-white">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Back
             </button>
@@ -61,9 +61,9 @@
                     <th class="p-3">Actual Situation</th>
                     <th class="p-3">Self-Evaluation Status</th>
                     <th class="p-3">Evidence</th>
-                    <th class="p-3" v-show="showEvaluation">Findings</th>
+                    <!-- <th class="p-3" v-show="showEvaluation">Findings</th>
                     <th class="p-3" v-show="showEvaluation">Comments/Recommendations</th>
-                    <th class="p-3" v-show="showEvaluation">Evaluation Status</th>
+                    <th class="p-3" v-show="showEvaluation">Evaluation Status</th> -->
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="evaluation_tool.item.length == 0">
@@ -90,7 +90,7 @@
                                 </a>
                             </div>
                         </td>
-                        <td v-show="showEvaluation" class="p-3 whitespace-normal">
+                        <!-- <td v-show="showEvaluation" class="p-3 whitespace-normal">
                             {{ item.findings }}
                         </td>
                         <td v-show="showEvaluation" class="p-3 whitespace-normal">
@@ -98,9 +98,12 @@
                         </td>
                         <td v-show="showEvaluation" class="p-3">
                             <div class="px-1 py-0.5 w-fit rounded text-white"
-                            :class="[{'bg-blue-600' : item.evaluationStatus == 'Complied'}]"
+                            :class="[{ 'bg-blue-600': item.evaluationStatus == 'Complied' },
+                                {'bg-red-500' : item.evaluationStatus == 'Not complied'},
+                                {'bg-gray-700' : item.evaluationStatus == 'Not applicable'}
+                            ]"
                             >{{ item.evaluationStatus }}</div>
-                        </td>
+                        </td> -->
                     </tr>
                 </template>
             </content-table>

@@ -17,6 +17,7 @@ use Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Kreait\Firebase\Factory;
+use Throwable;
 
 
 class HEIFormController extends Controller
@@ -87,23 +88,6 @@ class HEIFormController extends Controller
         $percentage = intval(round((($complied + $notComplied + $notApplicable)/$items->count())*100));
         $progress = [ $complied, $notComplied, $notApplicable, $percentage];
 
-        $canSubmit = true;
-        
-        foreach ($items as $item) {
-            if ($item->selfEvaluationStatus == 'Not complied') {
-                $canSubmit = false;
-                break;
-            }
-            if ($item->selfEvaluationStatus == 'Complied') {
-                if ($item->actualSituation != null || count($item->evidence) > 0) {
-                    continue;
-                } else {
-                    $canSubmit = false;
-                    break;
-                }
-            }
-        }
-
         if($tool->status == 'In progress') {
             return Inertia::render('Progmes/Evaluation/HEI-Evaluation-Edit', [
                 'evaluation' => $tool,
@@ -117,12 +101,30 @@ class HEIFormController extends Controller
                     'evidence' => $item->evidence,
                 ]),
                 'progress' => $progress,
-                'canSubmit' => $canSubmit,
             ]);
         } else {
-            return redirect()->back()->with('failed', 'This tool can\'t be accessed.');
+            return redirect('/hei/ph/evaluation')->with('failed', 'This tool has been locked and can\'t be accessed.');
         }
     }
+
+
+    public function conforme(Request $request) {
+        $tool = EvaluationFormModel::where('id', $request->id)->first();
+
+        if (!$tool) {
+            redirect()->back()->with('failed', 'Failed to update conforme.');
+        }
+
+        $tool->update([
+            'conforme' => $request->name,
+            'conformeTitle' => $request->title,
+        ]);
+
+        $tool->save();
+
+        redirect()->back()->with('success', 'Updated successfully.');
+    }
+
 
     public function update(Request $request) {
         foreach ($request->items as $item) {
@@ -171,22 +173,34 @@ class HEIFormController extends Controller
                 return redirect()->back()->with('failed', 'File already exist.');
             }
 
+            try {
+                $storage = Firebase::storage();
 
-            $storage = Firebase::storage();
-            $bucket = $storage->getBucket();
+                if(!$storage) {
+                    return redirect()->back()->with('failed', 'Failed to upload file.');
+                }
 
-            $object = $bucket->upload(file_get_contents($evidenceFile->path()), [
-                'name' => $filename,
-            ]);
+                $bucket = $storage->getBucket();
 
-            $url = $object->signedUrl(new \DateTime('tomorrow'));
+                if(!$bucket) {
+                    return redirect()->back()->with('failed', 'Failed to upload file.');
+                }
 
-            EvidenceModel::create([
-                'itemId' => $itemId,
-                'type' => "file",
-                'text' => $filename,
-                'url' => $url,
-            ]);
+                $object = $bucket->upload(file_get_contents($evidenceFile->path()), [
+                    'name' => $filename,
+                ]);
+
+                $url = $object->signedUrl(new \DateTime('tomorrow'));
+
+                EvidenceModel::create([
+                    'itemId' => $itemId,
+                    'type' => "file",
+                    'text' => $filename,
+                    'url' => $url,
+                ]);
+            } catch (Throwable $thr) {
+                return redirect()->back()->with('failed', 'Failed to upload file.');
+            }
         }
 
         return redirect()->back()->with('uploaded', 'Evidence successfully uploaded.');
@@ -201,15 +215,19 @@ class HEIFormController extends Controller
             'link.required' => 'URL for the link is required.',
             'link.url' => 'Invalid URL format.',
         ]);
+        
+        try {
+            $evidenceItem = EvidenceModel::create([
+                'itemId' => $validated['id'],
+                'type' => "link",
+                'text' => $validated['link'],
+                'url' => $validated['link'],
+            ]);
 
-        $evidenceItem = EvidenceModel::create([
-            'itemId' => $validated['id'],
-            'type' => "link",
-            'text' => $validated['link'],
-            'url' => $validated['link'],
-        ]);
-
-        return redirect()->back()->with('uploaded', 'Link successfully posted.');
+            return redirect()->back()->with('uploaded', 'Link successfully posted.');
+        } catch (Throwable $thr) {
+            return redirect()->back()->with('failed', 'Failed to post link.');
+        }
     }
 
 
@@ -243,13 +261,13 @@ class HEIFormController extends Controller
         ]);
         $evaluation->save();
 
-        return redirect('/hei/evaluation')->with('success', "The evaluation tool was successfully submitted.");
+        return redirect('/hei/ph/evaluation')->with('success', "The evaluation tool has been successfully submitted.");
     }
 
     
     function generateKey($length = 10) {
         return Str::random($length);
     }
-
+    
 
 }

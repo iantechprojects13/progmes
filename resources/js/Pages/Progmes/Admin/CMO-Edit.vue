@@ -2,7 +2,7 @@
 
     <Head title="Edit CMO" />
     <AdminPanel />
-    <content-container pageTitle="CHED Memorandum Order" hasTopButton="true">
+    <content-container pageTitle="CHED Memorandum Order" page="cmo" :hasTopButton="true">
         <template v-slot:top-button>
             <div class="relative">
                 <dropdown-option position="left">

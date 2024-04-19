@@ -60,7 +60,7 @@ class InstitutionController extends Controller
     public function create()
     {
         return Inertia::render('Progmes/Admin/HEI-Create', [
-            'program_list' => ProgramModel::all(),
+            'program_list' => ProgramModel::orderBy('program', 'asc')->orderBy('program', 'asc')->get(),
         ]);
     }
 
@@ -115,7 +115,7 @@ class InstitutionController extends Controller
         return Inertia::render('Progmes/Admin/HEI-Edit', [
             'institution' => $institutionModel,
             'programsOffered' => $programsOffered,
-            'program_list' => ProgramModel::all(),
+            'program_list' => ProgramModel::orderBy('program', 'asc')->orderBy('program', 'asc')->get(),
         ]);
     }
 

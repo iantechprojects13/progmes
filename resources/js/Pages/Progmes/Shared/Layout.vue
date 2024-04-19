@@ -21,7 +21,7 @@
                             <div>
                                 <div>
                                     <hr />
-                                    <div class="w-full h-12 rounded p-2 mt-3 relative flex items-center justify-start cursor-pointer">
+                                    <div class="select-none w-full h-12 rounded p-2 mt-3 relative flex items-center justify-start cursor-pointer">
                                         <div class="inline-block mr-3">
                                             <img :src="$page.props.auth.user.avatar" width="40" class="rounded-full" />
                                         </div>
@@ -79,14 +79,13 @@
                                 My Account
                                 </Link>
 
-                                <Link href="/logout" method="post" as="button"
-                                    class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700">
-                                <i class="fa fa-sign-out mr-4 text-xl"></i>
+                                <button @click="logout" :disable="loggingout" class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700">
+                                    <i class="fa fa-sign-out mr-4 text-xl"></i>
                                 Log out
-                                </Link>
+                                </button>
                             </div>
                         </div>
-
+                        
                         <div class="absolute top-1/2 -right-4 text-black hidden md:block text-md" :class="{
                                 'fixed top-0 bg-slate-700': !closeSideBar,
                             }">
@@ -119,7 +118,8 @@
                 <div class="cursor-pointer" @click="toggleSideBar">
                     <i class="fas fa-bars text-xl"></i>
                 </div>
-                <!-- <div>
+                <div class="flex flex-row items-center">
+                    <div class="text-sm mr-2">Hi, {{ $page.props.auth.user.name }}</div>
                     <dropdown-option position="right">
                         <template v-slot:button>
                             <img :src="$page.props.auth.user.avatar" width="35"
@@ -132,20 +132,36 @@
                                     <i class="fas fa-user mr-3"></i>My Account
                                 </button>
                                 </Link>
-                                <Link href="/logout" method="post" as="button" class="w-full">
-                                <button class="block py-2 indent-3 hover:bg-gray-200 w-full text-left">
+                                <button @click="logout" :disable="loggingout" class="block py-2 indent-3 hover:bg-gray-200 w-full text-left">
                                     <i class="fas fa-sign-out mr-3"></i>Log out
                                 </button>
-                                </Link>
                             </div>
                         </template>
                     </dropdown-option>
-                </div> -->
+                </div>
             </div>
             <slot />
         </div>
     </div>
 </template>
+
+<script setup>
+import { router } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
+const loggingout = ref(false);
+
+function logout() {
+    router.post('/logout', loggingout.value, {
+        onStart: () => {
+            loggingout.value = true;
+        },
+        onFinish: () => {
+            loggingout.value = false;
+        }
+    });
+}
+</script>
 
 <script>
     export default {
@@ -190,7 +206,8 @@
                         "Progmes/Evaluation/CHED-Evaluation-Select",
                         "Progmes/Evaluation/CHED-Evaluation-Edit",
                         "Progmes/Evaluation/CHED-Evaluation-View",
-                        "Progmes/Evaluation/CHED-Evaluation-Deficiency-Report",
+                        "Progmes/Evaluation/CHED-Evaluation-Report-Create",
+                        "Progmes/Evaluation/CHED-Evaluation-Archive",
                     ],
                     myaccount: [
                         "Progmes/Auth/Account",
@@ -211,6 +228,8 @@
                     return this.component.adminpanel.includes(this.$page.component);
                 } else if (btn == "evaluation") {
                     return this.component.evaluation.includes(this.$page.component);
+                } else if (btn == "archive") {
+                    return this.component.archive.includes(this.$page.component);
                 } else if (btn == "myaccount") {
                     return this.component.myaccount.includes(this.$page.component);
                 }

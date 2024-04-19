@@ -5,7 +5,7 @@
     <div class="md:mx-8 mx-3 mt-8 flex flex-row justify-between rounded relative">
         <div>
             <Link href="/evaluation">
-            <button class="select-none w-24 h-10 border border-gray-500 rounded bg-white">
+            <button class="select-none w-24 h-10 border border-gray-500 rounded bg-white hover:bg-gray-700 hover:text-white">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Back
             </button>

@@ -55,6 +55,9 @@
             </div>
         </div>
     </div>
+    <div class="mx-3 md:mx-8 my-8">
+        asdasdasdasd
+    </div>
     <div class="mx-3 md:mx-8 mt-5 flex flex-col lg:flex-row justify-between">
         <div class="w-full lg:w-1/2 lg:mr-5">
             <div class="flex flex-col lg:flex-row">

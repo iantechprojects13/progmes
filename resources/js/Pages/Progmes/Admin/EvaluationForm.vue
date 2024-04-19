@@ -2,7 +2,7 @@
 
     <Head title="Evaluation Forms" />
     <AdminPanel />
-    <content-container pageTitle="Compliance Evaluation Tool" :hasTopButton="canEdit" hasSearch="true" hasFilters="true"
+    <content-container pageTitle="Compliance Evaluation Tool" page="tool" :hasTopButton="canEdit" :hasSearch="true" :hasFilters="true"
         :hasNavigation="true" :data_list="institutionProgramList">
         <template v-slot:navigation>
             <div class="mb-2 flex items-center">
@@ -17,9 +17,9 @@
             <div class="w-full flex justify-end relative">
                 <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
                     placeholder="Search"
-                    class="w-full rounded-full bg-slate-100 h-10 border-none indent-3 text-base placeholder-gray-400 pr-11 mr-2" />
+                    class="w-full rounded border border-gray-400 bg-slate-100 h-10 text-base placeholder-gray-400 pr-11 mr-2" />
                 <button @click="submit"
-                    class="hover:bg-gray-300 active:text-blue-500 h-10 w-10 rounded-full absolute right-3">
+                    class="text-gray-700 hover:text-black active:text-blue-500 h-10 w-10 rounded absolute right-2">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
@@ -150,7 +150,7 @@
                     <input id="cmo" type="text" disabled class="w-full text-sm rounded border-gray-400 my-0.5" :value="
                             deployment.program?.active_cmo != null
                                 ? 'CMO No.' +
-                                  deployment.program.active_cmo.version +
+                                  deployment.program.active_cmo.number +
                                   ' Series of ' +
                                   deployment.program.active_cmo.series +
                                   ' - Version ' +

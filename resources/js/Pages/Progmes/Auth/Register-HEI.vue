@@ -81,9 +81,6 @@
             </div>
         </div>
     </div>
-    <pre>
-        {{ program_list }}
-    </pre>
 </template>
 
 <script setup>

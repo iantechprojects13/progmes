@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use Inertia\Inertia;
+use Throwable;
 use Auth;
 
 class GoogleAuthController extends Controller
@@ -42,8 +43,9 @@ class GoogleAuthController extends Controller
             }
 
             return redirect()->route('register.select');
-        } catch (Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+
+        } catch (Throwable $thr) {
+            return redirect()->back();
         }
     }
 }

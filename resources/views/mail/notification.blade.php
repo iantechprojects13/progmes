@@ -1,5 +1,5 @@
-Hi <b>{{$name}}</b>,
+Hi {{$name}},
 <br>
-Great news! Your ProgMES CHEDRO-XI account is now verified. You can now access the CHEDRO-XI ProgMES webapp @ http://127.0.0.1:8000/.
+Your ProgMES account is now verified. You can now access the CHED RO XI ProgMES web application @ http://chedprogmes.online.
 <br>
 Thank you!

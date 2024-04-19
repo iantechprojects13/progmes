@@ -5,15 +5,19 @@
     <div class="md:mx-8 mx-3 mt-8 flex flex-row justify-between rounded relative">
         <div>
             <Link href="/evaluation">
-            <button class="select-none w-24 h-10 border border-gray-500 rounded bg-white">
+            <button class="select-none w-24 h-10 border border-gray-500 rounded bg-white hover:bg-gray-700 hover:text-white">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Back
             </button>
             </Link>
         </div>
         <div>
-            <button @click="readyForVisitModal = true"
-                class="select-none px-3 w-fit text-white bg-gray-600 hover:bg-gray-700 h-10 rounded mr-1">
+            <button @click="toggleResubmitModal" v-if="progress[3] == 100 && evaluation.visitDate != null"
+                class="select-none px-3 w-fit text-white bg-blue-500 hover:bg-blue-600 h-10 rounded mr-1">
+                Resubmit
+            </button>
+            <button @click="toggleReadyForVisitModal" v-else-if="progress[3] == 100 && evaluation.visitDate == null"
+                class="select-none px-3 w-fit text-white bg-gray-700 hover:bg-gray-800 h-10 rounded mr-1">
                 Ready for visit
             </button>
         </div>
@@ -62,11 +66,29 @@
     <content-container :hasTopButton="true">
         <template v-slot:top-button>
             <div class="whitespace-normal mr-2">
+                <button @click="updateConforme" ref="saveBtn"
+                    class="select-none cursor-pointer bg-blue-500 hover:bg-blue-600 mr-2 text-white w-20 h-10 rounded">
+                    <span v-if="updatingconforme"><i class="fas fa-spinner animate-spin"></i></span>
+                    <span v-else>Save</span>
+                </button>
+            </div>
+        </template>
+        <template v-slot:main-content>
+            <div class="mt-3 flex items-center lg:flex-row flex-col px-3 py-3">
+                <label for="conforme" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Conforme</label>
+                <input type="text" id="conforme" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Conforme" v-model="conforme.name">
+                <input type="text" id="conformeTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="conforme.title">
+            </div>
+        </template>
+    </content-container>
+
+    <content-container :hasTopButton="true">
+        <template v-slot:top-button>
+            <div class="whitespace-normal mr-2">
                 <button @click="update" ref="saveBtn"
                     class="select-none cursor-pointer bg-blue-500 hover:bg-blue-600 mr-2 text-white px-2 w-fit h-10 rounded">Save
                     Changes
                 </button>
-                
             </div>
             <div class="whitespace-normal">
                 <div v-if="hasUpdate" class="text-red-500">
@@ -192,7 +214,7 @@
     </content-container>
 
     <!-- Ready for visit confirmation -->
-    <confirmation @close="closeReadyForVisitConfirmation" v-show="readyForVisitModal" title="Ready For Visit">
+    <confirmation @close="toggleReadyForVisitModal" v-show="readyForVisitModal" title="Ready For Visit">
 
         <template v-slot:message>
             Are you sure you want to submit this compliance evaluation tool? You won't be able to make changes after
@@ -200,9 +222,27 @@
         </template>
 
         <template v-slot:buttons>
-            <button class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 p-2 px-3 rounded mr-1"
-                @click="readyForVisit">
-                Submit
+            <button class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 w-20 h-10 rounded mr-1"
+                @click="submitTool">
+                <span v-if="submitting"><i class="fas fa-spinner animate-spin"></i></span>
+                <span v-else>Submit</span>
+            </button>
+        </template>
+    </confirmation>
+
+    <!-- Resubmit confirmation -->
+    <confirmation @close="toggleResubmitModal" v-show="resubmitModal" title="Resubmit">
+
+        <template v-slot:message>
+            Are you sure you want to resubmit this compliance evaluation tool? You won't be able to make changes after
+            resubmitting.
+        </template>
+        
+        <template v-slot:buttons>
+            <button class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 w-20 h-10 rounded mr-1"
+                @click="submitTool">
+                <span v-if="submitting"><i class="fas fa-spinner animate-spin"></i></span>
+                <span v-else>Submit</span>
             </button>
         </template>
     </confirmation>
@@ -265,7 +305,6 @@
         'evaluation',
         'items',
         'progress',
-        'canSubmit',
     ]);
 
     const handleBeforeUnload = (event) => {
@@ -305,6 +344,7 @@
     const textEditorIndex = ref('');
     const texteditor = ref([]);
     const readyForVisitModal = ref(false);
+    const resubmitModal = ref(false);
 
     const actualSituationInput = ref([]);
     const selfEvaluationStatus = ref([]);
@@ -315,6 +355,8 @@
     const updatedRows = ref([]);
     const saveBtn = ref(null);
     const saving = ref(false);
+const submitting = ref(false);
+const updatingconforme = ref(false);
 
     const refs = { actualSituationInput, selfEvaluationStatus, actionButtons, evidenceFiles, saveBtn, texteditor, inputEvidenceFile };
 
@@ -383,9 +425,13 @@
         isEditorOpen.value = false;
     }
 
-    function closeReadyForVisitConfirmation() {
-        readyForVisitModal.value = false;
-    }
+function toggleReadyForVisitModal() {
+    readyForVisitModal.value = !readyForVisitModal.value;
+}
+
+function toggleResubmitModal() {
+    resubmitModal.value = !resubmitModal.value;
+}
 
     // CTRL + S function
     const handleKeyDown = (event) => {
@@ -397,12 +443,24 @@
         }
     };
 
-    const evidenceUpload = reactive({
-        itemId: null,
-        file: null,
+const conforme = reactive({
+        id: ref(props.evaluation.id),
+        name: ref(props.evaluation.conforme),
+        title: ref(props.evaluation.conformeTitle),
     });
 
-
+function updateConforme() {
+        router.post('/hei/evaluation/conforme', conforme, {
+            onStart: () => {
+                updatingconforme.value = true;
+            },
+            onFinish: () => {
+                updatingconforme.value = false;
+            },
+            preserveScroll: true,
+            preserveState: false,
+        });
+    }
 
     function update() {
         router.post('/hei/evaluation/update', {
@@ -454,8 +512,17 @@
         });
     }
 
-    function readyForVisit() {
-        router.post('/hei/evaluation/submit', props.evaluation);
+    function submitTool() {
+        router.post('/hei/evaluation/submit', props.evaluation, {
+            onStart: () => {
+                submitting.value = true;
+            },
+            onFinish: () => {
+                submitting.value = false;
+            },
+            preserveState: false,
+            preserveScroll: true,
+        });
     }
 
 

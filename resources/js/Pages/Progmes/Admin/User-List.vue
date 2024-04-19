@@ -2,8 +2,8 @@
 
     <Head title="Users List" />
     <AdminPanel />
-    <content-container @submit="submit" :pageTitle="canEdit ? 'Active Users List' : 'Users List'"
-        :hasNavigation="canEdit" hasSearch="true" hasFilters="true" :data_list="user_list">
+    <content-container @submit="submit" :pageTitle="canEdit ? 'Active Users List' : 'Users List'" page="user"
+        :hasNavigation="canEdit" :hasSearch="true" :hasFilters="true" :data_list="user_list">
         <template v-slot:navigation>
             <div>
                 <button class="select-none text-blue-500 h-10 mr-7 border-b-2 relative font-bold border-blue-500">
@@ -24,10 +24,10 @@
         <template v-slot:search>
             <div class="w-full flex justify-end relative">
                 <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
-                    placeholder="Search a user"
-                    class="w-full rounded-full bg-slate-100 h-10 border-none indent-3 text-base placeholder-gray-400 pr-11 mr-2" />
+                    placeholder="Search"
+                    class="w-full rounded border border-gray-400 bg-slate-100 h-10 text-base placeholder-gray-400 pr-11 mr-2" />
                 <button @click="submit"
-                    class="hover:bg-gray-300 active:text-blue-500 h-10 w-10 rounded-full absolute right-3">
+                    class="text-gray-700 hover:text-black active:text-blue-500 h-10 w-10 rounded absolute right-2">
                     <i class="fas fa-search"></i>
                 </button>
             </div>

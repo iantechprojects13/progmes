@@ -107,7 +107,7 @@ class DashboardController extends Controller
             'academicyear' => $acadYear,
             'readyforvisit' => $tools->where('status', 'Submitted')->count(),
             'inprogress' => $tools->where('status', 'In progress')->count(),
-            'pending' => $tools->where('status', 'Deployed')->count(),
+            'pending' => $tools->where('status', 'Deployed')->count() + $tools->where('status', 'Locked')->count(),
             'archived' => $tools->where('status', 'Archived')->count(),
             'program_list' => $program_list,
             'program' => $program,
@@ -129,75 +129,6 @@ class DashboardController extends Controller
             'usertype' => [User::where('type', 'CHED')->count(), User::where('type', 'HEI')->count()],
         ]);
     }
-
-    // public function dashboardForES(Request $request) {
-    //     $acadYear = $request->query('academicyear') ? $request->query('academicyear') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
-    //     $institution = $request->query('hei') != null && $request->query('program') == null ? $request->query('hei') : null;
-    //     $program = $request->query('program') != null ? $request->query('program') : null;
-    //     $filter = $request->query('filter') != null ? $request->query('filter') : null;
-    //     $disciplines = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('discipline')->get();
-    //     $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
-        
-    //     $complianceTools = EvaluationFormModel::query()
-    //     ->where('effectivity', $acadYear)
-    //     ->whereNot('status', 'Deployed')
-    //     ->when(!$request->query('hei') && !$request->query('program'), function($query) use ($request){
-    //         $query->inRandomOrder()->limit(10)->get();
-    //     })
-    //     ->when($request->query('hei'), function($query) use ($request, $institution) {
-    //         $query->whereHas('institution_program.institution', function($q) use ($request, $institution) {
-    //             $q->where('institutionId', $institution);
-    //         });
-    //     })
-    //     ->when($request->query('program'), function($query) use ($request, $program) {
-    //         $query->whereHas('institution_program.program', function($q) use ($request, $program) {
-    //             $q->where('programId', $program);
-    //         });
-    //     })
-    //     ->whereIn('disciplineId', $disciplineIds)
-    //     ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable', 'no_status')
-    //     ->get();
-
-    //     $tools = EvaluationFormModel::where('effectivity', $acadYear)
-    //     ->whereIn('disciplineId', $disciplineIds)
-    //     ->when($request->query('hei'), function($query) use ($request, $institution) {
-    //         $query->whereHas('institution_program.institution', function($q) use ($request, $institution) {
-    //             $q->where('institutionId', $institution);
-    //         });
-    //     })
-    //     ->when($request->query('program'), function($query) use ($request, $program) {
-    //         $query->whereHas('institution_program.program', function($q) use ($request, $program) {
-    //             $q->where('programId', $program);
-    //         });
-    //     })
-    //     ->get();
-
-    //     return Inertia::render('Progmes/Dashboard/Dashboard-CHED', [
-    //         'complianceTool' => $complianceTools->map(fn($item) => [
-    //             'id' => $item->id,
-    //             'status' => $item->status,
-    //             'institution' => $item->institution_program->institution->name,
-    //             'program' => $item->institution_program->program->program,
-    //             'complied' => $item->complied->count(),
-    //             'notcomplied' => $item->not_complied->count(),
-    //             'notapplicable' => $item->not_applicable->count(),
-    //             'nostatus' => $item->no_status->count(),
-    //             'progress' => $item->item->count() != 0 ? intval(round((($item->complied->count() + $item->not_complied->count() + $item->not_applicable->count())/$item->item->count())*100)) : 0,
-    //         ]),
-    //         'academicyear' => $acadYear,
-    //         'readyforvisit' => $tools->where('status', 'Submitted')->count(),
-    //         'inprogress' => $tools->where('status', 'In progress')->count(),
-    //         'pending' => $tools->where('status', 'Deployed')->count(),
-    //         'archived' => $tools->where('status', 'Archived')->count(),
-    //         'program_list' => ProgramModel::whereIn('disciplineId', $disciplineIds)->orderBy('program', 'asc')->orderBy('major', 'asc')->get(),
-    //         'program' => $program,
-    //         'programName' => ProgramModel::where('id', $program)->value('program'),
-    //         'hei_list' => InstitutionModel::orderBy('name', 'asc')->get(),
-    //         'hei' => $institution,
-    //         'heiName' => InstitutionModel::where('id', $institution)->value('name'),
-    //         'filters' => $request->only(['']) + ['filter' => $filter ],
-    //     ]);
-    // }
 
     public function dashboardForHEI(Request $request) {
         
@@ -293,7 +224,7 @@ class DashboardController extends Controller
             'academicyear' => $acadYear,
             'readyforvisit' => $tools->where('status', 'Submitted')->count(),
             'inprogress' => $tools->where('status', 'In progress')->count(),
-            'pending' => $tools->where('status', 'Deployed')->count(),
+            'pending' => $tools->where('status', 'Deployed')->count() + $tools->where('status', 'Locked')->count(),
             'archived' => $tools->where('status', 'Archived')->count(),
             'program_list' => $program_list,
             'program' => $program,

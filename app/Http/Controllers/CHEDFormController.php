@@ -11,6 +11,8 @@ use App\Models\CMOModel;
 use Inertia\Inertia;
 use Auth;
 
+
+
 class CHEDFormController extends Controller
 {
     public function view($tool) {
@@ -43,7 +45,7 @@ class CHEDFormController extends Controller
         $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program')->first();
         $items = EvaluationItemModel::where('evaluationFormId', $evaluation)->with('criteria', 'evidence')->get();
 
-        if($tool->status == 'Submitted') {
+        if($tool->status == 'Submitted' || $tool->status == 'Locked') {
             return Inertia::render('Progmes/Evaluation/CHED-Evaluation-Edit', [
                 'evaluation' => $tool,
                 'items' => $items->map(fn($item) => [
@@ -59,8 +61,10 @@ class CHEDFormController extends Controller
                     'evidence' => $item->evidence,
                 ]),
             ]);
+        } else if ($tool->status == 'In progress') {
+            return redirect()->back()->with('failed', 'This compliance evaluation tool can\'t be evaluated yet.');
         } else {
-            return redirect()->back()->with('failed', 'This tool can\'t be accessed.');
+            return redirect()->back()->with('failed', 'This compliance evaluation tool can\'t be accessed.');
         }
     }
 
@@ -86,13 +90,60 @@ class CHEDFormController extends Controller
         return redirect()->back()->with('updated', 'All changes saved.');
     }
 
-    public function deficiencyReport($tool) {
+    public function archive(Request $request) {
+
+        $tool = EvaluationFormModel::where('id', $request->id)->first();
+
+        if($tool->status == 'Submitted' || $tool->status == 'Locked') {
+            $tool->update([
+                'status' => 'Archived',
+                'archivedDate' => now(),
+            ]);
+            $tool->save();
+
+            return redirect()->back()->with('success', 'Compliance evaluation tool successfully archived.');
+        }
+        
+        return redirect()->back()->with('failed', 'Failed to archive compliance evaluation tool.');
+    }
+
+    public function lock(Request $request) {
+        $tool = EvaluationFormModel::where('id', $request->id)->first();
+
+        if (!$tool) {
+            return redirect('/ched/evaluation/')->with('error', 'No compliance evaluation tool found.');
+        }
+
+        $tool->update([
+            'status' => 'Locked',
+        ]);
+        $tool->save();
+
+        return redirect()->back()->with('success', 'Compliance evaluation tool has been locked.');
+
+    }
+
+    public function unlock(Request $request) {
+        $tool = EvaluationFormModel::where('id', $request->id)->first();
+
+        if (!$tool) {
+            return redirect('/ched/evaluation/')->with('error', 'No compliance evaluation tool found.');
+        }
+
+        $tool->update([
+            'status' => 'In progress',
+        ]);
+
+        $tool->save();
+
+        return redirect()->back()->with('success', 'Compliance evaluation tool has been unlocked.');
+    }
+    
+    public function report($tool) {
         $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.institution', 'institution_program.program')->first();
         
-        return Inertia::render('Progmes/Evaluation/CHED-Evaluation-Deficiency-Report', [
+        return Inertia::render('Progmes/Evaluation/CHED-Evaluation-Report-Create', [
             'tool' => $evaluationTool,
-            'evaluatedBy' => $evaluationTool->evaluatedBy != null ? $evaluationTool->evaluatedBy : Auth::user()->name,
-            'evaluatedByTitle' => $evaluationTool->evaluatedByTitle != null ? $evaluationTool->evaluatedByTitle : Auth::user()->role,
         ]);
     }
 }

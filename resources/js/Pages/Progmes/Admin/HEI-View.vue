@@ -2,25 +2,21 @@
 
     <Head :title="institution.name" />
     <AdminPanel />
-    <content-container pageTitle="Institution Details" :hasBackButton="true">
-        <template v-slot:back-button>
-            <Link href="/admin/higher-education-institutions">
-            <button class="w-10 h-10 mr-2 rounded-full hover:bg-gray-300 tooltipForActions" data-tooltip="Back">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            </Link>
+    <content-container>
+        <template v-slot:content-title>
+                <div class="p-3 flex flex-row items-center justify-between border-b border-gray-400">
+                    <div class="flex flex-row">
+                        <Link href="/admin/higher-education-institutions/">
+                        <button><i class="fas fa-arrow-left ml-2 mr-3"></i></button>
+                        </Link>
+                        <div class="font-bold">HEI Details</div>
+                    </div>
+                </div>
         </template>
         <template v-slot:main-content>
-            <div class="p-5 font-bold">
-                {{ institution.name }}
-            </div>
-            <div class="p-5">
+            <div class="p-3 md:p-5">
                 <table class="w-full">
                     <tbody>
-                        <tr>
-                            <th class="text-right align-top w-1/5 px-3 py-2 border border-gray-400">ID</th>
-                            <td class="px-3 py-2 border border-gray-400">{{ institution.id }}</td>
-                        </tr>
                         <tr>
                             <th class="text-right align-top w-1/5 px-3 py-2 border border-gray-400">Institutional
                                 Code</th>

@@ -63,6 +63,7 @@ Route::get('/register/{user}/accept', [RegistrationController::class, 'accept'])
 Route::get('/register/{user}/reject', [RegistrationController::class, 'reject'])->name('register.reject');
 Route::get('/register/{user}/activate', [RegistrationController::class, 'activate'])->name('user.activate');
 Route::get('/register/{user}/deactivate', [RegistrationController::class, 'deactivate'])->name('user.deactivate');
+Route::post('/register/change-role', [RegistrationController::class, 'changeRole'])->name('user.role.change');
 Route::get('/register/{user}/delete', [RegistrationController::class, 'destroy'])->name('user.delete');
 
 //Profile
@@ -80,15 +81,16 @@ Route::post('/set-academic-year', [DashboardController::class, 'setAcademicYear'
 //evaluation
 Route::get('/evaluation', [EvaluationController::class, 'index'])->middleware(['auth', 'user.verified'])->name('evaluation');
 Route::get('/ched/evaluation', [EvaluationController::class, 'evaluationForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('evaluation.ched');
-Route::get('/hei/ph/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware(['auth','type.hei'])->name('evaluation.ph');
-Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForHEI'])->middleware(['auth','type.hei'])->name('evaluation.hei');
-// Route::get('/admin/evaluation', [EvaluationController::class, 'evaluationForAdmin'])->middleware('type.ched')->name('evaluation.admin');
+Route::get('/ched/evaluation/archived', [EvaluationController::class, 'archivedForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('ched.evaluation.archive');
+Route::get('/hei/ph/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware(['auth','type.hei', 'hei.ph'])->name('evaluation.ph');
+Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean'])->name('evaluation.hei');
 Route::get('hei/evaluation/{tool}/edit', [HEIFormController::class, 'edit'])->middleware(['auth', 'type.hei'])->name('form.hei.key');
 Route::get('ched/evaluation/{tool}/view', [CHEDFormController::class, 'view'])->middleware(['auth', 'type.ched'])->name('evaluation.ched.view');
-Route::get('ched/evaluation/{tool}/evaluate', [CHEDFormController::class, 'evaluate'])->middleware(['auth', 'type.ched'])->name('form.ched.evaluate');
-Route::get('ched/evaluation/{tool}/deficiency-report', [CHEDFormController::class, 'deficiencyReport'])->middleware(['auth', 'type.ched'])->name('form.ched.report');
+Route::get('ched/evaluation/{tool}/evaluate/', [CHEDFormController::class, 'evaluate'])->middleware(['auth', 'type.ched'])->name('form.ched.evaluate');
+Route::get('ched/evaluation/{tool}/report', [CHEDFormController::class, 'report'])->middleware(['auth', 'type.ched'])->name('form.ched.report');
 Route::get('/hei/evaluation/{tool}/view', [HEIFormController::class, 'view'])->middleware(['auth', 'type.hei'])->name('hei.evaluation.view');
 
+Route::post('/hei/evaluation/conforme', [HEIFormController::class, 'conforme'])->name('form.hei.conforme');
 Route::post('/hei/evaluation/update', [HEIFormController::class, 'update'])->name('form.hei.update');
 Route::post('/hei/evaluation/upload', [HEIFormController::class, 'upload'])->name('form.hei.upload');
 Route::post('/hei/evaluation/link', [HEIFormController::class, 'submitLink'])->name('form.hei.link');
@@ -96,6 +98,10 @@ Route::post('/hei/evaluation/submit', [HEIFormController::class, 'readyForVisit'
 Route::post('/hei/evaluation/link/delete', [HEIFormController::class, 'deleteLink'])->name('form.hei.link.delete');
 
 Route::post('/ched/evaluation/update', [CHEDFormController::class, 'update'])->name('form.ched.update');
+Route::post('/ched/evaluation/archive', [CHEDFormController::class, 'archive'])->name('form.ched.archive');
+Route::post('/ched/evaluation/lock', [CHEDFormController::class, 'lock'])->name('form.ched.lock');
+Route::post('/ched/evaluation/unlock', [CHEDFormController::class, 'unlock'])->name('form.ched.unlock');
+
 
 //admin-panel
 //USERS
@@ -152,21 +158,24 @@ Route::get('/admin/discipline/{discipline}/delete', [DisciplineController::class
 //Admin Settings
 Route::get('/admin/settings', [AdminSettingsController::class, 'index'])->middleware(['auth'])->name('admin.settings');
 
+//Email Notification
+Route::post('/evaluation/notify', [EvaluationController::class, 'sendEmail'])->middleware(['auth'])->name('evaluation.notify');
 
 //Generate Report
-Route::post('/report/deficiency/generate', [PDFController::class, 'generateDeficiencyReport'])->middleware(['auth'])->name('report.deficiency.generate');
-Route::get('/report/deficiency/view/{tool}', [PDFController::class, 'viewDeficiencyReport'])->middleware(['auth'])->name('report.deficiency.view');
-Route::get('/report/deficiency/download/{tool}', [PDFController::class, 'downloadDeficiencyReport'])->middleware(['auth'])->name('report.deficiency.download');
+Route::post('/report', [PDFController::class, 'report'])->middleware(['auth'])->name('report.create');
+Route::post('/report/generate', [PDFController::class, 'generateReport'])->middleware(['auth'])->name('report.generate');
+Route::get('/report/monitoring/{tool}/{type}', [PDFController::class, 'monitoringReport'])->middleware(['auth'])->name('report.monitoring');
+Route::get('/report/deficiency/{tool}/{type}', [PDFController::class, 'deficiencyReport'])->middleware(['auth'])->name('report.deficiency');
 
-Route::get('/chart', function () {
-    return Inertia::render('Progmes/Shared/Charts/DoughnutChart');
-});
+// Route::get('/chart', function () {
+//     return Inertia::render('Progmes/Shared/Charts/DoughnutChart');
+// });
 
-Route::get('/test', function () {
-    return Inertia::render('Progmes/Shared/Test');
-});
+// Route::get('/test', function () {
+//     return Inertia::render('Progmes/Shared/Test');
+// });
 
-Route::get('/login-testuser', [UserController::class, 'userLogin']);
-Route::post('/testuserlogin', [UserController::class, 'testUserLogin']);
+// Route::get('/login-testuser', [UserController::class, 'userLogin']);
+// Route::post('/testuserlogin', [UserController::class, 'testUserLogin']);
 
 require __DIR__.'/auth.php';

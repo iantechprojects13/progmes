@@ -15,7 +15,7 @@
         </Link>
     </div>
     <div class="mx-3 md:mx-8 mt-5 border border-gray-400 rounded p-3 bg-white flex flex-col lg:flex-row justify-between items-center">
-        <div class="mb-3 lg:mb-0">
+        <div class="mb-3 lg:mb-0 w-full pr-5">
             <div v-if="!hei & !program">
                 <div class="flex flex-row items-center">
                     <i class="fas fa-book mr-3 text-blue-500"></i>
@@ -117,11 +117,6 @@
         <div class="w-full lg:w-1/2 border border-gray-400 bg-white rounded mt-3 lg:mt-0">
             <div class="p-3 border-b border-gray-400"><b>Compliance Status</b></div>
             <div class="flex items-center text-center w-full h-36">
-                <!-- <compliance-status :dataItem="[readyforvisit, inprogress, pending, archived]" :color="['#04f', '#07f', '#09f', '#0cf']"
-                :labels="['Ready for Visit', 'In progress', 'Pending', 'Complied/Archived']"
-                >
-
-                </compliance-status> -->
                 <compliance-status v-if="readyforvisit != 0 || inprogress != 0 || pending != 0 || archived != 0" :dataItem="[readyforvisit, inprogress, pending, archived]" :color="['#03d', '#07f', '#09f', '#0cf']"
                 :labels="['Ready for visit', 'In progress', 'Pending', 'Complied/Archived']"
                 >
