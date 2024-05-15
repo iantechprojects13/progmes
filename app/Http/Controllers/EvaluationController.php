@@ -44,10 +44,17 @@ class EvaluationController extends Controller
         $disciplines = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('discipline')->get();
         $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
         $canEvaluate = false;
+        $canEmail = false;
 
         if ($user->role == 'Super Admin' || $user->role == 'Education Supervisor') {
             $canEvaluate = true;
+            $canEmail = true;
         }
+
+        if ($user->role == 'Admin') {
+            $canEmail = true;
+        }
+        
 
         $complianceTools = EvaluationFormModel::query()
         ->when($request->query('search'), function ($query) use ($request, $disciplineIds) {
@@ -88,6 +95,7 @@ class EvaluationController extends Controller
             'complianceTools' => $complianceTools,
             'filters' => $request->only(['search']) + ['show' => $show, 'academicYear' => $acadYear ],
             'canEvaluate' => $canEvaluate,
+            'canEmail' => $canEmail,
         ]);
     }
 
@@ -183,7 +191,7 @@ class EvaluationController extends Controller
                 });
             })
             ->where(function ($query) {
-                $query->whereNot('status', 'Deployed');
+                $query->whereNot('status', 'Deployed')->whereNot('status', 'Archived');
             });
         })
         ->when($user->role == 'Dean', function ($query) use ($disciplineIds) {
@@ -194,7 +202,7 @@ class EvaluationController extends Controller
             $query->where('id', $institution);
         })
         ->where(function ($query) {
-            $query->whereNot('status', 'Deployed');
+            $query->whereNot('status', 'Deployed')->whereNot('status', 'Archived');
         })
         ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable')
         ->paginate($show)
@@ -214,6 +222,57 @@ class EvaluationController extends Controller
             'institution' => $institutionName,
         ]);
     }
+
+
+    public function archivedForHEI(Request $request) {
+        $user = Auth::user();
+        $show = $request->query('show') ? $request->query('show') : 25;
+        $acadYear = $request->query('academicYear') ? $request->query('academicYear') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
+        $disciplines = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('discipline')->get();
+        $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+        $institution = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->value('institutionId');
+        $institutionName = InstitutionModel::where('id', $institution)->value('name');
+
+        $complianceTools = EvaluationFormModel::query()
+        ->when($request->query('search'), function ($query) use ($request, $disciplineIds) {
+            $query->where(function ($q) use ($request, $disciplineIds){
+                $q->whereHas('institution_program.program', function ($searchQuery) use ($request, $disciplineIds) {
+                    $searchQuery->where('program', 'like', '%' . $request->query('search') . '%');
+                });
+            })
+            ->where(function ($query) {
+                $query->where('status', 'Archived');
+            });
+        })
+        ->when($user->role == 'Dean', function ($query) use ($disciplineIds) {
+            $query->whereIn('disciplineId', $disciplineIds);
+        })
+        ->where('effectivity', $acadYear)
+        ->whereHas('institution_program.institution', function($query) use ($institution) {
+            $query->where('id', $institution);
+        })
+        ->where(function ($query) {
+            $query->where('status', 'Archived');
+        })
+        ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable')
+        ->paginate($show)
+        ->through(fn($item) => [
+            'id' => $item->id,
+            'submissionDate' => $item->submissionDate,
+            'status' => $item->status,
+            'institution' => $item->institution_program->institution->name,
+            'program' => $item->institution_program->program->program,
+            'progress' => intval(round((($item->complied->count() + $item->not_complied->count() + $item->not_applicable->count())/$item->item->count())*100)),
+        ])
+        ->withQueryString();
+
+        return Inertia::render('Progmes/Evaluation/HEI-Evaluation-Archive', [
+            'complianceTools' => $complianceTools,
+            'filters' => $request->only(['search']) + ['show' => $show, 'academicYear' => $acadYear ],
+            'institution' => $institutionName,
+        ]);
+    }
+
 
     public function sendEmail(Request $request) {
 

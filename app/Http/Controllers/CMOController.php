@@ -243,7 +243,7 @@ class CMOController extends Controller
             !$cmoModel->series ||
             !$cmoModel->version
         ) {
-            return redirect()->back()->with('failed', 'Failed: Incomplete CMO details. Please provide required information to proceed.');
+            return redirect()->back()->with('failed', 'Incomplete CMO details. Please provide required information to proceed.');
         }
 
         $cmoModel->update([
@@ -300,15 +300,28 @@ class CMOController extends Controller
     }
 
     public function destroy($id) {
-        $cmoModel = CMOModel::find($id);
-        
+        $cmoModel = CMOModel::where('id', $id)->with('evaluationForm')->first();
+
         if (!$cmoModel) {
-            return redirect()->back()->with('failed', 'Failed to delete CMO.');
+            return redirect()->back()->with('failed', 'CMO not found.');
         }
 
-        $cmoModel->criteria()->delete();
-        $cmoModel->delete();
+        $canBeDeleted = true;
 
-        return redirect()->back()->with('success', 'CMO deleted successfully.');
+        foreach ($cmoModel->evaluationForm as $tool) {
+            if ($tool != null) {
+                $canBeDeleted = false;
+                break;
+            }
+        }
+
+        if ($canBeDeleted) {
+            $cmoModel->criteria()->delete();
+            $cmoModel->delete();
+            
+            return redirect()->back()->with('success', 'CMO deleted successfully.');
+        }
+
+        return redirect()->back()->with('failed', 'This record cannot be deleted because it is associated with another records.');
     }
 }

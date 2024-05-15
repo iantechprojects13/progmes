@@ -136,7 +136,6 @@
 <script setup>
     import { useForm, router } from "@inertiajs/vue3";
     import { ref, watch } from "vue";
-    import { Inertia } from "@inertiajs/inertia";
 
     const evidence_file = ref(null);
     const toggleBtn = ref([]);

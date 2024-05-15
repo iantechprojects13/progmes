@@ -97,8 +97,12 @@
                         </td>
                         <td v-show="showEvaluation" class="p-3">
                             <div class="px-1 py-0.5 w-fit rounded text-white"
-                            :class="[{'bg-blue-600' : item.evaluationStatus == 'Complied'}]"
-                            >{{ item.evaluationStatus }}</div>
+                                :class="[{ 'bg-blue-500': item.evaluationStatus == 'Complied' },
+                                {'bg-red-500' : item.evaluationStatus == 'Not complied'},
+                                {'bg-gray-600' :item.evaluationStatus == 'Not applicable'},
+                                ]"
+                                >{{ item.evaluationStatus }}
+                            </div>
                         </td>
                     </tr>
                 </template>

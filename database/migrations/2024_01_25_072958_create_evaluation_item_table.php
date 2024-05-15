@@ -20,9 +20,6 @@ return new class extends Migration
             $table->string('recommendations', 5000)->nullable();
             $table->string('selfEvaluationStatus')->nullable();
             $table->string('evaluationStatus')->nullable();
-            $table->string('evidenceId')->nullable();
-            $table->string('evidenceLink')->nullable();
-            $table->boolean('canUploadEvidence')->nullable();
             $table->timestamps();
         });
     }

@@ -16,7 +16,19 @@
             </select>
         </div>
     </div>
-    <content-container hasSearch="true" hasFilters="true" :data_list="complianceTools">
+    <content-container :hasNavigation="true" :hasSearch="true" :hasFilters="true" :data_list="complianceTools">
+        <template v-slot:navigation>
+            <div class="mt-3">
+                <button class="select-none text-blue-500 h-10 mr-8 border-b-2 font-bold border-blue-500">
+                    Evaluation
+                </button>
+                <Link :href="route('evaluation.hei.archive')">
+                <button class="select-none text-gray-500 hover:text-black">
+                    Archived
+                </button>
+                </Link>
+            </div>
+        </template>
         <template v-slot:search>
             <div class="w-full flex justify-end relative">
                 <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"

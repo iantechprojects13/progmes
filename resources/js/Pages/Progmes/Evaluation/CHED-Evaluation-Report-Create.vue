@@ -66,28 +66,28 @@
                     <input type="text" id="effectivity" class="w-full rounded bg-gray-200" :value="'A.Y. '+tool.effectivity" disabled>
                 </div>
                 <div class="mt-3 flex items-center lg:flex-row flex-col">
-                    <label for="visitDate" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Evaluation Date</label>
-                    <input type="date" id="visitDate" class="w-full rounded" placeholder="Monitoring/Evaluation Date" v-model="report.visitDate">
+                    <label for="evaluationDate" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Evaluation Date</label>
+                    <input type="date" id="evaluationDate" class="w-full rounded" placeholder="Monitoring/Evaluation Date" v-model="report.evaluationDate">
                 </div>
                 <div class="mt-3 flex items-center lg:flex-row flex-col">
                     <label for="conforme" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Conforme</label>
-                    <input type="text" id="conforme" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Conforme" v-model="report.conforme">
-                    <input type="text" id="conformeTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="report.conformeTitle">
+                    <input maxlength="255" type="text" id="conforme" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Conforme" v-model="report.conforme">
+                    <input maxlength="255" type="text" id="conformeTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="report.conformeTitle">
                 </div>
                 <div class="mt-3 flex items-center lg:flex-row flex-col">
                     <label for="evaluatedBy" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Evaluated by</label>
-                    <input type="text" id="evaluatedBy" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Evaluated by" v-model="report.evaluatedBy">
-                    <input type="text" id="evaluatedByTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="report.evaluatedByTitle">
+                    <input maxlength="255" type="text" id="evaluatedBy" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Evaluated by" v-model="report.evaluatedBy">
+                    <input maxlength="255" type="text" id="evaluatedByTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="report.evaluatedByTitle">
                 </div>
                 <div class="mt-3 flex items-center lg:flex-row flex-col">
                     <label for="reviewedBy" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Reviewed by</label>
-                    <input type="text" id="reviewedBy" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Reviewed by" v-model="report.reviewedBy">
-                    <input type="text" id="reviewedByTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="report.reviewedByTitle">
+                    <input maxlength="255" type="text" id="reviewedBy" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Reviewed by" v-model="report.reviewedBy">
+                    <input maxlength="255" type="text" id="reviewedByTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="report.reviewedByTitle">
                 </div>
                 <div class="mt-3 flex items-center lg:flex-row flex-col">
                     <label for="notedBy" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Noted by</label>
-                    <input type="text" id="notedBy" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Noted by" v-model="report.notedBy">
-                    <input type="text" id="notedByTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="report.notedByTitle">
+                    <input maxlength="255" type="text" id="notedBy" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Noted by" v-model="report.notedBy">
+                    <input maxlength="255" type="text" id="notedByTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="report.notedByTitle">
                 </div>
             </div>
         </template>
@@ -106,7 +106,7 @@ const props = defineProps([
 
 const report = reactive({
     id: ref(props.tool.id),
-    visitDate: ref(props.tool.visitDate),
+    evaluationDate: ref(props.tool.evaluationDate),
     conforme: ref(props.tool.conforme),
     conformeTitle: ref(props.tool.conformeTitle),
     evaluatedBy: ref(props.tool.evaluatedBy),

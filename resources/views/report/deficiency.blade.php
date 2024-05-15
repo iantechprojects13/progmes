@@ -129,7 +129,7 @@
                 <br>
 
                 <div style="display: inline-block; margin-top: 5px"><b>Monitoring/Evaluation Date:</b></div>
-                <div style="display: inline-block;">{{ date('F j, Y', strtotime($tool->visitDate)) }}</div>
+                <div style="display: inline-block;">{{ date('F j, Y', strtotime($tool->evaluationDate)) }}</div>
                 <br>
             </div>
 

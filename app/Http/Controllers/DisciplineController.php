@@ -65,9 +65,10 @@ class DisciplineController extends Controller
 
     public function store(Request $request) {
         $validated = $request->validate([
-            'discipline' => 'required',
+            'discipline' => 'required|unique:discipline,discipline',
         ], [
-            'discipline.required' => 'The discipline field is required.'
+            'discipline.required' => 'The discipline field is required.',
+            'discipline.unique' => 'This discipline has already been registered.'
         ]);
 
         DisciplineModel::create([
@@ -86,6 +87,13 @@ class DisciplineController extends Controller
 
         $discipline = DisciplineModel::find($request->id);
 
+        $disciplineExist = DisciplineModel::where('id', '<>', $request->id)->where('discipline', $validated['discipline'])
+        ->exists();
+
+        if ($disciplineExist) {
+            return redirect()->back()->with('failed', 'This discipline has already been registered.');
+        }
+
         if($discipline) {
             $discipline->update([
                 'discipline' => $validated['discipline'],
@@ -100,17 +108,54 @@ class DisciplineController extends Controller
 
     public function delete($discipline) {
 
-        $disciplineModel = DisciplineModel::find($discipline);
 
-        if(!$disciplineModel) {
-           return redirect()->back()->with('failed', 'Failed to delete program.');
+        $disciplineModel = DisciplineModel::where( 'id', $discipline)
+        ->with('program', 'tool', 'cmo', 'role')
+        ->first();
+        
+
+        if (!$disciplineModel) {
+            return redirect()->back()->with('failed', 'Discipline not found.');
+        }
+
+        $canBeDeleted = true;
+
+        foreach ($disciplineModel->program as $program) {
+            if ($program != null) {
+                $canBeDeleted = false;
+                break;
+            }
+        }
+
+        foreach ($disciplineModel->tool as $tool) {
+            if ($tool != null) {
+                $canBeDeleted = false;
+                break;
+            }
+        }
+
+        foreach ($disciplineModel->role as $role) {
+            if ($role != null) {
+                $canBeDeleted = false;
+                break;
+            }
+        }
+
+        foreach ($disciplineModel->cmo as $cmo) {
+            if ($cmo != null) {
+                $canBeDeleted = false;
+                break;
+            }
+        }
+
+        if ($canBeDeleted) {
+            $disciplineModel->delete();
+            
+            return redirect()->back()->with('success', 'Discipline successfully deleted.');
         }
         
-        $disciplineModel->institution_program()->delete();
-        $disciplineModel->program()->delete();
-        $disciplineModel->delete();
+        return redirect()->back()->with('failed', 'This record cannot be deleted because it is associated with another records.');
 
-        return redirect()->back()->with('success', 'Deleted successfully.');
     }
 
 }

@@ -118,12 +118,12 @@
                             {{ index + 1 }}
                         </td>
                         <td class="max-w-18 w-1/4 min-w-18 py-5 px-2 align-top">
-                            <textarea ref="area" :id="'area' + index" v-model="form.area[index]"
+                            <textarea ref="area" :id="'area' + index" v-model="form.area[index]" maxlength="255"
                                 class="areaInput min-h-max h-10 resize-none text-sm rounded w-full overflow-hidden border-2 border-gray-400"
                                 @focus="handleAreaInput(index)" @input="handleAreaInput(index)"></textarea>
                         </td>
                         <td class="min-w-18 py-5 px-2 align-top">
-                            <textarea ref="minreq" :id="'minReq' + index" v-model="form.minReq[index]"
+                            <textarea ref="minreq" :id="'minReq' + index" v-model="form.minReq[index]" maxlength="5000"
                                 class="minreqInput min-h-max resize-none text-sm bg-white rounded w-full overflow-hidden border-2 border-gray-400"
                                 @focus="handleMinreqInput(index)" @input="handleMinreqInput(index)"></textarea>
                         </td>
@@ -133,9 +133,6 @@
         </template>
     </content-container>
     <Notification v-if="saving" message="Processing..." type="processing" />
-    <!-- <modal showModal="addRowModal">
-        asdsad
-    </modal> -->
 </template>
 
 <script setup>

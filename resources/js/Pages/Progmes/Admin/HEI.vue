@@ -37,6 +37,7 @@
             <content-table>
                 <template v-slot:table-head>
                     <th class="p-3 pl-5">HEI Name</th>
+                    <!-- <th class="p-3">Current Status</th> -->
                     <th v-show="canEdit" class="p-3 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
@@ -52,6 +53,14 @@
                         <td class="p-3 pl-5">
                             {{ hei.name }}
                         </td>
+                        <!-- <td class="p-3 text-xs">
+                            <div v-if="hei.isActive" class="bg-green-600 text-white py-0.5 px-1 rounded w-fit">
+                                Active
+                            </div>
+                            <div v-else class="bg-gray-700 text-white py-0.5 px-1 rounded w-fit">
+                                Not active
+                            </div>
+                        </td> -->
                         <td class="p-3 text-right">
                             <button @click="view(hei.id)"
                                 class="mr-1 select-none h-10 w-10 rounded text-white bg-green-600 hover:bg-green-700 tooltipForActions"
@@ -99,8 +108,6 @@
     import { ref } from 'vue';
 
     const props = defineProps(['institution_list', 'canEdit', 'canAdd', 'canDelete', 'filters']);
-    const selected = ref(null);
-    const deleteProcessing = ref(false);
 
     const query = useForm({
         show: props.filters.show,
@@ -129,17 +136,6 @@
         router.get('/admin/higher-education-institutions/' + id + '/view');
     }
 
-    function deleteHEI() {
-        router.post('/admin/higher-education-institutions/delete', { 'id': selected.value.id }, {
-            onStart: () => {
-                deleteProcessing.value = true;
-            },
-            onFinish: () => {
-                deleteProcessing.value = false;
-            },
-            preserveState: false,
-        });
-    }
 
 </script>
 

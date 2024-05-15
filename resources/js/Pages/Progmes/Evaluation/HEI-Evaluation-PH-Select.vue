@@ -44,7 +44,7 @@
                                     Submitted
                                 </span>
                                 <span class="px-1 py-0.5 bg-gray-700 rounded" v-show="item.status === 'Archived'">
-                                    Submitted
+                                    Archived
                                 </span>
                             </div>
                         </td>

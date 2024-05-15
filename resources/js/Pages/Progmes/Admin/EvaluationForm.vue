@@ -27,7 +27,7 @@
         <template v-slot:top-button>
             <div class="flex md:flex-row flex-col text-sm">
                 <div class="w-full">
-                    <button @click="deployToolModal = true"
+                    <button @click="toggleDeployModal"
                         class="select-none whitespace-nowrap px-3 w-fit rounded h-10 bg-blue-500 hover:bg-blue-600 text-white group">
                         <i class="fas fa-rocket mr-2"></i>
                         Deploy tool
@@ -127,7 +127,7 @@
         </template>
     </content-container>
 
-    <modal :showModal="deployToolModal" @close="closeModal" @submit="deploy" type="deploy"
+    <modal :showModal="deployToolModal" @close="toggleDeployModal" @submit="deploy" type="deploy"
         title="Deploy Compliance Tool">
         <div class="p-3">
             <div>
@@ -149,11 +149,11 @@
                     <label class="font-bold text-gray-700" for="cmo">CHED Memorandum Order</label>
                     <input id="cmo" type="text" disabled class="w-full text-sm rounded border-gray-400 my-0.5" :value="
                             deployment.program?.active_cmo != null
-                                ? 'CMO No.' +
+                                ? 'CMO ' +
                                   deployment.program.active_cmo.number +
-                                  ' Series of ' +
+                                  ', S. ' +
                                   deployment.program.active_cmo.series +
-                                  ' - Version ' +
+                                  ', Version ' +
                                   deployment.program.active_cmo.version
                                 : 'No Active CMO'
                         " />
@@ -168,7 +168,10 @@
             </div>
         </div>
         <template v-slot:custom-button>
-            <button @click="deploy" class="text-white bg-blue-600 hover:bg-blue-700 h-10 w-20 rounded border">
+            <button 
+            :disabled="deployment.program == null || deployment.cmo == null" @click="toggleConfirmationModal" class="select-none text-white h-10 w-20 rounded border"
+            :class="[{'bg-gray-700':deployment.program == null || deployment.cmo == null}, {'bg-blue-600 hover:bg-blue-700':deployment.program != null && deployment.cmo != null}]"
+            >
                 <span v-if="deploying">
                     <i class="fas fa-spinner animate-spin"></i>
                 </span>
@@ -176,6 +179,22 @@
             </button>
         </template>
     </modal>
+    <div v-if="confirmationModal">
+        <Confirmation @close="toggleConfirmationModal" title="Confirm Deployment">
+            <template v-slot:message>
+                <div>Are you sure you want to deploy evaluation compliance tool for <b>{{ deployment.program.program }}<span v-if="deployment.program?.major"> - {{ deployment.program.major }}</span>
+                </b>?</div>
+            </template>
+            <template v-slot:buttons>
+                <button @click="deploy" class="select-none text-white bg-blue-600 hover:bg-blue-700 h-10 w-20 rounded border">
+                    <span v-if="deploying">
+                        <i class="fas fa-spinner animate-spin"></i>
+                    </span>
+                    <span v-else>Confirm</span>
+                </button>
+            </template>
+        </Confirmation>
+    </div>
     <Notification :message="$page.props.flash.success" type="success" />
     <Notification :message="$page.props.flash.failed" type="failed" />
     <Notification v-if="$page.props.errors.program" :message="$page.props.errors.program" type="failed" />
@@ -188,10 +207,16 @@
 
     let deployToolModal = ref(false);
     const deploying = ref(false);
+    const confirmationModal = ref(false);
 
-    const closeModal = () => {
-        deployToolModal.value = false;
+    function toggleDeployModal() {
+        deployToolModal.value = !deployToolModal.value;
     };
+
+    function toggleConfirmationModal() {
+        toggleDeployModal();
+        confirmationModal.value = !confirmationModal.value;
+    }
 
     const props = defineProps([
         "institutionProgramList",
@@ -206,6 +231,10 @@
         program: null,
         cmo: null,
         effectivity: ref(props.effectivity),
+    });
+
+    watch(() => deployment.program?.active_cmo, (cmo_value) => {
+        deployment.cmo = cmo_value;
     });
 
     function deploy() {
@@ -261,7 +290,9 @@
 <script>
     import Layout from "../Shared/Layout.vue";
     import FormErrorMessage from "../Shared/FormErrorMessage.vue";
+import Confirmation from '../Shared/Confirmation.vue';
     export default {
+  components: { Confirmation },
         data() {
             return {
                 openSelectPageDropdown: false,

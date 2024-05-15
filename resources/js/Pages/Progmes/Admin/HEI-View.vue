@@ -27,15 +27,22 @@
                                 Name</th>
                             <td class="px-3 py-2 border border-gray-400">{{ institution.name }}</td>
                         </tr>
+                        <!-- <tr>
+                            <th class="text-right align-top w-1/5 px-3 py-2 border border-gray-400">Current Status</th>
+                            <td class="px-3 py-2 border border-gray-400">
+                                <div v-if="institution.isActive" class="w-fit py-0.5 px-1 rounded bg-green-500 text-white">Active</div>
+                                <div v-else class="w-fit py-0.5 px-1 rounded bg-gray-600 text-white">Inactive</div>
+                            </td>
+                        </tr> -->
                         <tr>
                             <th class="text-right align-top w-1/5 px-3 py-2 border border-gray-400">Programs</th>
                             <td class="px-3 py-2 border border-gray-400">
                                 <div>
                                     <ul>
-                                        <li v-if="institution.institution_program.length == 0">
+                                        <li v-if="institution.active_program.length == 0">
                                             Empty
                                         </li>
-                                        <li v-else v-for="program in institution.institution_program" :key="program.id">
+                                        <li v-else v-for="program in institution.active_program" :key="program.id">
                                             {{ program.program.program }}
                                         </li>
                                     </ul>

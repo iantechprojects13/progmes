@@ -62,6 +62,16 @@ class ProgramController extends Controller
 
     public function store(ProgramRequest $request) {
         $validatedData = $request->validated();
+        $programExist = false;
+
+        $programExist = ProgramModel::where('program', $validatedData['program'])
+        ->where('major', $validatedData['major'] ? $validatedData['major'] : null)
+        ->exists();
+
+        if ($programExist) {
+            return redirect()->back()->with('failed', 'This program has already been registered.');
+        }
+
         ProgramModel::create([
             'disciplineId' => $validatedData['discipline'],
             'program' => $validatedData['program'],
@@ -92,6 +102,15 @@ class ProgramController extends Controller
 
         $programModel = ProgramModel::find($request->id);
 
+
+        $programExist = ProgramModel::where('id', '<>', $request->id)->where('program', $validatedData['program'])
+        ->where('major', $validatedData['major'] ? $validatedData['major'] : null)
+        ->exists();
+
+        if ($programExist) {
+            return redirect()->back()->with('failed', 'This program has already been registered.');
+        }
+
         $programModel->update([
             'disciplineId' => $validatedData['discipline'],
             'program' => $validatedData['program'],
@@ -105,17 +124,45 @@ class ProgramController extends Controller
 
     public function delete($program) {
 
-        $programModel = ProgramModel::find($program);
+        $programModel = ProgramModel::where( 'id', $program)
+        ->with('institutionProgram', 'institutionProgram.evaluationForm', 'role', 'cmo')
+        ->first();
 
-        if(!$programModel) {
-            return redirect()->back()->with('failed', 'Failed to delete program.');
+
+        if (!$programModel) {
+            return redirect()->back()->with('failed', 'Program not found.');
         }
 
-        $programModel->institutionProgram()->delete();
-        $programModel->cmo()->delete();
-        $programModel->delete();
+        $canBeDeleted = true;
 
-        return redirect()->back()->with('success', 'Program successfully deleted.');
+        foreach ($programModel->institutionProgram as $program) {
+            if (count($program->evaluationForm) != 0) {
+                $canBeDeleted = false;
+                break;
+            }
+        }
+
+        foreach ($programModel->role as $role) {
+            if ($role != null) {
+                $canBeDeleted = false;
+                break;
+            }
+        }
+
+        foreach ($programModel->cmo as $cmo) {
+            if ($cmo != null) {
+                $canBeDeleted = false;
+                break;
+            }
+        }
+
+        if ($canBeDeleted) {
+            $programModel->delete();
+            
+            return redirect()->back()->with('success', 'Program successfully deleted.');
+        }
+        
+        return redirect()->back()->with('failed', 'This record cannot be deleted because it is associated with another records.');
         
     }
 

@@ -27,10 +27,10 @@ class ComplianceEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Compliance Status Notification',
+            subject: 'ProgMES Program Compliance Status Notification',
         );
     }
-
+    
     /**
      * Get the message content definition.
      */

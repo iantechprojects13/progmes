@@ -222,89 +222,202 @@ class InitialDataSeeder extends Seeder
         ]);        
         
         // Test users
+
         DB::table('users')->insert([
             'id' => 1001,
+            'name' => 'SuperAdmin Test-user',
+            'email' => 'superadmin@gmail.com',
+            'role' => 'Super Admin',
+            'type' => 'CHED',
+            'avatar' => '/assets/user.png',
+            'isVerified' => 1,
+            'isActive' => 1,
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1002,
             'name' => 'Admin Test-user',
             'email' => 'admin@gmail.com',
             'role' => 'Admin',
             'type' => 'CHED',
             'avatar' => '/assets/user.png',
+            'isVerified' => 1,
+            'isActive' => 1,
         ]);
 
         DB::table('users')->insert([
-            'id' => 1002,
+            'id' => 1003,
             'name' => 'RD Test-user',
             'email' => 'regionaldirector@gmail.com',
             'role' => 'Regional Director',
             'type' => 'CHED',
             'avatar' => '/assets/user.png',
-        ]);
-
-        DB::table('users')->insert([
-            'id' => 1003,
-            'name' => 'ES1 Test-user',
-            'email' => 'educationsupervisor1@gmail.com',
-            'role' => 'Education Supervisor',
-            'type' => 'CHED',
-            'avatar' => '/assets/user.png',
+            'isVerified' => 1,
+            'isActive' => 1,
         ]);
 
         DB::table('users')->insert([
             'id' => 1004,
-            'name' => 'ES2 Test-user',
-            'email' => 'educationsupervisor2@gmail.com',
-            'role' => 'Education Supervisor',
+            'name' => 'CEPS Test-user',
+            'email' => 'ceps01@gmail.com',
+            'role' => 'Chief Education Program Specialist',
             'type' => 'CHED',
             'avatar' => '/assets/user.png',
+            'isVerified' => 1,
+            'isActive' => 1,
         ]);
 
         DB::table('users')->insert([
             'id' => 1005,
-            'name' => 'PH1 Test-user',
-            'email' => 'programhead1@gmail.com',
-            'role' => 'Program Head',
+            'name' => 'SEPS Test-user',
+            'email' => 'seps01@gmail.com',
+            'role' => 'Supervising Education Program Specialist',
+            'type' => 'CHED',
             'avatar' => '/assets/user.png',
+            'isVerified' => 1,
+            'isActive' => 1,
         ]);
 
         DB::table('users')->insert([
             'id' => 1006,
-            'name' => 'PH2 Test-user',
-            'email' => 'programhead2@gmail.com',
-            'role' => 'Program Head',
+            'name' => 'ES1 Test-user',
+            'email' => 'educationsupervisor1@gmail.com',
             'avatar' => '/assets/user.png',
         ]);
 
-        
-        DB::table('role')->insert([
-            'userId' => 1003,
-            'disciplineId' => 1,
+        DB::table('users')->insert([
+            'id' => 1007,
+            'name' => 'ES2 Test-user',
+            'email' => 'educationsupervisor2@gmail.com',
+            'avatar' => '/assets/user.png',
         ]);
 
-        DB::table('role')->insert([
-            'userId' => 1003,
-            'disciplineId' => 2,
+        DB::table('users')->insert([
+            'id' => 1008,
+            'name' => 'ES3 Test-user',
+            'email' => 'educationsupervisor3@gmail.com',
+            'avatar' => '/assets/user.png',
         ]);
 
-        DB::table('role')->insert([
-            'userId' => 1004,
-            'disciplineId' => 3,
+        DB::table('users')->insert([
+            'id' => 1009,
+            'name' => 'ES4 Test-user',
+            'email' => 'educationsupervisor4@gmail.com',
+            'avatar' => '/assets/user.png',
         ]);
 
-        DB::table('role')->insert([
-            'userId' => 1004,
-            'disciplineId' => 4,
+        DB::table('users')->insert([
+            'id' => 1010,
+            'name' => 'ES5 Test-user',
+            'email' => 'educationsupervisor5@gmail.com',
+            'avatar' => '/assets/user.png',
         ]);
 
-        DB::table('role')->insert([
-            'userId' => 1005,
-            'institutionId' => 100,
-            'programId' => 1,
+        DB::table('users')->insert([
+            'id' => 1011,
+            'name' => 'PH1 Test-user',
+            'email' => 'programhead1@gmail.com',
+            'avatar' => '/assets/user.png',
         ]);
 
-        DB::table('role')->insert([
-            'userId' => 1006,
-            'institutionId' => 100,
-            'programId' => 5,
+        DB::table('users')->insert([
+            'id' => 1012,
+            'name' => 'PH2 Test-user',
+            'email' => 'programhead2@gmail.com',
+            'avatar' => '/assets/user.png',
         ]);
+
+        DB::table('users')->insert([
+            'id' => 1013,
+            'name' => 'PH3 Test-user',
+            'email' => 'programhead3@gmail.com',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1014,
+            'name' => 'PH4 Test-user',
+            'email' => 'programhead4@gmail.com',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1015,
+            'name' => 'PH5 Test-user',
+            'email' => 'programhead5@gmail.com',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1016,
+            'name' => 'Dean1 Test-user',
+            'email' => 'dean1@gmail.com',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1017,
+            'name' => 'Dean2 Test-user',
+            'email' => 'dean2@gmail.com',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1018,
+            'name' => 'VP-Acad1 Test-user',
+            'email' => 'vpacad1@gmail.com',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1019,
+            'name' => 'VP-Acad2 Test-user',
+            'email' => 'vpacad2@gmail.com',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1020,
+            'name' => 'Random1 Test-user',
+            'email' => 'random1@gmail.com',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1021,
+            'name' => 'Random2 Test-user',
+            'email' => 'random2@gmail.com',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1022,
+            'name' => 'Random3 Test-user',
+            'email' => 'random3@gmail.com',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1023,
+            'name' => 'Random4 Test-user',
+            'email' => 'random4@gmail.com',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1024,
+            'name' => 'Random5 Test-user',
+            'email' => 'random5@gmail.com',
+            'avatar' => '/assets/user.png',
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 1025,
+            'name' => 'Random6 Test-user',
+            'email' => 'random6@gmail.com',
+            'avatar' => '/assets/user.png',
+        ]);
+
+
     }
 }

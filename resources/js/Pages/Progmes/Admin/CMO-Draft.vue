@@ -84,10 +84,10 @@
                         </td>
                         <td class="p-3 whitespace-normal"
                             v-show="$page.props.auth.user.role == 'Super Admin'|| $page.props.auth.user.role == 'Admin'">
-                            {{ cmo.created_by.name }}
+                            {{ cmo.created_by?.name }}
                         </td>
                         <td class="p-3 text-right">
-                            <button @click="toggleConfirmationModal(cmo.id, 'publish', 'Publish CMO')"
+                            <button @click="toggleConfirmationModal(cmo, 'publish', 'Publish CMO')"
                                 class="select-none h-10 w-10 mr-1 rounded bg-green-600 hover:bg-green-700 text-white tooltipForActions"
                                 data-tooltip="Publish">
                                 <i class="fas fa-paper-plane"></i>
@@ -97,7 +97,7 @@
                                 data-tooltip="Edit">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button @click="toggleConfirmationModal(cmo.id, 'deleteCMO', 'Delete Draft')"
+                            <button @click="toggleConfirmationModal(cmo, 'deleteCMO', 'Delete Draft')"
                                 class="select-none h-10 w-10 rounded bg-red-500 hover:bg-red-600 text-white tooltipForActions"
                                 data-tooltip="Delete">
                                 <i class="fas fa-trash"></i>

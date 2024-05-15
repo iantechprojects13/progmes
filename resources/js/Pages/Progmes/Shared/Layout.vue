@@ -45,7 +45,7 @@
                                         'text-blue-400 bg-slate-800':
                                             highlight('dashboard'),
                                     }">
-                                <i class="fa fa-th-large mr-4 text-xl"></i>
+                                <i class="fa fa-pie-chart mr-4 text-xl"></i>
                                 Dashboard
                                 </Link>
 
@@ -79,7 +79,7 @@
                                 My Account
                                 </Link>
 
-                                <button @click="logout" :disable="loggingout" class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700">
+                                <button @click="toggleLogoutModal" :disable="loggingout" class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700">
                                     <i class="fa fa-sign-out mr-4 text-xl"></i>
                                 Log out
                                 </button>
@@ -112,7 +112,7 @@
         </div>
 
         <!-- Page Content -->
-        <div class="w-full h-auto overflow-y-hidden relative bg-gray-100 overflow-x-auto md:pt-0">
+        <div class="w-full h-auto overflow-y-hidden relative bg-gray-100 overflow-x-auto md:pt-0 pb-5">
             <div
                 class="md:hidden sticky top-0 w-full bg-blue-900 text-white flex justify-between text-center h-16 items-center shadow-md z-80 px-4">
                 <div class="cursor-pointer" @click="toggleSideBar">
@@ -132,7 +132,7 @@
                                     <i class="fas fa-user mr-3"></i>My Account
                                 </button>
                                 </Link>
-                                <button @click="logout" :disable="loggingout" class="block py-2 indent-3 hover:bg-gray-200 w-full text-left">
+                                <button @click="toggleLogoutModal" :disable="loggingout" class="block py-2 indent-3 hover:bg-gray-200 w-full text-left">
                                     <i class="fas fa-sign-out mr-3"></i>Log out
                                 </button>
                             </div>
@@ -143,13 +143,33 @@
             <slot />
         </div>
     </div>
+    <div>
+        <confirmation v-if="logoutModal" @close="toggleLogoutModal" title="Confirm Logout">
+            <template v-slot:message>
+                <div>Are you sure you want to log out?</div>
+            </template>
+            <template v-slot:buttons>
+                <button @click="logout" class="select-none text-white bg-red-500 hover:bg-red-600 h-10 w-20 rounded border">
+                    <span v-if="loggingout">
+                        <i class="fas fa-spinner animate-spin"></i>
+                    </span>
+                    <span v-else>Log out</span>
+                </button>
+            </template>
+        </confirmation>
+    </div>
 </template>
 
 <script setup>
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
+const logoutModal = ref(false);
 const loggingout = ref(false);
+
+function toggleLogoutModal() {
+    logoutModal.value = !logoutModal.value;
+}
 
 function logout() {
     router.post('/logout', loggingout.value, {
@@ -171,6 +191,7 @@ function logout() {
                     dashboard: [
                         "Progmes/Dashboard/Dashboard-CHED-Progress",
                         "Progmes/Dashboard/Dashboard-CHED-Overview",
+                        "Progmes/Dashboard/Dashboard-CHED-Analytics",
                         "Progmes/Dashboard/Dashboard-HEI",
                         "Progmes/Dashboard/Dashboard-CHED",
                         "Progmes/Dashboard/CHED-ES-Dashboard",
@@ -228,8 +249,6 @@ function logout() {
                     return this.component.adminpanel.includes(this.$page.component);
                 } else if (btn == "evaluation") {
                     return this.component.evaluation.includes(this.$page.component);
-                } else if (btn == "archive") {
-                    return this.component.archive.includes(this.$page.component);
                 } else if (btn == "myaccount") {
                     return this.component.myaccount.includes(this.$page.component);
                 }

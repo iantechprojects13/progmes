@@ -61,9 +61,9 @@
                     <th class="p-3">Actual Situation</th>
                     <th class="p-3">Self-Evaluation Status</th>
                     <th class="p-3">Evidence</th>
-                    <!-- <th class="p-3" v-show="showEvaluation">Findings</th>
+                    <th class="p-3" v-show="showEvaluation">Findings</th>
                     <th class="p-3" v-show="showEvaluation">Comments/Recommendations</th>
-                    <th class="p-3" v-show="showEvaluation">Evaluation Status</th> -->
+                    <th class="p-3" v-show="showEvaluation">Evaluation Status</th>
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="evaluation_tool.item.length == 0">
@@ -90,7 +90,7 @@
                                 </a>
                             </div>
                         </td>
-                        <!-- <td v-show="showEvaluation" class="p-3 whitespace-normal">
+                        <td v-show="showEvaluation" class="p-3 whitespace-normal">
                             {{ item.findings }}
                         </td>
                         <td v-show="showEvaluation" class="p-3 whitespace-normal">
@@ -103,7 +103,7 @@
                                 {'bg-gray-700' : item.evaluationStatus == 'Not applicable'}
                             ]"
                             >{{ item.evaluationStatus }}</div>
-                        </td> -->
+                        </td>
                     </tr>
                 </template>
             </content-table>

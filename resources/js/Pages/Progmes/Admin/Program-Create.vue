@@ -37,14 +37,15 @@
                 <div class="mt-3">
                     <label for="program" class="font-bold text-gray-600">Program</label>
                     <span class="text-red-500">*</span>
-                    <input v-model="form.program" type="text" id="program"
+                    <input maxlength="255" v-model="form.program" type="text" id="program"
                         class="rounded text-sm border-gray-400 w-full my-0.5 placeholder-gray-500"
                         placeholder="Program">
                     <FormErrorMessage :message="$page.props.errors.program" theme="dark" />
+                    <FormErrorMessage :message="$page.props.flash.failed" theme="dark" />
                 </div>
                 <div class="mt-3">
                     <label for="major" class="font-bold text-gray-600">Major</label>
-                    <input v-model="form.major" type="text" id="major"
+                    <input maxlength="255" v-model="form.major" type="text" id="major"
                         class="rounded text-sm border-gray-400 w-full my-0.5 placeholder-gray-500" placeholder="Major">
                 </div>
                 <div class="mt-5">

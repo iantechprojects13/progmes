@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('program', function (Blueprint $table) {
             $table->id();
             $table->foreignId('disciplineId')->nullable();
-            $table->string('program')->nullable();
-            $table->string('major')->nullable();
+            $table->string('program', 255)->nullable();
+            $table->string('major', 255)->nullable();
             $table->timestamps();
         });
     }

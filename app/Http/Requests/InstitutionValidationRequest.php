@@ -23,8 +23,8 @@ class InstitutionValidationRequest extends FormRequest
     {
         return [
             'id' => 'nullable',
-            'code' => 'required',
-            'name' => 'required',
+            'code' => 'required|unique:institution,code',
+            'name' => 'required|unique:institution,name',
             'programs' => 'nullable',
         ];
     }
@@ -33,7 +33,9 @@ class InstitutionValidationRequest extends FormRequest
     {
         return [
             'code.required' => 'The institutional code field is required.',
+            'code.unique' => 'The code has already been registered.',
             'name.required' => 'The institution name field is required.',
+            'name.unique' => 'The HEI name has already been registered.',
         ];
     }
 

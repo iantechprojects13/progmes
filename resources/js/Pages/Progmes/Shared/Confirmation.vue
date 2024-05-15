@@ -39,7 +39,7 @@
                     Are you sure you want to make
                     <b>CMO No.{{ selected.number }} - Series of {{ selected.series }} - Version {{
                         selected.version }}</b>
-                    as active CMO for <b>{{ selected.program.program }}</b> program?
+                    as active CMO for <b>{{ selected.program.program }}<span v-if="selected.program.major != null"> - {{ selected.program.major }}</span></b> program?
                 </div>
                 <div v-if="modaltype == 'deactivate'">
                     Are you sure you want to remove the activation from this CMO?
@@ -48,7 +48,7 @@
                     Are you sure you want to delete <b>{{ selected.name }}</b>? This action can't be undone.
                 </div>
                 <div v-if="modaltype == 'deleteProgram'">
-                    Are you sure you want to delete <b>{{ selected.program }}</b>? This action can't be undone.
+                    Are you sure you want to delete <b>{{ selected.program }}<span v-if="selected.major != null"> - {{ selected.major }}</span></b>? This action can't be undone.
                 </div>
 
                 <div v-if="modaltype == 'deleteDiscipline'">
@@ -143,32 +143,41 @@
                     <span v-else>Delete</span>
                 </button>
 
+                <button :disabled="processing" v-if="modaltype == 'deleteCMO'"
+                    @click="submit('/admin/CMOs/delete/' + selected.id)"
+                    class="select-none text-white bg-red-500 hover:text-white hover:bg-red-600 h-10 w-24 rounded border">
+                    <span v-if="processing">
+                        <i class="fas fa-spinner animate-spin"></i>
+                    </span>
+                    <span v-else>Delete</span>
+                </button>
 
-                <Link method="get" v-if="modaltype == 'deleteCMO'" @click="closeModal"
-                    :href="'/admin/CMOs/delete/' + selected"
-                    class=" text-white bg-red-500 hover:text-white hover:bg-red-600 p-2.5 px-3 rounded border cursor-pointer"
-                    preserve-scroll>
-                Delete
-                </Link>
+                <button :disabled="processing" v-if="modaltype == 'publish'"
+                    @click="submit('/admin/CMOs/publish/' + selected.id)"
+                    class="select-none text-white bg-blue-500 hover:text-white hover:bg-blue-600 h-10 w-20 rounded border">
+                    <span v-if="processing">
+                        <i class="fas fa-spinner animate-spin"></i>
+                    </span>
+                    <span v-else>Publish</span>
+                </button>
 
-                <Link method="get" v-if="modaltype == 'publish'" :href="'/admin/CMOs/publish/' + selected"
-                    @class="closeModal"
-                    class=" text-white bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border cursor-pointer"
-                    preserve-scroll>
-                Publish
-                </Link>
-                <Link method="get" v-if="modaltype == 'activate'" :href="'/admin/CMOs/activate/' + selected.id"
-                    @click="closeModal"
-                    class=" text-white bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border cursor-pointer"
-                    preserve-scroll>
-                Confirm
-                </Link>
-                <Link method="get" v-if="modaltype == 'deactivate'" :href="'/admin/CMOs/deactivate/' + selected.id"
-                    @click="closeModal"
-                    class=" text-white bg-blue-500 hover:text-white hover:bg-blue-600 p-2.5 px-3 rounded border cursor-pointer"
-                    preserve-scroll>
-                Confirm
-                </Link>
+                <button :disabled="processing" v-if="modaltype == 'activate'"
+                    @click="submit('/admin/CMOs/activate/' + selected.id)"
+                    class="select-none text-white bg-blue-500 hover:text-white hover:bg-blue-600 h-10 w-20 rounded border">
+                    <span v-if="processing">
+                        <i class="fas fa-spinner animate-spin"></i>
+                    </span>
+                    <span v-else>Confirm</span>
+                </button>
+
+                <button :disabled="processing" v-if="modaltype == 'deactivate'"
+                    @click="submit('/admin/CMOs/deactivate/' + selected.id)"
+                    class="select-none text-white bg-blue-500 hover:text-white hover:bg-blue-600 h-10 w-20 rounded border">
+                    <span v-if="processing">
+                        <i class="fas fa-spinner animate-spin"></i>
+                    </span>
+                    <span v-else>Confirm</span>
+                </button>
                 <slot name="buttons"></slot>
             </div>
         </div>

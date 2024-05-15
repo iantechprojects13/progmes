@@ -4,12 +4,12 @@
     <page-title title="Dashboard" />
     <div class="mx-3 md:mx-8 mt-5 border-b-2 border-gray-400" v-show="$page.props.auth.user.role != 'Education Supervisor'">
         <Link href="/ched/dashboard/progress" class="mr-7">
-            <button class="h-10 border-b-2 border-blue-500 text-blue-500 font-bold">
+            <button class="select-none h-10 border-b-2 border-blue-500 text-blue-500 font-bold">
                 Progress
             </button>
         </Link>
         <Link href="/ched/dashboard/overview">
-            <button class="h-10 text-gray-700 hover:text-black">
+            <button class="select-none h-10 text-gray-700 hover:text-black">
                 Overview
             </button>
         </Link>
@@ -186,6 +186,48 @@
             </div>
         </div>
     </div>
+    <div class="mx-3 md:mx-8 mt-12 font-bold">
+        SUMMARY OF PROGRAMS MONITORED
+    </div>
+    <div class="mx-3 md:mx-8 mt-5 flex flex-col lg:flex-row justify-between">
+        <div class="w-full lg:w-1/2 lg:mr-5">
+            <div class="py-3 font-bold">No. of Programs Monitored (by Quarter)</div>
+            <div class="flex flex-col lg:flex-row">
+                <div class="bg-white border border-gray-400 rounded p-5 mt-2 lg:mt-0 mr-5 w-full">
+                    <div class="text-lg font-bold">{{ quarter1 }}</div>
+                    <div class="text-blue-500">1st Quarter</div>
+                </div>
+                <div class="bg-white border border-gray-400 rounded p-5 mt-2 lg:mt-0 w-full">
+                    <div class="text-lg font-bold">{{ quarter2 }}</div>
+                    <div class="text-blue-500">2nd Quarter</div>
+                </div>
+            </div>
+            <div class="flex flex-col lg:flex-row mt-0 lg:mt-3">
+                <div class="bg-white border border-gray-400 rounded p-5 mt-2 lg:mt-0 mr-5 w-full">
+                    <div class="text-lg font-bold">{{ quarter3 }}</div>
+                    <div class="text-blue-500">3rd Quarter</div>
+                </div>
+                <div class="bg-white border border-gray-400 rounded p-5 mt-2 lg:mt-0 w-full">
+                    <div class="text-lg font-bold">{{ quarter4 }}</div>
+                    <div class="text-blue-500">4th Quarter</div>
+                </div>
+            </div>
+            <div class="mt-0 lg:mt-3">
+                <div class="bg-white border border-gray-400 rounded p-5 mt-2 lg:mt-0 w-full">
+                    <div class="text-lg font-bold">{{ evaluatedTotal }}</div>
+                    <div class="text-blue-500">Total</div>
+                </div>
+            </div>
+        </div>
+        <div class="w-full lg:w-1/2 border border-gray-400 bg-white rounded mt-3 lg:mt-0">
+            <div class="p-3 border-b border-gray-400"><b>Monitored Programs Distribution</b></div>
+            <div class="flex items-center text-center w-full h-auto py-5">
+                <bar-chart :orientation="'x'" :dataItem="[quarter1, quarter2, quarter3, quarter4]" :color="['#0af', '#0f5', '#fc0', '#f33']" :labels="['Q1', 'Q2', 'Q3', 'Q4']"></bar-chart>
+            </div>
+        </div>
+    </div>
+    
+
     <Notification :message="$page.props.flash.success" type="success"/>
     <Notification :message="$page.props.flash.failed" type="failed"/>
     <Notification :message="$page.props.flash.error" type="failed"/>
@@ -210,6 +252,11 @@ const props = defineProps([
     'hei',
     'heiName',
     'programName',
+    'quarter1',
+    'quarter2',
+    'quarter3',
+    'quarter4',
+    'evaluatedTotal',
 ]);
 
 const query = useForm({

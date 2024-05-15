@@ -13,7 +13,7 @@
         </div>
         <div class="flex flex-row">
             <Link :href="'/ched/evaluation/' + evaluation.id + '/report'">
-                <button class="select-none px-2 rounded text-white bg-gray-700 hover:bg-gray-800 hover:text-white h-10 text-sm">Deficiency Report</button>
+                <button class="select-none px-2 rounded text-white bg-gray-700 hover:bg-gray-800 hover:text-white h-10 text-sm">Generate Report</button>
             </Link>
         </div>
     </div>
@@ -112,7 +112,7 @@
                             </div>
                         </td>
                         <td class="h-32 min-w-16 p-3 relative group">
-                            <textarea ref="findingsInput" v-model="item.findings" :name="'findings' + index"
+                            <textarea maxlength="5000" ref="findingsInput" v-model="item.findings" :name="'findings' + index"
                                 :id="'findings' + index"
                                 class="w-full min-w-md h-32 rounded border-gray-500 resize-none group custom-scrollbar"
                                 placeholder="Input findings here" @input="handleFindingsInput(index, item.id)">
@@ -124,7 +124,7 @@
                             </button>
                             <text-editor title="Findings" :showModal="isFindingsEditorOpen && textEditorIndex == index"
                                 @close="closeFindingsEditor">
-                                <textarea ref="findingstexteditor" v-model="item.findings"
+                                <textarea maxlength="5000" ref="findingstexteditor" v-model="item.findings"
                                     :name="'findingsEditor' + index" :id="'findingsEditor' + index"
                                     class="w-full h-32 rounded border-gray-500 resize-none group"
                                     placeholder="Input findings here" @focus="handleFindingsEditorInput(index)"
@@ -133,7 +133,7 @@
                             </text-editor>
                         </td>
                         <td class="h-32 min-w-16 p-3 relative group">
-                            <textarea ref="recommendationsInput" v-model="item.recommendations"
+                            <textarea maxlength="5000" ref="recommendationsInput" v-model="item.recommendations"
                                 :name="'recommendations' + index" :id="'recommendations' + index"
                                 class="w-full h-32 rounded border-gray-500 resize-none group custom-scrollbar"
                                 placeholder="Input comments here" @input="handleRecommendationsInput(index, item.id)">
@@ -146,7 +146,7 @@
                             <text-editor title="Comments/Recommendations"
                                 :showModal="isRecommendationsEditorOpen && textEditorIndex == index"
                                 @close="closeRecommendationsEditor">
-                                <textarea ref="recommendationstexteditor" v-model="item.findings"
+                                <textarea maxlength="5000" ref="recommendationstexteditor" v-model="item.findings"
                                     :name="'recommendationsEditor' + index" :id="'recommendationsEditor' + index"
                                     class="w-full h-32 rounded border-gray-500 resize-none group"
                                     placeholder="Input findings here" @focus="handleRecommendationEditorInput(index)"
@@ -183,7 +183,7 @@
 
 <script setup>
     // Imports
-    import { ref, onMounted, onUnmounted, computed, reactive } from 'vue';
+    import { ref, onMounted, onUnmounted } from 'vue';
     import { router } from '@inertiajs/vue3';
 
     // Props
@@ -191,7 +191,7 @@
         'evaluation',
         'items',
         'deficiencyReport',
-        'visitDate',
+        'evaluationDate',
         'evaluatedBy',
         'reviewedBy',
         'notedBy',

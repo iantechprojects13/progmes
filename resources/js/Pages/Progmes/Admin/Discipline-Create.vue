@@ -23,7 +23,7 @@
                     <div class="mt-7">
                         <label for="discipline" class="font-black">Discipline</label>
                         <span class="text-red-500">*</span>
-                        <input required v-model="form.discipline" type="text" id="discipline"
+                        <input required maxlength="255" v-model="form.discipline" type="text" id="discipline"
                             class="rounded text-sm border-gray-500 w-full my-0.5 placeholder-gray-400"
                             placeholder="Discipline" />
                         <form-error-message :message="$page.props.errors.discipline" theme="dark" />

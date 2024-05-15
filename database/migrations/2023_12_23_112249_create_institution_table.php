@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code')->nullable();
             $table->string('name')->nullable();
+            $table->boolean('isActive')->nullable();
             $table->timestamps();
         });
     }

@@ -46,4 +46,9 @@ class CMOModel extends Model
     {
         return $this->hasMany(CriteriaModel::class, 'cmoId', 'id')->orderBy('itemNo', 'asc');
     }
+
+    public function evaluationForm()
+    {
+        return $this->hasMany(EvaluationFormModel::class, 'cmoId', 'id');
+    }
 }

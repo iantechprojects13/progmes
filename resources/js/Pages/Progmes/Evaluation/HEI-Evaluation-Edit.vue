@@ -12,11 +12,11 @@
             </Link>
         </div>
         <div>
-            <button @click="toggleResubmitModal" v-if="progress[3] == 100 && evaluation.visitDate != null"
+            <button @click="toggleResubmitModal" v-if="progress[3] == 100 && evaluation.evaluationDate != null"
                 class="select-none px-3 w-fit text-white bg-blue-500 hover:bg-blue-600 h-10 rounded mr-1">
                 Resubmit
             </button>
-            <button @click="toggleReadyForVisitModal" v-else-if="progress[3] == 100 && evaluation.visitDate == null"
+            <button @click="toggleReadyForVisitModal" v-else-if="progress[3] == 100 && evaluation.evaluationDate == null"
                 class="select-none px-3 w-fit text-white bg-gray-700 hover:bg-gray-800 h-10 rounded mr-1">
                 Ready for visit
             </button>
@@ -76,8 +76,8 @@
         <template v-slot:main-content>
             <div class="mt-3 flex items-center lg:flex-row flex-col px-3 py-3">
                 <label for="conforme" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Conforme</label>
-                <input type="text" id="conforme" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Conforme" v-model="conforme.name">
-                <input type="text" id="conformeTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="conforme.title">
+                <input maxlength="255" type="text" id="conforme" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Conforme" v-model="conforme.name">
+                <input maxlength="255" type="text" id="conformeTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="conforme.title">
             </div>
         </template>
     </content-container>
@@ -132,7 +132,7 @@
                             </div>
                         </td>
                         <td class="h-32 max-w-lg p-3 relative group">
-                            <textarea ref="actualSituationInput" v-model="item.actualSituation"
+                            <textarea maxlength="5000" ref="actualSituationInput" v-model="item.actualSituation"
                                 :name="'actualSituation' + index" :id="'actualSituation' + index"
                                 class="w-full min-w-16 h-32 rounded border-2 border-gray-500 resize-none group custom-scrollbar"
                                 :disabled="item.selfEvaluationStatus == 'Not applicable'"
@@ -145,7 +145,7 @@
                             </button>
                             <text-editor title="Actual Situation" :showModal="isEditorOpen && textEditorIndex == index"
                                 @close="closeEditor">
-                                <textarea ref="texteditor" v-model="item.actualSituation"
+                                <textarea maxlength="5000" ref="texteditor" v-model="item.actualSituation"
                                     :name="'actualSituationEditor' + index" :id="'actualSituationEditor' + index"
                                     class="w-full h-32 rounded border-2 border-gray-500 resize-none group"
                                     placeholder="Input actual situation here" @focus="handleTextEditorInput(index)"
@@ -256,7 +256,7 @@
     <!-- Upload link modal -->
     <modal :showModal="linkModal" title="Evidence Link" @close="linkModal = false">
         <div class="text-center">
-            <textarea class="w-full h-32 resize-none" placeholder="Input URL/Link here" id="link"
+            <textarea maxlength="1000" class="w-full h-32 resize-none" placeholder="Input URL/Link here" id="link"
                 v-model="evidenceLink">
             </textarea>
         </div>

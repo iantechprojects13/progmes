@@ -24,9 +24,6 @@ class DashboardController extends Controller
         if ($user->type == 'CHED') {
                 return redirect()->route('dashboard.admin.progress');
         }
-        // else if ($user->role == 'Education Supervisor') {
-        //     return redirect()->route('dashboard.ched');
-        // }
         else {
             return redirect()->route('dashboard.hei');
         }
@@ -70,6 +67,7 @@ class DashboardController extends Controller
         })
         ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable', 'no_status')
         ->get();
+        
 
         $tools = EvaluationFormModel::where('effectivity', $acadYear)
         ->when($request->query('hei'), function($query) use ($request, $institution) {
@@ -84,13 +82,98 @@ class DashboardController extends Controller
         })
         ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
             $query->whereIn('disciplineId', $disciplineIds);
+        })->get();
+        
+
+       
+
+        $quarter1Count = EvaluationFormModel::where('effectivity', $acadYear)
+        ->when($request->query('hei'), function($query) use ($request, $institution) {
+            $query->whereHas('institution_program.institution', function($q) use ($institution) {
+                $q->where('institutionId', $institution);
+            });
         })
-        ->get();
+        ->when($request->query('program'), function($query) use ($request, $program) {
+            $query->whereHas('institution_program.program', function($q) use ($program) {
+                $q->where('programId', $program);
+            });
+        })
+        ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
+            $query->whereIn('disciplineId', $disciplineIds);
+        })
+        ->where(function ($query) {
+            $query->whereMonth('evaluationDate', 1)
+                ->orWhereMonth('evaluationDate', 2)
+                ->orWhereMonth('evaluationDate', 3);
+        })
+        ->count();
+
+        $quarter2Count = EvaluationFormModel::where('effectivity', $acadYear)
+        ->when($request->query('hei'), function($query) use ($request, $institution) {
+            $query->whereHas('institution_program.institution', function($q) use ($institution) {
+                $q->where('institutionId', $institution);
+            });
+        })
+        ->when($request->query('program'), function($query) use ($request, $program) {
+            $query->whereHas('institution_program.program', function($q) use ($program) {
+                $q->where('programId', $program);
+            });
+        })
+        ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
+            $query->whereIn('disciplineId', $disciplineIds);
+        })
+        ->where(function ($query) {
+            $query->whereMonth('evaluationDate', 4)
+                ->orWhereMonth('evaluationDate', 5)
+                ->orWhereMonth('evaluationDate', 6);
+        })
+        ->count();
+
+       $quarter3Count = EvaluationFormModel::where('effectivity', $acadYear)
+        ->when($request->query('hei'), function($query) use ($request, $institution) {
+            $query->whereHas('institution_program.institution', function($q) use ($institution) {
+                $q->where('institutionId', $institution);
+            });
+        })
+        ->when($request->query('program'), function($query) use ($request, $program) {
+            $query->whereHas('institution_program.program', function($q) use ($program) {
+                $q->where('programId', $program);
+            });
+        })
+        ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
+            $query->whereIn('disciplineId', $disciplineIds);
+        })
+        ->where(function ($query) {
+            $query->whereMonth('evaluationDate', 7)
+                ->orWhereMonth('evaluationDate', 8)
+                ->orWhereMonth('evaluationDate', 9);
+        })
+        ->count();
+
+        $quarter4Count = EvaluationFormModel::where('effectivity', $acadYear)
+        ->when($request->query('hei'), function($query) use ($request, $institution) {
+            $query->whereHas('institution_program.institution', function($q) use ($institution) {
+                $q->where('institutionId', $institution);
+            });
+        })
+        ->when($request->query('program'), function($query) use ($request, $program) {
+            $query->whereHas('institution_program.program', function($q) use ($program) {
+                $q->where('programId', $program);
+            });
+        })
+        ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
+            $query->whereIn('disciplineId', $disciplineIds);
+        })
+        ->where(function ($query) {
+            $query->whereMonth('evaluationDate', 10)
+                ->orWhereMonth('evaluationDate', 11)
+                ->orWhereMonth('evaluationDate', 12);
+        })
+        ->count();
 
         $program_list = ProgramModel::when($user->role == 'Education Supervisor', function ($query) use ($disciplineIds) {
             $query->where('disciplineId', $disciplineIds);
         })->orderBy('program', 'asc')->orderBy('major', 'asc')->get();
-
 
         return Inertia::render('Progmes/Dashboard/Dashboard-CHED-Progress', [
             'complianceTool' => $complianceTools->map(fn($item) => [
@@ -117,6 +200,11 @@ class DashboardController extends Controller
             'hei' => $institution,
             'heiName' => InstitutionModel::where('id', $institution)->value('name'),
             'filters' => $request->only(['']) + ['filter' => $filter ],
+            'quarter1' => $quarter1Count,
+            'quarter2' => $quarter2Count,
+            'quarter3' => $quarter3Count,
+            'quarter4' => $quarter4Count,
+            'evaluatedTotal' => $quarter1Count + $quarter2Count + $quarter3Count + $quarter4Count,
         ]);
     }
 
@@ -236,6 +324,10 @@ class DashboardController extends Controller
             'heiName' => InstitutionModel::where('id', $institution)->value('name'),
             'filters' => $request->only(['']) + ['filter' => $filter ],
         ]);
+    }
+
+    public function analytics () {
+        return Inertia::render('Progmes/Dashboard/Dashboard-CHED-Analytics');
     }
     
     public function setAcademicYear(Request $request) {

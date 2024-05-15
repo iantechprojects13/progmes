@@ -4,31 +4,31 @@
     <AdminPanel />
     <div class="mx-3 md:mx-8 mt-8">
         <Link href="/admin/CMOs">
-        <button class="h-10 px-3 bg-white border-2 border-gray-500 rounded">
+        <button class="select-none w-24 h-10 border border-gray-500 rounded bg-white hover:bg-gray-700 hover:text-white">
             <i class="fas fa-arrow-left mr-2"></i>
-            Back to List
+            Back
         </button>
         </Link>
     </div>
-    <div class="mx-3 md:mx-8 bg-white rounded mt-5 p-5">
+    <div class="mx-3 md:mx-8 border border-gray-400 bg-white rounded mt-5 p-5">
         <div>
             <div class="font-bold text-lg mb-3">CMO Details</div>
-            <table class="">
+            <table>
                 <tbody>
                     <tr>
-                        <td class="px-3 text-right">No</td>
+                        <td class="px-3 text-right font-bold text-blue-500">No</td>
                         <td class="px-3">{{ cmo.number }}</td>
                     </tr>
                     <tr>
-                        <td class="px-3 text-right">Series</td>
+                        <td class="px-3 text-right font-bold text-blue-500">Series</td>
                         <td class="px-3">{{ cmo.series }}</td>
                     </tr>
                     <tr>
-                        <td class="px-3 text-right">Version</td>
+                        <td class="px-3 text-right font-bold text-blue-500">Version</td>
                         <td class="px-3">{{ cmo.version }}</td>
                     </tr>
                     <tr>
-                        <td class="px-3 text-right">Program</td>
+                        <td class="px-3 text-right font-bold text-blue-500">Program</td>
                         <td class="px-3">{{ cmo.program.program }}</td>
                     </tr>
                 </tbody>

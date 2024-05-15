@@ -41,5 +41,10 @@ class ProgramModel extends Model
     {
         return $this->hasOne(CMOModel::class, 'programId', 'id')->where('isActive', 1);
     }
+
+    public function role()
+    {
+        return $this->hasMany(RoleModel::class, 'programId', 'id');
+    }
     
 }

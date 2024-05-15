@@ -18,7 +18,6 @@ class EvaluationFormModel extends Model
         'cmoId',
         'effectivity',
         'evaluationDate',
-        'visitDate',
         'submissionDate',
         'archivedDate',
         'conforme',

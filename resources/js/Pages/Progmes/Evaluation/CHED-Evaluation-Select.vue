@@ -102,31 +102,31 @@
                                 data-tooltip="View">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <button
-                             @click="evaluate(item.id)"
+                            <button v-show="canEvaluate"
+                             @click="evaluate(item.id)" 
                                 class="select-none w-10 h-10 text-white bg-blue-500 hover:bg-blue-600 rounded mr-1 tooltipForActions"
                                 data-tooltip="Evaluate">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button v-if="item.isLocked"
+                            <button v-show="canEvaluate" v-if="item.isLocked" 
                              @click="setId(item.id); unlockModal = true;"
                                 class="select-none w-10 h-10 text-white bg-red-500 hover:bg-red-600 rounded mr-1 tooltipForActions"
                                 data-tooltip="Unlock">
                                 <i class="fas fa-unlock"></i>
                             </button>
-                            <button v-else
+                            <button v-show="canEvaluate" v-else
                              @click="setId(item.id); lockModal = true;"
                                 class="select-none w-10 h-10 text-white bg-red-500 hover:bg-red-600 rounded mr-1 tooltipForActions"
                                 data-tooltip="Lock">
                                 <i class="fas fa-lock"></i>
                             </button>
-                            <button
+                            <button v-show="canEmail"
                              @click="setProgress(item.progress);  toggleEmailModal(); email.toolId = item.id;"
                                 class="select-none w-10 h-10 text-white bg-orange-500 hover:bg-orange-600 rounded mr-1 tooltipForActions"
                                 data-tooltip="Send Email">
                                 <i class="fas fa-envelope"></i>
                             </button>
-                            <button
+                            <button v-show="canEvaluate"
                              @click="setId(item.id); archiveModal = true;"
                                 class="select-none w-10 h-10 text-white bg-gray-500 hover:bg-gray-600 rounded tooltipForActions"
                                 data-tooltip="Archive">
@@ -217,6 +217,7 @@
         'complianceTools',
         'filters',
         'canEvaluate',
+        'canEmail',
     ]);
 const toolId = ref(null);
 const lockModal = ref(false);

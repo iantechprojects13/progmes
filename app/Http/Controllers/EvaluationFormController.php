@@ -45,7 +45,10 @@ class EvaluationFormController extends Controller
             foreach($discipline as $item) {
                 array_push($disciplineList, $item->disciplineId);
             }
-            $program_list = ProgramModel::whereIn('disciplineId', $disciplineList)->orderBy('program', 'asc')->with('active_cmo')->get();
+            $program_list = ProgramModel::query()
+            ->whereIn('disciplineId', $disciplineList)
+            ->orderBy('program', 'asc')
+            ->with('active_cmo')->get();
         }
 
         $allinstitutionprograms = InstitutionProgramModel::query()
@@ -127,14 +130,20 @@ class EvaluationFormController extends Controller
             'cmo.required' => 'Active CMO is required.',
         ]);
 
-        $institutionProgram = InstitutionProgramModel::where('programId', $validatedData['program']['id'])
+        $institutionProgram = InstitutionProgramModel::query()
+        ->where('programId', $validatedData['program']['id'])
         ->where('isActive', 1)
         ->whereNotExists(function ($query) use ($validatedData) {
             $query->select(DB::raw(1))
                 ->from('evaluation_form')
                 ->whereRaw('evaluation_form.institutionProgramId = institution_program.id')
                 ->where('effectivity', $validatedData['effectivity']);
-        })->get();
+        })
+        ->whereHas('institution', function ($query){
+            $query->where('isActive', 1);
+        })
+        ->with('institution')
+        ->get();
 
         $cmo = $validatedData['cmo']['id'];
         $discipline = $validatedData['program']['disciplineId'];

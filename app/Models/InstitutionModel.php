@@ -14,15 +14,26 @@ class InstitutionModel extends Model
     protected $fillable = [
         'code',
         'name',
+        'isActive',
     ];
 
     protected $hidden = [
         'created_at',
         'updated_at',
     ];
-
+    
     public function institution_program()
     {
         return $this->hasMany(InstitutionProgramModel::class, 'institutionId', 'id');
+    }
+
+    public function active_program()
+    {
+        return $this->hasMany(InstitutionProgramModel::class, 'institutionId', 'id')->where('isActive', 1);
+    }
+
+    public function role()
+    {
+        return $this->hasMany(RoleModel::class, 'institutionId', 'id');
     }
 }

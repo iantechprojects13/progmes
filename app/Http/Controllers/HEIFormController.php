@@ -52,7 +52,7 @@ class HEIFormController extends Controller
             return redirect('/hei/evaluation')->with('failed', 'Evaluation tool not found.');
         }
 
-        if ($evaluationTool->status != 'In progress') {
+        if ($evaluationTool->status != 'In progress' || $evaluationTool->evaluationDate != null) {
             $showEvaluation = true;
         }
 
