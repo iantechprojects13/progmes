@@ -1,0 +1,1 @@
+import s from"./Layout-4e2e1be8.js";import{_ as c,A as e,o as n,f as r,a as t,b as _,F as p}from"./app-fe511cab.js";const m={layout:s},d={class:"w-1/2"};function l(f,i,u,$,h,b){const o=e("Head"),a=e("bar-chart");return n(),r(p,null,[t(o,{title:"Test"}),_("div",d,[t(a)])],64)}const k=c(m,[["render",l]]);export{k as default};

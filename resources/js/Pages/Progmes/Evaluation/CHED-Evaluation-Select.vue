@@ -197,8 +197,10 @@
             </textarea>
         </div>
         <template v-slot:custom-button>
-            <button @click="sendEmail" :disabled="sending"
-                class="text-white bg-blue-600 hover:bg-blue-700 w-24 py-2 px-3 rounded border">
+            <button @click="sendEmail" :disabled="sending || email.body == ''"
+                class="text-white bg-blue-600 hover:bg-blue-700 w-24 py-2 px-3 rounded border"
+                :class="[{'bg-gray-600 hover:bg-gray-700': email.body == ''}]"
+                >
                 <span v-if="sending"><i class="fas fa-spinner animate-spin"></i></span>
                 <span v-else>Send</span>
             </button>
@@ -253,7 +255,7 @@ const str = computed(() => {
 
 const email = reactive({
     toolId: null,
-    body: str,
+    body: null,
 });
 
 function sendEmail() {

@@ -25,6 +25,12 @@
                     <tr>
                         <th scope="row"
                             class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right whitespace-nowrap">
+                            Email</th>
+                        <td class="px-3 py-1 align-top border-b border-gray-400 w-full">{{ profile.email }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row"
+                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right whitespace-nowrap">
                             Account
                             Type</th>
                         <td class="px-3 py-1 align-top border-b border-gray-400 w-full">
