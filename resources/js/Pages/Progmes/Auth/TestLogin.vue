@@ -7,8 +7,7 @@
             <select v-model="login.user" id="usersDropDown" class="w-full">
                 <option :value="null">Select user</option>
                 <option v-for="user in users" :key="user.id" :value="user.id">
-                    <span v-if="user.role == null">Unassigned - {{ user.name }}</span>
-                    <span v-else>{{ user.role }} - {{ user.name }}</span>
+                    <span>{{ user.name }}</span>
                 </option>
             </select>
             <button @click="userLogin" class="w-full h-10 bg-gray-700 hover:bg-gray-900 text-white mt-3">

@@ -205,11 +205,15 @@
     });
 
     function publish() {
-        form.post("/admin/CMOs/save-and-publish", form);
+        router.post("/admin/CMOs/save-and-publish", form, {
+            replace: true,
+        });
     }
 
     function saveAsDraft() {
-        router.post("/admin/CMOs/save-as-draft", form);
+        router.post("/admin/CMOs/save-as-draft", form, {
+            replace: true,
+        });
     }
 </script>
 

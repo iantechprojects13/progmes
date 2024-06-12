@@ -54,7 +54,7 @@ class InstitutionController extends Controller
     public function create()
     {
         return Inertia::render('Progmes/Admin/HEI-Create', [
-            'program_list' => ProgramModel::orderBy('program', 'asc')->orderBy('program', 'asc')->get(),
+            'program_list' => ProgramModel::orderBy('program', 'asc')->orderBy('major', 'asc')->get(),
         ]);
     }
 
@@ -113,7 +113,7 @@ class InstitutionController extends Controller
         return Inertia::render('Progmes/Admin/HEI-Edit', [
             'institution' => $institutionModel,
             'programsOffered' => $programsOffered,
-            'program_list' => ProgramModel::orderBy('program', 'asc')->orderBy('program', 'asc')->get(),
+            'program_list' => ProgramModel::orderBy('program', 'asc')->orderBy('major', 'asc')->get(),
         ]);
     }
 
@@ -203,4 +203,5 @@ class InstitutionController extends Controller
         return redirect()->back()->with('failed', 'This record cannot be deleted because it is associated with another records.');
         
     }
+
 }

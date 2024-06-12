@@ -179,6 +179,8 @@ Route::get('/report/deficiency/{tool}/{type}', [PDFController::class, 'deficienc
 //     return Inertia::render('Progmes/Shared/Test');
 // });
 
+Route::get('/allprog', [ProgramController::class, 'allprog']);
+
 Route::get('/login-testuser', [UserController::class, 'userLogin']);
 Route::post('/testuserlogin', [UserController::class, 'testUserLogin']);
 

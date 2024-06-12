@@ -270,6 +270,7 @@ function submit() {
     query.get("/ched/dashboard/progress", {
         preserveState: false,
         preserveScroll: true,
+        replace: true,
     });
 }
 
@@ -280,6 +281,7 @@ function selectAll() {
         query.get("/ched/dashboard/progress", {
             preserveState: false,
             preserveScroll: true,
+            replace: true,
         });
     }
 }
@@ -289,6 +291,7 @@ function selectHEI() {
     query.get("/ched/dashboard/progress", {
         preserveState: false,
         preserveScroll: true,
+        replace: true,
     });
 }
 
@@ -297,6 +300,7 @@ function selectProgram() {
     query.get("/ched/dashboard/progress", {
         preserveState: false,
         preserveScroll: true,
+        replace: true,
     });
 }
 

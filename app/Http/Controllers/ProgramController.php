@@ -136,6 +136,11 @@ class ProgramController extends Controller
         $canBeDeleted = true;
 
         foreach ($programModel->institutionProgram as $program) {
+            if ($program->isActive == 1) {
+                $canBeDeleted = false;
+                break;
+            }
+
             if (count($program->evaluationForm) != 0) {
                 $canBeDeleted = false;
                 break;
@@ -164,6 +169,13 @@ class ProgramController extends Controller
         
         return redirect()->back()->with('failed', 'This record cannot be deleted because it is associated with another records.');
         
+    }
+
+
+    public function allprog() {
+        return Inertia::render('Progmes/Shared/Test', [
+            'programs' => ProgramModel::orderBy('program', 'asc')->orderBy('major', 'asc')->with('discipline')->get(),
+        ]);
     }
 
     

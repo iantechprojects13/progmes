@@ -200,7 +200,7 @@ class UserController extends Controller
 
     public function userLogin() {
         return Inertia::render('Progmes/Auth/TestLogin', [
-            'users' => User::all(),
+            'users' => User::orderBy('name', 'asc')->get(),
         ]);
     }
 

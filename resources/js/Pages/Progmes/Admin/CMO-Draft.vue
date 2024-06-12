@@ -84,7 +84,15 @@
                         </td>
                         <td class="p-3 whitespace-normal"
                             v-show="$page.props.auth.user.role == 'Super Admin'|| $page.props.auth.user.role == 'Admin'">
-                            {{ cmo.created_by?.name }}
+                            <div v-if="cmo.created_by?.name == null">
+                                -
+                            </div>
+                            <div v-else-if="cmo.created_by?.name != $page.props.auth.user.name">
+                                {{ cmo.created_by?.name }}
+                            </div>
+                            <div v-else>
+                                Me
+                            </div>
                         </td>
                         <td class="p-3 text-right">
                             <button @click="toggleConfirmationModal(cmo, 'publish', 'Publish CMO')"
@@ -161,6 +169,7 @@
     function submit() {
         query.get("/admin/CMOs/draft", {
             preserveScroll: true,
+            replace: true,
         });
 
     }
@@ -169,6 +178,7 @@
         query.get("/admin/CMOs/draft", {
             preserveScroll: false,
             preserveState: false,
+            replace: true,
         });
     }
 
@@ -182,6 +192,7 @@
             },
             preserveScroll: true,
             preserveState: false,
+            replace: true,
         });
     });
 
