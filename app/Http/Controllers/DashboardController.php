@@ -48,7 +48,7 @@ class DashboardController extends Controller
         
         $complianceTools = EvaluationFormModel::query()
         ->where('effectivity', $acadYear)
-        ->whereNot('status', 'Deployed')
+        ->where('status', 'In progress')
         ->when(!$request->query('hei') && !$request->query('program'), function($query) use ($request){
             $query->inRandomOrder()->limit(10)->get();
         })
@@ -84,10 +84,10 @@ class DashboardController extends Controller
             $query->whereIn('disciplineId', $disciplineIds);
         })->get();
         
+        
 
-       
-
-        $quarter1Count = EvaluationFormModel::where('effectivity', $acadYear)
+        $comTools = EvaluationFormModel::where('effectivity', $acadYear)
+        ->where('status', 'Monitored')
         ->when($request->query('hei'), function($query) use ($request, $institution) {
             $query->whereHas('institution_program.institution', function($q) use ($institution) {
                 $q->where('institutionId', $institution);
@@ -101,76 +101,27 @@ class DashboardController extends Controller
         ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
             $query->whereIn('disciplineId', $disciplineIds);
         })
-        ->where(function ($query) {
-            $query->whereMonth('evaluationDate', 1)
-                ->orWhereMonth('evaluationDate', 2)
-                ->orWhereMonth('evaluationDate', 3);
-        })
-        ->count();
+        ->whereNotNull('evaluationDate');
 
-        $quarter2Count = EvaluationFormModel::where('effectivity', $acadYear)
-        ->when($request->query('hei'), function($query) use ($request, $institution) {
-            $query->whereHas('institution_program.institution', function($q) use ($institution) {
-                $q->where('institutionId', $institution);
-            });
-        })
-        ->when($request->query('program'), function($query) use ($request, $program) {
-            $query->whereHas('institution_program.program', function($q) use ($program) {
-                $q->where('programId', $program);
-            });
-        })
-        ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
-            $query->whereIn('disciplineId', $disciplineIds);
-        })
-        ->where(function ($query) {
-            $query->whereMonth('evaluationDate', 4)
-                ->orWhereMonth('evaluationDate', 5)
-                ->orWhereMonth('evaluationDate', 6);
-        })
-        ->count();
 
-       $quarter3Count = EvaluationFormModel::where('effectivity', $acadYear)
-        ->when($request->query('hei'), function($query) use ($request, $institution) {
-            $query->whereHas('institution_program.institution', function($q) use ($institution) {
-                $q->where('institutionId', $institution);
-            });
-        })
-        ->when($request->query('program'), function($query) use ($request, $program) {
-            $query->whereHas('institution_program.program', function($q) use ($program) {
-                $q->where('programId', $program);
-            });
-        })
-        ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
-            $query->whereIn('disciplineId', $disciplineIds);
-        })
-        ->where(function ($query) {
-            $query->whereMonth('evaluationDate', 7)
-                ->orWhereMonth('evaluationDate', 8)
-                ->orWhereMonth('evaluationDate', 9);
-        })
-        ->count();
+        $jan = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 1);})->count();
+        $feb = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 2);})->count();
+        $mar = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 3);})->count();
+        $apr = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 4);})->count();
+        $may = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 5);})->count();
+        $jun = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 6);})->count();
+        $jul = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 7);})->count();
+        $aug = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 8);})->count();
+        $sep = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 9);})->count();
+        $oct = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 10);})->count();
+        $nov = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 11);})->count();
+        $dec = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 12);})->count();
 
-        $quarter4Count = EvaluationFormModel::where('effectivity', $acadYear)
-        ->when($request->query('hei'), function($query) use ($request, $institution) {
-            $query->whereHas('institution_program.institution', function($q) use ($institution) {
-                $q->where('institutionId', $institution);
-            });
-        })
-        ->when($request->query('program'), function($query) use ($request, $program) {
-            $query->whereHas('institution_program.program', function($q) use ($program) {
-                $q->where('programId', $program);
-            });
-        })
-        ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
-            $query->whereIn('disciplineId', $disciplineIds);
-        })
-        ->where(function ($query) {
-            $query->whereMonth('evaluationDate', 10)
-                ->orWhereMonth('evaluationDate', 11)
-                ->orWhereMonth('evaluationDate', 12);
-        })
-        ->count();
-
+        $quarter1Count = $jan + $feb + $mar;
+        $quarter2Count = $apr + $may + $jun;
+        $quarter3Count = $jul + $aug + $sep;
+        $quarter4Count = $oct + $nov + $dec;
+        
         $program_list = ProgramModel::when($user->role == 'Education Supervisor', function ($query) use ($disciplineIds) {
             $query->where('disciplineId', $disciplineIds);
         })->orderBy('program', 'asc')->orderBy('major', 'asc')->get();
@@ -191,7 +142,7 @@ class DashboardController extends Controller
             'readyforvisit' => $tools->where('status', 'Submitted')->count(),
             'inprogress' => $tools->where('status', 'In progress')->count(),
             'pending' => $tools->where('status', 'Deployed')->count() + $tools->where('status', 'Locked')->count(),
-            'archived' => $tools->where('status', 'Archived')->count(),
+            'monitored' => $tools->where('status', 'Monitored')->count(),
             'program_list' => $program_list,
             'program' => $program,
             'major' => ProgramModel::where('id', $program)->value('major'),
@@ -205,6 +156,7 @@ class DashboardController extends Controller
             'quarter3' => $quarter3Count,
             'quarter4' => $quarter4Count,
             'evaluatedTotal' => $quarter1Count + $quarter2Count + $quarter3Count + $quarter4Count,
+            'lineChartDataItem' => [$jan, $feb, $mar, $apr, $may, $jun, $jul, $aug, $sep, $oct, $nov, $dec],
         ]);
     }
 

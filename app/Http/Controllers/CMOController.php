@@ -140,7 +140,13 @@ class CMOController extends Controller
     }
 
     public function edit(Request $request) {
+
+        $cmo = CMOModel::where('id', $request->id)->with('criteria')->first();
         
+        if ($cmo->status == 'Published') {
+            return redirect('/admin/CMOs')->with('failed', 'This CMO can\'t be edited.');
+        }
+
         $user = Auth::user();
         $disciplineList = [];
         $disciplineArray = [];
@@ -160,7 +166,7 @@ class CMOController extends Controller
 
 
         return Inertia::render('Progmes/Admin/CMO-Edit', [
-            'cmo' => CMOModel::where('id', $request->id)->with('criteria')->first(),
+            'cmo' => $cmo,
             'discipline_list' => $disciplineList,
             'program_list' => $programList,
         ]);

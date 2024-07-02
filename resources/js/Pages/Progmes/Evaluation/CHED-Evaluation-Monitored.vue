@@ -2,7 +2,7 @@
 
     <Head title="Program Self-Evaluation" />
     <page-title title="Program Evaluation" />
-    <content-container hasSearch="true" pageTitle="Archived" page="archive" :hasNavigation="true" :hasTopButton="true" :hasFilters="true" :data_list="complianceTools">
+    <content-container hasSearch="true" pageTitle="Monitored" page="monitored" :hasNavigation="true" :hasTopButton="true" :hasFilters="true" :data_list="complianceTools">
         <template v-slot:navigation>
             <div>
                 <Link href="/evaluation">
@@ -11,7 +11,7 @@
                 </button>
                 </Link>
                 <button class="select-none text-blue-500 h-10 border-b-2 font-bold border-blue-500">
-                    Archived
+                    Monitored
                 </button>
             </div>
         </template>
@@ -52,6 +52,7 @@
             <content-table>
                 <template v-slot:table-head>
                     <th class="p-3 pl-5 border-b border-gray-400">Program/Institution</th>
+                    <th class="p-3 border-b border-gray-400">Monitoring/Evaluation Date</th>
                     <th class="p-3 border-b border-gray-400">Archive Date</th>
                     <th class="p-3 border-b border-gray-400 text-right">
                         <i class="fas fa-ellipsis-v"></i>
@@ -70,6 +71,11 @@
                             </div>
                             <div class="font-bold">
                                 {{ item.institution }}
+                            </div>
+                        </td>
+                        <td class="p-3">
+                            <div class="font-bold text-sm px-1 py-0.5 rounded w-fit">
+                                {{ item.evaluationDate }}
                             </div>
                         </td>
                         <td class="p-3">

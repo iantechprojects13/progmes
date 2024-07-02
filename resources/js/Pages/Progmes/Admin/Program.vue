@@ -76,7 +76,7 @@
                         </td>
                         <td class="p-3 text-right">
                             <button v-show="canEdit" @click="edit(program.id)"
-                                class="mr-1 select-none h-10 w-10 rounded text-white bg-blue-500 hover:bg-blue-600 tooltipForActions"
+                                class="mr-1 select-none h-10 w-10 rounded-full hover:text-white text-lg hover:bg-blue-600 tooltipForActions"
                                 data-tooltip="Edit">
                                 <i class="fas fa-edit mr-0.5"></i>
                             </button>

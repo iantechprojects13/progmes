@@ -29,6 +29,9 @@ import DoughnutChart from './Pages/Progmes/Shared/Charts/DoughnutChart.vue';
 import ComplianceProgress from './Pages/Progmes/Shared/Charts/ComplianceProgress.vue';
 import ComplianceStatus from './Pages/Progmes/Shared/Charts/ComplianceStatus.vue';
 import BarChart from './Pages/Progmes/Shared/Charts/BarChart.vue';
+import GroupBarChart from './Pages/Progmes/Shared/Charts/GroupBarChart.vue';
+import AnalyticsLineChart from './Pages/Progmes/Shared/Charts/AnalyticsLineChart.vue';
+import LineChart from './Pages/Progmes/Shared/Charts/LineChart.vue';
 import ComplianceBarGraph from './Pages/Progmes/Shared/Charts/ComplianceBarGraph.vue';
 import DistributionChart from './Pages/Progmes/Shared/Charts/DistributionChart.vue';
 
@@ -65,6 +68,9 @@ createInertiaApp({
             .component('ComplianceProgress', ComplianceProgress)
             .component('ComplianceStatus', ComplianceStatus)
             .component('BarChart', BarChart)
+            .component('GroupBarChart', GroupBarChart)
+            .component('LineChart', LineChart)
+            .component('AnalyticsLineChart', AnalyticsLineChart)
             .component('ComplianceBarGraph', ComplianceBarGraph)
             .component('DistributionChart', DistributionChart)
             .mount(el);

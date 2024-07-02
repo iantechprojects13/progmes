@@ -3,33 +3,48 @@
     <Head title="CHED Memorandum Order List" />
     <AdminPanel />
     <div class="mx-3 md:mx-8 mt-8">
-        <Link href="/admin/CMOs">
+        <Link :href="$page.url.includes('/admin/CMOs/draft') ? '/admin/CMOs/draft' : '/admin/CMOs/'">
         <button class="select-none w-24 h-10 border border-gray-500 rounded bg-white hover:bg-gray-700 hover:text-white">
             <i class="fas fa-arrow-left mr-2"></i>
             Back
         </button>
         </Link>
     </div>
-    <div class="mx-3 md:mx-8 border border-gray-400 bg-white rounded mt-5 p-5">
+    <div class="mx-3 md:mx-8 border border-gray-400 bg-white rounded mt-5 p-5 md:p-10">
         <div>
-            <div class="font-bold text-lg mb-3">CMO Details</div>
+            <div class="font-bold mb-3">CMO Details</div>
             <table>
                 <tbody>
                     <tr>
-                        <td class="px-3 text-right font-bold text-blue-500">No</td>
-                        <td class="px-3">{{ cmo.number }}</td>
+                        <td class="px-1 py-0.5 align-text-top">No</td>
+                        <td class="px-5 py-0.5 align-text-top">:</td>
+                        <td class="px-1 py-0.5 align-text-top">
+                                {{ cmo.number }}
+                        </td>
                     </tr>
                     <tr>
-                        <td class="px-3 text-right font-bold text-blue-500">Series</td>
-                        <td class="px-3">{{ cmo.series }}</td>
+                        <td class="px-1 py-0.5 align-text-top">Series</td>
+                        <td class="px-5 py-0.5 align-text-top">:</td>
+                        <td class="px-1 py-0.5 align-text-top">
+                            {{ cmo.series }}
+                        </td>
                     </tr>
                     <tr>
-                        <td class="px-3 text-right font-bold text-blue-500">Version</td>
-                        <td class="px-3">{{ cmo.version }}</td>
+                        <td class="px-1 py-0.5 align-text-top">Version</td>
+                        <td class="px-5 py-0.5 align-text-top">:</td>
+                        <td class="px-1 py-0.5 align-text-top">
+                            {{ cmo.version }}
+                        </td>
                     </tr>
                     <tr>
-                        <td class="px-3 text-right font-bold text-blue-500">Program</td>
-                        <td class="px-3">{{ cmo.program.program }}</td>
+                        <td class="px-1 py-0.5 align-text-top">Program</td>
+                        <td class="px-5 py-0.5 align-text-top">:</td>
+                        <td class="px-1 py-0.5 align-text-top">
+                            {{ cmo.program?.program }}
+                            <span v-if="cmo.program?.major != null">
+                                - {{ cmo.program?.major }}
+                            </span>
+                        </td>
                     </tr>
                 </tbody>
             </table>

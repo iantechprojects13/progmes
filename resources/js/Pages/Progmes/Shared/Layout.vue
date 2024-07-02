@@ -228,7 +228,7 @@ function logout() {
                         "Progmes/Evaluation/CHED-Evaluation-Edit",
                         "Progmes/Evaluation/CHED-Evaluation-View",
                         "Progmes/Evaluation/CHED-Evaluation-Report-Create",
-                        "Progmes/Evaluation/CHED-Evaluation-Archive",
+                        "Progmes/Evaluation/CHED-Evaluation-Monitored",
                     ],
                     myaccount: [
                         "Progmes/Auth/Account",

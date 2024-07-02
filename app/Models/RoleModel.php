@@ -37,7 +37,7 @@ class RoleModel extends Model
 
     public function program()
     {
-        return $this->belongsTo(ProgramModel::class, 'programId', 'id')->select(['id', 'program']);
+        return $this->belongsTo(ProgramModel::class, 'programId', 'id')->select(['id', 'program', 'major']);
     }
 
     public function tool()

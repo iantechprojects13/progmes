@@ -20,8 +20,10 @@ return new class extends Migration
             $table->date('evaluationDate')->nullable();
             $table->date('submissionDate')->nullable();
             $table->date('archivedDate')->nullable();
-            $table->string('conforme', 255)->nullable();
-            $table->string('conformeTitle', 255)->nullable();
+            $table->string('conforme1', 255)->nullable();
+            $table->string('conforme1Title', 255)->nullable();
+            $table->string('conforme2', 255)->nullable();
+            $table->string('conforme2Title', 255)->nullable();
             $table->string('evaluatedBy', 255)->nullable();
             $table->string('evaluatedByTitle', 255)->nullable();
             $table->string('reviewedBy', 255)->nullable();

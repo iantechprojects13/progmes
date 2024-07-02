@@ -109,16 +109,16 @@
                     <div class="text-blue-500">Pending</div>
                 </div>
                 <div class="bg-white border border-gray-400 rounded p-5 mt-2 lg:mt-0 w-full">
-                    <div class="text-lg font-bold">{{ archived }}</div>
-                    <div class="text-blue-500">Archived</div>
+                    <div class="text-lg font-bold">{{ monitored }}</div>
+                    <div class="text-blue-500">Monitored</div>
                 </div>
             </div>
         </div>
         <div class="w-full lg:w-1/2 border border-gray-400 bg-white rounded mt-3 lg:mt-0">
             <div class="p-3 border-b border-gray-400"><b>Compliance Status</b></div>
             <div class="flex items-center text-center w-full h-36">
-                <compliance-status v-if="readyforvisit != 0 || inprogress != 0 || pending != 0 || archived != 0" :dataItem="[readyforvisit, inprogress, pending, archived]" :color="['#03d', '#07f', '#09f', '#0cf']"
-                :labels="['Ready for visit', 'In progress', 'Pending', 'Complied/Archived']"
+                <compliance-status v-if="readyforvisit != 0 || inprogress != 0 || pending != 0 || monitored != 0" :dataItem="[readyforvisit, inprogress, pending, monitored]" :color="['#03d', '#07f', '#09f', '#0cf']"
+                :labels="['Ready for visit', 'In progress', 'Pending', 'Monitored']"
                 >
 
                 </compliance-status>
@@ -162,7 +162,7 @@
                                 <div v-if="item.status == 'Deployed'" class="bg-gray-600 px-1 text-white w-fit rounded text-xs">
                                     Pending
                                 </div>
-                                <div v-else class="bg-green-500 px-1 w-fit rounded text-white text-xs">
+                                <div v-else class="bg-red-500 px-1 w-fit rounded text-white text-xs">
                                     {{ item.status }}
                                 </div>
                             </td>
@@ -222,7 +222,16 @@
         <div class="w-full lg:w-1/2 border border-gray-400 bg-white rounded mt-3 lg:mt-0">
             <div class="p-3 border-b border-gray-400"><b>Monitored Programs Distribution</b></div>
             <div class="flex items-center text-center w-full h-auto py-5">
-                <bar-chart :orientation="'x'" :dataItem="[quarter1, quarter2, quarter3, quarter4]" :color="['#0af', '#0f5', '#fc0', '#f33']" :labels="['Q1', 'Q2', 'Q3', 'Q4']"></bar-chart>
+                <bar-chart :dataItem="[quarter1, quarter2, quarter3, quarter4]" :color="['#0af']" :labels="['Q1', 'Q2', 'Q3', 'Q4']"></bar-chart>
+            </div>
+        </div>
+    </div>
+
+    <div class="mx-3 md:mx-8 mt-5 flex flex-col xl:flex-row justify-between">
+        <div class="w-full border border-gray-400 bg-white rounded mt-3 lg:mt-0">
+            <div class="p-3 border-b border-gray-400"><b>Programs Monitored by Month</b></div>
+            <div class="flex items-center text-center w-full h-auto p-5">
+                <line-chart :lineChartDataItem="lineChartDataItem"></line-chart>
             </div>
         </div>
     </div>
@@ -244,7 +253,7 @@ const props = defineProps([
     'readyforvisit',
     'inprogress',
     'pending',
-    'archived',
+    'monitored',
     'program_list',
     'program',
     'major',
@@ -257,7 +266,12 @@ const props = defineProps([
     'quarter3',
     'quarter4',
     'evaluatedTotal',
+    'lineChartDataItem',
 ]);
+
+const sampleData = [
+    
+]
 
 const query = useForm({
     academicyear: ref(props.academicyear),

@@ -142,6 +142,9 @@
                         <td class="p-3 whitespace-normal">
                             <div v-for="role in user.user_role" :key="role.id">
                                 {{ role.program?.program }}
+                                <span v-if="role.program?.major != null">
+                                    - {{ role.program?.major }}
+                                </span>
                             </div>
                         </td>
                         <td class="p-3 whitespace-normal">

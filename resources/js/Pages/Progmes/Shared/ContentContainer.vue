@@ -9,7 +9,7 @@
                     <i class="fas mr-2 text-blue-500"
                         :class="[{ 'fa-user': page == 'user' }, { 'fas fa-file': page == 'cmo' || page == 'tool' },
                         {'fa-institution': page == 'hei'}, {'fa-book' : page == 'program' || page == 'discipline'},
-                        {'fa-edit' : page == 'evaluation'}, {'fa-archive' : page == 'archive'}
+                        {'fa-edit' : page == 'evaluation'}, {'fa-check' : page == 'monitored'}
                         ]">
                     </i>
                     {{ pageTitle }}

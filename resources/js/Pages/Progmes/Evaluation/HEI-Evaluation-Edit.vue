@@ -66,25 +66,6 @@
     <content-container :hasTopButton="true">
         <template v-slot:top-button>
             <div class="whitespace-normal mr-2">
-                <button @click="updateConforme" ref="saveBtn"
-                    class="select-none cursor-pointer bg-blue-500 hover:bg-blue-600 mr-2 text-white w-20 h-10 rounded">
-                    <span v-if="updatingconforme"><i class="fas fa-spinner animate-spin"></i></span>
-                    <span v-else>Save</span>
-                </button>
-            </div>
-        </template>
-        <template v-slot:main-content>
-            <div class="mt-3 flex items-center lg:flex-row flex-col px-3 py-3">
-                <label for="conforme" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Conforme</label>
-                <input maxlength="255" type="text" id="conforme" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Conforme" v-model="conforme.name">
-                <input maxlength="255" type="text" id="conformeTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="conforme.title">
-            </div>
-        </template>
-    </content-container>
-
-    <content-container :hasTopButton="true">
-        <template v-slot:top-button>
-            <div class="whitespace-normal mr-2">
                 <button @click="update" ref="saveBtn"
                     class="select-none cursor-pointer bg-blue-500 hover:bg-blue-600 mr-2 text-white px-2 w-fit h-10 rounded">Save
                     Changes

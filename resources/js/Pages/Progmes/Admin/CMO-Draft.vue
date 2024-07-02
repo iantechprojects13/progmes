@@ -95,8 +95,13 @@
                             </div>
                         </td>
                         <td class="p-3 text-right">
+                            <button @click="view(cmo.id)"
+                                class="h-10 w-10 mr-1 rounded bg-green-600 hover:bg-green-700 text-white tooltipForActions"
+                                data-tooltip="View">
+                                <i class="fas fa-eye"></i>
+                            </button>
                             <button @click="toggleConfirmationModal(cmo, 'publish', 'Publish CMO')"
-                                class="select-none h-10 w-10 mr-1 rounded bg-green-600 hover:bg-green-700 text-white tooltipForActions"
+                                class="select-none h-10 w-10 mr-1 rounded bg-blue-500 hover:bg-blue-600 text-white tooltipForActions"
                                 data-tooltip="Publish">
                                 <i class="fas fa-paper-plane"></i>
                             </button>
@@ -157,6 +162,10 @@
 
     function edit(id) {
         router.get('/admin/CMOs/draft/' + id + '/edit');
+    }
+
+    function view(id) {
+        router.get('/admin/CMOs/draft/' + id + '/view');
     }
 
     const props = defineProps(['cmo_list', 'canEdit', 'filters']);

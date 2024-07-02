@@ -46,7 +46,19 @@ class UserController extends Controller
         $userlist = User::query()
         ->when($request->query('search'), function ($query) use ($request, $role) {
             $query->where(function ($query) use ($request) {
-                $query->where('name', 'like', '%' . $request->query('search') . '%');
+                $query->where('name', 'like', '%' . $request->query('search') . '%')
+                ->orWhere('type', 'like', '%' . $request->query('search') . '%')
+                ->orWhere('role', 'like', '%' . $request->query('search') . '%')
+                ->orWhereHas('userRole.program', function ($programQuery) use ($request) {
+                    $programQuery->where('program', 'like', '%' . $request->query('search') . '%')
+                        ->orWhere('major', 'like', '%' . $request->query('search') . '%');
+                })
+                ->orWhereHas('userRole.institution', function ($institutionQuery) use ($request) {
+                    $institutionQuery->where('name', 'like', '%' . $request->query('search') . '%');
+                })
+                ->orWhereHas('userRole.discipline', function ($institutionQuery) use ($request) {
+                    $institutionQuery->where('discipline', 'like', '%' . $request->query('search') . '%');
+                });
             })
             ->where([
                 'isVerified' => 1,
@@ -115,7 +127,17 @@ class UserController extends Controller
             $query->where(function ($query) use ($request) {
                 $query->where('name', 'like', '%' . $request->query('search') . '%')
                     ->orWhere('type', 'like', '%' . $request->query('search') . '%')
-                    ->orWhere('role', 'like', '%' . $request->query('search') . '%');
+                    ->orWhere('role', 'like', '%' . $request->query('search') . '%')
+                    ->orWhereHas('userRole.program', function ($programQuery) use ($request) {
+                        $programQuery->where('program', 'like', '%' . $request->query('search') . '%')
+                            ->orWhere('major', 'like', '%' . $request->query('search') . '%');
+                    })
+                    ->orWhereHas('userRole.institution', function ($institutionQuery) use ($request) {
+                        $institutionQuery->where('name', 'like', '%' . $request->query('search') . '%');
+                    })
+                    ->orWhereHas('userRole.discipline', function ($institutionQuery) use ($request) {
+                        $institutionQuery->where('discipline', 'like', '%' . $request->query('search') . '%');
+                    });
             })
             ->where([
                 'isVerified' => null,
@@ -167,7 +189,19 @@ class UserController extends Controller
         $userlist = User::query()
         ->when($request->query('search'), function ($query) use ($request, $role) {
             $query->where(function ($query) use ($request) {
-                $query->where('name', 'like', '%' . $request->query('search') . '%');
+                $query->where('name', 'like', '%' . $request->query('search') . '%')
+                ->orWhere('type', 'like', '%' . $request->query('search') . '%')
+                ->orWhere('role', 'like', '%' . $request->query('search') . '%')
+                ->orWhereHas('userRole.program', function ($programQuery) use ($request) {
+                    $programQuery->where('program', 'like', '%' . $request->query('search') . '%')
+                        ->orWhere('major', 'like', '%' . $request->query('search') . '%');
+                })
+                ->orWhereHas('userRole.institution', function ($institutionQuery) use ($request) {
+                    $institutionQuery->where('name', 'like', '%' . $request->query('search') . '%');
+                })
+                ->orWhereHas('userRole.discipline', function ($institutionQuery) use ($request) {
+                    $institutionQuery->where('discipline', 'like', '%' . $request->query('search') . '%');
+                });
             })
             ->where([
                 'isVerified' => 1,

@@ -2,15 +2,15 @@
 
     <Head title="Program Self-Evaluation" />
     <page-title title="Program Evaluation" />
-    <content-container hasSearch="true" pageTitle="Monitoring / Evaluation" :hasNavigation="true" page="evaluation" :hasTopButton="true" :hasFilters="true" :data_list="complianceTools">
+    <content-container hasSearch="true" pageTitle="Evaluation" :hasNavigation="true" page="evaluation" :hasTopButton="true" :hasFilters="true" :data_list="complianceTools">
         <template v-slot:navigation>
             <div>
                 <button class="select-none text-blue-500 h-10 mr-8 border-b-2 font-bold border-blue-500">
                     Evaluation
                 </button>
-                <Link :href="route('ched.evaluation.archive')">
+                <Link :href="route('ched.evaluation.monitored')">
                 <button class="select-none text-gray-500 hover:text-black">
-                    Archived
+                    Monitored
                 </button>
                 </Link>
             </div>
@@ -127,10 +127,10 @@
                                 <i class="fas fa-envelope"></i>
                             </button>
                             <button v-show="canEvaluate"
-                             @click="setId(item.id); archiveModal = true;"
-                                class="select-none w-10 h-10 text-white bg-gray-500 hover:bg-gray-600 rounded tooltipForActions"
-                                data-tooltip="Archive">
-                                <i class="fas fa-archive"></i>
+                             @click="setId(item.id); monitoredModal = true;"
+                                class="select-none w-10 h-10 text-white bg-blue-500 hover:bg-blue-600 rounded tooltipForActions"
+                                data-tooltip="Mark as monitored">
+                                <i class="fas fa-check"></i>
                             </button>
                         </td>
                     </tr>
@@ -176,15 +176,15 @@
         </template>
     </confirmation-modal>
 
-    <confirmation-modal :showModal="archiveModal" @close="archiveModal = false" title="Archive Evaluation Tool">
+    <confirmation-modal :showModal="monitoredModal" @close="monitoredModal = false" title="Mark as Monitored">
         <template v-slot:message>
-            Are you sure you want to archive this compliance evaluation tool?
+            Are you sure you want to mark this compliance evaluation tool as monitored? Once marked as monitored, it cannot be edited.
         </template>
         <template v-slot:buttons>
-            <button @click="archive" :disabled="archiving"
+            <button @click="monitored" :disabled="markingAsMonitored"
                 class="select-none text-white h-10 w-20 rounded bg-blue-500">
-                <span v-if="archiving"><i class="fas fa-spinner animate-spin"></i></span>
-                <span v-else>Archive</span>
+                <span v-if="markingAsMonitored"><i class="fas fa-spinner animate-spin"></i></span>
+                <span v-else>Confirm</span>
             </button>
         </template>
     </confirmation-modal>
@@ -228,8 +228,8 @@ const locking = ref(false);
 const unlockModal = ref(false);
 const unlocking = ref(false);
 
-const archiveModal = ref(false);
-const archiving = ref(false); 
+const monitoredModal = ref(false);
+const markingAsMonitored = ref(false); 
 
     const query = useForm({
         academicYear: props.filters.academicYear,
@@ -249,9 +249,6 @@ function setProgress(val) {
     prog.value = val;
 }
 
-const str = computed(() => {
-    return `We wanted to inform you of the current status of your program self-evaluation. As of now, your progress stands at ${prog.value}%. If you have any questions or need assistance, please feel free to contact us.`;
-});
 
 const email = reactive({
     toolId: null,
@@ -274,7 +271,7 @@ function sendEmail() {
     function evaluate(tool) {
         router.get('/ched/evaluation/' + tool + '/evaluate', {
             preserveScroll: true,
-            preserveState: false,
+            preserveState: true,
         });
     }
 
@@ -319,13 +316,13 @@ function sendEmail() {
         });
     }
 
-    function archive(id) {
-        router.post('/ched/evaluation/archive', { 'id': toolId.value }, {
+    function monitored(id) {
+        router.post('/ched/evaluation/monitored', { 'id': toolId.value }, {
             onStart: () => {
-                archiving.value = true;
+                markingAsMonitored.value = true;
             },
             onFinish: () => {
-                archiving.value = false;
+                markingAsMonitored.value = false;
             },
             preserveState: false,
             preserveScroll: true,

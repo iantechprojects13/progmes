@@ -69,6 +69,16 @@
             </div>
         </div>
     </div>
+
+    <div class="mx-3 md:mx-8 mt-5 flex flex-col xl:flex-row justify-between">
+        <div class="w-full border border-gray-400 bg-white rounded mt-3 lg:mt-0">
+            <div class="p-3 border-b border-gray-400"><b>Programs Monitored Analysis</b></div>
+            <div class="flex items-center text-center w-full h-auto p-5">
+                <analytics-line-chart  :lineChartDataItem1="[2, 3, 4, 1]" :lineChartDataItem2="[4, 2, 3, 2]" :lineChartDataItem3="[1, 4, 2, 3]" :labels="['Q1', 'Q2', 'Q3', 'Q4']">
+                </analytics-line-chart>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup>

@@ -90,21 +90,29 @@ class CHEDFormController extends Controller
         return redirect()->back()->with('updated', 'All changes saved.');
     }
 
-    public function archive(Request $request) {
+    public function monitored(Request $request) {
 
         $tool = EvaluationFormModel::where('id', $request->id)->first();
 
+        if ($tool->status == 'In progress') {
+            return redirect()->back()->with('failed', 'Failed! You cannot mark the compliance evaluation tool as monitored while it is in progress.');
+        }
+
+        if ($tool->evaluationDate == null) {
+            return redirect()->back()->with('failed', 'Failed! Please provide a valid evaluation date before marking it as monitored.');
+        }
+
         if($tool->status == 'Submitted' || $tool->status == 'Locked') {
             $tool->update([
-                'status' => 'Archived',
+                'status' => 'Monitored',
                 'archivedDate' => now(),
             ]);
             $tool->save();
 
-            return redirect()->back()->with('success', 'Compliance evaluation tool successfully archived.');
+            return redirect()->back()->with('success', 'Compliance evaluation tool successfully marked as monitored.');
         }
         
-        return redirect()->back()->with('failed', 'Failed to archive compliance evaluation tool.');
+        return redirect()->back()->with('failed', 'Failed! Please complete the evaluation before marking it as monitored.');
     }
 
     public function lock(Request $request) {

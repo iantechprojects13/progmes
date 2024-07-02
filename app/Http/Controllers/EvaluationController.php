@@ -67,7 +67,7 @@ class EvaluationController extends Controller
                 });
             })
             ->where(function ($query) {
-                $query->whereNot('status', 'Deployed')->whereNot('status', 'Archived');
+                $query->whereNot('status', 'Deployed')->whereNot('status', 'Monitored');
             });
         })
         ->when($user->role == 'Education Supervisor', function ($query) use ($disciplineIds) {
@@ -75,7 +75,7 @@ class EvaluationController extends Controller
         })
         ->where('effectivity', $acadYear)
         ->where(function ($query) {
-            $query->whereNot('status', 'Deployed')->whereNot('status', 'Archived');
+            $query->whereNot('status', 'Deployed')->whereNot('status', 'Monitored');
         })
         ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable')
         ->paginate($show)
@@ -99,7 +99,7 @@ class EvaluationController extends Controller
         ]);
     }
 
-    public function archivedForCHED(Request $request) {
+    public function monitoredForCHED(Request $request) {
         $user = Auth::user();
         $show = $request->query('show') ? $request->query('show') : 25;
         $acadYear = $request->query('academicYear') ? $request->query('academicYear') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
@@ -124,7 +124,7 @@ class EvaluationController extends Controller
                 });
             })
             ->where(function ($query) {
-                $query->where('status', 'Archived');
+                $query->where('status', 'Monitored');
             });
         })
         ->when($user->role == 'Education Supervisor', function ($query) use ($disciplineIds) {
@@ -132,7 +132,7 @@ class EvaluationController extends Controller
         })
         ->where('effectivity', $acadYear)
         ->where(function ($query) {
-            $query->where('status', 'Archived');
+            $query->where('status', 'Monitored');
         })
         ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable')
         ->paginate($show)
@@ -140,14 +140,14 @@ class EvaluationController extends Controller
             'id' => $item->id,
             'submissionDate' => $item->submissionDate,
             'archivedDate' => Carbon::createFromFormat('Y-m-d', $item->archivedDate)->format('M d, Y'),
-            'evaluationDate' => $item->evaluationDate,
+            'evaluationDate' => Carbon::createFromFormat('Y-m-d', $item->evaluationDate)->format('M d, Y'),
             'status' => $item->status,
             'institution' => $item->institution_program->institution->name,
             'program' => $item->institution_program->program->program,
         ])
         ->withQueryString();
 
-        return Inertia::render('Progmes/Evaluation/CHED-Evaluation-Archive', [
+        return Inertia::render('Progmes/Evaluation/CHED-Evaluation-Monitored', [
             'complianceTools' => $complianceTools,
             'filters' => $request->only(['search']) + ['show' => $show, 'academicYear' => $acadYear ],
             'canEvaluate' => $canEvaluate,
@@ -191,7 +191,7 @@ class EvaluationController extends Controller
                 });
             })
             ->where(function ($query) {
-                $query->whereNot('status', 'Deployed')->whereNot('status', 'Archived');
+                $query->whereNot('status', 'Deployed')->whereNot('status', 'Monitored');
             });
         })
         ->when($user->role == 'Dean', function ($query) use ($disciplineIds) {
@@ -202,7 +202,7 @@ class EvaluationController extends Controller
             $query->where('id', $institution);
         })
         ->where(function ($query) {
-            $query->whereNot('status', 'Deployed')->whereNot('status', 'Archived');
+            $query->whereNot('status', 'Deployed')->whereNot('status', 'Monitored');
         })
         ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable')
         ->paginate($show)
@@ -241,7 +241,7 @@ class EvaluationController extends Controller
                 });
             })
             ->where(function ($query) {
-                $query->where('status', 'Archived');
+                $query->where('status', 'Monitored');
             });
         })
         ->when($user->role == 'Dean', function ($query) use ($disciplineIds) {
@@ -252,7 +252,7 @@ class EvaluationController extends Controller
             $query->where('id', $institution);
         })
         ->where(function ($query) {
-            $query->where('status', 'Archived');
+            $query->where('status', 'Monitored');
         })
         ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable')
         ->paginate($show)

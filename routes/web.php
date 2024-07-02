@@ -84,7 +84,7 @@ Route::post('/set-academic-year', [DashboardController::class, 'setAcademicYear'
 //evaluation
 Route::get('/evaluation', [EvaluationController::class, 'index'])->middleware(['auth', 'user.verified'])->name('evaluation');
 Route::get('/ched/evaluation', [EvaluationController::class, 'evaluationForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('evaluation.ched');
-Route::get('/ched/evaluation/archived', [EvaluationController::class, 'archivedForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('ched.evaluation.archive');
+Route::get('/ched/evaluation/monitored', [EvaluationController::class, 'monitoredForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('ched.evaluation.monitored');
 Route::get('/hei/ph/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware(['auth','type.hei', 'hei.ph'])->name('evaluation.ph');
 Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean'])->name('evaluation.hei');
 Route::get('/hei/evaluation/archived', [EvaluationController::class, 'archivedForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean'])->name('evaluation.hei.archive');
@@ -102,7 +102,7 @@ Route::post('/hei/evaluation/submit', [HEIFormController::class, 'readyForVisit'
 Route::post('/hei/evaluation/link/delete', [HEIFormController::class, 'deleteLink'])->name('form.hei.link.delete');
 
 Route::post('/ched/evaluation/update', [CHEDFormController::class, 'update'])->name('form.ched.update');
-Route::post('/ched/evaluation/archive', [CHEDFormController::class, 'archive'])->name('form.ched.archive');
+Route::post('/ched/evaluation/monitored', [CHEDFormController::class, 'monitored'])->name('form.ched.monitored');
 Route::post('/ched/evaluation/lock', [CHEDFormController::class, 'lock'])->name('form.ched.lock');
 Route::post('/ched/evaluation/unlock', [CHEDFormController::class, 'unlock'])->name('form.ched.unlock');
 
@@ -125,9 +125,10 @@ Route::post('/admin/higher-education-institutions/update', [InstitutionControlle
 // CMO
 Route::get('/admin/CMOs', [CMOController::class, 'index'])->middleware('auth', 'type.ched')->name('admin.cmo.list');
 Route::get('/admin/CMOs/draft', [CMOController::class, 'draft'])->middleware('auth', 'type.ched', 'cmo.draft')->name('admin.cmo.draft');
+Route::get('/admin/CMOs/draft/{cmo}/view', [CMOController::class, 'view'])->middleware('auth', 'type.ched', 'cmo.draft')->name('admin.cmo.draft.view');
+Route::get('/admin/CMOs/draft/{id}/edit', [CMOController::class, 'edit'])->name('admin.cmo.edit');
 Route::get('admin/CMOs/{cmo}/view', [CMOController::class, 'view'])->middleware('auth', 'type.ched')->name('admin.cmo.show');
 Route::post('/admin/CMOs/create/import', [ExcelController::class, 'importExcel'])->name('admin.cmo.import');
-Route::get('/admin/CMOs/draft/{id}/edit', [CMOController::class, 'edit'])->name('admin.cmo.edit');
 Route::post('/admin/CMOs/store', [CMOController::class, 'store'])->middleware('auth')->name('admin.cmo.store');
 Route::post('/admin/CMOs/save-and-publish', [CMOController::class, 'saveAndPublish'])->middleware('auth')->name('admin.cmo.save.publish');
 Route::post('/admin/CMOs/save-as-draft', [CMOController::class, 'saveAsDraft'])->middleware('auth')->name('admin.cmo.save.draft');
