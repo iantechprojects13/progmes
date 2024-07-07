@@ -1,7 +1,7 @@
 <template>
 
     <!-- Body -->
-    <div class="flex flex-col md:flex-row h-full bg-gray-200">
+    <div class="flex flex-col md:flex-row h-full bg-neutral-900">
         <!-- Navigation -->
         <div class="fixed z-90 top-0 w-full h-full bg-black bg-opacity-70 md:hidden" :class="{ hidden: closeSideBar }"
             @click="toggleSideBar()"></div>
@@ -112,7 +112,7 @@
         </div>
 
         <!-- Page Content -->
-        <div class="w-full h-auto overflow-y-hidden relative bg-gray-100 overflow-x-auto md:pt-0 pb-5">
+        <div class="w-full h-auto relative bg-gray-100 md:pt-0 pb-5">
             <div
                 class="md:hidden sticky top-0 w-full bg-blue-900 text-white flex justify-between text-center h-16 items-center shadow-md z-80 px-4">
                 <div class="cursor-pointer" @click="toggleSideBar">
@@ -140,7 +140,9 @@
                     </dropdown-option>
                 </div>
             </div>
-            <slot />
+            <div>
+                <slot />
+            </div>
         </div>
     </div>
     <div>

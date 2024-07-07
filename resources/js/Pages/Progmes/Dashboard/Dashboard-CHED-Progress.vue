@@ -158,11 +158,11 @@
                                     <div v-show="program || props.filters.filter == null">{{ item.institution }}</div>
                                 </div>
                             </td>
-                            <td class="text-sm">
+                            <td class="text-sm px-2">
                                 <div v-if="item.status == 'Deployed'" class="bg-gray-600 px-1 text-white w-fit rounded text-xs">
                                     Pending
                                 </div>
-                                <div v-else class="bg-red-500 px-1 w-fit rounded text-white text-xs">
+                                <div v-else class="bg-green-500 px-1 w-fit rounded text-white text-xs whitespace-nowrap">
                                     {{ item.status }}
                                 </div>
                             </td>
@@ -230,7 +230,7 @@
     <div class="mx-3 md:mx-8 mt-5 flex flex-col xl:flex-row justify-between">
         <div class="w-full border border-gray-400 bg-white rounded mt-3 lg:mt-0">
             <div class="p-3 border-b border-gray-400"><b>Programs Monitored by Month</b></div>
-            <div class="flex items-center text-center w-full h-auto p-5">
+            <div class="flex items-center text-center w-full h-auto p-5 md:px-20">
                 <line-chart :lineChartDataItem="lineChartDataItem"></line-chart>
             </div>
         </div>
@@ -268,10 +268,6 @@ const props = defineProps([
     'evaluatedTotal',
     'lineChartDataItem',
 ]);
-
-const sampleData = [
-    
-]
 
 const query = useForm({
     academicyear: ref(props.academicyear),

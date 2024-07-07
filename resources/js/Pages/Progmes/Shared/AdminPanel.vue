@@ -1,10 +1,10 @@
 <template>
-    <div class="px-3 md:px-7 pt-4 md:text-gray-200 md:bg-blue-800 z-60">
-        <h1 class="text-2xl font-bold">Admin Panel</h1>
+    <div class="px-3 md:px-7 pt-4 md:text-gray-200 md:bg-blue-900 z-60">
+        <h1 class="text-xl font-bold">Admin Panel</h1>
         <div class="mt-3 w-full z-40 text-gray-700 font-bold text-base md:pb-0">
             <div class="text-right">
                 <button @click="toggleMenu"
-                    class="flex flex-row  absolute top-20 right-3 justify-center items-center md:hidden w-14 h-10 rounded border-2 border-gray-500 text-gray-700 hover:text-black hover:bg-gray-100">
+                    class="flex flex-row  absolute top-20 right-3 justify-center items-center md:hidden w-14 h-10 rounded border border-gray-400 hover:border-gray-500 text-gray-400 hover:text-black hover:bg-gray-200">
                     <span v-if="!isMenuOpen">
                         <i class="fas fa-bars"></i>
                     </span>
@@ -14,7 +14,7 @@
                 </button>
             </div>
             <div ref="adminPanelContainer"
-                class="relative transition-all duration-200 md:visible md:whitespace-nowrap h-0 md:h-auto md:border-none bg-stone-700 md:bg-blue-800 rounded md:rounded-none overflow-hidden"
+                class="relative transition-all duration-200 md:visible md:whitespace-nowrap h-0 md:h-auto md:border-none bg-stone-700 md:bg-blue-900 rounded md:rounded-none overflow-hidden"
                 :class="[{ 'border-none invisible': !isMenuOpen }, { 'h-60': isMenuOpen }]">
                 <div class="w-full sm:flex-row md:block md:text-gray-300 text-gray-200">
                     <Link :href="route('admin.users.list')" preserved-state>

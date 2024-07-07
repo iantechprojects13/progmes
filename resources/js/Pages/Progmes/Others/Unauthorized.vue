@@ -13,10 +13,13 @@
                 </div>
             </div>
 
-            <div class="mt-5 w-full text-center md:text-end">
+            <div class="mt-5 w-full flex md:flex-row flex-col items-center justify-between text-center md:text-end">
                 <Link :href="route('dashboard')" class="px-3 py-2 hover:underline text-sm">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Go back to App
+                </Link>
+                <Link method="post" href="/logout" class="px-3 py-1 bg-gray-700 hover:bg-gray-800 text-white rounded">
+                    <i class="fas fa-sign-out mr-2"></i>Logout
                 </Link>
             </div>
         </div>

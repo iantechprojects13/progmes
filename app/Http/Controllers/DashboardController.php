@@ -161,12 +161,72 @@ class DashboardController extends Controller
     }
 
     public function dashboardForCHEDOverview() {
+
+        $user = Auth::user();
+        $role = $user->role;
+
+        $acadYear = AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
+
+        $disciplines = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('discipline')->get();
+        $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+
+
+        $acadYearArray = [
+            '2020-2021', '2021-2022', '2022-2023', '2023-2024', '2024-2025', 
+            '2025-2026', '2026-2027', '2027-2028', '2028-2029', 
+            '2029-2030',
+        ];
+
+        $index = array_search($acadYear, $acadYearArray);
+        $yearsData = [];
+
+        for ($i = 0; $i <= 2; $i++) {
+            $comTools = EvaluationFormModel::where('effectivity', $acadYearArray[$index])
+                ->where('status', 'Monitored')
+                ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
+                    $query->whereIn('disciplineId', $disciplineIds);
+                })
+                ->whereNotNull('evaluationDate');
+
+            $quarters = [ [1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12] ];
+            $yearData = array_map(function($months) use ($comTools) {
+                return (clone $comTools)->where(function ($query) use ($months) {
+                    foreach ($months as $month) {
+                        $query->orWhereMonth('evaluationDate', $month);
+                    }
+                })->count();
+            }, $quarters);
+
+            $yearsData[] = $yearData;
+            $index--;
+        }
+
+        [$thisYear, $lastYear, $twoYearsAgo] = $yearsData;
+
+
+        // $comTools = EvaluationFormModel::where('effectivity', '2022-2023')
+        // ->where('status', 'Monitored')
+        // ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
+        //     $query->whereIn('disciplineId', $disciplineIds);
+        // })
+        // ->whereNotNull('evaluationDate');
+
+        // $ayearago[] = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 1)->orWhereMonth('evaluationDate', 2)->orWhereMonth('evaluationDate', 3);})->count();
+        // $ayearago[] = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 4)->orWhereMonth('evaluationDate', 5)->orWhereMonth('evaluationDate', 6);})->count();
+        // $ayearago[] = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 7)->orWhereMonth('evaluationDate', 8)->orWhereMonth('evaluationDate', 9);})->count();
+        // $ayearago[] = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 10)->orWhereMonth('evaluationDate', 11)->orWhereMonth('evaluationDate', 12);})->count();
+        
+        
+
         return Inertia::render('Progmes/Dashboard/Dashboard-CHED-Overview', [
             'user' => User::where('isActive', 1)->count(),
             'institution' => InstitutionModel::all()->count(),
             'program' => ProgramModel::all()->count(),
             'discipline' => DisciplineModel::all()->count(),
             'usertype' => [User::where('type', 'CHED')->count(), User::where('type', 'HEI')->count()],
+            'thisYear' => $thisYear,
+            'lastYear' => $lastYear,
+            'twoYearsAgo' => $twoYearsAgo,
         ]);
     }
 

@@ -62,8 +62,11 @@ class EvaluationFormController extends Controller
                     $programQuery->where('name', 'like', '%' . $request->query('search') . '%');
                 });
             })
-            ->whereHas('evaluationForm', function ($query) use ($defaultAcademicYear) {
-                $query->where('effectivity', $defaultAcademicYear);
+            ->whereHas('evaluationForm', function ($query) use ($defaultAcademicYear, $request) {
+                $query->where('effectivity', $defaultAcademicYear)
+                ->when($request->query('status'), function ($query) use ($request) {
+                    $query->where('status', $request->query('status'));
+                });
             });
             
         })
@@ -71,8 +74,11 @@ class EvaluationFormController extends Controller
             $evalFormQuery->where('effectivity', $defaultAcademicYear);
         }, 'evaluationForm.cmo'])
         ->where('isActive', 1)
-        ->whereHas('evaluationForm', function ($query) use ($defaultAcademicYear) {
-            $query->where('effectivity', $defaultAcademicYear);
+        ->whereHas('evaluationForm', function ($query) use ($defaultAcademicYear, $request) {
+            $query->where('effectivity', $defaultAcademicYear)
+                ->when($request->query('status'), function ($query) use ($request) {
+                    $query->where('status', $request->query('status'));
+                });
         })
         ->when($role == 'Education Supervisor', function ($query) use ($disciplineList) {
             $query->whereHas('evaluationForm', function ($q) use ($disciplineList) {
@@ -88,7 +94,7 @@ class EvaluationFormController extends Controller
             'academicYear' => $defaultAcademicYear,
             'institutionProgramList' => $allinstitutionprograms,
             'canEdit' => $canEdit,
-            'filters' => $request->only(['search']) + ['academicYear' => $defaultAcademicYear ]
+            'filters' => $request->only(['search', 'status']) + ['academicYear' => $defaultAcademicYear ]
             + ['show' => $show ],
         ]);
     }

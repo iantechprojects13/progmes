@@ -25,24 +25,21 @@
                     datasets: [
                         {   
                             label: "This Year",
-                            // data: this.lineChartDataItem1,
-                            data: [231, 312, 123, 412],
+                            data: this.thisYear,
                             borderColor: "#85C1E9",
                             fill: false,
                             tension: 0.3,
                         },
                         {   
                             label: "A Year Ago",
-                            // data: this.lineChartDataItem2,
-                            data: [198, 331, 161, 371],
+                            data: this.lastYear,
                             borderColor: "#F7DC6F",
                             fill: false,
                             tension: 0.3,
                         },
                         {   
                             label: "Two Years Ago",
-                            // data: this.lineChartDataItem3,
-                            data: [313, 210, 319, 232],
+                            data: this.twoYearsAgo,
                             borderColor: "#EC7063",
                             fill: false,
                             tension: 0.3,
@@ -87,9 +84,9 @@
             }
         },
         props: [
-            'lineChartDataItem1',
-            'lineChartDataItem2',
-            'lineChartDataItem3',
+            'thisYear',
+            'lastYear',
+            'twoYearsAgo'
         ],
     }
 </script>

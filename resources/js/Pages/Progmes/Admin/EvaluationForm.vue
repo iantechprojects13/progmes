@@ -1,45 +1,43 @@
 <template>
 
     <Head title="Evaluation Forms" />
-    <AdminPanel />
-    <content-container pageTitle="Compliance Evaluation Tool" page="tool" :hasTopButton="canEdit" :hasSearch="true" :hasFilters="true"
-        :hasNavigation="true" :data_list="institutionProgramList">
-        <template v-slot:navigation>
-            <div class="mb-2 flex items-center">
-                <div class="mr-2 font-bold">Academic Year:</div>
+    <content-container :hasAdminPanel="true" :hasModal="true" pageTitle="Compliance Evaluation Tool" page="tool" :hasTopButton="canEdit" :hasSearch="true" :hasFilters="true" :data_list="institutionProgramList">
+        <template v-slot:top-button>
+            <div class="flex flex-row">
+                <div class="flex md:flex-row flex-col">
+                    <div class="w-full">
+                        <button @click="toggleDeployModal"
+                            class="select-none whitespace-nowrap px-3 rounded h-10 bg-blue-500 hover:bg-blue-600 text-white group">
+                            <i class="fas fa-rocket mr-2"></i>
+                            Deploy Tool
+                        </button>
+                    </div>
+                </div>
                 <select v-model="query.ay" id="academicYearDd" @change.prevent="changeAcademicYear"
-                    class="select-none text-sm rounded border-2 border-gray-500">
-                    <option v-for="(item, index) in academicYearDropdown" :key="index" :value="item">{{ item }}</option>
+                    class="select-none ml-2 text-gray-700 text-sm rounded border border-gray-400 hover:border-gray-500 cursor-pointer">
+                    <option v-for="(item, index) in academicYearDropdown" :key="index" :value="item">A.Y. {{ item }}</option>
                 </select>
             </div>
         </template>
         <template v-slot:search>
-            <div class="w-full flex justify-end relative">
+            <div class="w-full flex flex-row relative items-center">
+                <i class="fa fa-search text-gray-400 absolute left-5"></i>
                 <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
                     placeholder="Search"
-                    class="w-full rounded border border-gray-400 bg-slate-100 h-10 text-base placeholder-gray-400 pr-11 mr-2" />
-                <button @click="submit"
-                    class="text-gray-700 hover:text-black active:text-blue-500 h-10 w-10 rounded absolute right-2">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-        </template>
-        <template v-slot:top-button>
-            <div class="flex md:flex-row flex-col text-sm">
-                <div class="w-full">
-                    <button @click="toggleDeployModal"
-                        class="select-none whitespace-nowrap px-3 w-fit rounded h-10 bg-blue-500 hover:bg-blue-600 text-white group">
-                        <i class="fas fa-rocket mr-2"></i>
-                        Deploy tool
-                    </button>
-                </div>
+                    class="w-full rounded-lg border border-gray-300 indent-10 h-10 text-base placeholder-gray-400" />
             </div>
         </template>
         <template v-slot:options>
-            <div>
+            <div class="mr-1">
+                
+                <button @click="toggleFilterModal"
+                    class="w-10 h-10 whitespace-nowrap hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
+                    data-tooltip="Filters">
+                    <i class="fas fa-filter"></i>
+                </button>
                 <Link href="/admin/tool">
                 <button
-                    class="w-10 h-10 whitespace-nowrap rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
+                    class="w-10 h-10 whitespace-nowrap hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
                     data-tooltip="Refresh page">
                     <i class="fas fa-refresh"></i>
                 </button>
@@ -62,7 +60,7 @@
                         </td>
                     </tr>
                     <tr v-else v-for="(program, index) in institutionProgramList.data" :key="program.id"
-                        class="hover:bg-slate-300" :class="{ 'bg-slate-200': index % 2 == 0 }">
+                        class="hover:bg-gray-200 border-b" :class="{ 'bg-gray-100': index % 2 == 1 }">
                         <td class="p-3 whitespace-normal pl-5">
                             {{ program.institution?.name }}
                         </td>
@@ -80,121 +78,125 @@
                             </div>
                         </td>
                         <td class="p-3">
-                            <div v-if="program.evaluation_form.length == 0"
-                                class="bg-gray-600 text-white w-fit px-1 rounded text-xs">
-                                Pending
-                            </div>
-                            <div v-if="
-                                    program.evaluation_form[0]?.status ==
-                                    'Deployed'
-                                " class="bg-gray-700 text-white w-fit px-1 rounded text-xs">
-                                Deployed
-                            </div>
-                            <div v-if="
-                                    program.evaluation_form[0]?.status ==
-                                    'In progress'
-                                " class="bg-blue-500 text-white w-fit px-1 rounded text-xs">
+                            <div v-if="program.evaluation_form[0]?.status == 'In progress' || program.evaluation_form[0]?.status == 'Deployed'"
+                            class="bg-green-600 text-white w-fit px-1 rounded text-xs">
                                 In Progress
                             </div>
-                            <div v-if="program.evaluation_form[0]?.status == 'Submitted'"
-                                class="bg-emerald-500 text-white w-fit px-1 rounded text-xs">
+                            <div v-else-if="program.evaluation_form[0]?.status == 'Submitted'"
+                                class="bg-green-600 text-white w-fit px-1 rounded text-xs">
                                 Submitted
                             </div>
-                        </td>
-                        <td v-show="canEdit" class="p-3 text-right">
-                            <!-- <button v-show="program.evaluation_form[0]?.status == 'In progress'"
-                                class="border-2 border-gray-500 hover:text-blue-500 bg-white rounded h-10 px-2">
-                                <i class="fas fa-lock mr-1"></i>Lock
-                            </button> -->
-                            <!-- <button v-show="program.evaluation_form[0]?.status == 'In progress'">
-                                <i class="fas fa-lock"></i>
-                            </button> -->
+                            <div v-else-if="program.evaluation_form[0]?.status == 'Monitored'"
+                                class="bg-blue-500 text-white w-fit px-1 rounded text-xs">
+                                Monitored
+                            </div>
                         </td>
                     </tr>
                 </template>
             </content-table>
         </template>
-        <template v-slot:show-item>
-            <div class="mr-2">Items per page</div>
-            <select v-model="query.show" id="showResultCount" @change="changeResultCount"
-                class="select-none rounded h-8 w-16 p-1 text-sm">
-                <option :value="25">25</option>
-                <option :value="50">50</option>
-                <option :value="75">75</option>
-                <option :value="100">100</option>
-                <option :value="200">200</option>
-            </select>
+        <template v-slot:modal>
+            <modal :showModal="deployToolModal" width="md" height="long" @close="toggleDeployModal" @submit="deploy" type="deploy"
+                title="Deploy Compliance Tool">
+                <div class="p-3">
+                    <div>
+                        <label class="font-bold text-gray-700" for="program">Program</label>
+                        <select id="program" class="w-full h-10 text-sm rounded border-gray-400 my-0.5"
+                            v-model="deployment.program">
+                            <option :value="null">Select program</option>
+                            <option v-for="program in program_list" :key="program.id" :value="program">
+                                {{ program.program }}
+                                <span v-if="program.major != null"> - {{ program.major }}</span>
+                            </option>
+                        </select>
+                    </div>
+                    <div class="mt-3">
+                        <div :class="{
+                                'grayscale opacity-50 pointer-events-none':
+                                    deployment.program == null,
+                            }">
+                            <label class="font-bold text-gray-700" for="cmo">CHED Memorandum Order</label>
+                            <input id="cmo" type="text" disabled class="w-full text-sm rounded border-gray-400 my-0.5" :value="
+                                    deployment.program?.active_cmo != null
+                                        ? 'CMO ' +
+                                        deployment.program.active_cmo.number +
+                                        ', S. ' +
+                                        deployment.program.active_cmo.series +
+                                        ', Version ' +
+                                        deployment.program.active_cmo.version
+                                        : 'No Active CMO'
+                                " />
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="font-bold text-gray-700" for="toolEffectivity">Effective A.Y.</label>
+                        <select v-model="deployment.effectivity" id="toolEffectivity"
+                            class="w-full text-sm rounded border-gray-400 my-0.5">
+                            <option v-for="(year, index) in academicYearDropdown" :key="index" :value="year">{{ year }}</option>
+                        </select>
+                    </div>
+                </div>
+                <template v-slot:custom-button>
+                    <button 
+                    :disabled="deployment.program == null || deployment.cmo == null" @click="toggleConfirmationModal" class="select-none text-white h-10 w-20 rounded border"
+                    :class="[{'bg-gray-700':deployment.program == null || deployment.cmo == null}, {'bg-blue-600 hover:bg-blue-700':deployment.program != null && deployment.cmo != null}]"
+                    >
+                        <span v-if="deploying">
+                            <i class="fas fa-spinner animate-spin"></i>
+                        </span>
+                        <span v-else>Deploy</span>
+                    </button>
+                </template>
+            </modal>
         </template>
     </content-container>
 
-    <modal :showModal="deployToolModal" @close="toggleDeployModal" @submit="deploy" type="deploy"
-        title="Deploy Compliance Tool">
-        <div class="p-3">
-            <div>
-                <label class="font-bold text-gray-700" for="program">Program</label>
-                <select id="program" class="w-full h-10 text-sm rounded border-gray-400 my-0.5"
-                    v-model="deployment.program">
-                    <option :value="null">Select program</option>
-                    <option v-for="program in program_list" :key="program.id" :value="program">
-                        {{ program.program }}
-                        <span v-if="program.major != null"> - {{ program.major }}</span>
-                    </option>
+    <modal :showModal="showFilterModal" @close="toggleFilterModal" width="sm" height="long" title="Filters">
+        <div>
+            <div class="flex flex-col">
+                <label for="status">Status</label>
+                <select v-model="query.status" id="status" class="rounded border-gray-400">
+                    <option :value="null">Select Status</option>
+                    <option value="In progress">In Progress</option>
+                    <option value="Submitted">Submitted</option>
+                    <option value="Monitored">Monitored</option>
                 </select>
             </div>
-            <div class="mt-3">
-                <div :class="{
-                        'grayscale opacity-50 pointer-events-none':
-                            deployment.program == null,
-                    }">
-                    <label class="font-bold text-gray-700" for="cmo">CHED Memorandum Order</label>
-                    <input id="cmo" type="text" disabled class="w-full text-sm rounded border-gray-400 my-0.5" :value="
-                            deployment.program?.active_cmo != null
-                                ? 'CMO ' +
-                                  deployment.program.active_cmo.number +
-                                  ', S. ' +
-                                  deployment.program.active_cmo.series +
-                                  ', Version ' +
-                                  deployment.program.active_cmo.version
-                                : 'No Active CMO'
-                        " />
-                </div>
-            </div>
-            <div class="mt-3">
-                <label class="font-bold text-gray-700" for="toolEffectivity">Effective A.Y.</label>
-                <select v-model="deployment.effectivity" id="toolEffectivity"
-                    class="w-full text-sm rounded border-gray-400 my-0.5">
-                    <option v-for="(year, index) in academicYearDropdown" :key="index" :value="year">{{ year }}</option>
+            <div class="mt-3 flex flex-col">
+                <label for="show">Items per page</label>
+                <select v-model="query.show" id="show" class="rounded border-gray-400">
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
                 </select>
             </div>
         </div>
         <template v-slot:custom-button>
-            <button 
-            :disabled="deployment.program == null || deployment.cmo == null" @click="toggleConfirmationModal" class="select-none text-white h-10 w-20 rounded border"
-            :class="[{'bg-gray-700':deployment.program == null || deployment.cmo == null}, {'bg-blue-600 hover:bg-blue-700':deployment.program != null && deployment.cmo != null}]"
-            >
-                <span v-if="deploying">
+            <button @click="filter" class="text-white bg-green-600 hover:bg-green-700 w-20 rounded h-10">
+                <span v-if="processing">
                     <i class="fas fa-spinner animate-spin"></i>
                 </span>
-                <span v-else>Deploy</span>
+                <span v-else>Apply</span>
             </button>
         </template>
     </modal>
-    <div v-if="confirmationModal">
-        <Confirmation @close="toggleConfirmationModal" title="Confirm Deployment">
-            <template v-slot:message>
-                <div>Are you sure you want to deploy evaluation compliance tool for <b>{{ deployment.program.program }}<span v-if="deployment.program?.major"> - {{ deployment.program.major }}</span>
-                </b>?</div>
-            </template>
-            <template v-slot:buttons>
-                <button @click="deploy" class="select-none text-white bg-blue-600 hover:bg-blue-700 h-10 w-20 rounded border">
-                    <span v-if="deploying">
-                        <i class="fas fa-spinner animate-spin"></i>
-                    </span>
-                    <span v-else>Confirm</span>
-                </button>
-            </template>
-        </Confirmation>
-    </div>
+
+    <Confirmation :showModal="confirmationModal" width="md" height="short" @close="toggleConfirmationModal" title="Confirm Deployment">
+        <template v-slot:message>
+            <div>Are you sure you want to deploy evaluation compliance tool for <b>{{ deployment.program?.program }}<span v-if="deployment.program?.major"> - {{ deployment.program.major }}</span>
+            </b>?</div>
+        </template>
+        <template v-slot:buttons>
+            <button @click="deploy" class="select-none text-white bg-blue-600 hover:bg-blue-700 h-10 w-20 rounded border">
+                <span v-if="deploying">
+                    <i class="fas fa-spinner animate-spin"></i>
+                </span>
+                <span v-else>Confirm</span>
+            </button>
+        </template>
+    </Confirmation>
+    
     <Notification :message="$page.props.flash.success" type="success" />
     <Notification :message="$page.props.flash.failed" type="failed" />
     <Notification v-if="$page.props.errors.program" :message="$page.props.errors.program" type="failed" />
@@ -202,87 +204,118 @@
 </template>
 
 <script setup>
-    import { useForm, router } from "@inertiajs/vue3";
-    import { ref, watch, reactive } from "vue";
+import { useForm, router } from "@inertiajs/vue3";
+import { ref, watch } from "vue";
 
-    let deployToolModal = ref(false);
-    const deploying = ref(false);
-    const confirmationModal = ref(false);
+const props = defineProps([
+    "institutionProgramList",
+    "effectivity",
+    "program_list",
+    "academicYear",
+    "canEdit",
+    "filters",
+]);
 
-    function toggleDeployModal() {
-        deployToolModal.value = !deployToolModal.value;
-    };
+let deployToolModal = ref(false);
+const deploying = ref(false);
+const confirmationModal = ref(false);
+const showFilterModal = ref(false);
+const processing = ref(false);
 
-    function toggleConfirmationModal() {
+function toggleDeployModal() {
+    deployToolModal.value = !deployToolModal.value;
+};
+
+function toggleConfirmationModal() {
+    if (confirmationModal.value == true) {
+        setTimeout(() => {
+                toggleDeployModal();
+        }, 297);
+    } else {
         toggleDeployModal();
+    }
+
+    if (confirmationModal.value == false) {
+        setTimeout(() => {
+            confirmationModal.value = !confirmationModal.value;
+        }, 297);
+    } else {
         confirmationModal.value = !confirmationModal.value;
     }
 
-    const props = defineProps([
-        "institutionProgramList",
-        "effectivity",
-        "program_list",
-        "academicYear",
-        "canEdit",
-        "filters",
-    ]);
+}
 
-    const deployment = reactive({
-        program: null,
-        cmo: null,
-        effectivity: ref(props.effectivity),
+const deployment = useForm({
+    program: null,
+    cmo: null,
+    effectivity: ref(props.effectivity),
+});
+
+watch(() => deployment.program?.active_cmo, (cmo_value) => {
+    deployment.cmo = cmo_value;
+});
+
+function deploy() {
+    if (deployment.program?.active_cmo) {
+        deployment.cmo = deployment.program.active_cmo;
+    } else {
+        deployment.cmo = null;
+    }
+
+    router.post("/admin/form/deploy", deployment, {
+        onStart: () => {
+            deploying.value = true;
+        },
+        onFinish: () => {
+            deploying.value = false;
+        },
+        preserveState: false,
     });
+}
 
-    watch(() => deployment.program?.active_cmo, (cmo_value) => {
-        deployment.cmo = cmo_value;
+const query = useForm({
+    ay: props.filters.academicYear,
+    show: props.filters.show != null ? props.filters.show : null,
+    search: props.filters.search,
+    status: props.filters.status != null ? props.filters.status : null,
+});
+
+function toggleFilterModal() {
+    showFilterModal.value = !showFilterModal.value;
+}
+
+function submit() {
+    query.get("/admin/tool", {
+        onStart: () => {
+            processing.value = true;
+        },
+        onFinish: () => {
+            processing.value = false;
+        },
+        preserveState: false,
     });
+}
 
-    function deploy() {
-        if (deployment.program?.active_cmo) {
-            deployment.cmo = deployment.program.active_cmo;
-        } else {
-            deployment.cmo = null;
-        }
-
-        router.post("/admin/form/deploy", deployment, {
-            onStart: () => {
-                deploying.value = true;
-            },
-            onFinish: () => {
-                deploying.value = false;
-            },
-            preserveState: false,
-        });
-    }
-
-    const query = useForm({
-        ay: props.filters.academicYear,
-        show: props.filters.show,
-        search: props.filters.search,
+function filter() {
+    query.get("/admin/tool", {
+        onStart: () => {
+            processing.value = true;
+        },
+        onFinish: () => {
+            processing.value = false;
+            toggleFilterModal();
+        },
+        preserveState: true,
     });
+}
 
-
-    function submit() {
-        query.get("/admin/tool", {
-            preserveScroll: true,
-            preserveState: false,
-        });
-    }
-
-    function changeAcademicYear() {
-        query.search = '';
-        query.get("/admin/tool", {
-            preserveScroll: true,
-            preserveState: false,
-        });
-    }
-
-    function changeResultCount() {
-        query.get("/admin/tool", {
-            preserveScroll: false,
-            preserveState: true,
-        });
-    }
+function changeAcademicYear() {
+    query.search = '';
+    query.get("/admin/tool", {
+        preserveScroll: true,
+        preserveState: false,
+    });
+}
 
 
 </script>

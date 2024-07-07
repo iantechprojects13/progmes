@@ -55,14 +55,15 @@ class CMOController extends Controller
                 });
             });
         })
-        ->where([
-            'status' => 'Published',
-        ])
         ->orderBy('number', 'asc')
         ->when($role == 'Education Supervisor', function ($query) use ($disciplineList) {
             $query->whereHas('program', function ($q) use ($disciplineList) {
                 $q->whereIn('disciplineId', $disciplineList);
             });
+        })
+        ->where('status', 'Published')
+        ->when($request->query('isActive') != null, function ($query) use ($request) {
+            $query->where('isActive', $request->query('isActive'));
         })
         ->with('program')
         ->paginate($show)
@@ -73,7 +74,7 @@ class CMOController extends Controller
             'canImport' => $canImport,
             'canDraft' => $canDraft,
             'canEdit' => $canEdit,
-            'filters' => $request->only(['search']) + ['show' => $show ],
+            'filters' => $request->only(['search', 'status']) + ['show' => $show ],
         ]);
     }
 
@@ -102,7 +103,8 @@ class CMOController extends Controller
                 ->orWhere('series', 'like', '%' . $request->query('search') . '%')
                 ->orWhere('version', 'like', '%' . $request->query('search') . '%')
                 ->orWhereHas('program', function ($programQuery) use ($request) {
-                    $programQuery->where('program', 'like', '%' . $request->query('search') . '%');
+                    $programQuery->where('program', 'like', '%' . $request->query('search') . '%')
+                    ->orWhere('major', 'like', '%' . $request->query('search') . '%');
                 });
             })
             ->when($role == 'Education Supervisor', function ($query) {

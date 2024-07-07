@@ -1,14 +1,12 @@
 <template>
 
     <Head title="New HEI" />
-    <AdminPanel />
-
-    <content-container>
+    <content-container :hasAdminPanel="true">
         <template v-slot:content-title>
-            <div class="p-3 flex flex-row items-center justify-between border-b border-gray-400">
+            <div class="w-full flex flex-row items-center justify-between">
                 <div class="flex flex-row">
                     <Link href="/admin/higher-education-institutions">
-                    <button><i class="fas fa-arrow-left ml-2 mr-3"></i></button>
+                    <button><i class="fas fa-arrow-left mr-3"></i></button>
                     </Link>
                     <div class="font-bold">Create HEI</div>
                 </div>
@@ -46,10 +44,10 @@
                         class="h-auto max-h-96 overflow-y-auto border border-gray-500 rounded lg:max-w-xl w-full mx-auto p-3">
 
                         <div v-for="(  program, index  ) in   program_list  " :key="program.id" class="p-2">
-                            <div class="mr-2 flex flex-row items-center">
+                            <div class="mr-2 flex flex-row items-center py-1 border-b border-gray-300">
                                 <input type="checkbox" :id="'programCheck' + index" class="mr-2 text-blue-500"
                                     @change="addProgram(program.id)">
-                                <label class="cursor-pointer text-sm" :for="'programCheck' + index">
+                                <label class="cursor-pointer" :for="'programCheck' + index">
                                     {{ program.program }}
                                     <span v-if="program.major"> - {{ program.major }}</span>
                                 </label>

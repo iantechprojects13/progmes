@@ -1,9 +1,13 @@
 <template>
-    <div v-show="showModal"
-        class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-70 z-100 p-2 flex items-center overflow-y-auto select-none"
+    <div :class="[{'visible' : showModal}, {'invisible': !showModal}]" ref="modalContainer"
+        class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-75 z-100 p-2 overflow-y-auto select-none transition-all duration-300"
         @click.self="bgClicked">
-        <div class="bg-white w-full mx-auto max-w-lg rounded-md shadow-md shadow-gray-500 md:mb-24 opacity-100 select-none"
-            ref="modalContainer">
+        <div class="bg-white w-full mx-auto max-w-lg rounded-md shadow-md md:mb-24 select-none transition-all duration-300"
+        :class="[{ 'max-w-sm': width == 'sm' }, { ' max-w-md': width == 'md' }, { 'max-w-lg': width == 'lg' }, { ' max-w-xl': width == 'xl' },
+                        {'max-w-2xl': width == '2xl'}, {'max-w-3xl': width == '3xl'}, {'max-w-4xl': width == '4xl'},
+                        {' translate-y-24 opacity-100': showModal && height == 'short'}, {'-translate-y-24 opacity-0': !showModal && height == 'short'},
+                        {' translate-y-10 opacity-100' : showModal && height == 'long'}, {'-translate-y-10 opacity-0': !showModal && height == 'long'}
+                ]">
             <div class="border-b-2 border-gray-100 p-3 px-5 flex justify-between items-center text-lg">
                 <div class="font-bold">
                     {{ title }}
@@ -51,6 +55,8 @@
         'title',
         'type',
         'showModal',
+        'width',
+        'height',
     ]);
 
 </script>
@@ -76,29 +82,11 @@
 
             bgClicked() {
                 let cont = this.$refs.modalContainer;
-                cont.classList.add('animate-shake');
+                cont.classList.add('animate-pulse');
                 setTimeout(() => {
-                    cont.classList.remove('animate-shake');
+                    cont.classList.remove('animate-pulse');
                 }, 200);
             }
         }
     }
 </script>
-
-<style scoped>
-    @keyframes shake {
-
-        0%,
-        100% {
-            transform: translateY(0);
-        }
-
-        50% {
-            transform: translateY(-10px);
-        }
-    }
-
-    .animate-shake {
-        animation: shake 200ms 1;
-    }
-</style>

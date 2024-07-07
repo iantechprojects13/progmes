@@ -1,8 +1,14 @@
 <template>
-    <div class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-70 z-100 p-2 flex items-center overflow-y-auto"
+    <div :class="[{'visible' : showModal}, {'invisible': !showModal}]" class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-75 z-100 p-2 overflow-y-auto select-none transition-all duration-300"
         @click.self="bgClicked">
-        <div class="bg-white w-full mx-auto max-w-lg bg-opacity-100 rounded-md shadow-md text-base shadow-gray-500 md:mb-48 border border-gray-300"
-            ref="confirmationModalContainer">
+        <div class="bg-white w-full mx-auto max-w-lg bg-opacity-100 rounded-md shadow-md text-base shadow-gray-500 border border-gray-300 select-none transition-all duration-300"
+            ref="confirmationModalContainer"
+            :class="[{ 'max-w-sm': width == 'sm' }, { ' max-w-md': width == 'md' }, { 'max-w-lg': width == 'lg' }, { ' max-w-xl': width == 'xl' },
+                        {'max-w-2xl': width == '2xl'}, {'max-w-3xl': width == '3xl'}, {'max-w-4xl': width == '4xl'},
+                        {' translate-y-24 opacity-100': showModal && height == 'short'}, {'-translate-y-24 opacity-0': !showModal && height == 'short'},
+                        {' translate-y-10 opacity-100' : showModal && height == 'long'}, {'-translate-y-10 opacity-0': !showModal && height == 'long'}
+                ]"
+            >
             <div class="border-b-2 border-gray-100 p-3 px-5 flex justify-between text-base">
                 <div class="font-bold">
                     {{ title }}
@@ -185,29 +191,32 @@
 </template>
 
 <script setup>
-    import { router } from '@inertiajs/vue3';
-    import { ref } from 'vue';
+import { router } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
-    const props = defineProps({
-        'title': String,
-        'modaltype': String,
-        'selected': Object,
+const props = defineProps([
+    'showModal',
+    'width',
+    'height',
+    'title',
+    'modaltype',
+    'selected',
+]);
+
+const processing = ref(false);
+
+function submit(link) {
+    router.get(link, props.selected, {
+        onStart: () => {
+            processing.value = true;
+        },
+        onFinish: () => {
+            processing.value = false;
+        },
+        preserveState: false,
+        replace: true,
     });
-
-    const processing = ref(false);
-
-    function submit(link) {
-        router.get(link, props.selected, {
-            onStart: () => {
-                processing.value = true;
-            },
-            onFinish: () => {
-                processing.value = false;
-            },
-            preserveState: false,
-            replace: true,
-        });
-    }
+}
 
 </script>
 
@@ -224,29 +233,11 @@
 
             bgClicked() {
                 let cont = this.$refs.confirmationModalContainer;
-                cont.classList.add('animate-shake');
+                cont.classList.add('animate-pulse');
                 setTimeout(() => {
-                    cont.classList.remove('animate-shake');
+                    cont.classList.remove('animate-pulse');
                 }, 200);
             }
         }
     }
 </script>
-
-<style scoped>
-    @keyframes shake {
-
-        0%,
-        100% {
-            transform: translateY(0);
-        }
-
-        50% {
-            transform: translateY(-10px);
-        }
-    }
-
-    .animate-shake {
-        animation: shake 200ms 1;
-    }
-</style>

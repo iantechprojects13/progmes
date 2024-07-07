@@ -66,10 +66,10 @@
                     <tr v-else v-for="(item, index) in complianceTools.data" :key="item.id" class="hover:bg-slate-300"
                         :class="{'bg-slate-200': index % 2 ==0}">
                         <td class="p-3 pl-5">
-                            <div>
+                            <div class="font-bold">
                                 {{ item.program }}
                             </div>
-                            <div class="font-bold">
+                            <div>
                                 {{ item.institution }}
                             </div>
                         </td>

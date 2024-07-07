@@ -1,46 +1,44 @@
 <template>
 
     <Head title="Program List" />
-    <AdminPanel />
-    <content-container pageTitle="Program List" page="program" :hasTopButton="canAdd" :hasNavigation="true" :hasSearch="true"
+    <content-container :hasAdminPanel="true" pageTitle="Program List" page="program" :hasTopButton="canAdd" :hasNavigation="true" :hasSearch="true"
         :hasFilters="true" :data_list="program_list">
-        <template v-slot:navigation>
-            <div>
-                <div>
-                    <button class="select-none text-blue-500 h-10 mr-8 border-b-2 font-bold border-blue-500">
-                        Program
-                    </button>
-                    <Link :href="route('admin.discipline.list')">
-                    <button class="select-none text-gray-500 hover:text-black">
-                        Discipline
-                    </button>
-                    </Link>
-                </div>
-            </div>
-        </template>
-        <template v-slot:search>
-            <div class="w-full flex justify-end relative">
-                <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
-                    placeholder="Search"
-                    class="w-full rounded border border-gray-400 bg-slate-100 h-10 text-base placeholder-gray-400 pr-11 mr-2" />
-                <button @click="submit"
-                    class="text-gray-700 hover:text-black active:text-blue-500 h-10 w-10 rounded absolute right-2">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-        </template>
         <template v-slot:top-button>
             <Link href="/admin/program/create">
             <button
-                class="select-none bg-blue-500 hover:bg-blue-600 h-10 px-3 whitespace-nowrap rounded text-white text-sm"><i
+                class="select-none bg-blue-500 hover:bg-blue-600 h-10 px-3 whitespace-nowrap rounded text-white"><i
                     class="fas fa-plus mr-2"></i>Add program</button>
             </Link>
         </template>
+        <template v-slot:navigation>
+            <button class="select-none h-12 w-28 hover:bg-gray-100 text-blue-500 border-b-4 relative font-bold border-blue-500">
+                Program
+            </button>
+            <Link :href="route('admin.discipline.list')">
+            <button class="select-none h-12 w-28 hover:bg-gray-100 text-gray-700 hover:text-black">
+                Discipline
+            </button>
+            </Link>
+        </template>
+        <template v-slot:search>
+            <div class="w-full flex flex-row relative items-center">
+                <i class="fa fa-search text-gray-400 absolute left-5"></i>
+                <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
+                    placeholder="Search"
+                    class="w-full rounded-lg border border-gray-300 indent-10 h-10 text-base placeholder-gray-400" />
+            </div>
+        </template>
         <template v-slot:options>
-            <div>
+            <div class="mr-1">
+                
+                <button @click="toggleFilterModal"
+                    class="w-10 h-10 whitespace-nowrap hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
+                    data-tooltip="Filters">
+                    <i class="fas fa-filter"></i>
+                </button>
                 <Link href="/admin/program">
                 <button
-                    class="w-10 h-10 whitespace-nowrap rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
+                    class="w-10 h-10 whitespace-nowrap hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
                     data-tooltip="Refresh page">
                     <i class="fas fa-refresh"></i>
                 </button>
@@ -53,7 +51,7 @@
                     <th class="p-3 pl-5">Program</th>
                     <th class="p-3">Major</th>
                     <th class="p-3">Discipline</th>
-                    <th v-show="canEdit" class="p-3 text-right">
+                    <th v-show="canEdit" class="p-3 pr-5 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
@@ -64,7 +62,7 @@
                         </td>
                     </tr>
                     <tr v-else v-for="(program, index) in program_list.data" :key="program.id"
-                        class="hover:bg-slate-300" :class="{'bg-slate-200': index % 2 == 0}">
+                        class="hover:bg-gray-200 border-b" :class="{'bg-gray-100': index % 2 == 1}">
                         <td class="p-3 pl-5 whitespace-normal">
                             {{ program.program }}
                         </td>
@@ -76,13 +74,13 @@
                         </td>
                         <td class="p-3 text-right">
                             <button v-show="canEdit" @click="edit(program.id)"
-                                class="mr-1 select-none h-10 w-10 rounded-full hover:text-white text-lg hover:bg-blue-600 tooltipForActions"
+                                class="select-none h-8 w-8 text-center text-xl hover:bg-gray-300 rounded-full text-blue-500 hover:text-blue-600 tooltipForActions"
                                 data-tooltip="Edit">
                                 <i class="fas fa-edit mr-0.5"></i>
                             </button>
                             <button v-show="canDelete"
                                 @click="toggleConfirmationModal(program, 'deleteProgram', 'Delete Program')"
-                                class="select-none h-10 w-10 rounded text-white bg-red-500 hover:bg-red-600 tooltipForActions"
+                                class="select-none h-8 w-8 text-center text-xl hover:bg-gray-300 rounded-full text-red-500 hover:text-red-600 tooltipForActions"
                                 data-tooltip="Delete">
                                 <i class="fas fa-trash mr-0.5"></i>
                             </button>
@@ -91,58 +89,82 @@
                 </template>
             </content-table>
         </template>
-        <template v-slot:show-item>
-            <div class="mr-2">Items per page</div>
-            <select v-model="query.show" id="showResultCount" @change="changeResultCount"
-                class="select-none rounded h-8 w-20 p-1 text-sm">
-                <option value="25">25</option>
-                <option :value="50">50</option>
-                <option :value="75">75</option>
-                <option :value="100">100</option>
-                <option :value="200">200</option>
-            </select>
-        </template>
     </content-container>
 
-    <div v-if="confirmationModal">
-        <Confirmation @close="closeModal" :title="title" :modaltype="modaltype" :selected="selectedProgram" />
-    </div>
+    <modal :showModal="showFilterModal" @close="toggleFilterModal" width="sm" height="long" title="Filters">
+        <div>
+            <div class="flex flex-col">
+                <label for="show">Items per page</label>
+                <select v-model="query.show" id="show" class="rounded border-gray-400">
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                </select>
+            </div>
+        </div>
+        <template v-slot:custom-button>
+            <button @click="filter" class="text-white bg-green-600 hover:bg-green-700 w-20 rounded h-10">
+                <span v-if="processing">
+                    <i class="fas fa-spinner animate-spin"></i>
+                </span>
+                <span v-else>Apply</span>
+            </button>
+        </template>
+    </modal>
+
+    <Confirmation :showModal="confirmationModal" @close="closeModal" :title="title" :modaltype="modaltype" :selected="selectedProgram" width="md" height="short"/>
 
     <Notification :message="$page.props.flash.success" type="success" />
     <Notification :message="$page.props.flash.failed" type="failed" />
 </template>
 
 <script setup>
-    import { useForm, router } from "@inertiajs/vue3";
-    import { ref, reactive } from "vue";
+import { useForm, router } from "@inertiajs/vue3";
+import { ref, reactive } from "vue";
 
-    const props = defineProps(['program_list', 'canEdit', 'canAdd', 'canDelete', 'filters']);
-    const id = ref(null);
-    const deleteProcessing = ref(false);
-    const selected = ref(null);
+const props = defineProps(['program_list', 'canEdit', 'canAdd', 'canDelete', 'filters']);
 
-    const query = useForm({
-        show: props.filters.show,
-        search: props.filters.search,
+const showFilterModal = ref(false);
+const processing = ref(false);
+
+const query = useForm({
+    show: props.filters.show != null ? props.filters.show : null,
+    search: props.filters.search,
+});
+
+function toggleFilterModal() {
+showFilterModal.value = !showFilterModal.value;
+}
+
+function submit() {
+    query.get("/admin/program", {
+        onStart: () => {
+            processing.value = true;
+        },
+        onFinish: () => {
+            processing.value = false;
+        },
+        preserveState: false,
     });
+}
 
-    function submit() {
-        query.get("/admin/program", {
-            preserveState: true,
-            preserveScroll: true,
-        });
-    }
+function filter() {
+    query.get("/admin/program", {
+        onStart: () => {
+            processing.value = true;
+        },
+        onFinish: () => {
+            processing.value = false;
+            toggleFilterModal();
+        },
+        preserveState: true,
+    });
+}
 
-    function changeResultCount() {
-        query.get("/admin/program", {
-            preserveScroll: false,
-            preserveState: false,
-        });
-    }
-
-    function edit(id) {
-        router.get('/admin/program/' + id + '/edit');
-    }
+function edit(id) {
+    router.get('/admin/program/' + id + '/edit');
+}
 
 
 </script>

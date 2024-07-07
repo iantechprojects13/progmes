@@ -4,7 +4,7 @@
     <AdminPanel />
     <content-container>
         <template v-slot:content-title>
-                <div class="p-3 flex flex-row items-center justify-between border-b border-gray-400">
+                <div class="w-full flex flex-row items-center justify-between">
                     <div class="flex flex-row">
                         <Link href="/admin/users/list/">
                         <button><i class="fas fa-arrow-left ml-2 mr-3"></i></button>
