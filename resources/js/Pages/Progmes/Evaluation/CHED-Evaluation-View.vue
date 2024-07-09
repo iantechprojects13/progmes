@@ -2,18 +2,21 @@
 
     <Head title="Program Evaluation" />
     <page-title title="Program Evaluation" />
-    <div class="md:mx-8 mx-3 mt-8 flex flex-row justify-between rounded relative">
-        <div>
-            <Link href="/evaluation">
-            <button class="select-none w-24 h-10 border border-gray-500 rounded bg-white hover:bg-gray-700 hover:text-white">
-                <i class="fas fa-arrow-left mr-2"></i>
-                Back
-            </button>
-            </Link>
-        </div>
-    </div>
-
-    <div class="flex flex-col xl:flex-row items-center justify-between w-auto rounded border border-gray-400 bg-white mx-3 md:mx-8 mt-5 p-3">
+    <content-container>
+        <template v-slot:content-title>
+            <div class="w-full flex flex-col md:flex-row justify-between items-center">
+                <div class="w-full flex flex-row items-center">
+                    <div class="w-full flex flex-row items-center">
+                        <Link :href="evaluation_tool.status != 'Monitored' ? '/evaluation' : '/ched/evaluation/monitored'">
+                        <button class="w-8 h-8 rounded-full hover:bg-gray-200 tooltipForActions" data-tooltip="Back"><i class="fas fa-arrow-left"></i></button>
+                        </Link>
+                        <div class="ml-3 font-bold">Evaluate</div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template v-slot:main-content>
+            <div class="flex flex-col xl:flex-row items-center justify-between w-auto rounded border border-gray-300 bg-white my-3 p-5">
         <div class="w-full text-left">
             <div class="w-auto flex flex-row items-center">
                 <i class="fas fa-institution mr-3 text-blue-500"></i>
@@ -52,8 +55,6 @@
             </div>
         </div>
     </div>
-    <content-container>
-        <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
                     <th class="p-3">Area/<br>Minimum Requirement</th>
@@ -69,7 +70,7 @@
                         <td colspan="5">No Data</td>
                     </tr>
                     <tr v-else v-for="(item, index) in evaluation_tool.item" :key="item.id"
-                        class="border-b border-gray-400 align-top" :class="{'bg-slate-200': index % 2 == 0 }">
+                        class="hover:bg-gray-200 align-top" :class="{'bg-gray-100': index % 2 == 1 }">
                         <td class="p-3 whitespace-normal text-justify max-w-xl">
                             <div class="font-bold">{{ item.criteria.area }}</div>
                             <div>{{ item.criteria.minimumRequirement }}</div>

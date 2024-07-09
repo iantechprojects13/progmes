@@ -4,11 +4,11 @@
     <content-container :hasAdminPanel="true">
         <template v-slot:content-title>
                 <div class="flex flex-row items-center justify-between">
-                    <div class="flex flex-row">
+                    <div class="w-full flex flex-row items-center">
                         <Link href="/admin/program/discipline">
-                        <button><i class="fas fa-arrow-left ml-2 mr-3"></i></button>
+                        <button class="w-8 h-8 rounded-full hover:bg-gray-200 tooltipForActions" data-tooltip="Back"><i class="fas fa-arrow-left"></i></button>
                         </Link>
-                        <div class="font-bold">Create Discipline</div>
+                        <div class="ml-3 font-bold">Create Discipline</div>
                     </div>
                 </div>
         </template>

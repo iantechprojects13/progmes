@@ -6,8 +6,10 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\EvaluationFormModel;
+use App\Models\RoleModel;
 use App\Models\EvaluationItemModel;
 use App\Models\CMOModel;
+use App\Models\InstitutionProgramModel;
 use App\Models\CriteriaModel;
 use App\Models\EvidenceModel;
 use Kreait\Laravel\Firebase\Facades\Firebase;
@@ -25,7 +27,7 @@ class HEIFormController extends Controller
     public function store(Request $request) {
         $tool = EvaluationFormModel::find($request->id);
         $cmo = CMOModel::where('id', $tool->cmoId)->with('criteria')->first();
-
+        
         foreach($cmo->criteria as $item) {
             EvaluationItemModel::create([
                 'evaluationFormId' => $tool->id,
@@ -71,40 +73,52 @@ class HEIFormController extends Controller
     }
 
     public function edit($evaluation) {
-
+        $user = Auth::user();
         $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program')->first();
 
         if(!$tool) {
-            return redirect('/hei/evaluation')->with('failed', 'Evaluation tool not found.');
+            return redirect('/hei/ph/evaluation')->with('failed', 'Evaluation tool not found.');
         }
 
-        
-        $items = EvaluationItemModel::where('evaluationFormId', $evaluation)->with('criteria', 'evidence')->get();
-        $totalItems = $items->count();
-        $complied = $items->where('selfEvaluationStatus', 'Complied')->count();
-        $notComplied = $items->where('selfEvaluationStatus', 'Not complied')->count();
-        $notApplicable = $items->where('selfEvaluationStatus', 'Not applicable')->count();
-        $totalItems = $totalItems - $notApplicable;
-        $percentage = intval(round((($complied + $notComplied + $notApplicable)/$items->count())*100));
-        $progress = [ $complied, $notComplied, $notApplicable, $percentage];
+        $role = RoleModel::where('userId', $user->id)->where('isActive', 1)->first();
 
-        if($tool->status == 'In progress') {
-            return Inertia::render('Progmes/Evaluation/HEI-Evaluation-Edit', [
-                'evaluation' => $tool,
-                'items' => $items->map(fn($item) => [
-                    'id' => $item->id,
-                    'itemNo' => $item->criteria->itemNo,
-                    'area' => $item->criteria->area,
-                    'minimumRequirement' => $item->criteria->minimumRequirement,
-                    'actualSituation' => $item->actualSituation,
-                    'selfEvaluationStatus' => $item->selfEvaluationStatus,
-                    'evidence' => $item->evidence,
-                ]),
-                'progress' => $progress,
-            ]);
+        if ($role) {
+            $institutionProgram = InstitutionProgramModel::where('institutionId', $role->institutionId)->where('programId', $role->programId)->first();
         } else {
-            return redirect('/hei/ph/evaluation')->with('failed', 'This tool has been locked and can\'t be accessed.');
+            return redirect('/unauthorized');
         }
+
+        if (!($tool->institutionProgramId == $institutionProgram->id)) {
+            return redirect('/unauthorized');
+        } else {
+            $items = EvaluationItemModel::where('evaluationFormId', $evaluation)->with('criteria', 'evidence')->get();
+            $totalItems = $items->count();
+            $complied = $items->where('selfEvaluationStatus', 'Complied')->count();
+            $notComplied = $items->where('selfEvaluationStatus', 'Not complied')->count();
+            $notApplicable = $items->where('selfEvaluationStatus', 'Not applicable')->count();
+            $totalItems = $totalItems - $notApplicable;
+            $percentage = intval(round((($complied + $notComplied + $notApplicable)/$items->count())*100));
+            $progress = [ $complied, $notComplied, $notApplicable, $percentage];
+
+            if($tool->status == 'In progress') {
+                return Inertia::render('Progmes/Evaluation/HEI-Evaluation-Edit', [
+                    'evaluation' => $tool,
+                    'items' => $items->map(fn($item) => [
+                        'id' => $item->id,
+                        'itemNo' => $item->criteria->itemNo,
+                        'area' => $item->criteria->area,
+                        'minimumRequirement' => $item->criteria->minimumRequirement,
+                        'actualSituation' => $item->actualSituation,
+                        'selfEvaluationStatus' => $item->selfEvaluationStatus,
+                        'evidence' => $item->evidence,
+                    ]),
+                    'progress' => $progress,
+                ]);
+            } else {
+                return redirect('/hei/ph/evaluation')->with('failed', 'This tool has been locked and can\'t be accessed.');
+            }
+        }
+        
     }
 
 

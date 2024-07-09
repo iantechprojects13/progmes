@@ -49,7 +49,7 @@ class PDFController extends Controller
             'tool' => $complianceTool,
         ];
         
-        $fileName = time() . '.pdf';
+        $fileName = 'Deficiency-Report-'. time() . '.pdf';
         $report = Pdf::loadView('report.deficiency', $data);
         
         if ($type == 'view') {
@@ -71,7 +71,7 @@ class PDFController extends Controller
             'tool' => $complianceTool,
         ];
         
-        $fileName = time() . '.pdf';
+        $fileName = 'Monitoring-Report-'. time() . '.pdf';
         $report = Pdf::loadView('report.monitoring', $data);
         
         if ($type == 'view') {

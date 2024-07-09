@@ -1,33 +1,10 @@
 <template>
 
-    <Head title="Program Self-Evaluation" />
+    <Head title="Program Evaluation Monitored List" />
     <page-title title="Program Evaluation" />
     <content-container hasSearch="true" pageTitle="Monitored" page="monitored" :hasNavigation="true" :hasTopButton="true" :hasFilters="true" :data_list="complianceTools">
-        <template v-slot:navigation>
-            <div>
-                <Link href="/evaluation">
-                <button class="select-none mr-8 text-gray-500 hover:text-black">
-                    Evaluation
-                </button>
-                </Link>
-                <button class="select-none text-blue-500 h-10 border-b-2 font-bold border-blue-500">
-                    Monitored
-                </button>
-            </div>
-        </template>
-        <template v-slot:search>
-            <div class="w-full flex justify-end relative">
-                <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
-                    placeholder="Search"
-                    class="w-full rounded border border-gray-400 bg-slate-100 h-10 text-base placeholder-gray-400 pr-11 mr-2" />
-                <button @click="submit"
-                    class="text-gray-700 hover:text-black active:text-blue-500 h-10 w-10 rounded absolute right-2">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-        </template>
         <template v-slot:top-button>
-            <select @change="submit" v-model="query.academicYear" id="academicYearSelect" class="h-10 rounded text-sm">
+            <select @change="submit" v-model="query.academicYear" id="academicYearSelect" class="h-10 border border-gray-400 hover:border-gray-500 cursor-pointer rounded text-sm">
                 <option value="2023-2024">A.Y. 2023-24</option>
                 <option value="2024-2025">A.Y. 2024-25</option>
                 <option value="2025-2026">A.Y. 2025-26</option>
@@ -37,11 +14,35 @@
                 <option value="2029-2030">A.Y. 2029-30</option>
             </select>
         </template>
+        <template v-slot:navigation>
+            <Link href="/evaluation">
+            <button class="select-none h-12 w-28 hover:bg-gray-100 text-gray-700 hover:text-black">
+                Evaluation
+            </button>
+            </Link>
+            <button class="select-none h-12 w-28 hover:bg-gray-100 text-blue-500 border-b-4 font-bold border-blue-500">
+                Monitored
+            </button>
+        </template>
+        <template v-slot:search>
+            <div class="w-full flex flex-row relative items-center">
+                <i class="fa fa-search text-gray-400 absolute left-5"></i>
+                <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
+                    placeholder="Search"
+                    class="w-full rounded-lg border border-gray-300 indent-10 h-10 text-base placeholder-gray-400" />
+            </div>
+        </template>
         <template v-slot:options>
             <div class="mr-1">
-                <Link href="/ched/evaluation/archived">
+                
+                <button @click="toggleFilterModal"
+                    class="w-10 h-10 whitespace-nowrap hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
+                    data-tooltip="Filters">
+                    <i class="fas fa-filter"></i>
+                </button>
+                <Link href="/ched/evaluation/monitored">
                 <button
-                    class="w-10 h-10 whitespace-nowrap rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
+                    class="w-10 h-10 whitespace-nowrap hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
                     data-tooltip="Refresh page">
                     <i class="fas fa-refresh"></i>
                 </button>
@@ -51,10 +52,10 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="p-3 pl-5 border-b border-gray-400">Program/Institution</th>
-                    <th class="p-3 border-b border-gray-400">Monitoring/Evaluation Date</th>
-                    <th class="p-3 border-b border-gray-400">Archive Date</th>
-                    <th class="p-3 border-b border-gray-400 text-right">
+                    <th class="p-2 pl-5">Program/Institution</th>
+                    <th class="p-2">Monitoring/Evaluation Date</th>
+                    <th class="p-2">Archive Date</th>
+                    <th class="p-2 pr-5 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
@@ -63,9 +64,9 @@
                     <tr v-if="complianceTools.data.length == 0">
                         <td colspan="3" class="p-3 py-10 text-center">No evaluation tool found</td>
                     </tr>
-                    <tr v-else v-for="(item, index) in complianceTools.data" :key="item.id" class="hover:bg-slate-300"
-                        :class="{'bg-slate-200': index % 2 ==0}">
-                        <td class="p-3 pl-5">
+                    <tr v-else v-for="(item, index) in complianceTools.data" :key="item.id" class="hover:bg-gray-200"
+                        :class="{'bg-gray-100': index % 2 == 1}">
+                        <td class="p-2 pl-5">
                             <div>
                                 {{ item.program }}
                             </div>
@@ -73,70 +74,102 @@
                                 {{ item.institution }}
                             </div>
                         </td>
-                        <td class="p-3">
-                            <div class="font-bold text-sm px-1 py-0.5 rounded w-fit">
+                        <td class="p-2">
+                            <div class="text-sm px-1 py-0.5 rounded w-fit">
                                 {{ item.evaluationDate }}
                             </div>
                         </td>
-                        <td class="p-3">
-                            <div class="font-bold text-sm px-1 py-0.5 rounded w-fit">
+                        <td class="p-2">
+                            <div class="text-sm px-1 py-0.5 rounded w-fit">
                                 {{ item.archivedDate }}
                             </div>
                         </td>
-                        <td class="p-3 text-right">
-                            <a :href="'/ched/evaluation/' + item.id + '/view'" target="_blank">
-                                <button class="h-10 w-10 rounded text-white bg-green-600 hover:bg-green-700 tooltipForActions" data-tooltip="View"><i class="fas fa-eye"></i></button>
-                            </a>
+                        <td class="p-2 pr-5 text-right whitespace-nowrap">
+                            <Link :href="'/ched/evaluation/' + item.id + '/view'">
+                                <button class="select-none h-8 w-8 text-xl text-center rounded-full hover:bg-gray-300 text-green-500 hover:text-green-600 tooltipForActions" data-tooltip="View"><i class="fas fa-eye"></i></button>
+                            </Link>
                         </td>
                     </tr>
                 </template>
             </content-table>
-            <Notification :message="$page.props.flash.success" type="success" />
-        </template>
-        <template v-slot:show-item>
-            <div class="mr-2">Items per page</div>
-            <select v-model="query.show" id="showResultCount" @change="submit"
-                class="select-none rounded h-8 w-20 p-1 text-sm">
-                <option value="25">25</option>
-                <option :value="50">50</option>
-                <option :value="75">75</option>
-                <option :value="100">100</option>
-                <option :value="200">200</option>
-            </select>
         </template>
     </content-container>
+    <modal :showModal="showFilterModal" @close="toggleFilterModal" width="sm" height="long" title="Filters">
+        <div>
+            <div class="flex flex-col">
+                <label for="show">Items per page</label>
+                <select v-model="query.show" id="show" class="rounded border-gray-400">
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                </select>
+            </div>
+        </div>
+        <template v-slot:custom-button>
+            <button @click="filter" class="text-white bg-green-600 hover:bg-green-700 w-20 rounded h-10">
+                <span v-if="processing">
+                    <i class="fas fa-spinner animate-spin"></i>
+                </span>
+                <span v-else>Apply</span>
+            </button>
+        </template>
+    </modal>
+    <Notification :message="$page.props.flash.success" type="success" />
+    <Notification :message="$page.props.flash.failed" type="failed" />
 </template>
 
 <script setup>
-    import { router, useForm } from '@inertiajs/vue3';
-    import { ref } from 'vue';
+import { router, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
-    const props = defineProps([
-        'complianceTools',
-        'filters',
-        'canEvaluate',
-    ]);
+const props = defineProps([
+    'complianceTools',
+    'filters',
+    'canEvaluate',
+]);
 
-    const query = useForm({
-        academicYear: props.filters.academicYear,
-        show: props.filters.show,
-        search: props.filters.search,
+const showFilterModal = ref(false);
+const processing = ref(false);
+
+const query = useForm({
+    show: props.filters.show != null ? props.filters.show : null,
+    search: props.filters.search,
+    academicYear: props.filters.academicYear != null ? props.filters.academicYear : null,
+});
+
+function toggleFilterModal() {
+    showFilterModal.value = !showFilterModal.value;
+}
+
+function submit() {
+    query.get("/ched/evaluation/monitored", {
+        onStart: () => {
+            processing.value = true;
+        },
+        onFinish: () => {
+            processing.value = false;
+        },
+        preserveState: false,
+        preserveScroll: true,
     });
+}
 
-    function evaluate(tool) {
-        router.get('/ched/evaluation/' + tool + '/evaluate');
-    }
+function filter() {
+    query.get("/ched/evaluation/monitored", {
+        onStart: () => {
+            processing.value = true;
+        },
+        onFinish: () => {
+            processing.value = false;
+            toggleFilterModal();
+        },
+        preserveState: true,
+        preserveScroll: true,
+    });
+}
 
-    function view(tool) {
-        router.get('/ched/evaluation/' + tool + '/view');
-    }
 
-    function submit() {
-        query.get("/ched/evaluation/archived", {
-            preserveState: true,
-            preserveScroll: true,
-        });
-    }
 </script>
 
 <script>

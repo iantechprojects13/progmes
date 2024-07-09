@@ -48,10 +48,10 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="p-3 pl-5">Program</th>
-                    <th class="p-3">Major</th>
-                    <th class="p-3">Discipline</th>
-                    <th v-show="canEdit" class="p-3 pr-5 text-right">
+                    <th class="p-2 pl-5">Program</th>
+                    <th class="p-2">Major</th>
+                    <th class="p-2">Discipline</th>
+                    <th class="p-2 pr-5 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
@@ -63,26 +63,26 @@
                     </tr>
                     <tr v-else v-for="(program, index) in program_list.data" :key="program.id"
                         class="hover:bg-gray-200 border-b" :class="{'bg-gray-100': index % 2 == 1}">
-                        <td class="p-3 pl-5 whitespace-normal">
+                        <td class="p-2 pl-5">
                             {{ program.program }}
                         </td>
-                        <td class="p-3 whitespace-normal">
+                        <td class="p-2">
                             {{ program.major }}
                         </td>
-                        <td class="p-3 whitespace-normal">
+                        <td class="p-2">
                             {{ program.discipline?.discipline }}
                         </td>
-                        <td class="p-3 text-right">
+                        <td class="p-2 pr-5 text-right whitespace-nowrap">
                             <button v-show="canEdit" @click="edit(program.id)"
                                 class="select-none h-8 w-8 text-center text-xl hover:bg-gray-300 rounded-full text-blue-500 hover:text-blue-600 tooltipForActions"
                                 data-tooltip="Edit">
-                                <i class="fas fa-edit mr-0.5"></i>
+                                <i class="fas fa-edit"></i>
                             </button>
                             <button v-show="canDelete"
                                 @click="toggleConfirmationModal(program, 'deleteProgram', 'Delete Program')"
                                 class="select-none h-8 w-8 text-center text-xl hover:bg-gray-300 rounded-full text-red-500 hover:text-red-600 tooltipForActions"
                                 data-tooltip="Delete">
-                                <i class="fas fa-trash mr-0.5"></i>
+                                <i class="fas fa-trash"></i>
                             </button>
                         </td>
                     </tr>

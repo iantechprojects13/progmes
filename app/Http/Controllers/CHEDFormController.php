@@ -8,6 +8,7 @@ use App\Models\EvaluationFormModel;
 use App\Models\User;
 use App\Models\EvaluationItemModel;
 use App\Models\CMOModel;
+use App\Models\RoleModel;
 use Inertia\Inertia;
 use Auth;
 
@@ -16,13 +17,23 @@ use Auth;
 class CHEDFormController extends Controller
 {
     public function view($tool) {
-        
+        $user = Auth::user();
+
         $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.program', 'institution_program.institution','complied', 'not_complied', 'not_applicable', 'item', 'item.criteria', 'item.evidence')->first();
         $showEvaluation = false;
 
         if (!$evaluationTool) {
             return redirect('/ched/evaluation')->with('failed', 'Evaluation tool not found.');
         }
+
+        if ($user->role == 'Education Supervisor') {
+            $disciplines = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('discipline')->get();
+            $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+            if (!in_array($evaluationTool->disciplineId, $disciplineIds)) {
+                return redirect('/unauthorized');
+            }
+        }
+        
 
         if ($evaluationTool->status != 'In progress') {
             $showEvaluation = true;
@@ -41,9 +52,23 @@ class CHEDFormController extends Controller
         ]);
     }
     
-    public function evaluate($evaluation) {
+    public function evaluate($evaluation, Request $request) {
+        $user = Auth::user();
+
         $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program')->first();
         $items = EvaluationItemModel::where('evaluationFormId', $evaluation)->with('criteria', 'evidence')->get();
+
+        if (!$tool) {
+            return redirect('/ched/evaluation')->with('failed', 'Evaluation tool not found.');
+        }
+
+        if ($user->role == 'Education Supervisor') {
+            $disciplines = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('discipline')->get();
+            $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+            if (!in_array($tool->disciplineId, $disciplineIds)) {
+                return redirect('/unauthorized');
+            }
+        }
 
         if($tool->status == 'Submitted' || $tool->status == 'Locked') {
             return Inertia::render('Progmes/Evaluation/CHED-Evaluation-Edit', [
@@ -95,11 +120,11 @@ class CHEDFormController extends Controller
         $tool = EvaluationFormModel::where('id', $request->id)->first();
 
         if ($tool->status == 'In progress') {
-            return redirect()->back()->with('failed', 'Failed! You cannot mark the compliance evaluation tool as monitored while it is in progress.');
+            return redirect()->back()->with('failed', 'You cannot mark the compliance evaluation tool as monitored while it is in progress.');
         }
 
         if ($tool->evaluationDate == null) {
-            return redirect()->back()->with('failed', 'Failed! Please provide a valid evaluation date before marking it as monitored.');
+            return redirect()->back()->with('failed', 'Please provide a valid evaluation date before marking it as monitored.');
         }
 
         if($tool->status == 'Submitted' || $tool->status == 'Locked') {
@@ -108,7 +133,7 @@ class CHEDFormController extends Controller
                 'archivedDate' => now(),
             ]);
             $tool->save();
-
+            
             return redirect()->back()->with('success', 'Compliance evaluation tool successfully marked as monitored.');
         }
         

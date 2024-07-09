@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full px-5">
+    <div class="w-full px-3">
         <Line id="my-chart-id" :options="chartOptions" :data="chartData" class="w-full"/>
         <div class="w-full text-left mt-5 bg-blue-200 p-2 rounded-md text-gray-600">
             <i class="fas fa-info-circle text-sm mx-3"></i>The line graph compares the number of programs monitored in each quarter over the last three years.

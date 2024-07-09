@@ -1,51 +1,43 @@
 <template>
-    <Head title="Create Report"/>
-    <page-title title="Create Report" />
-    <div class="mt-8 md:mx-8 mx-3 flex flex-col lg:flex-row justify-between sticky top-0 z-80">
-        <div>
-            <Link :href="'/ched/evaluation/'+ tool.id +'/evaluate'">
-            <button class="select-none w-24 h-10 border border-gray-500 rounded bg-white hover:bg-gray-700 hover:text-white">
-                <i class="fas fa-arrow-left mr-2"></i>
-                Back
-            </button>
-            </Link>
-        </div>
-        <div class="flex flex-col lg:flex-row lg:mt-0 mt-2 w-full lg:w-auto">
-            <div class="mr-0 lg:mr-2">
-                <select v-model="submitReport.type" id="selectReport" class="select-none h-10 rounded text-sm lg:w-fit w-full">
-                    <option value="monitoring">
-                        Monitoring/Evaluation
-                    </option>
-                    <option value="deficiency">Deficiency</option>
-                </select>
+    <Head title="Generate Report"/>
+    <page-title title="Create Report"/>
+    <content-container>
+        <template v-slot:content-title>
+            <div class="w-full  flex flex-col xl:flex-row items-center justify-between">
+                <div class="w-full flex flex-row items-center">
+                    <Link :href="'/ched/evaluation/'+ tool.id +'/evaluate'">
+                    <button class="w-8 h-8 rounded-full hover:bg-gray-200 tooltipForActions" data-tooltip="Back"><i class="fas fa-arrow-left"></i></button>
+                    </Link>
+                    <div class="ml-3 font-bold">Generate Report</div>
+                </div>
+                <div class="w-full xl:w-auto flex flex-col md:flex-row items-center xl:mt-0 mt-3">
+                    <div class="w-full items-center md:mr-2">
+                        <select v-model="submitReport.type" id="selectReport" class="select-none h-10 rounded text-sm w-fit border-gray-400 hover:border-gray-500 cursor-pointer">
+                            <option value="monitoring">
+                                Monitoring/Evaluation
+                            </option>
+                            <option value="deficiency">Deficiency</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-row items-center w-full md:w-auto mt-3 md:mt-0">
+                        <a :href="submitReport.type == 'monitoring' ? '/report/monitoring/' + tool.id + '/view' : '/report/deficiency/' + tool.id + '/view'" target="_blank" class="mr-2">
+                            <button class="select-none bg-green-500 hover:bg-green-600 text-white h-10 px-2 rounded whitespace-nowrap">
+                                <i class="fas fa-eye mr-2"></i>Preview
+                            </button>
+                        </a>
+                        <a :href="submitReport.type == 'monitoring' ? '/report/monitoring/' + tool.id + '/download' : '/report/deficiency/' + tool.id + '/download'" target="_blank" class="mr-2">
+                            <button class="select-none bg-green-500 hover:bg-green-600 text-white h-10 px-2 rounded whitespace-nowrap">
+                                <i class="fas fa-download mr-2"></i>Download
+                            </button>
+                        </a>
+                        <button ref="saveBtn" @click="generate" class="select-none bg-blue-500 hover:bg-blue-600 text-white w-24 h-10 rounded" :disabled="generatingReport">
+                            Save
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="mt-2 lg:mt-0" v-show="submitReport.type == 'monitoring'">
-                <a :href="'/report/monitoring/' + tool.id + '/view'" target="_blank" class="underline mr-2">
-                    <button class="select-none bg-blue-500 hover:bg-blue-600 text-white h-10 px-2 rounded text-sm">
-                        <i class="fas fa-eye mr-2"></i>Preview
-                    </button>
-                </a>
-                <a :href="'/report/monitoring/' + tool.id + '/download'" target="_blank">
-                    <button class="select-none bg-blue-500 hover:bg-blue-600 text-white h-10 px-2 rounded text-sm">
-                        <i class="fas fa-download mr-2"></i>Download
-                    </button>
-                </a>
-            </div>
-            <div v-if="submitReport.type == 'deficiency'" class="mt-2 lg:mt-0">
-                <a :href="'/report/deficiency/' + tool.id + '/view'" target="_blank" class="underline mr-2">
-                    <button class="select-none bg-blue-500 hover:bg-blue-600 text-white h-10 px-2 rounded text-sm">
-                        <i class="fas fa-eye mr-2"></i>Preview
-                    </button>
-                </a>
-                <a :href="'/report/deficiency/' + tool.id + '/download'" target="_blank">
-                    <button class="select-none bg-blue-500 hover:bg-blue-600 text-white h-10 px-2 rounded text-sm">
-                        <i class="fas fa-download mr-2"></i>Download
-                    </button>
-                </a>
-            </div>
-        </div>
-    </div>
-    <content-container :hasTopButton="true">
+        </template>
+
         <template v-slot:top-button>
             <button @click="generate" class="select-none bg-blue-500 hover:bg-blue-600 text-white px-3 h-10 rounded" :disabled="generatingReport">
                 Save
@@ -93,15 +85,37 @@
         </template>
     </content-container>
     <Notification :message="$page.props.flash.success" type="success" />
+    <Notification v-show="generatingReport" message="Saving..." type="processing" />
 </template>
 
 <script setup>
 import { router } from '@inertiajs/vue3';
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps([
     'tool',
 ]);
+
+
+const saveBtn = ref(null);
+const refs = { saveBtn };
+
+const handleKeyDown = (event) => {
+    if (event.ctrlKey || event.metaKey) {
+        if (event.key === 's' || event.key === 'S') {
+            event.preventDefault();
+            refs.saveBtn.value.click();
+        }
+    }
+};
+
+onMounted(() => {
+    window.addEventListener('keydown', handleKeyDown);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('keydown', handleKeyDown);
+});
 
 
 const report = reactive({

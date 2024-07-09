@@ -23,12 +23,17 @@
                 </div>
             </div>
         </div>
+        <div v-show="hasStickyDiv" class="sticky md:top-0 top-16 bg-white shadow-lg z-50 hidden" ref="stickyDiv">
+            <div class="w-full">
+                <slot name="sticky-div"></slot>
+            </div>
+        </div>
         <div class="h-auto mx-3 mt-3 md:mx-8 bg-white border border-gray-300 rounded-lg relative" :class="{'mt-8': !pageTitle}">
             <div class="overflow-x-auto px-5 pt-1 justify-between border-b border-gray-300 whitespace-nowrap"
                 v-show="hasNavigation">
                 <slot name="navigation"></slot>
             </div>
-            <div v-show="!pageTitle" class="w-full py-8 px-5 flex items-center h-12 border-b border-gray-300">
+            <div v-show="!pageTitle" ref="actionButtons" class="w-full py-4 px-5 flex items-center h-auto border-b border-gray-300">
                 <slot name="content-title"></slot>
             </div>
             <div class="w-full flex md:flex-row flex-col md:items-center px-5 pb-3 pt-5 relative"
@@ -63,21 +68,55 @@
 
 <script setup>
 import AdminPanel from './AdminPanel.vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 
-    defineProps([
-        "pageTitle",
-        "page",
-        "placeholder",
-        "data_list",
-        "hasAdminPanel",
-        "hasAction",
-        "hasPagination",
-        "hasTopButton",
-        "hasSearch",
-        "hasFilters",
-        "hasNavigation",
-        "hasModal",
-    ]);
+const stickyDiv = ref([]);
+const actionButtons = ref([]);
+const refs = { actionButtons, stickyDiv }
+
+const props = defineProps([
+    "pageTitle",
+    "page",
+    "placeholder",
+    "data_list",
+    "hasAdminPanel",
+    "hasAction",
+    "hasPagination",
+    "hasTopButton",
+    "hasSearch",
+    "hasFilters",
+    "hasNavigation",
+    "hasModal",
+    "hasStickyDiv",
+]);
+
+
+const showStickyDiv = () => {
+    const rect = actionButtons.value.getBoundingClientRect();
+    if (`${ rect.top }` < -80) {
+        stickyDiv.value.classList.remove('hidden');
+    } else {
+        stickyDiv.value.classList.add('hidden');
+    }
+};
+
+function showDivAfterLoad() {
+    const rect = actionButtons.value.getBoundingClientRect();
+    if (`${ rect.top }` < -80) {
+        stickyDiv.value.classList.remove('hidden');
+    } else {
+        stickyDiv.value.classList.add('hidden');
+    }
+}
+
+onMounted(() => {
+    window.addEventListener('scroll', showStickyDiv);
+    setTimeout(showStickyDiv, 50);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('scroll', showStickyDiv);
+});
 
 </script>
 

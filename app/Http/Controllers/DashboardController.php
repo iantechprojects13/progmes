@@ -122,9 +122,10 @@ class DashboardController extends Controller
         $quarter3Count = $jul + $aug + $sep;
         $quarter4Count = $oct + $nov + $dec;
         
-        $program_list = ProgramModel::when($user->role == 'Education Supervisor', function ($query) use ($disciplineIds) {
-            $query->where('disciplineId', $disciplineIds);
+        $program_list = ProgramModel::query()->when($user->role == 'Education Supervisor', function ($query) use ($disciplineIds) {
+            $query->whereIn('disciplineId', $disciplineIds);
         })->orderBy('program', 'asc')->orderBy('major', 'asc')->get();
+        
 
         return Inertia::render('Progmes/Dashboard/Dashboard-CHED-Progress', [
             'complianceTool' => $complianceTools->map(fn($item) => [
@@ -203,20 +204,6 @@ class DashboardController extends Controller
 
         [$thisYear, $lastYear, $twoYearsAgo] = $yearsData;
 
-
-        // $comTools = EvaluationFormModel::where('effectivity', '2022-2023')
-        // ->where('status', 'Monitored')
-        // ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
-        //     $query->whereIn('disciplineId', $disciplineIds);
-        // })
-        // ->whereNotNull('evaluationDate');
-
-        // $ayearago[] = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 1)->orWhereMonth('evaluationDate', 2)->orWhereMonth('evaluationDate', 3);})->count();
-        // $ayearago[] = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 4)->orWhereMonth('evaluationDate', 5)->orWhereMonth('evaluationDate', 6);})->count();
-        // $ayearago[] = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 7)->orWhereMonth('evaluationDate', 8)->orWhereMonth('evaluationDate', 9);})->count();
-        // $ayearago[] = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 10)->orWhereMonth('evaluationDate', 11)->orWhereMonth('evaluationDate', 12);})->count();
-        
-        
 
         return Inertia::render('Progmes/Dashboard/Dashboard-CHED-Overview', [
             'user' => User::where('isActive', 1)->count(),

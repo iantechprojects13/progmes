@@ -77,6 +77,9 @@ class EvaluationController extends Controller
         ->where(function ($query) {
             $query->whereNot('status', 'Deployed')->whereNot('status', 'Monitored');
         })
+        ->when($request->query('status'), function ($statusQuery) use ($request) {
+            $statusQuery->where('status', $request->query('status'));
+        })
         ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable')
         ->paginate($show)
         ->through(fn($item) => [
@@ -93,7 +96,7 @@ class EvaluationController extends Controller
 
         return Inertia::render('Progmes/Evaluation/CHED-Evaluation-Select', [
             'complianceTools' => $complianceTools,
-            'filters' => $request->only(['search']) + ['show' => $show, 'academicYear' => $acadYear ],
+            'filters' => $request->only(['search', 'status']) + ['show' => $show, 'academicYear' => $acadYear ],
             'canEvaluate' => $canEvaluate,
             'canEmail' => $canEmail,
         ]);

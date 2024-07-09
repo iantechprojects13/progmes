@@ -39,8 +39,8 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="p-3 pl-5">HEI Name</th>
-                    <th v-show="canEdit" class="p-3 pr-5 text-right">
+                    <th class="p-2 pl-5">HEI Name</th>
+                    <th class="p-2 pr-5 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
@@ -52,10 +52,10 @@
                     </tr>
                     <tr v-else v-for="(hei, index) in institution_list.data" :key="hei.id" class="hover:bg-gray-200 border-b"
                         :class="{'bg-gray-100': index % 2 == 1}">
-                        <td class="p-3 pl-5">
+                        <td class="p-2 pl-5">
                             {{ hei.name }}
                         </td>
-                        <td class="p-3 text-right">
+                        <td class="p-2 pr-5 text-right whitespace-nowrap">
                             <button @click="view(hei.id)"
                                 class="select-none h-8 w-8 text-xl text-center rounded-full hover:bg-gray-300 text-green-500 hover:text-green-600 tooltipForActions"
                                 data-tooltip="View">
@@ -134,6 +134,7 @@ function submit() {
             processing.value = false;
         },
         preserveState: false,
+        preserveScroll: true,
     });
 }
 
@@ -147,6 +148,7 @@ function filter() {
             toggleFilterModal();
         },
         preserveState: true,
+        preserveScroll: true,
     });
 }
 

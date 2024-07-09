@@ -14,9 +14,9 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="p-3 border-b border-gray-400">Academic Year</th>
-                    <th class="p-3 border-b border-gray-400">Status</th>
-                    <th class="p-3 border-b border-gray-400 text-right">
+                    <th class="p-2 pl-5">Academic Year</th>
+                    <th class="p-2">Status</th>
+                    <th class="p-2 pr-5 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
@@ -25,7 +25,7 @@
                         <td colspan="3" class="text-center py-10">No compliance evaluation tool found</td>
                     </tr>
                     <tr v-else v-for="(item, index) in program.evaluation_form" :key="item.id"
-                        class="hover:bg-gray-100 border-b border-gray-300" :class="{'bg-slate-200': index % 2 == 0}">
+                        class="hover:bg-gray-100 border-b border-gray-300" :class="{'bg-slate-200': index % 2 == 1}">
                         <td class="p-3 align-middle">
                             <i class="fas fa-file text-lg mr-2"></i>{{ item.effectivity }}
                         </td>

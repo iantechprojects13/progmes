@@ -52,10 +52,10 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="p-3 pl-5">CHED Memorandum Order</th>
-                    <th class="p-3">Program</th>
-                    <th class="p-3">Active Status</th>
-                    <th v-show="canEdit" class="p-3 pr-5 text-right">
+                    <th class="p-2 pl-5">CHED Memorandum Order</th>
+                    <th class="p-2">Program</th>
+                    <th class="p-2">Active Status</th>
+                    <th v-show="canEdit" class="p-2 pr-5 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
@@ -67,25 +67,25 @@
                     </tr>
                     <tr v-else v-for="(cmo, index) in cmo_list.data" :key="cmo.id" class="hover:bg-gray-200 border-b"
                         :class="{ 'bg-gray-100': index % 2 == 1 }">
-                        <td class="p-3 whitespace-normal pl-5">
+                        <td class="p-2 pl-5">
                             CMO No.{{ cmo.number }} S. {{ cmo.series }},
                             Version {{ cmo.version }}
                         </td>
-                        <td class="p-3 whitespace-normal">
+                        <td class="p-2">
                             {{ cmo.program?.program }}
                             <span v-if="cmo.program?.major">
                                 - {{ cmo.program?.major }}
                             </span>
                         </td>
-                        <td class="p-3 whitespace-normal">
-                            <div v-if="cmo.isActive" class="w-fit text-xs px-1 rounded bg-green-600 text-white">
+                        <td class="p-2">
+                            <div v-if="cmo.isActive" class="w-fit text-xs px-1 rounded bg-green-500 text-white whitespace-nowrap">
                                 Active
                             </div>
-                            <div v-else class="w-fit text-xs px-1 rounded text-white bg-gray-500">
+                            <div v-else class="w-fit text-xs px-1 rounded text-white bg-gray-500 whitespace-nowrap">
                                 Not Active
                             </div>
                         </td>
-                        <td class="p-3 text-right">
+                        <td class="p-2 pr-5 text-right whitespace-nowrap">
                             <button @click="view(cmo.id)"
                                 class="select-none h-8 w-8 text-xl text-center rounded-full hover:bg-gray-300 text-green-500 hover:text-green-600 tooltipForActions"
                                 data-tooltip="View">
@@ -120,7 +120,7 @@
             <div class="flex flex-col">
                 <label for="isActive">Active Status</label>
                 <select v-model="query.isActive" id="isActive" class="rounded border-gray-400">
-                    <option :value="null">Select status</option>
+                    <option :value="null">All</option>
                     <option :value="1">Active</option>
                     <option :value="0">Not Active</option>
                 </select>
@@ -192,6 +192,7 @@ function submit() {
             processing.value = false;
         },
         preserveState: false,
+        preserveScroll: true,
     });
 }
 
@@ -205,6 +206,7 @@ function filter() {
             toggleFilterModal();
         },
         preserveState: true,
+        preserveScroll: true,
     });
 }
 

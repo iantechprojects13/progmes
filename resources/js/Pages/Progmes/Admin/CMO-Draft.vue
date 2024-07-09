@@ -52,12 +52,12 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="p-3 pl-5">CMO</th>
-                    <th class="p-3">Program</th>
-                    <th class="p-3"
+                    <th class="p-2 pl-5">CMO</th>
+                    <th class="p-2">Program</th>
+                    <th class="p-2"
                         v-show="$page.props.auth.user.role == 'Super Admin' || $page.props.auth.user.role == 'Admin'">
                         Imported by</th>
-                    <th v-show="canEdit" class="p-3 pr-5 text-right">
+                    <th v-show="canEdit" class="p-2 pr-5 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
@@ -69,7 +69,7 @@
                     </tr>
                     <tr v-else v-for="(cmo, index) in cmo_list.data" :key="cmo.id" class="hover:bg-gray-200 border-b"
                         :class="{'bg-gray-100': index % 2 == 1}">
-                        <td class="p-3 pl-5 whitespace-normal min-w-12">
+                        <td class="p-2 pl-5 min-w-12">
                             <div v-if="cmo.number != null && cmo.series != null && cmo.version != null">
                                 CMO No.{{ cmo.number }} Series of {{cmo.series}}, Version {{cmo.version}}
                             </div>
@@ -77,13 +77,13 @@
                                 -
                             </div>
                         </td>
-                        <td class="p-3 whitespace-normal min-w-12">
+                        <td class="p-2 min-w-12">
                             {{ cmo.program?.program }}
                             <span v-if="cmo.program?.major">
                                 - {{ cmo.program?.major }}
                             </span>
                         </td>
-                        <td class="p-3 whitespace-normal"
+                        <td class="p-2"
                             v-show="$page.props.auth.user.role == 'Super Admin'|| $page.props.auth.user.role == 'Admin'">
                             <div v-if="cmo.created_by?.name == null">
                                 -
@@ -95,7 +95,7 @@
                                 Me
                             </div>
                         </td>
-                        <td class="p-3 text-right">
+                        <td class="p-2 pr-5 text-right whitespace-nowrap">
                             <button @click="view(cmo.id)"
                                 class="select-none h-8 w-8 text-xl text-center rounded-full hover:bg-gray-300 text-green-500 hover:text-green-600 tooltipForActions"
                                 data-tooltip="View">
@@ -196,6 +196,7 @@ function submit() {
             processing.value = false;
         },
         preserveState: false,
+        preserveScroll: true,
     });
 }
 
@@ -209,6 +210,7 @@ function filter() {
             toggleFilterModal();
         },
         preserveState: true,
+        preserveScroll: true,
     });
 }
 

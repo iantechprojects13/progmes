@@ -31,13 +31,13 @@
             <div class="mr-1">
                 
                 <button @click="toggleFilterModal"
-                    class="w-10 h-10 whitespace-nowrap hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
+                    class="w-10 h-10 hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
                     data-tooltip="Filters">
                     <i class="fas fa-filter"></i>
                 </button>
                 <Link href="/admin/users/list">
                 <button
-                    class="w-10 h-10 whitespace-nowrap hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
+                    class="w-10 h-10 hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
                     data-tooltip="Refresh page">
                     <i class="fas fa-refresh"></i>
                 </button>
@@ -47,13 +47,13 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="p-3 pl-5">Name/Email</th>
-                    <th class="p-3">Type</th>
-                    <th class="p-3">Role</th>
-                    <th class="p-3">Discipline</th>
-                    <th class="p-3">Program</th>
-                    <th class="p-3">HEI Name</th>
-                    <th v-show="canEdit" class="p-3 pr-5 text-right">
+                    <th class="p-2 pl-5">Name/Email</th>
+                    <th class="p-2">Type</th>
+                    <th class="p-2">Role</th>
+                    <th class="p-2">Discipline</th>
+                    <th class="p-2">Program</th>
+                    <th class="p-2">HEI Name</th>
+                    <th v-show="canEdit" class="p-2 pr-5 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
@@ -84,18 +84,18 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="p-3">
+                        <td class="p-2">
                             {{ user.type }}
                         </td>
-                        <td class="p-3 whitespace-normal">
+                        <td class="p-2">
                             {{ user.role }}
                         </td>
-                        <td class="p-3 whitespace-normal">
+                        <td class="p-2">
                             <div v-for="role in user.user_role" :key="role.id">
                                 {{ role.discipline?.discipline }}
                             </div>
                         </td>
-                        <td class="p-3 whitespace-normal">
+                        <td class="p-2">
                             <div v-for="role in user.user_role" :key="role.id">
                                 {{ role.program?.program }}
                                 <span v-if="role.program?.major != null">
@@ -103,12 +103,12 @@
                                 </span>
                             </div>
                         </td>
-                        <td class="p-3 whitespace-normal">
+                        <td class="p-2">
                             <div v-for="role in user.user_role" :key="role.id">
                                 {{ role.institution?.name }}
                             </div>
                         </td>
-                        <td class="p-3 text-right">
+                        <td class="p-2 pr-5 text-right whitespace-nowrap">
                             <Link :href="'/admin/users/list/profile/' + user.id + '/view'">
                                 <button class="select-none h-8 w-8 text-xl text-center rounded-full hover:bg-gray-300 text-green-500 hover:text-green-600 tooltipForActions"
                                 data-tooltip="View profile"
@@ -138,7 +138,7 @@
             <div class="flex flex-col">
                 <label for="type">Account Type</label>
                 <select v-model="query.type" id="type" class="rounded border-gray-400">
-                    <option :value="null">Select type</option>
+                    <option :value="null">All</option>
                     <option value="HEI">HEI</option>
                     <option value="CHED">CHED</option>
                 </select>
@@ -187,7 +187,7 @@ const processing = ref(false);
 const query = useForm({
     show: props.filters.show != null ? props.filters.show : null,
     search: props.filters.search,
-    status: props.filters.status != null ? props.filters.status : null,
+    type: props.filters.type != null ? props.filters.type : null,
 });
 
 function toggleFilterModal() {
@@ -203,6 +203,7 @@ function submit() {
             processing.value = false;
         },
         preserveState: false,
+        preserveScroll: true,
     });
 }
 
@@ -216,6 +217,7 @@ function filter() {
             toggleFilterModal();
         },
         preserveState: true,
+        preserveScroll: true,
     });
 }
 </script>

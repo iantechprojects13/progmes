@@ -4,14 +4,14 @@
     <page-title title="My Account" />
     <content-container>
         <template v-slot:content-title>
-                <div class="p-3 flex flex-row items-center justify-between border-b border-gray-400">
-                    <div class="flex flex-row">
-                        <div class="ml-2 mr-3">
-                            <i class="fas fa-user text-blue-500"></i>
-                        </div>
-                        <div class="font-bold">Account Information</div>
+            <div class="p-3 flex flex-row items-center justify-between">
+                <div class="flex flex-row">
+                    <div class="mr-3">
+                        <i class="fas fa-user text-blue-500"></i>
                     </div>
+                    <div class="font-bold">Account Information</div>
                 </div>
+            </div>
         </template>
         <template v-slot:main-content>
             <div class="my-8 mx-3 md:mx-5">

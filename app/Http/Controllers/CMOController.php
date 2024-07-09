@@ -129,7 +129,6 @@ class CMOController extends Controller
         ]);
     }
 
-
     public function create() {
         return Inertia::render('Progmes/Admin/CMO-Create');
     }

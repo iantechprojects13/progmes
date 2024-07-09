@@ -47,11 +47,11 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="p-3 pl-5">Institution</th>
-                    <th class="p-3">Program</th>
-                    <th class="p-3">Major</th>
-                    <th class="p-3">CMO</th>
-                    <th class="p-3">Status</th>
+                    <th class="p-2 pl-5">Institution</th>
+                    <th class="p-2">Program</th>
+                    <th class="p-2">Major</th>
+                    <th class="p-2">CMO</th>
+                    <th class="p-2">Status</th>
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="institutionProgramList.data.length == 0">
@@ -61,30 +61,30 @@
                     </tr>
                     <tr v-else v-for="(program, index) in institutionProgramList.data" :key="program.id"
                         class="hover:bg-gray-200 border-b" :class="{ 'bg-gray-100': index % 2 == 1 }">
-                        <td class="p-3 whitespace-normal pl-5">
+                        <td class="p-2 pl-5">
                             {{ program.institution?.name }}
                         </td>
-                        <td class="p-3 whitespace-normal">
+                        <td class="p-2">
                             {{ program.program?.program }}
                         </td>
-                        <td class="p-3 whitespace-normal">
+                        <td class="p-2">
                             {{ program.program?.major }}
                         </td>
-                        <td class="p-3 whitespace-normal">
+                        <td class="p-2">
                             <div>
                                 CMO No.{{ program.evaluation_form[0]?.cmo?.number }}
-                                Series of {{ program.evaluation_form[0]?.cmo?.series }},
+                                S. {{ program.evaluation_form[0]?.cmo?.series }},
                                 Version {{ program.evaluation_form[0]?.cmo?.version }}
                             </div>
                         </td>
-                        <td class="p-3">
+                        <td class="p-2 pr-5 text-left whitespace-nowrap">
                             <div v-if="program.evaluation_form[0]?.status == 'In progress' || program.evaluation_form[0]?.status == 'Deployed'"
                             class="bg-green-600 text-white w-fit px-1 rounded text-xs">
                                 In Progress
                             </div>
                             <div v-else-if="program.evaluation_form[0]?.status == 'Submitted'"
                                 class="bg-green-600 text-white w-fit px-1 rounded text-xs">
-                                Submitted
+                                Ready for visit
                             </div>
                             <div v-else-if="program.evaluation_form[0]?.status == 'Monitored'"
                                 class="bg-blue-500 text-white w-fit px-1 rounded text-xs">
@@ -156,9 +156,9 @@
             <div class="flex flex-col">
                 <label for="status">Status</label>
                 <select v-model="query.status" id="status" class="rounded border-gray-400">
-                    <option :value="null">Select Status</option>
+                    <option :value="null">All</option>
                     <option value="In progress">In Progress</option>
-                    <option value="Submitted">Submitted</option>
+                    <option value="Submitted">Ready for visit</option>
                     <option value="Monitored">Monitored</option>
                 </select>
             </div>
@@ -293,6 +293,7 @@ function submit() {
             processing.value = false;
         },
         preserveState: false,
+        preserveScroll: true,
     });
 }
 
@@ -306,6 +307,7 @@ function filter() {
             toggleFilterModal();
         },
         preserveState: true,
+        preserveScroll: true,
     });
 }
 

@@ -146,7 +146,7 @@
         </div>
     </div>
     <div>
-        <confirmation v-if="logoutModal" @close="toggleLogoutModal" title="Confirm Logout">
+        <confirmation :showModal="logoutModal" @close="toggleLogoutModal" title="Confirm Logout" width="md" height="short">
             <template v-slot:message>
                 <div>Are you sure you want to log out?</div>
             </template>
@@ -242,7 +242,6 @@ function logout() {
                 userOption: false,
             };
         },
-
         methods: {
             highlight(btn) {
                 if (btn == "dashboard") {

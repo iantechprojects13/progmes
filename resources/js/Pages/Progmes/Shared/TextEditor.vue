@@ -4,11 +4,11 @@
         @click.self="bgClicked">
         <div class="md:bg-white bg-gray-300  flex flex-col justify-center w-full mx-auto max-w-3xl md:rounded shadow-md shadow-gray-500 opacity-100 md:h-auto h-full"
             ref="modalContainer">
-            <div class="p-3 text-gray-700">
+            <div class="p-5 text-gray-700">
                 <div class="mb-2 font-bold">{{ title }}</div>
                 <slot></slot>
             </div>
-            <div class="p-3 text-right">
+            <div class="p-5 text-right">
                 <button class=" bg-blue-500 text-white hover:bg-blue-600 p-2 px-3 rounded border border-gray-400 mr-1"
                     @click="closeModal">
                     Done

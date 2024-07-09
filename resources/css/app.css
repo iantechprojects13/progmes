@@ -48,7 +48,7 @@
     padding: 10px;
     border-radius: 3px;
     display: none;
-    z-index: 50;
+    z-index: 80;
 }
 
 .tooltipForActions:hover::before {

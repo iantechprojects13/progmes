@@ -5,11 +5,11 @@
         </div>
         <div class="flex items-center justify-center w-fit rounded">
             <button @click="submit(link.url)" v-show="hideBtn(link.label)" v-for="link in data_list.links" :key="link.id"
-            :class="{'text-gray-300 border-gray-100': !link.url}"
-                class="hover:bg-gray-200 border border-gray-400 rounded-xl text-lg p-1 text-center h-10 w-10 ml-1 tooltipForActions"
+            :class="[{'text-gray-600 border-gray-400 hover:bg-gray-200 active:bg-gray-300': link.url}, {'text-gray-300 border-gray-300': !link.url}]"
+                class="border rounded-xl p-1 text-center h-10 w-10 ml-1 tooltipForActions text-xl"
                 :data-tooltip="link.label.includes('Previous')? 'Previous': 'Next'">
-            <span v-if="link.label.includes('Previous')">&#11164;</span>
-            <span v-else-if="link.label.includes('Next')">&#11166;</span>
+            <span v-if="link.label.includes('Previous')">&laquo;</span>
+            <span v-else-if="link.label.includes('Next')">&raquo;</span>
             </button>
         </div>
     </div>
@@ -33,6 +33,10 @@ function submit(link) {
         onStart: () => {
             isLoading.value = true;
         },
+        onFinish: () => {
+            isLoading.value = false;
+        },
+        preserveScroll: true,
     });
 }
 
