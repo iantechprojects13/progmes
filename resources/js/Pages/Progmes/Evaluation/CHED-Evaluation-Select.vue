@@ -91,6 +91,10 @@
                                 class="bg-emerald-500 text-white w-fit px-1 py-0.5 rounded text-xs whitespace-nowrap">
                                 Ready for visit
                             </div>
+                            <div v-if="item.status == 'For re-evaluation'"
+                                class="bg-emerald-500 text-white w-fit px-1 py-0.5 rounded text-xs whitespace-nowrap">
+                                For re-evaluation
+                            </div>
                         </td>
                         <td class="p-2">
                             <div class="font-bold text-sm px-1 py-0.5 rounded w-fit">

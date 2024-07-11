@@ -1,9 +1,9 @@
 <template>
     <Head title="Dashboard"/>
     <page-title title="Dashboard"/>
-    <div class="mx-3 md:mx-8 mt-5 border-b-2 border-gray-400">
+    <div class="mx-3 md:mx-8 mt-5 border-b-2 border-gray-300">
         <Link href="/ched/dashboard/progress" class="mr-7">
-            <button class="select-none h-10 text-gray-700 hover:text-black  ">
+            <button class="select-none h-10 text-gray-500 hover:text-black  ">
                 Progress
             </button>
         </Link>
@@ -15,7 +15,7 @@
     </div>
     <div class="mx-3 md:mx-8 mt-5 flex flex-col xl:flex-row justify-between">
         <div class="flex flex-col md:flex-row w-full lg:mr-10 mr-0">
-            <div class="border border-gray-400 bg-white px-5 py-3 w-full mt-3 mr-10 rounded flex flex-row justify-between items-center">
+            <div class="border border-gray-300 bg-white px-5 py-3 w-full mt-3 mr-10 rounded flex flex-row justify-between items-center">
                 <div>
                     <span class="font-bold text-lg mb-5">{{ user }}</span>
                     <br>Users
@@ -25,7 +25,7 @@
                     <i class="fas fa-user"></i>
                 </div>
             </div>
-            <div class="border border-gray-400 bg-white px-5 py-3 w-full mt-3 rounded flex flex-row justify-between items-center">
+            <div class="border border-gray-300 bg-white px-5 py-3 w-full mt-3 rounded flex flex-row justify-between items-center">
                 <div>
                     <span class="font-bold text-lg mb-5">{{ institution }}</span>
                     <br>HEIs
@@ -37,7 +37,7 @@
             </div>
         </div>
         <div class="flex flex-col md:flex-row w-full lg:mt-3">
-           <div class="border border-gray-400 bg-white px-5 py-3 w-full mt-3 lg:mt-0 mr-10 rounded flex flex-row justify-between items-center">
+           <div class="border border-gray-300 bg-white px-5 py-3 w-full mt-3 lg:mt-0 mr-10 rounded flex flex-row justify-between items-center">
                 <div>
                     <span class="font-bold text-lg mb-5">{{ program }}</span>
                     <br>Programs
@@ -47,7 +47,7 @@
                     <i class="fas fa-book"></i>
                 </div>
             </div>
-            <div class="border border-gray-400 bg-white px-5 py-3 w-full mt-3 lg:mt-0 rounded flex flex-row justify-between items-center">
+            <div class="border border-gray-300 bg-white px-5 py-3 w-full mt-3 lg:mt-0 rounded flex flex-row justify-between items-center">
                 <div>
                     <span class="font-bold text-lg mb-5">{{ discipline }}</span>
                     <br>Discipline
@@ -60,8 +60,8 @@
         </div>
     </div>
     <div class="mx-3 md:mx-8 mt-5 flex flex-col xl:flex-row justify-between">
-        <div class="w-full border border-gray-400 bg-white rounded mt-3 lg:mt-0">
-            <div class="p-3 border-b border-gray-400"><b>Programs Monitored Analysis</b></div>
+        <div class="w-full border border-gray-300 bg-white rounded mt-3 lg:mt-0">
+            <div class="p-3 border-b border-gray-300"><b>Programs Monitored Analysis</b></div>
             <div class="flex items-center text-center w-full h-auto py-3 md:py-5 px-0 md:px-16">
                 <analytics-line-chart :thisYear="thisYear" :lastYear="lastYear" :twoYearsAgo="twoYearsAgo">
                 </analytics-line-chart>
@@ -69,8 +69,8 @@
         </div>
     </div>
     <div class="mx-3 md:mx-8 mt-5 flex flex-col xl:flex-row justify-between">
-        <div class="w-full border border-gray-400 bg-white rounded mt-3 lg:mt-0">
-            <div class="p-3 border-b border-gray-400"><b>User-type Distribution</b></div>
+        <div class="w-full border border-gray-300 bg-white rounded mt-3 lg:mt-0">
+            <div class="p-3 border-b border-gray-300"><b>User-type Distribution</b></div>
             <div class="flex items-center text-center w-full h-auto py-5">
                 <distribution-chart :dataItem="usertype" :color="['#06d', '#09f']" :labels="['CHED', 'HEI']">
                     

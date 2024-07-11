@@ -2,7 +2,7 @@
 
     <Head title="Program Evaluation" />
     <page-title title="Program Evaluation" />
-    <content-container>
+    <content-container :hasTopMainContent="true">
         <template v-slot:content-title>
             <div class="w-full flex flex-col md:flex-row justify-between items-center">
                 <div class="w-full flex flex-row items-center">
@@ -15,46 +15,48 @@
                 </div>
             </div>
         </template>
-        <template v-slot:main-content>
+        <template v-slot:top-main-content>
             <div class="flex flex-col xl:flex-row items-center justify-between w-auto rounded border border-gray-300 bg-white my-3 p-5">
-        <div class="w-full text-left">
-            <div class="w-auto flex flex-row items-center">
-                <i class="fas fa-institution mr-3 text-blue-500"></i>
-                <div>{{ evaluation_tool.institution_program.institution?.name }}</div>
-            </div>
-            <div class="w-auto flex flex-row items-center">
-                <i class="fas fa-book mr-3 text-blue-500"></i>
-                <div>
-                    {{ evaluation_tool.institution_program.program?.program }}
-                    <span></span>
+                <div class="w-full text-left">
+                    <div class="w-auto flex flex-row items-center">
+                        <i class="fas fa-institution mr-3 text-blue-500"></i>
+                        <div>{{ evaluation_tool.institution_program.institution?.name }}</div>
+                    </div>
+                    <div class="w-auto flex flex-row items-center">
+                        <i class="fas fa-book mr-3 text-blue-500"></i>
+                        <div>
+                            {{ evaluation_tool.institution_program.program?.program }}
+                            <span></span>
+                        </div>
+                    </div>
+                    <div class="w-auto flex flex-row items-center">
+                        <i class="fas fa-calendar-check mr-3 text-blue-500"></i>
+                        <div>A.Y. {{ evaluation_tool.effectivity }}</div>
+                    </div>
+                </div>
+                <div class="xl:w-auto w-full text-right mt-5 xl:mt-0">
+                    <div class="flex flex-col md:flex-row lg:mt-0 md:w-auto w-full">
+                        <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-500 bg-white">
+                            <div class="w-full font-bold ">{{ progress[0] }}</div>
+                            <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Complied</div>
+                        </div>
+                        <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-500 bg-white">
+                            <div class="w-full font-bold">{{ progress[1] }}</div>
+                            <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Not Complied</div>
+                        </div>
+                        <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-500 bg-white">
+                            <div class="w-full font-bold">{{ progress[2] }}</div>
+                            <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Not Applicable</div>
+                        </div>
+                        <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-500 bg-white">
+                            <div class="w-full font-bold">{{ progress[3] }}%</div>
+                            <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Progress</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="w-auto flex flex-row items-center">
-                <i class="fas fa-calendar-check mr-3 text-blue-500"></i>
-                <div>A.Y. {{ evaluation_tool.effectivity }}</div>
-            </div>
-        </div>
-        <div class="xl:w-auto w-full text-right mt-5 xl:mt-0">
-            <div class="flex flex-col md:flex-row lg:mt-0 md:w-auto w-full">
-                <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-500 bg-white">
-                    <div class="w-full font-bold ">{{ progress[0] }}</div>
-                    <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Complied</div>
-                </div>
-                <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-500 bg-white">
-                    <div class="w-full font-bold">{{ progress[1] }}</div>
-                    <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Not Complied</div>
-                </div>
-                <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-500 bg-white">
-                    <div class="w-full font-bold">{{ progress[2] }}</div>
-                    <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Not Applicable</div>
-                </div>
-                <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-500 bg-white">
-                    <div class="w-full font-bold">{{ progress[3] }}%</div>
-                    <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Progress</div>
-                </div>
-            </div>
-        </div>
-    </div>
+        </template>
+        <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
                     <th class="p-3">Area/<br>Minimum Requirement</th>

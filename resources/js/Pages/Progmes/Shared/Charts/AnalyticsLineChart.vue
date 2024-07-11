@@ -1,9 +1,6 @@
 <template>
-    <div class="w-full px-3">
-        <Line id="my-chart-id" :options="chartOptions" :data="chartData" class="w-full"/>
-        <div class="w-full text-left mt-5 bg-blue-200 p-2 rounded-md text-gray-600">
-            <i class="fas fa-info-circle text-sm mx-3"></i>The line graph compares the number of programs monitored in each quarter over the last three years.
-        </div>
+    <div class="w-full lg:h-96 h-52">
+        <Line id="my-chart-id" :options="chartOptions" :data="chartData" class="w-full h-auto"/>
     </div>
 </template>
 
@@ -48,6 +45,7 @@
                 },
                 chartOptions: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     legends: true,
                     label: true,
                     scales: {
@@ -64,9 +62,9 @@
                     },
                     layout: {
                         padding: {
-                            left: 10,
-                            right: 10,
-                        }
+                            // left: 10,
+                            // right: 10,
+                        },
                     },
                     plugins: {
                         legend: {
@@ -76,6 +74,7 @@
                                 pointStyle: 'circle',
                                 font: {
                                     size: 12,
+                                    padding: 10,
                                 },
                             }
                         },

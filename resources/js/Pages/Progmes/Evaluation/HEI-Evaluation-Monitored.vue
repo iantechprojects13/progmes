@@ -19,14 +19,14 @@
     <content-container :hasNavigation="true" :hasSearch="true" :hasFilters="true" :data_list="complianceTools" :hideTopBorder="true">
         <template v-slot:navigation>
             <div>
-                <button class="select-none h-12 w-28 hover:bg-gray-100 text-blue-500 border-b-4 relative font-bold border-blue-500">
+                <Link href="/evaluation">
+                <button class="select-none h-12 w-28 hover:bg-gray-100 text-gray-700 hover:text-black">
                     Evaluation
                 </button>
-                <Link :href="route('evaluation.hei.monitored')">
-                <button class="select-none h-12 w-28 hover:bg-gray-100 text-gray-700 hover:text-black">
+                </Link>
+                <button class="select-none h-12 w-28 hover:bg-gray-100 text-blue-500 border-b-4 border-blue-500 relative font-bold">
                     Monitored
                 </button>
-                </Link>
             </div>
         </template>
         <template v-slot:search>
@@ -39,13 +39,7 @@
         </template>
         <template v-slot:options>
             <div class="mr-1">
-                
-                <button @click="toggleFilterModal"
-                    class="w-10 h-10 whitespace-nowrap hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
-                    data-tooltip="Filters">
-                    <i class="fas fa-filter"></i>
-                </button>
-                <Link href="/evaluation">
+                <Link href="/hei/evaluation/monitored">
                 <button
                     class="w-10 h-10 whitespace-nowrap hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
                     data-tooltip="Refresh page">
@@ -53,60 +47,33 @@
                 </button>
                 </Link>
             </div>
-        </template>
-        <template v-slot:main-content>
+        </template>        <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
                     <th class="p-2 pl-5">Program</th>
-                    <th class="p-2">Status</th>
-                    <th class="p-2">Progress</th>
-                    <th class="p-2 text-right">
+                    <th class="p-2">Monitoring/Evaluation Date</th>
+                    <th class="p-2">Archived Date</th>
+                    <th class="p-2 pr-5 text-right">
                         <i class="fas fa-ellipsis-v"></i>
                     </th>
                 </template>
 
                 <template v-slot:table-body>
                     <tr v-if="complianceTools.data.length == 0">
-                        <td colspan="4" class="p-2 py-10 text-center">No data</td>
+                        <td colspan="3" class="p-2 py-10 text-center">No data</td>
                     </tr>
                     <tr v-else v-for="(item, index) in complianceTools.data" :key="item.id" class="border-b hover:bg-gray-200"
                         :class="{'bg-gray-100': index % 2 == 1}">
                         <td class="p-2 pl-5">
                             {{ item.program }}
                         </td>
-                        <td class="p-2">
-                            <div v-if="
-                                    item.status ==
-                                    'Locked'
-                                " class="bg-red-500 text-white w-fit px-1 py-0.5 text-xs rounded whitespace-nowrap">
-                                Locked
-                            </div>
-                            <div v-if="
-                                    item.status ==
-                                    'In progress'
-                                " class="bg-blue-500 text-white w-fit px-1 py-0.5 text-xs rounded whitespace-nowrap">
-                                In Progress
-                            </div>
-                            <div v-if="item.status == 'Submitted'"
-                                class="bg-green-500 text-white w-fit px-1 py-0.5 text-xs rounded whitespace-nowrap">
-                                Ready for visit
-                            </div>
-                            <div v-if="item.status == 'For re-evaluation'"
-                                class="bg-green-500 text-white w-fit px-1 py-0.5 text-xs rounded whitespace-nowrap">
-                                For re-evaluation
-                            </div>
+                        <td class="p-2 text-sm">
+                            {{ item.evaluationDate }}
                         </td>
-                        <td class="p-2">
-                            <div class="font-bold text-sm px-1 py-0.5 w-fit">
-                                {{ item.progress }}%
-                            </div>
+                        <td class="p-2 text-sm">
+                            {{ item.archivedDate }}
                         </td>
                         <td class="p-2 pr-5 text-right whitespace-nowrap">
-                            <button v-show="canEvaluate && item.status == 'Submitted'" @click="edit(item.id)"
-                                class="select-none h-8 w-8 text-xl text-center rounded-full hover:bg-gray-300 text-blue-500 hover:text-blue-600 tooltipForActions"
-                                data-tooltip="Evaluate">
-                                <i class="fas fa-edit"></i>
-                            </button>
                             <button @click="view(item.id)"
                                 class="select-none h-8 w-8 text-xl text-center rounded-full hover:bg-gray-300 text-green-500 hover:text-green-600 tooltipForActions"
                                 data-tooltip="View">
@@ -123,46 +90,31 @@
 </template>
 
 <script setup>
-    import { router, useForm } from '@inertiajs/vue3';
-    import { ref } from 'vue';
+import { router, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
-    const props = defineProps([
-        'complianceTools',
-        'filters',
-        'institution',
-    ]);
+const props = defineProps([
+    'complianceTools',
+    'filters',
+    'institution',
+]);
 
-    const query = useForm({
-        academicYear: props.filters.academicYear,
-        show: props.filters.show,
-        search: props.filters.search,
+const query = useForm({
+    academicYear: props.filters.academicYear,
+    show: props.filters.show,
+    search: props.filters.search,
+});
+
+function submit() {
+    query.get("/hei/evaluation/monitored", {
+        preserveState: true,
+        preserveScroll: true,
     });
+}
 
-    function view(tool) {
-        router.get('/hei/evaluation/' + tool + '/view');
-    }
-
-    function submit() {
-        query.get("/hei/evaluation", {
-            preserveState: true,
-            preserveScroll: true,
-        });
-    }
-
-    // function changeResultCount() {
-    //     query.get("/ched/evaluation", {
-    //         preserveScroll: true,
-    //         preserveState: true,
-    //     });
-    // }
-
-
-    // function changeAcademicYear() {
-    //     query.get("/ched/evaluation", {
-    //         preserveScroll: true,
-    //         preserveState: true,
-    //     });
-    // }
+function view(tool) {
+    router.get('/hei/evaluation/' + tool + '/view');
+}
 </script>
 
 <script>

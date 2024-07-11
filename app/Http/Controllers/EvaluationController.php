@@ -227,7 +227,7 @@ class EvaluationController extends Controller
     }
 
 
-    public function archivedForHEI(Request $request) {
+    public function monitoredForHEI(Request $request) {
         $user = Auth::user();
         $show = $request->query('show') ? $request->query('show') : 25;
         $acadYear = $request->query('academicYear') ? $request->query('academicYear') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
@@ -263,13 +263,16 @@ class EvaluationController extends Controller
             'id' => $item->id,
             'submissionDate' => $item->submissionDate,
             'status' => $item->status,
+            'archivedDate' => Carbon::createFromFormat('Y-m-d', $item->archivedDate)->format('M d, Y'),
+            'evaluationDate' => Carbon::createFromFormat('Y-m-d', $item->evaluationDate)->format('M d, Y'),
+            'status' => $item->status,
             'institution' => $item->institution_program->institution->name,
             'program' => $item->institution_program->program->program,
             'progress' => intval(round((($item->complied->count() + $item->not_complied->count() + $item->not_applicable->count())/$item->item->count())*100)),
         ])
         ->withQueryString();
 
-        return Inertia::render('Progmes/Evaluation/HEI-Evaluation-Archive', [
+        return Inertia::render('Progmes/Evaluation/HEI-Evaluation-Monitored', [
             'complianceTools' => $complianceTools,
             'filters' => $request->only(['search']) + ['show' => $show, 'academicYear' => $acadYear ],
             'institution' => $institutionName,

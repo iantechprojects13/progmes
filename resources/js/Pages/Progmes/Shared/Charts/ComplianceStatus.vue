@@ -1,5 +1,5 @@
 <template>
-    <div class="h-28 w-full">
+    <div class="h-32 w-full">
         <Doughnut id="my-chart-id" :options="chartOptions" :data="chartData" />
     </div>
 </template>

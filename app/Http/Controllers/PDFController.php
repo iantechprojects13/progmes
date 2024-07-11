@@ -22,8 +22,10 @@ class PDFController extends Controller
 
         $complianceTool->update([
             'evaluationDate' => $request->evaluationDate,
-            'conforme' => $request->conforme,
-            'conformeTitle' => $request->conformeTitle,
+            'conforme1' => $request->conforme1,
+            'conforme1Title' => $request->conforme1Title,
+            'conforme2' => $request->conforme2,
+            'conforme2Title' => $request->conforme2Title,
             'evaluatedBy' => $request->evaluatedBy,
             'evaluatedByTitle' => $request->evaluatedByTitle,
             'reviewedBy' => $request->reviewedBy,

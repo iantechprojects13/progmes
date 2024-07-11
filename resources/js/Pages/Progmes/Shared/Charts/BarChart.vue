@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full">
+    <div class="w-full lg:h-96 h-52">
         <Bar id="my-chart-id" :options="chartOptions" :data="chartData" class="w-full"/>
     </div>
 </template>
@@ -21,12 +21,15 @@
                         {   
                             data: this.dataItem,
                             backgroundColor: this.color,
-                            barThickness: 65,
+                            barThickness: 45,
+                            borderColor: '#fff',
+                            borderWidth: 2,
                         }
                     ]
                 },
                 chartOptions: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     indexAxis: this.orientation,
                     legends: false,
                     label: true,
@@ -36,7 +39,10 @@
                             ticks: {
                                 beginAtZero: true,
                                 stepSize: 5,
-                            }
+                            },
+                            grid: {
+                                display: false,
+                            },
                         },
                         y: {
                             beginAtZero: true,

@@ -34,6 +34,8 @@ import AnalyticsLineChart from './Pages/Progmes/Shared/Charts/AnalyticsLineChart
 import LineChart from './Pages/Progmes/Shared/Charts/LineChart.vue';
 import ComplianceBarGraph from './Pages/Progmes/Shared/Charts/ComplianceBarGraph.vue';
 import DistributionChart from './Pages/Progmes/Shared/Charts/DistributionChart.vue';
+import PieChart from './Pages/Progmes/Shared/Charts/PieChart.vue';
+import ChartsContainer from './Pages/Progmes/Shared/Charts/ChartsContainer.vue';
 
 
 
@@ -68,11 +70,13 @@ createInertiaApp({
             .component('ComplianceProgress', ComplianceProgress)
             .component('ComplianceStatus', ComplianceStatus)
             .component('BarChart', BarChart)
+            .component('PieChart', PieChart)
             .component('GroupBarChart', GroupBarChart)
             .component('LineChart', LineChart)
             .component('AnalyticsLineChart', AnalyticsLineChart)
             .component('ComplianceBarGraph', ComplianceBarGraph)
             .component('DistributionChart', DistributionChart)
+            .component('ChartsContainer', ChartsContainer)
             .mount(el);
     },
     progress: {

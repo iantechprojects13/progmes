@@ -86,6 +86,10 @@
                                 class="bg-green-600 text-white w-fit px-1 rounded text-xs">
                                 Ready for visit
                             </div>
+                            <div v-else-if="program.evaluation_form[0]?.status == 'For re-evaluation'"
+                                class="bg-green-600 text-white w-fit px-1 rounded text-xs">
+                                For re-evaluation
+                            </div>
                             <div v-else-if="program.evaluation_form[0]?.status == 'Monitored'"
                                 class="bg-blue-500 text-white w-fit px-1 rounded text-xs">
                                 Monitored

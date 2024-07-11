@@ -63,8 +63,13 @@
                 </div>
                 <div class="mt-3 flex items-center lg:flex-row flex-col">
                     <label for="conforme" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Conforme</label>
-                    <input maxlength="255" type="text" id="conforme" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Conforme" v-model="report.conforme">
-                    <input maxlength="255" type="text" id="conformeTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="report.conformeTitle">
+                    <input maxlength="255" type="text" id="conforme" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Conforme" v-model="report.conforme1">
+                    <input maxlength="255" type="text" id="conformeTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="report.conforme1Title">
+                </div>
+                <div class="mt-3 flex items-center lg:flex-row flex-col">
+                    <label for="conforme" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Conforme</label>
+                    <input maxlength="255" type="text" id="conforme" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Conforme" v-model="report.conforme2">
+                    <input maxlength="255" type="text" id="conformeTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="report.conforme2Title">
                 </div>
                 <div class="mt-3 flex items-center lg:flex-row flex-col">
                     <label for="evaluatedBy" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Evaluated by</label>
@@ -121,8 +126,10 @@ onUnmounted(() => {
 const report = reactive({
     id: ref(props.tool.id),
     evaluationDate: ref(props.tool.evaluationDate),
-    conforme: ref(props.tool.conforme),
-    conformeTitle: ref(props.tool.conformeTitle),
+    conforme1: ref(props.tool.conforme1),
+    conforme1Title: ref(props.tool.conforme1Title),
+    conforme2: ref(props.tool.conforme2),
+    conforme2Title: ref(props.tool.conforme2Title),
     evaluatedBy: ref(props.tool.evaluatedBy),
     evaluatedByTitle: ref(props.tool.evaluatedByTitle),
     reviewedBy: ref(props.tool.reviewedBy),

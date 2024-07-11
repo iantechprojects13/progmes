@@ -19,11 +19,7 @@
         data() {
             return {
                 chartData: {
-                    labels: [
-                        "Jan", "Feb", "Mar", "Apr",
-                        "May", "Jun", "Jul", "Aug",
-                        "Sep", "Oct", "Nov", "Dec"
-                    ],
+                    labels: this.labels,
                     datasets: [
                         {   
                             data: this.lineChartDataItem,

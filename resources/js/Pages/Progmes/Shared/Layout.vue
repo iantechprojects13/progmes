@@ -226,6 +226,7 @@ function logout() {
                         "Progmes/Evaluation/HEI-Evaluation-View",
                         "Progmes/Evaluation/HEI-Evaluation-PH-Select",
                         "Progmes/Evaluation/HEI-Evaluation-Select",
+                        "Progmes/Evaluation/HEI-Evaluation-Monitored",
                         "Progmes/Evaluation/CHED-Evaluation-Select",
                         "Progmes/Evaluation/CHED-Evaluation-Edit",
                         "Progmes/Evaluation/CHED-Evaluation-View",

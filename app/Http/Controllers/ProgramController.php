@@ -171,12 +171,4 @@ class ProgramController extends Controller
         
     }
 
-
-    public function allprog() {
-        return Inertia::render('Progmes/Shared/Test', [
-            'programs' => ProgramModel::orderBy('program', 'asc')->orderBy('major', 'asc')->with('discipline')->get(),
-        ]);
-    }
-
-    
 }

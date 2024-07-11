@@ -68,6 +68,7 @@
                     <th class="p-3 border-b border-gray-300">Item</th>
                     <th class="p-3 border-b border-gray-300">Area</th>
                     <th class="p-3 border-b border-gray-300">Minimum Requirement</th>
+                    <th class="p-3 border-b border-gray-300">Test</th>
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="cmo.length == 0">
@@ -78,6 +79,9 @@
                         <td class="p-3">{{item.itemNo}}</td>
                         <td class="p-3 whitespace-normal">{{item.area}}</td>
                         <td class="p-3 whitespace-normal">{{item.minimumRequirement}}</td>
+                        <td class="p-3 whitespace-normal">
+                            <div v-html="item.minimumRequirement"></div>
+                        </td>
                     </tr>
                 </template>
             </content-table>

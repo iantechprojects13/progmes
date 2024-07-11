@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Kreait\Firebase\Factory;
 use Throwable;
+use Carbon\Carbon;
 
 
 class HEIFormController extends Controller
@@ -47,6 +48,7 @@ class HEIFormController extends Controller
     }
 
     public function view($tool) {
+        $user = Auth::user();
         $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.program', 'institution_program.institution', 'complied', 'not_complied', 'not_applicable', 'item', 'item.criteria', 'item.evidence')->first();
         $showEvaluation = false;
         
@@ -54,10 +56,35 @@ class HEIFormController extends Controller
             return redirect('/hei/evaluation')->with('failed', 'Evaluation tool not found.');
         }
 
+        $role = RoleModel::where('userId', $user->id)->where('isActive', 1)->first();
+
+        if ($role->role == 'Program Head') {
+            $institutionProgram = InstitutionProgramModel::where('institutionId', $role->institutionId)->where('programId', $role->programId)->first();
+            if (!($evaluationTool->institutionProgramId == $institutionProgram->id)) {
+                return redirect('/unauthorized');
+            }
+        } else if ($role->role == 'Vice-President for Academic Affairs') {
+            $institutionProgram = InstitutionProgramModel::where('institutionId', $role->institutionId)->get();
+            $institutionProgramIds = $institutionProgram->pluck('id')->toArray();
+
+            if (!in_array($evaluationTool->institutionProgramId, $institutionProgramIds)) {
+                return redirect('/unauthorized');
+            }
+        } else if ($role->role == 'Dean') {
+            if ($role->disciplineId != $evaluationTool->disciplineId) {
+                return redirect('/unauthorized');
+            } else if ($evaluationTool->institution_program->institution->id != $role->institutionId) {
+                return redirect('/unauthorized');
+            }
+        } else {
+            return redirect('/unauthorized');
+        }
+
+
         if ($evaluationTool->status != 'In progress' || $evaluationTool->evaluationDate != null) {
             $showEvaluation = true;
         }
-
+        
         $compliedCount = $evaluationTool->complied->count();
         $notCompliedCount = $evaluationTool->not_complied->count();
         $notApplicableCount = $evaluationTool->not_applicable->count();
@@ -70,9 +97,11 @@ class HEIFormController extends Controller
             'progress' => $progress,
             'showEvaluation' => $showEvaluation,
         ]);
+        
     }
 
-    public function edit($evaluation) {
+
+    public function edit($evaluation, Request $request) {
         $user = Auth::user();
         $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program')->first();
 
@@ -92,6 +121,50 @@ class HEIFormController extends Controller
             return redirect('/unauthorized');
         } else {
             $items = EvaluationItemModel::where('evaluationFormId', $evaluation)->with('criteria', 'evidence')->get();
+
+            $complianceTool = EvaluationItemModel::query()
+            ->when($request->query('search'), function ($query) use ($request) {
+                $query->where(function ($query) use ($request) {
+                    $query->where('actualSituation', 'like', '%' . $request->query('search') . '%')
+                        ->orWhere('findings', 'like', '%' . $request->query('search') . '%')
+                        ->orWhere('recommendations', 'like', '%' . $request->query('search') . '%')
+                        ->orWhereHas('criteria', function ($criteriaQuery) use ($request) {
+                            $criteriaQuery->where('area', 'like', '%' . $request->query('search') . '%')
+                            ->orWhere('minimumRequirement', 'like', '%' . $request->query('search') . '%');
+                        });
+                });
+            })
+            ->when($request->query('selfEvaluationStatus'), function ($query) use ($request){
+                if ($request->query('selfEvaluationStatus') == 'No Status') {
+                    $query->where(function ($query) use ($request) {
+                        $query->where('selfEvaluationStatus', null);
+                    });
+                }
+                else {
+                        $query->where(function ($query) use ($request) {
+                        $query->where('selfEvaluationStatus', $request->query('selfEvaluationStatus'));
+                    });
+                }
+            })
+            ->when($request->query('evaluationStatus'), function ($query) use ($request){
+                if ($request->query('evaluationStatus') == 'No Status') {
+                    $query->where(function ($query) use ($request) {
+                        $query->where('evaluationStatus', null);
+                    });
+                }
+                else {
+                        $query->where(function ($query) use ($request) {
+                        $query->where('evaluationStatus', $request->query('evaluationStatus'));
+                    });
+                }
+            })
+            ->where('evaluationFormId', $evaluation)
+            ->with('criteria', 'evidence')
+            ->paginate(1000)
+            ->withQueryString();
+
+            
+
             $totalItems = $items->count();
             $complied = $items->where('selfEvaluationStatus', 'Complied')->count();
             $notComplied = $items->where('selfEvaluationStatus', 'Not complied')->count();
@@ -103,16 +176,9 @@ class HEIFormController extends Controller
             if($tool->status == 'In progress') {
                 return Inertia::render('Progmes/Evaluation/HEI-Evaluation-Edit', [
                     'evaluation' => $tool,
-                    'items' => $items->map(fn($item) => [
-                        'id' => $item->id,
-                        'itemNo' => $item->criteria->itemNo,
-                        'area' => $item->criteria->area,
-                        'minimumRequirement' => $item->criteria->minimumRequirement,
-                        'actualSituation' => $item->actualSituation,
-                        'selfEvaluationStatus' => $item->selfEvaluationStatus,
-                        'evidence' => $item->evidence,
-                    ]),
+                    'items' => $complianceTool,
                     'progress' => $progress,
+                    'filters' => $request->only(['search', 'selfEvaluationStatus', 'evaluationStatus']),
                 ]);
             } else {
                 return redirect('/hei/ph/evaluation')->with('failed', 'This tool has been locked and can\'t be accessed.');
@@ -122,26 +188,9 @@ class HEIFormController extends Controller
     }
 
 
-    public function conforme(Request $request) {
-        $tool = EvaluationFormModel::where('id', $request->id)->first();
-
-        if (!$tool) {
-            redirect()->back()->with('failed', 'Failed to update conforme.');
-        }
-
-        $tool->update([
-            'conforme' => $request->name,
-            'conformeTitle' => $request->title,
-        ]);
-
-        $tool->save();
-
-        redirect()->back()->with('success', 'Updated successfully.');
-    }
-
-
     public function update(Request $request) {
-        foreach ($request->items as $item) {
+
+        foreach ($request->items['data'] as $item) {
 
             if (in_array($item['id'], $request->rows)) {
                 
@@ -163,11 +212,13 @@ class HEIFormController extends Controller
         $request->validate([
             'id' => 'required',
             'itemId' => 'required',
-            'file' => 'required',
+            'file' => 'required|file|max:10240|mimes:xlsx,csv,pdf,doc,docx,png,jpeg,jpg',
         ], [
             'file.required' => 'Please select a file.',
+            'file.max' => 'The file may not be greater than 10MB.',
+            'file.mimes' => 'The file must be a type of: Excel, CSV, PDF, Word, PNG, JPEG, JPG.',
         ]);
-
+        
         $formModel = EvaluationFormModel::where('id', $request->id)->with('institution_program.institution', 'institution_program.program')->first();
         $institution = $formModel->institution_program->institution->name;
         $program = $formModel->institution_program->program->program;
@@ -268,11 +319,21 @@ class HEIFormController extends Controller
 
     public function readyForVisit(Request $request) {
         $evaluation = EvaluationFormModel::find($request->id);
+        
+        if ($evaluation->evaluationDate != null) {
+            $evaluation->update([
+                'status' => 'For re-evaluation',
+                'submissionDate' => now(),
+            ]);
 
-        $evaluation->update([
-            'status' => 'Submitted',
-            'submissionDate' => now(),
-        ]);
+        } else {
+            $evaluation->update([
+                'status' => 'Submitted',
+                'submissionDate' => now(),
+            ]);
+        }
+
+        
         $evaluation->save();
 
         return redirect('/hei/ph/evaluation')->with('success', "The evaluation tool has been successfully submitted.");

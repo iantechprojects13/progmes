@@ -110,7 +110,7 @@
     <main>
         <div>
             <div style="width: 100%; text-align: center; margin-top: 20px;">
-                <b>MONITORING AND EVALUATION</b>
+                <b>PROGRAM MONITORING</b>
             </div>
             <div style="width: 100%; text-align: center; margin-top: 8px;">
                 <b>DEFICIENCY REPORT</b>
@@ -154,28 +154,35 @@
                 </tbody>
             </table>
             <div style="margin-top: 75px; width: 100%;">
-                <div style="margin-left: 10px;">
+                <div style="margin-left: 10px; page-break-inside: avoid;">
                     <div>Conforme:</div>
                     <div style="margin: 8px 20px;">
-                        <div>{{ $tool->conforme }}</div>
-                        <div>{{ $tool->conformeTitle }}</div>
+                        <div>{{ $tool->conforme1 }}</div>
+                        <div>{{ $tool->conforme1Title }}</div>
                     </div>
                 </div>
-                <div style="margin-left: 10px; margin-top: 30px;">
+                <div style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid;">
+                    <div>Conforme:</div>
+                    <div style="margin: 8px 20px;">
+                        <div>{{ $tool->conforme2 }}</div>
+                        <div>{{ $tool->conforme2Title }}</div>
+                    </div>
+                </div>
+                <div style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid;">
                     <div>Evaluated by:</div>
                     <div style="margin: 8px 20px;">
                         <div>{{ $tool->evaluatedBy }}</div>
                         <div>{{ $tool->evaluatedByTitle }}</div>
                     </div>
                 </div>
-                <div style="margin-left: 10px; margin-top: 30px;">
+                <div style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid;">
                     <div>Reviewed by:</div>
                     <div style="margin: 8px 20px;">
                         <div>{{ $tool->reviewedBy }}</div>
                         <div>{{ $tool->reviewedByTitle }}</div>
                     </div>
                 </div>
-                <div style="margin-left: 10px; margin-top: 30px;">
+                <div style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid;">
                     <div>Noted by:</div>
                     <div style="margin: 8px 20px;">
                         <div>{{ $tool->notedBy }}</div>

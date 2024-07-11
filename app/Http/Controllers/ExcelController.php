@@ -19,15 +19,14 @@ class ExcelController extends Controller
         $user = Auth::user();
         
        $request->validate([
-        'file' => 'required|mimes:xlsx,xls',
+        'file' => 'required|mimes:xlsx,xls,csv',
             ], [
                 'file.required' => 'Please select a file.',
-                'file.mimes' => 'File must be in Excel format: .xlsx or .xls.',
+                'file.mimes' => 'The file must be a type of: Excel or CSV.',
             ]);
-
+        
         $excelContent = [];
         $fileName ='';
-        
         
         if (request()->file('file')) {
             $excelContent = Excel::toArray(new CMOImport, request()->file('file'));

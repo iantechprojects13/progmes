@@ -2,7 +2,7 @@
 
     <Head title="Evaluation Compliance Tool" />
     <page-title title="Program Evaluation" />
-    <content-container :hasStickyDiv="true">
+    <content-container :hasStickyDiv="true" :hasTopMainContent="true" :hasSearch="true" :hasFilters="true">
         <template v-slot:content-title>
             <div class="w-full flex flex-col md:flex-row justify-between items-center">
                 <div class="w-full flex flex-row items-center">
@@ -40,6 +40,27 @@
                 </div>
             </div>
         </template>
+        <template v-slot:top-main-content>
+            <div class="flex flex-col xl:flex-row items-center justify-between w-auto rounded border border-gray-300 bg-white my-3">
+                <div class="w-full text-left p-3 md:p-5">
+                    <div class="w-auto flex flex-row items-center">
+                        <i class="fas fa-institution mr-3 text-blue-500"></i>
+                        <div>{{ evaluation.institution_program.institution.name }}</div>
+                    </div>
+                    <div class="w-auto flex flex-row items-center">
+                        <i class="fas fa-book mr-3 text-blue-500"></i>
+                        <div>
+                            {{ evaluation.institution_program.program.program }}
+                            <span v-if="evaluation.institution_program.program.major"> - {{ evaluation.institution_program.program.major }}</span>
+                        </div>
+                    </div>
+                    <div class="w-auto flex flex-row items-center">
+                        <i class="fas fa-calendar-check mr-3 text-blue-500"></i>
+                        <div>A.Y. {{ evaluation.effectivity }}</div>
+                    </div>
+                </div>
+            </div>
+        </template>
         <template v-slot:sticky-div>
             <div class="w-full flex items-end px-3 md:px-5 py-2">
                 <div class="w-full flex flex-row justify-between ml-2">
@@ -64,26 +85,32 @@
                 </div>
             </div>
         </template>
-        <template v-slot:main-content>
-            <div class="flex flex-col xl:flex-row items-center justify-between w-auto rounded border border-gray-300 bg-white my-3">
-                <div class="w-full text-left p-3 md:p-5">
-                    <div class="w-auto flex flex-row items-center">
-                        <i class="fas fa-institution mr-3 text-blue-500"></i>
-                        <div>{{ evaluation.institution_program.institution.name }}</div>
-                    </div>
-                    <div class="w-auto flex flex-row items-center">
-                        <i class="fas fa-book mr-3 text-blue-500"></i>
-                        <div>
-                            {{ evaluation.institution_program.program.program }}
-                            <span v-if="evaluation.institution_program.program.major"> - {{ evaluation.institution_program.program.major }}</span>
-                        </div>
-                    </div>
-                    <div class="w-auto flex flex-row items-center">
-                        <i class="fas fa-calendar-check mr-3 text-blue-500"></i>
-                        <div>A.Y. {{ evaluation.effectivity }}</div>
-                    </div>
-                </div>
+        <template v-slot:search>
+            <div class="w-full flex flex-row relative items-center">
+                <i class="fa fa-search text-gray-400 absolute left-5"></i>
+                <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
+                    placeholder="Search"
+                    class="w-full rounded-lg border border-gray-300 indent-10 h-10 text-base placeholder-gray-400" />
             </div>
+        </template>
+        <template v-slot:options>
+            <div class="mr-1">
+                
+                <button @click="toggleFilterModal"
+                    class="w-10 h-10 hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
+                    data-tooltip="Filters">
+                    <i class="fas fa-filter"></i>
+                </button>
+                <Link :href="'/ched/evaluation/'+props.evaluation.id+'/evaluate'">
+                <button
+                    class="w-10 h-10 hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
+                    data-tooltip="Refresh page">
+                    <i class="fas fa-refresh"></i>
+                </button>
+                </Link>
+            </div>
+        </template>
+        <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
                     <th class="p-2">Area/<br>Minimum Requirement</th>
@@ -97,15 +124,20 @@
                 </template>
 
                 <template v-slot:table-body>
-                    <tr v-for="(item, index) in items" :key="item.id" class="hover:bg-gray-200 align-top text-base"
+                    <tr v-if="items.data.length == 0">
+                        <td colspan="6" class="p-2 py-10 items-center text-center">
+                            No data
+                        </td>
+                    </tr>
+                    <tr v-else v-for="(item, index) in items.data" :key="item.id" class="hover:bg-gray-200 align-top text-base"
                         :class="{ 'bg-gray-100': index % 2 == 1 }">
                         <td class="p-2 text-justify">
                             <div class="flex flex-col">
                                 <div class="font-bold">
-                                    {{ item.area }}
+                                    {{ item.criteria.area }}
                                 </div>
                                 <div>
-                                    {{ item.minimumRequirement }}
+                                    {{ item.criteria.minimumRequirement }}
                                 </div>
                             </div>
                         </td>
@@ -163,7 +195,7 @@
                                 placeholder="Input comments here" @input="handleRecommendationsInput(index, item.id)">
                                             </textarea>
                             <button @click="openRecommendationsEditor(index)"
-                                class="absolute bottom-4 right-10 text-gray-500 hover:text-black group-focus-within:visible invisible tooltipForActions"
+                                class="absolute bottom-10 left-52 text-gray-500 hover:text-black group-focus-within:visible invisible tooltipForActions"
                                 data-tooltip="Open editor">
                                 <i class="fas fa-pen"></i>
                             </button>
@@ -196,6 +228,38 @@
         </template>
     </content-container>
 
+    <modal :showModal="showFilterModal" @close="toggleFilterModal" width="sm" height="long" title="Filters">
+        <div>
+            <div class="flex flex-col">
+                <label for="selfEvalStatus">Self-Evaluation Status</label>
+                <select v-model="query.selfEvaluationStatus" id="selfEvalStatus" class="rounded border-gray-400">
+                    <option :value="null">All</option>
+                    <option value="Complied">Complied</option>
+                    <option value="Not complied">Not Complied</option>
+                    <option value="Not applicable">Not Applicable</option>
+                    <option value="No Status">No Status</option>
+                </select>
+            </div>
+            <div class="mt-3 flex flex-col" v-show="evaluation.evaluationDate != null">
+                <label for="evalStatus">Evaluation Status</label>
+                <select v-model="query.evaluationStatus" id="evalStatus" class="rounded border-gray-400">
+                    <option :value="null">All</option>
+                    <option value="Complied">Complied</option>
+                    <option value="Not complied">Not Complied</option>
+                    <option value="Not applicable">Not Applicable</option>
+                </select>
+            </div>
+        </div>
+        <template v-slot:custom-button>
+            <button @click="filter" class="text-white bg-green-600 hover:bg-green-700 w-20 rounded h-10">
+                <span v-if="processing">
+                    <i class="fas fa-spinner animate-spin"></i>
+                </span>
+                <span v-else>Apply</span>
+            </button>
+        </template>
+    </modal>
+
     <Notification :message="$page.props.flash.success" type="success" />
     <Notification :message="$page.props.flash.failed" type="failed"/>
     <Notification :message="$page.props.flash.updated" type="success" />
@@ -208,8 +272,7 @@
 <script setup>
 
 import { ref, onMounted, onUnmounted } from 'vue';
-import { router } from '@inertiajs/vue3';
-
+import { router, useForm } from '@inertiajs/vue3';
 
 const props = defineProps([
     'evaluation',
@@ -220,6 +283,7 @@ const props = defineProps([
     'reviewedBy',
     'notedBy',
     'auth',
+    'filters',
 ]);
 
 const handleBeforeUnload = (event) => {
@@ -358,6 +422,46 @@ function update() {
             saving.value = false;
         },
         preserveState: false,
+        preserveScroll: true,
+    });
+}
+
+const processing = ref(false);
+const showFilterModal = ref(false);
+
+const query = useForm({
+    search: props.filters.search,
+    selfEvaluationStatus: props.filters.selfEvaluationStatus != null ? props.filters.selfEvaluationStatus : null,
+    evaluationStatus: props.filters.evaluationStatus != null ? props.filters.evaluationStatus : null,
+});
+
+function toggleFilterModal() {
+    showFilterModal.value = !showFilterModal.value;
+}
+
+function submit() {
+    query.get("/ched/evaluation/"+props.evaluation.id+"/evaluate", {
+        onStart: () => {
+            processing.value = true;
+        },
+        onFinish: () => {
+            processing.value = false;
+        },
+        preserveState: false,
+        preserveScroll: true,
+    });
+}
+
+function filter() {
+    query.get("/ched/evaluation/"+props.evaluation.id+"/evaluate", {
+        onStart: () => {
+            processing.value = true;
+        },
+        onFinish: () => {
+            processing.value = false;
+            toggleFilterModal();
+        },
+        preserveState: true,
         preserveScroll: true,
     });
 }

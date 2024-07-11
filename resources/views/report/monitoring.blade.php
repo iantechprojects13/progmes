@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoring & Evaluation Report</title>
+    <title>Program Monitoring Report</title>
     <style>
         @page {
             margin: 20px 38px;
@@ -110,7 +110,7 @@
     <main>
         <div>
             <div style="width: 100%; text-align: center; margin-top: 20px;">
-                <b>MONITORING AND EVALUATION REPORT</b>
+                <b>PROGRAM MONITORING REPORT</b>
             </div>
             <div style="margin-top: 30px;">
                 <div style="display: inline-block"><b>HEI Name:</b></div>
@@ -156,8 +156,15 @@
                 <div style="margin-left: 10px; page-break-inside: avoid;">
                     <div>Conforme:</div>
                     <div style="margin: 8px 20px;">
-                        <div>{{ $tool->conforme }}</div>
-                        <div>{{ $tool->conformeTitle }}</div>
+                        <div>{{ $tool->conforme1 }}</div>
+                        <div>{{ $tool->conforme1Title }}</div>
+                    </div>
+                </div>
+                <div style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid;">
+                    <div>Conforme:</div>
+                    <div style="margin: 8px 20px;">
+                        <div>{{ $tool->conforme2 }}</div>
+                        <div>{{ $tool->conforme2Title }}</div>
                     </div>
                 </div>
                 <div style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid;">

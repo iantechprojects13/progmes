@@ -72,10 +72,9 @@ Route::get('/admin/users/list/profile/{user?}/view',[RegistrationController::cla
 
 //dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth','registered', 'user.verified', 'active'])->name('dashboard');
-Route::get('/ched/dashboard/progress', [DashboardController::class, 'dashboardForCHEDProgress'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.admin.progress');
+Route::get('/ched/dashboard', [DashboardController::class, 'dashboardForCHED'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.admin.ched');
 Route::get('/ched/dashboard/analytics', [DashboardController::class, 'analytics'])->middleware(['auth', 'type.ched'])->name('analytics');
 Route::get('/ched/dashboard/overview', [DashboardController::class, 'dashboardForCHEDOverview'])->middleware(['auth', 'registered', 'type.ched', 'user.verified', 'ched.admin'])->name('dashboard.admin.overview');
-Route::get('/ched/dashboard', [DashboardController::class, 'dashboardForES'])->middleware(['auth', 'registered', 'type.ched', 'user.verified', 'ched.es'])->name('dashboard.ched');
 Route::get('/hei/dashboard', [DashboardController::class, 'dashboardForHEI'])->middleware(['auth', 'type.hei', 'user.verified', 'active'])->name('dashboard.hei');
 Route::post('/set-academic-year', [DashboardController::class, 'setAcademicYear'])->middleware(['auth', 'superadmin'])->name('setacadyear');
 
@@ -87,7 +86,7 @@ Route::get('/ched/evaluation', [EvaluationController::class, 'evaluationForCHED'
 Route::get('/ched/evaluation/monitored', [EvaluationController::class, 'monitoredForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('ched.evaluation.monitored');
 Route::get('/hei/ph/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware(['auth','type.hei', 'hei.ph'])->name('evaluation.ph');
 Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean'])->name('evaluation.hei');
-Route::get('/hei/evaluation/archived', [EvaluationController::class, 'archivedForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean'])->name('evaluation.hei.archive');
+Route::get('/hei/evaluation/monitored', [EvaluationController::class, 'monitoredForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean'])->name('evaluation.hei.monitored');
 Route::get('hei/evaluation/{tool}/edit', [HEIFormController::class, 'edit'])->middleware(['auth', 'type.hei', 'hei.ph'])->name('form.hei.key');
 Route::get('ched/evaluation/{tool}/view', [CHEDFormController::class, 'view'])->middleware(['auth', 'type.ched'])->name('evaluation.ched.view');
 Route::get('ched/evaluation/{tool}/evaluate/', [CHEDFormController::class, 'evaluate'])->middleware(['auth', 'type.ched', 'evaluate'])->name('form.ched.evaluate');
@@ -180,7 +179,7 @@ Route::get('/report/deficiency/{tool}/{type}', [PDFController::class, 'deficienc
 //     return Inertia::render('Progmes/Shared/Test');
 // });
 
-Route::get('/allprog', [ProgramController::class, 'allprog']);
+Route::get('/api/data', [DashboardController:: class, 'getData']);
 
 Route::get('/login-testuser', [UserController::class, 'userLogin']);
 Route::post('/testuserlogin', [UserController::class, 'testUserLogin']);

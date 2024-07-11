@@ -4,7 +4,7 @@
     <page-title title="My Account" />
     <content-container>
         <template v-slot:content-title>
-            <div class="p-3 flex flex-row items-center justify-between">
+            <div class="flex flex-row items-center justify-between">
                 <div class="flex flex-row">
                     <div class="mr-3">
                         <i class="fas fa-user text-blue-500"></i>
