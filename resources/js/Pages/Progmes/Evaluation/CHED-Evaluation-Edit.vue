@@ -136,9 +136,7 @@
                                 <div class="font-bold">
                                     {{ item.criteria.area }}
                                 </div>
-                                <div>
-                                    {{ item.criteria.minimumRequirement }}
-                                </div>
+                                <div v-html="item.criteria.minimumRequirement"></div>
                             </div>
                         </td>
                         <td class="p-2 text-justify">

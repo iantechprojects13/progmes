@@ -161,8 +161,7 @@
                             </div>
                         </td>
                         <td class="p-2 whitespace-normal max-w-xs">
-                            <div class="flex flex-col text-justify">
-                                {{ item.criteria.minimumRequirement }}
+                            <div class="flex flex-col text-justify" v-html="item.criteria.minimumRequirement">
                             </div>
                         </td>
                         <td class="h-32 min-w-16 p-2 relative group">

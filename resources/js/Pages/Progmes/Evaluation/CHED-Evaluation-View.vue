@@ -75,7 +75,7 @@
                         class="hover:bg-gray-200 align-top" :class="{'bg-gray-100': index % 2 == 1 }">
                         <td class="p-3 whitespace-normal text-justify max-w-xl">
                             <div class="font-bold">{{ item.criteria.area }}</div>
-                            <div>{{ item.criteria.minimumRequirement }}</div>
+                            <div v-html="item.criteria.minimumRequirement"></div>
                         </td>
                         <td class="p-3 whitespace-normal text-justify max-w-xl">{{ item.actualSituation }}</td>
                         <td class="p-3">{{ item.selfEvaluationStatus }}</td>
