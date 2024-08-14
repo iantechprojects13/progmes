@@ -21,21 +21,21 @@
                     ],
                     datasets: [
                         {   
-                            label: "This Year",
+                            label: this.labels[0],
                             data: this.thisYear,
                             borderColor: "#85C1E9",
                             fill: false,
                             tension: 0.3,
                         },
                         {   
-                            label: "A Year Ago",
+                            label: this.labels[1],
                             data: this.lastYear,
                             borderColor: "#F7DC6F",
                             fill: false,
                             tension: 0.3,
                         },
                         {   
-                            label: "Two Years Ago",
+                            label: this.labels[2],
                             data: this.twoYearsAgo,
                             borderColor: "#EC7063",
                             fill: false,
@@ -85,7 +85,8 @@
         props: [
             'thisYear',
             'lastYear',
-            'twoYearsAgo'
+            'twoYearsAgo',
+            'labels',
         ],
     }
 </script>

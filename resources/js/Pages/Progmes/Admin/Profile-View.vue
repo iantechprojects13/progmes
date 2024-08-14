@@ -73,7 +73,7 @@
             </div>
         </template>
     </content-container>
-    <modal :showModal="showModal" @close="toggleChangeRoleModal" title="Change User Role">
+    <modal :showModal="showModal" @close="toggleChangeRoleModal" title="Change User Role" height="short" width="lg">
         <div>Are you sure you want to change the role for this user? This action will deactivate their current role.</div>
         <template v-slot:custom-button>
             <button @click="changeRole" class="h-10 w-20 rounded bg-blue-500 text-white">

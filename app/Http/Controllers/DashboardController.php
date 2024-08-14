@@ -39,10 +39,20 @@ class DashboardController extends Controller
         $user = Auth::user();
         $role = $user->role;
 
+        $currentYear = Carbon::now()->year;
+
         $acadYear = $request->query('academicyear') ? $request->query('academicyear') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
         $institution = $request->query('hei') != null && $request->query('program') == null ? $request->query('hei') : null;
         $program = $request->query('program') != null ? $request->query('program') : null;
         $filter = $request->query('filter') != null ? $request->query('filter') : null;
+        $year = $request->query('year') != null ? $request->query('year') : $currentYear;
+
+
+
+        $justLastYear = $year - 1;
+        $yearBeforeLast = $year -2;
+        $currentMonth = Carbon::now()->month;
+
 
         $disciplines = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('discipline')->get();
         $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
@@ -85,12 +95,9 @@ class DashboardController extends Controller
             $query->whereIn('disciplineId', $disciplineIds);
         })->get();
         
-        $currentYear = Carbon::now()->year;
-        $justLastYear = Carbon::now()->subYear()->year;
-        $yearBeforeLast = Carbon::now()->subYears(2)->year;
-        $currentMonth = Carbon::now()->month;
+        
 
-        $comTools = EvaluationFormModel::whereYear('evaluationDate', $currentYear)
+        $comTools = EvaluationFormModel::whereYear('evaluationDate', $year)
         ->when($request->query('hei'), function($query) use ($request, $institution) {
             $query->whereHas('institution_program.institution', function($q) use ($institution) {
                 $q->where('institutionId', $institution);
@@ -149,9 +156,6 @@ class DashboardController extends Controller
 
         [$thisYear, $lastYear, $twoYearsAgo] = $yearsData;
 
-
-
-
         
         $program_list = ProgramModel::query()->when($user->role == 'Education Supervisor', function ($query) use ($disciplineIds) {
             $query->whereIn('disciplineId', $disciplineIds);
@@ -188,7 +192,7 @@ class DashboardController extends Controller
             'hei_list' => InstitutionModel::orderBy('name', 'asc')->get(),
             'hei' => $institution,
             'heiName' => InstitutionModel::where('id', $institution)->value('name'),
-            'filters' => $request->only(['']) + ['filter' => $filter ],
+            'filters' => $request->only(['']) + ['filter' => $filter ] + ['year' => $year],
             'quarter1' => $quarter1Count,
             'quarter2' => $quarter2Count,
             'quarter3' => $quarter3Count,
@@ -199,6 +203,9 @@ class DashboardController extends Controller
             'evaluatedTotal' => $quarter1Count + $quarter2Count + $quarter3Count + $quarter4Count,
             'byMonthData' => [$jan, $feb, $mar, $apr, $may, $jun, $jul, $aug, $sep, $oct, $nov, $dec],
             'monthIndex' => $currentMonth-1,
+            'isCurrentYear' => $year == $currentYear ? true : false,
+            'analyticsLabel' => [$year, $year-1, $year-2],
+            'displayAnalyticsData' => $year <= $currentYear ? true : false,
         ]);
     }
 

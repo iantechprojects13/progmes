@@ -209,6 +209,24 @@ class HEIFormController extends Controller
     }
 
     public function upload(Request $request) {
+
+        if ($request->rows) {
+            foreach ($request->items['data'] as $item) {
+                if (in_array($item['id'], $request->rows)) {
+                    
+                    $evaluationItem = EvaluationItemModel::find($item['id']);
+
+                    if ($evaluationItem) {
+                        $evaluationItem->update([
+                            'actualSituation' => $item['actualSituation'],
+                            'selfEvaluationStatus' => $item['selfEvaluationStatus'],
+                        ]);
+                    }
+                }
+            }
+        }
+
+
         $request->validate([
             'id' => 'required',
             'itemId' => 'required',
@@ -267,11 +285,27 @@ class HEIFormController extends Controller
                 return redirect()->back()->with('failed', 'Failed to upload file.');
             }
         }
-
+        
         return redirect()->back()->with('uploaded', 'Evidence successfully uploaded.');
     }
 
     public function submitLink(Request $request) {
+
+        if ($request->rows) {
+            foreach ($request->items['data'] as $item) {
+                if (in_array($item['id'], $request->rows)) {
+                    
+                    $evaluationItem = EvaluationItemModel::find($item['id']);
+
+                    if ($evaluationItem) {
+                        $evaluationItem->update([
+                            'actualSituation' => $item['actualSituation'],
+                            'selfEvaluationStatus' => $item['selfEvaluationStatus'],
+                        ]);
+                    }
+                }
+            }
+        }
 
         $validated = $request->validate([
             'id' => 'required',

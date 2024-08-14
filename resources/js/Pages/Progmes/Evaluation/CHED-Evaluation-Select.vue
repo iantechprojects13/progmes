@@ -180,6 +180,10 @@
             <textarea class="w-full h-52 resize-none" placeholder="Compose email here" id="emailBody"
                 v-model="email.body">
             </textarea>
+            <div class="mt-3">
+                <label for="emailBody" class="font-bold mb-2">Recipient</label>
+                <input type="text" v-model="email.recipient" class="h-10 w-full">
+            </div>
         </div>
         <template v-slot:custom-button>
             <button @click="sendEmail" :disabled="sending || email.body == ''"
@@ -244,6 +248,7 @@ const props = defineProps([
     'filters',
     'canEvaluate',
     'canEmail',
+    'programHeadEmail',
 ]);
 
 const toolId = ref(null);
@@ -315,6 +320,7 @@ function setProgress(val) {
 const email = reactive({
     toolId: null,
     body: null,
+    recipient: ref(props.programHeadEmail),
 });
 
 function sendEmail() {

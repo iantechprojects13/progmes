@@ -179,15 +179,27 @@
             </div>
         </div>
     </div>
-    <div class="mx-3 md:mx-8 mt-12 flex flex-col lg:flex-row justify-between border border-gray-300 bg-white p-3 rounded">
+    <div class="mx-3 md:mx-8 mt-12 flex flex-col lg:flex-row lg:items-center justify-between border border-gray-300 bg-white p-3 rounded">
         <div class=" font-bold uppercase text-gray-700">
-            <span v-show="$page.props.auth.user.role != 'Education Supervisor'">Overall </span>Summary of Programs Monitored ({{ currentYear }})
+            <span v-show="$page.props.auth.user.role != 'Education Supervisor'">Overall </span>Summary of Programs monitored
+        </div>
+        <div class="lg:mt-0 mt-2">
+            <select @change="submit" v-model="query.year" class="w-full lg:w-32 select-none h-10 py-0 rounded text-sm lg:mr-2 lg:mb-0 mb-2 border-gray-400 hover:border-gray-500 cursor-pointer">
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+            </select>
         </div>
     </div>
 
     <div class="mx-3 md:mx-8 mt-5 flex flex-col lg:flex-row justify-between">
         <div class="w-full border border-gray-300 bg-white rounded mt-3 lg:mt-0 flex-col lg:flex-row">
-            <div class="p-3 border-b border-gray-300"><b>Programs Monitored (by Quarter)</b></div>
+            <div class="p-3 border-b border-gray-300"><b>Programs Monitored by Quarter ({{ filters.year }})</b></div>
             <div class="flex flex-col lg:flex-row px-3 py-5 lg:px-8 items-center">
                 <div class="w-full lg:mr-5">
                         <div class="flex flex-col lg:flex-row">
@@ -224,61 +236,77 @@
             </div>
         </div>
     </div>
-
-    <charts-container :hasData="true" title="Programs Monitored Analysis" note="The line graph compares the number of programs monitored in each quarter over the last three years.">
+    
+    <charts-container :hasData="true" title="Programs Monitored Analysis" :note="displayAnalyticsData ? 'The line graph compares the number of programs monitored in each quarter during '+analyticsLabel[0]+ ', ' +analyticsLabel[1]+ ', and '+analyticsLabel[2]+'.' : null ">
         <template v-slot:data>
-            <div class="w-full flex flex-col lg:flex-row items-center justify-center mb-5">
+            <div v-show="displayAnalyticsData" class="w-full flex flex-col lg:flex-row items-center justify-center mb-5">
                 <div class="w-full lg:w-1/5 flex flex-col mx-3 p-2 rounded lg:mt-0 mt-5 border border-gray-300 lg:border-none">
                     <div class="text-lg font-bold">{{ averageResult(0) }}</div>
                     <div class="text-gray-600">1st Quarter Average</div>
-                    <div :class="[{'text-green-500': trend(0) == 'Inclined'}, {'text-red-500': trend(0) == 'Declined'}]">
-                        <i class="fas" :class="[{'fa-arrow-circle-up mr-2': trend(0) == 'Inclined'}, {'fa-arrow-circle-down': trend(0) == 'Declined'}]"></i>
+                    <div v-if="change(0) == 'No data'">
+                        -
+                    </div>
+                    <div v-else :class="[{'text-green-500': performance(0) == 'Inclined'}, {'text-red-500': performance(0) == 'Declined'}]">
+                        <i class="fas" :class="[{'fa-arrow-circle-up mr-2': performance(0) == 'Inclined'}, {'fa-arrow-circle-down': performance(0) == 'Declined'}]"></i>
                         {{ change(0) }}%
                     </div>
                 </div>
                 <div class="w-full lg:w-1/5 flex flex-col mx-3 p-2 rounded lg:mt-0 mt-5 border border-gray-300 lg:border-none">
                     <div class="text-lg font-bold">{{ averageResult(1) }}</div>
                     <div class="text-gray-600">2nd Quarter Average</div>
-                    <div :class="[{'text-green-500': trend(1) == 'Inclined'}, {'text-red-500': trend(1) == 'Declined'}]">
-                        <i class="fas" :class="[{'fa-arrow-circle-up mr-2': trend(1) == 'Inclined'}, {'fa-arrow-circle-down': trend(1) == 'Declined'}]"></i>
+                    <div v-if="change(1) == 'No data'">
+                        -
+                    </div>
+                    <div v-else :class="[{'text-green-500': performance(1) == 'Inclined'}, {'text-red-500': performance(1) == 'Declined'}]">
+                        <i class="fas" :class="[{'fa-arrow-circle-up mr-2': performance(1) == 'Inclined'}, {'fa-arrow-circle-down': performance(1) == 'Declined'}]"></i>
                         {{ change(1) }}%
                     </div>
                 </div>
                 <div class="w-full lg:w-1/5 flex flex-col mx-3 p-2 rounded lg:mt-0 mt-5 border border-gray-300 lg:border-none">
                     <div class="text-lg font-bold">{{ averageResult(2) }}</div>
                     <div class="text-gray-600">3rd Quarter Average</div>
-                    <div :class="[{'text-green-500': trend(2) == 'Inclined'}, {'text-red-500': trend(2) == 'Declined'}]">
-                        <i class="fas" :class="[{'fa-arrow-circle-up mr-2': trend(2) == 'Inclined'}, {'fa-arrow-circle-down': trend(2) == 'Declined'}]"></i>
+                    <div v-if="change(2) == 'No data'">
+                        -
+                    </div>
+                    <div v-else :class="[{'text-green-500': performance(2) == 'Inclined'}, {'text-red-500': performance(2) == 'Declined'}]">
+                        <i class="fas" :class="[{'fa-arrow-circle-up mr-2': performance(2) == 'Inclined'}, {'fa-arrow-circle-down': performance(2) == 'Declined'}]"></i>
                         {{ change(2) }}%
                     </div>
                 </div>
                 <div class="w-full lg:w-1/5 flex flex-col mx-3 p-2 rounded lg:mt-0 mt-5 border border-gray-300 lg:border-none">
                     <div class="text-lg font-bold">{{ averageResult(3) }}</div>
                     <div class="text-gray-600">4th Quarter Average</div>
-                    <div :class="[{'text-green-500': trend(3) == 'Inclined'}, {'text-red-500': trend(3) == 'Declined'}]">
-                        <i class="fas" :class="[{'fa-arrow-circle-up mr-2': trend(3) == 'Inclined'}, {'fa-arrow-circle-down': trend(3) == 'Declined'}]"></i>
+                    <div v-if="change(3) == 'No data'">
+                        -
+                    </div>
+                    <div v-else :class="[{'text-green-500': performance(3) == 'Inclined'}, {'text-red-500': performance(3) == 'Declined'}]">
+                        <i class="fas" :class="[{'fa-arrow-circle-up mr-2': performance(3) == 'Inclined'}, {'fa-arrow-circle-down': performance(3) == 'Declined'}]"></i>
                         {{ change(3) }}%
                     </div>
                 </div>
             </div>
         </template>
         <template v-slot:chart>
-            <analytics-line-chart :thisYear="props.thisYear" :lastYear="props.lastYear" :twoYearsAgo="props.twoYearsAgo"></analytics-line-chart>
+            <analytics-line-chart v-if="displayAnalyticsData" :thisYear="props.thisYear" :lastYear="props.lastYear" :twoYearsAgo="props.twoYearsAgo" :labels="analyticsLabel"></analytics-line-chart>
+            <div v-else class="py-10">
+                No data to display
+            </div>
         </template>
     </charts-container>
 
-    <charts-container :hasData="true" title="Programs Monitored This Year (by Month)" note="The bar graph compares the number of programs monitored in each month.">
+    <charts-container :hasData="true" :title="'Programs Monitored by Month ('+filters.year+')'" :note="evaluatedTotal != 0 ? 'The bar graph compares the number of programs monitored in each month.': null">
         <template v-slot:data>
-            <div v-show="evaluatedTotal != 0" class="w-full flex flex-col lg:flex-row items-center justify-center mb-5">
+            <div v-show="evaluatedTotal != 0 && isCurrentYear" class="w-full flex flex-col lg:flex-row items-center justify-center mb-5">
                 <div class="w-full lg:w-1/5 flex flex-col mx-3 p-2 rounded lg:mt-0 mt-5 border border-gray-300 lg:border-none">
                     <div class="text-lg font-bold">{{ monthlyAverageResult() }}</div>
                     <div class="text-gray-600">Monthly Average</div>
+                    <div class="text-gray-600 invisible">***</div>
                 </div>
                 <div class="w-full lg:w-1/5 flex flex-col mx-3 p-2 rounded lg:mt-0 mt-5 border border-gray-300 lg:border-none">
                     <div class="text-lg font-bold">{{ byMonthData[monthIndex] }}</div>
                     <div class="text-gray-600">This Month</div>
-                    <div :class="[{'text-green-500': trendByMonth() == 'Inclined'}, {'text-red-500': trendByMonth() == 'Declined'}]">
-                        <i class="fas" :class="[{'fa-arrow-circle-up mr-2': trendByMonth() == 'Inclined'}, {'fa-arrow-circle-down': trendByMonth() == 'Declined'}]"></i>
+                    <div :class="[{'text-green-500': performanceByMonth() == 'Inclined'}, {'text-red-500': performanceByMonth() == 'Declined'}]">
+                        <i class="fas" :class="[{'fa-arrow-circle-up mr-2': performanceByMonth() == 'Inclined'}, {'fa-arrow-circle-down': performanceByMonth() == 'Declined'}]"></i>
                         {{ changeByMonth() }}%
                     </div>
                 </div>
@@ -395,18 +423,15 @@ const props = defineProps([
     'evaluatedTotal',
     'byMonthData',
     'monthIndex',
+    'isCurrentYear',
+    'analyticsLabel',
+    'displayAnalyticsData',
 ]);
 
 
-const propx = {
-    thisYear: [379, 371, 391, 384],
-    lastYear: [321, 379, 440, 385],
-    twoYearsAgo: [390, 455, 385, 295],
-}
-
 const averageResult = (index) => {
   const average = (props.thisYear[index] + props.lastYear[index] + props.twoYearsAgo[index]) / 3;
-  return average.toFixed(2);
+  return average.toFixed(0);
 };
 
 const monthlyAverageResult = () => {
@@ -416,7 +441,7 @@ const monthlyAverageResult = () => {
         total = total + props.byMonthData[i];
     }
     monthly_average = total / props.monthIndex;
-    return monthly_average.toFixed(2);
+    return monthly_average.toFixed(0);
 };
 
 const averageLastTwoYears = (index) => {
@@ -435,14 +460,21 @@ const averageLastMonths = () => {
 };
 
 const change = (index) => {
-  const thisYearValue = props.thisYear[index];
-  const lastTwoYearsAverage = averageLastTwoYears(index);
-  const difference = thisYearValue - lastTwoYearsAverage;
-  const percentageChange = (difference / lastTwoYearsAverage) * 100;
-  return percentageChange.toFixed(2);
+    const thisYearValue = props.thisYear[index];
+    const lastTwoYearsAverage = averageLastTwoYears(index);
+    const difference = thisYearValue - lastTwoYearsAverage;
+
+    if (lastTwoYearsAverage == 0) {
+        return "No data";
+    }
+    
+    
+    const percentageChange = (difference / lastTwoYearsAverage) * 100;
+    
+    return percentageChange.toFixed(2);
 };
 
-const trend = (index) => {
+const performance = (index) => {
   const thisYearValue = props.thisYear[index];
   const lastTwoYearsAverage = averageLastTwoYears(index);
   return thisYearValue > lastTwoYearsAverage ? 'Inclined' : 'Declined';
@@ -456,7 +488,7 @@ const changeByMonth = () => {
   return percentageChange.toFixed(2);
 };
 
-const trendByMonth = () => {
+const performanceByMonth = () => {
   const thisMonthValue = props.byMonthData[props.monthIndex];
   const lastMonthsAverage = averageLastMonths();
   return thisMonthValue > lastMonthsAverage ? 'Inclined' : 'Declined';
@@ -469,6 +501,7 @@ const query = useForm({
     filter: ref(props.filters.filter) != null ? ref(props.filters.filter) : null,
     hei: ref(props.hei) != null ? ref(props.hei) : null,
     program: ref(props.program) != null ? ref(props.program) : null,
+    year: ref(props.filters.year) != null ? ref(props.filters.year) : null,
 });
 
 function submit() {

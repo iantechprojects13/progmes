@@ -99,6 +99,7 @@ class EvaluationController extends Controller
             'filters' => $request->only(['search', 'status']) + ['show' => $show, 'academicYear' => $acadYear ],
             'canEvaluate' => $canEvaluate,
             'canEmail' => $canEmail,
+            'programHeadEmail' => "ian.epidemia13@gmail.com",
         ]);
     }
 
@@ -288,8 +289,6 @@ class EvaluationController extends Controller
             $program = $tool->institution_program->programId;
 
             $userId = RoleModel::where('institutionId', $institution)->where('programId', $program)->where('isActive', 1)->value('userId');
-
-            // dd($user);
 
             $user = User::where('id', $userId)->first();
             $email = $user->email;

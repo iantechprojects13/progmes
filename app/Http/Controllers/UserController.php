@@ -82,7 +82,14 @@ class UserController extends Controller
                 $q->whereIn('disciplineId', $disciplineList);
             });
         })
-        ->with('userRole', 'userRole.discipline', 'userRole.program', 'userRole.institution')
+        ->with([
+            'userRole' => function ($query) {
+                $query->where('isActive', 1);
+            },
+            'userRole.discipline',
+            'userRole.program',
+            'userRole.institution'
+        ])
         ->paginate($show)
         ->withQueryString();
 
@@ -161,7 +168,18 @@ class UserController extends Controller
                 $q->whereIn('disciplineId', $disciplineList);
             });
         })
-        ->with('userRole', 'userRole.discipline', 'userRole.program', 'userRole.institution')
+        ->whereHas('userRole', function ($query) use ($request) {
+                $query->where('isActive', 1);
+            }
+        )
+        ->with([
+            'userRole' => function ($query) {
+                $query->where('isActive', 1);
+            },
+            'userRole.discipline',
+            'userRole.program',
+            'userRole.institution'
+        ])
         ->paginate($show)
         ->withQueryString();
 
@@ -220,7 +238,14 @@ class UserController extends Controller
         ])
         ->whereNot('role', 'Super Admin')
         ->orderBy('name', 'asc')
-        ->with('userRole', 'userRole.discipline', 'userRole.program', 'userRole.institution')
+        ->with([
+            'userRole' => function ($query) {
+                $query->where('isActive', 1);
+            },
+            'userRole.discipline',
+            'userRole.program',
+            'userRole.institution'
+        ])
         ->paginate($show)
         ->withQueryString();
 

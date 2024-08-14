@@ -227,13 +227,13 @@
                             <div class="w-full text-right text-sm visible" ref="actionButtons"
                                 :class="{ 'invisible': item.selfEvaluationStatus == 'Not applicable' }">
                                 <button @click=" fileModal = true; fileItem = item.id; $refs.inputEvidenceFile.click()"
-                                    class="rounded bg-blue-500 hover:bg-blue-600 text-white h-8 mr-1 px-2 tooltipForActions" data-tooltip="Upload file"
-                                    :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate">
+                                    class="rounded bg-green-600 hover:bg-green-700 text-white h-8 mr-1 px-2 tooltipForActions" data-tooltip="Upload file"
+                                    :disabled="item.selfEvaluationStatus == 'Not applicable'">
                                     <i class="fas fa-upload mr-2"></i>File
                                 </button>
                                 <button @click="linkModal = true; evidenceLink = null; linkItem = item.id"
-                                    class="rounded bg-blue-500 hover:bg-blue-600 text-white h-8 px-2 tooltipForActions" data-tooltip="Drop link"
-                                    :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate">
+                                    class="rounded bg-green-600 hover:bg-green-700 text-white h-8 px-2 tooltipForActions" data-tooltip="Drop link"
+                                    :disabled="item.selfEvaluationStatus == 'Not applicable'">
                                     <i class="fas fa-upload mr-2"></i>Link
                                 </button>
                             </div>
@@ -531,6 +531,8 @@ function submitLink() {
     router.post('/hei/evaluation/link', {
         id: linkItem.value,
         link: evidenceLink.value,
+        items: props.items,
+        rows: updatedRows.value,
     }, {
         onStart: () => {
             uploadingLink.value = true;
@@ -578,6 +580,8 @@ function submitTool() {
 watch(evidenceFile, value => {
     router.post('/hei/evaluation/upload', {
         id: props.evaluation.id,
+        items: props.items,
+        rows: updatedRows.value,
         itemId: fileItem.value,
         file: evidenceFile.value,
     }, {
