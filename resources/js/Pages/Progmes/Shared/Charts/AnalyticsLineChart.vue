@@ -23,13 +23,17 @@
                         {   
                             label: this.labels[0],
                             data: this.thisYear,
+                            filter: this.filter,
+                            growthRate: this.growthRate.thisYear,
                             borderColor: "#85C1E9",
                             fill: false,
                             tension: 0.3,
                         },
-                        {   
+                        {
                             label: this.labels[1],
                             data: this.lastYear,
+                            filter: this.filter,
+                            growthRate: this.growthRate.lastYear,
                             borderColor: "#F7DC6F",
                             fill: false,
                             tension: 0.3,
@@ -37,6 +41,8 @@
                         {   
                             label: this.labels[2],
                             data: this.twoYearsAgo,
+                            filter: this.filter,
+                            growthRate: this.growthRate.twoYearsAgo,
                             borderColor: "#EC7063",
                             fill: false,
                             tension: 0.3,
@@ -68,6 +74,7 @@
                     },
                     plugins: {
                         legend: {
+                            onClick: null,
                             display: true,
                             labels: {
                                 usePointStyle: true,
@@ -78,15 +85,76 @@
                                 },
                             }
                         },
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    
+                                    const indent = '\u00A0\u00A0\u00A0';
+                                    const datasetLabel = tooltipItem.dataset.label;
+                                    let growthRate = tooltipItem.dataset.growthRate[tooltipItem.dataIndex];
+                                    const dataValue = tooltipItem.raw;
+                                    const quarter = tooltipItem.label;
+                                    let mark = "";
+
+                                    growthRate = parseFloat(growthRate);
+
+                                    if (growthRate > 0 && tooltipItem.dataIndex > 0) {
+                                        mark = "Growth rate was improved by " + Math.abs(growthRate).toFixed(2) + "% compared to the previous quarter of the same year.";
+                                    } else if (growthRate < 0  && tooltipItem.dataIndex > 0) {
+                                        mark = "Growth rate was declined by " + Math.abs(growthRate).toFixed(2) + "% compared to the previous quarter of the same year.";
+                                    } else if (growthRate == 0 && tooltipItem.dataIndex > 0) {
+                                        mark = "";
+                                    }
+                                    
+                                    
+                                    
+                                    // Now use your logic to generate the custom tooltip text based on `filter`
+                                    const filter = tooltipItem.dataset.filter;
+                                    
+                                    if (filter === 'HEI') {
+                                        return [
+                                            indent + `In ${quarter} of ${datasetLabel},`,
+                                            indent + `${dataValue} programs were monitored in this HEI.`,
+                                            indent + mark,
+                                        ];
+                                    } else if (filter === 'Program') {
+                                        return [
+                                            indent + `In ${quarter} of ${datasetLabel},`,
+                                            indent + `${dataValue} programs were monitored in this program.`,
+                                            indent + mark,
+                                        ];
+                                    } else {
+                                        return [
+                                            indent + `In ${quarter} of ${datasetLabel},`,
+                                            indent + `${dataValue} programs were monitored across all HEIs.`,
+                                            indent + mark,
+                                        ];
+                                    }
+                                }
+                            },
+                            backgroundColor: '#333',
+                            titleColor: '#5dade2',
+                            bodyColor: '#eee',
+                            bodyFont: {
+                                size: 12,
+                            },
+                        }
+
                     },
                 }
             }
         },
-        props: [
-            'thisYear',
-            'lastYear',
-            'twoYearsAgo',
-            'labels',
-        ],
+    props: [
+        'thisYear',
+        'lastYear',
+        'twoYearsAgo',
+        'labels',
+        'filter',
+        'growthRate',
+        'isCurrentYear',
+        'currentQuarter',
+    ],
+        
     }
 </script>

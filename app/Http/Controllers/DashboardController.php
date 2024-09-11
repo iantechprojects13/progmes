@@ -136,6 +136,16 @@ class DashboardController extends Controller
 
         for ($i = 0; $i <= 2; $i++) {
             $comTools = EvaluationFormModel::whereYear('evaluationDate', $yearArray[$index])
+                ->when($request->query('hei'), function($query) use ($request, $institution) {
+                    $query->whereHas('institution_program.institution', function($q) use ($institution) {
+                        $q->where('institutionId', $institution);
+                    });
+                })
+                ->when($request->query('program'), function($query) use ($request, $program) {
+                    $query->whereHas('institution_program.program', function($q) use ($program) {
+                        $q->where('programId', $program);
+                    });
+                })
                 ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
                     $query->whereIn('disciplineId', $disciplineIds);
                 })
@@ -155,12 +165,30 @@ class DashboardController extends Controller
         }
 
         [$thisYear, $lastYear, $twoYearsAgo] = $yearsData;
-
+        
         
         $program_list = ProgramModel::query()->when($user->role == 'Education Supervisor', function ($query) use ($disciplineIds) {
             $query->whereIn('disciplineId', $disciplineIds);
         })->orderBy('program', 'asc')->orderBy('major', 'asc')->get();
         
+
+        $totalPrograms = EvaluationFormModel::where('effectivity', 'like', '%' . $year . '%')
+        ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
+            $query->whereIn('disciplineId', $disciplineIds);
+        })
+        ->select('institutionProgramId')
+        ->distinct()
+        ->get()
+        ->count();
+
+        $programTotal = null;
+
+        if ($program) {
+            $programTotal = InstitutionProgramModel::where('programId', $program)->count();
+        } else if ($institution) {
+            $programTotal = InstitutionProgramModel::where('institutionId', $institution)->count();
+        }
+
 
         return Inertia::render('Progmes/Dashboard/Dashboard-CHED', [
             'complianceTool' => $complianceTools->map(fn($item) => [
@@ -206,6 +234,9 @@ class DashboardController extends Controller
             'isCurrentYear' => $year == $currentYear ? true : false,
             'analyticsLabel' => [$year, $year-1, $year-2],
             'displayAnalyticsData' => $year <= $currentYear ? true : false,
+            'totalPrograms' => $totalPrograms,
+            'currentQuarter' => Carbon::now()->quarter,
+            'programTotal' => $programTotal,
         ]);
     }
 

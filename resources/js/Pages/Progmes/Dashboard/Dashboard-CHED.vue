@@ -29,7 +29,7 @@
         </div>
         <div class="flex flex-col lg:flex-row w-full lg:w-auto">
             <div class="flex flex-col lg:flex-row items-center lg:whitespace-nowrap w-full lg:w-auto">
-                <div class="lg:mr-2 w-full lg:w-auto">
+                <div class="w-full lg:w-auto">
                     <select @change="selectAll" v-model="query.filter" id="filter" class="w-full lg:w-32 select-none h-10 py-0 rounded text-sm lg:mr-2 lg:mb-0 mb-2 border-gray-400 hover:border-gray-500 cursor-pointer">
                         <option :value="null">All</option>
                         <option value="hei">HEI</option>
@@ -52,36 +52,42 @@
                     </select>
                 </div>
             </div>
-            <div class="flex flex-row mt-5 lg:mt-0">
-                <select @change="submit" id="acadYearDropDown" class="select-none w-full lg:w-36 indent-2 h-10 px-2 py-0 rounded text-sm mr-2 border-gray-400 hover:border-gray-500 cursor-pointer" v-model="query.academicyear">
-                    <option value="2023-2024">A.Y. 2023-24</option>
-                    <option value="2024-2025">A.Y. 2024-25</option>
-                    <option value="2025-2026">A.Y. 2025-26</option>
-                    <option value="2026-2027">A.Y. 2026-27</option>
-                    <option value="2027-2028">A.Y. 2027-28</option>
-                    <option value="2028-2029">A.Y. 2028-29</option>
-                    <option value="2029-2030">A.Y. 2029-30</option>
-                </select>
-                <div v-show="$page.props.auth.user.role == 'Super Admin'">
-                    <dropdown-option position="right">
-                        <template v-slot:button>
-                            <button class="h-10 select-none whitespace-nowrap border border-gray-400 hover:border-gray-500 cursor-pointer rounded px-3">
-                                <i class="fas fa-cog mr-1"></i><i class="fas fa-caret-down"></i>
-                            </button>
-                        </template>
-                        <template v-slot:options>
-                            <div class="w-40 text-center py-5">
-                                <button @click="setAcadYear" class="whitespace-nowrap text-sm bg-blue-500 text-white hover:bg-blue-600 rounded px-2 h-8">Set Default Year</button>
-                            </div>
-                        </template>
-                    </dropdown-option>
-                </div>
-            </div>
         </div>
     </div>
-    <div class="mx-3 md:mx-8 mt-8 flex flex-col lg:flex-row justify-between border border-gray-300 bg-white p-3 rounded">
+    <div class="mx-3 md:mx-8 mt-12 flex flex-col lg:flex-row lg:items-center justify-between border border-gray-300 bg-white p-3 rounded">
         <div class=" font-bold uppercase text-gray-700">
             Progress
+        </div>
+        <div class="lg:mt-0 mt-2">
+            <div class="flex flex-col lg:flex-row w-full lg:w-auto">
+                <div class="flex flex-col lg:flex-row items-center lg:whitespace-nowrap w-full lg:w-auto">
+                </div>
+                <div class="flex flex-row mt-5 lg:mt-0">
+                    <select @change="submit" id="acadYearDropDown" class="select-none w-full lg:w-36 indent-2 h-10 px-2 py-0 rounded text-sm mr-2 border-gray-400 hover:border-gray-500 cursor-pointer" v-model="query.academicyear">
+                        <option value="2023-2024">A.Y. 2023-24</option>
+                        <option value="2024-2025">A.Y. 2024-25</option>
+                        <option value="2025-2026">A.Y. 2025-26</option>
+                        <option value="2026-2027">A.Y. 2026-27</option>
+                        <option value="2027-2028">A.Y. 2027-28</option>
+                        <option value="2028-2029">A.Y. 2028-29</option>
+                        <option value="2029-2030">A.Y. 2029-30</option>
+                    </select>
+                    <div v-show="$page.props.auth.user.role == 'Super Admin'">
+                        <dropdown-option position="right">
+                            <template v-slot:button>
+                                <button class="h-10 select-none whitespace-nowrap border border-gray-400 hover:border-gray-500 cursor-pointer rounded px-3">
+                                    <i class="fas fa-cog mr-1"></i><i class="fas fa-caret-down"></i>
+                                </button>
+                            </template>
+                            <template v-slot:options>
+                                <div class="w-40 text-center py-5">
+                                    <button @click="setAcadYear" class="whitespace-nowrap text-sm bg-blue-500 text-white hover:bg-blue-600 rounded px-2 h-8">Set Default Year</button>
+                                </div>
+                            </template>
+                        </dropdown-option>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="mx-3 md:mx-8 mt-5 flex flex-col lg:flex-row justify-between">
@@ -179,6 +185,11 @@
             </div>
         </div>
     </div>
+    <div class="mx-3 md:mx-8 my-12">
+        <div class="h-0.5 w-full bg-stone-200">
+
+        </div>
+    </div>
     <div class="mx-3 md:mx-8 mt-12 flex flex-col lg:flex-row lg:items-center justify-between border border-gray-300 bg-white p-3 rounded">
         <div class=" font-bold uppercase text-gray-700">
             <span v-show="$page.props.auth.user.role != 'Education Supervisor'">Overall </span>Summary of Programs monitored
@@ -222,72 +233,51 @@
                                 <div class="text-blue-500">4th Quarter</div>
                             </div>
                         </div>
-                        <div class="mt-0 lg:mt-3">
+                        <div class="flex flex-col lg:flex-row mt-0 lg:mt-3">
+                            <div class="bg-white border border-gray-300 rounded p-5 mt-2 lg:mt-0 mr-5 w-full">
+                                <div class="text-lg font-bold">{{ evaluatedTotal }}</div>
+                                <div class="text-blue-500">Total</div>
+                            </div>
+                            <div class="bg-white border border-gray-300 rounded p-5 mt-2 lg:mt-0 w-full">
+                                <div v-if="performance()" class="font-bold">{{ performance() }}</div>
+                                <div v-else class="font-bold">-</div>
+                                <div class="text-blue-500">Monitoring Performance</div>
+                            </div>
+                        </div>
+                        <!-- <div class="mt-0 lg:mt-3">
                             <div class="bg-white border border-gray-300 rounded p-5 mt-2 lg:mt-0 w-full">
                                 <div class="text-lg font-bold">{{ evaluatedTotal }}</div>
                                 <div class="text-blue-500">Total</div>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
-                <div class="flex items-center text-center w-full px-10 lg:px-24 mt-8 lg:mt-0">
+                <div class="flex items-center text-center w-full mt-8 lg:mt-0">
                     <div v-if="evaluatedTotal == 0" class="w-full text-center">No data to display</div>
-                    <pie-chart v-else :dataItem="[quarter1, quarter2, quarter3, quarter4]" :color="['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']" :labels="['Q1', 'Q2', 'Q3', 'Q4']"></pie-chart>
+                    <pie-chart
+                    v-else :dataItem="[quarter1, quarter2, quarter3, quarter4]" :color="['#36A2EB', '#4BC0C0', '#FFCE56', '#FF6384']" :labels="['Q1', 'Q2', 'Q3', 'Q4']" :tooltip="[byQuarterData(quarter1, '1st'), byQuarterData(quarter2, '2nd'), byQuarterData(quarter3, '3rd'), byQuarterData(quarter4, '4th')]" :filter="heiName != null ? 'HEI' : programName != null ? 'Program' : 'Overall'">
+
+                    </pie-chart>
+                </div>
+            </div>
+            <div class="p-5" v-show="evaluatedTotal != 0">
+                <div class="p-3 border rounded bg-blue-100 text-sm">
+                    <p v-html="monitoredPercentage($page.props.auth.user.role, monitored, totalPrograms, filters.year, isCurrentYear)">
+
+                    </p>
                 </div>
             </div>
         </div>
     </div>
     
+    
     <charts-container :hasData="true" title="Programs Monitored Analysis" :note="displayAnalyticsData ? 'The line graph compares the number of programs monitored in each quarter during '+analyticsLabel[0]+ ', ' +analyticsLabel[1]+ ', and '+analyticsLabel[2]+'.' : null ">
         <template v-slot:data>
-            <div v-show="displayAnalyticsData" class="w-full flex flex-col lg:flex-row items-center justify-center mb-5">
-                <div class="w-full lg:w-1/5 flex flex-col mx-3 p-2 rounded lg:mt-0 mt-5 border border-gray-300 lg:border-none">
-                    <div class="text-lg font-bold">{{ averageResult(0) }}</div>
-                    <div class="text-gray-600">1st Quarter Average</div>
-                    <div v-if="change(0) == 'No data'">
-                        -
-                    </div>
-                    <div v-else :class="[{'text-green-500': performance(0) == 'Inclined'}, {'text-red-500': performance(0) == 'Declined'}]">
-                        <i class="fas" :class="[{'fa-arrow-circle-up mr-2': performance(0) == 'Inclined'}, {'fa-arrow-circle-down': performance(0) == 'Declined'}]"></i>
-                        {{ change(0) }}%
-                    </div>
-                </div>
-                <div class="w-full lg:w-1/5 flex flex-col mx-3 p-2 rounded lg:mt-0 mt-5 border border-gray-300 lg:border-none">
-                    <div class="text-lg font-bold">{{ averageResult(1) }}</div>
-                    <div class="text-gray-600">2nd Quarter Average</div>
-                    <div v-if="change(1) == 'No data'">
-                        -
-                    </div>
-                    <div v-else :class="[{'text-green-500': performance(1) == 'Inclined'}, {'text-red-500': performance(1) == 'Declined'}]">
-                        <i class="fas" :class="[{'fa-arrow-circle-up mr-2': performance(1) == 'Inclined'}, {'fa-arrow-circle-down': performance(1) == 'Declined'}]"></i>
-                        {{ change(1) }}%
-                    </div>
-                </div>
-                <div class="w-full lg:w-1/5 flex flex-col mx-3 p-2 rounded lg:mt-0 mt-5 border border-gray-300 lg:border-none">
-                    <div class="text-lg font-bold">{{ averageResult(2) }}</div>
-                    <div class="text-gray-600">3rd Quarter Average</div>
-                    <div v-if="change(2) == 'No data'">
-                        -
-                    </div>
-                    <div v-else :class="[{'text-green-500': performance(2) == 'Inclined'}, {'text-red-500': performance(2) == 'Declined'}]">
-                        <i class="fas" :class="[{'fa-arrow-circle-up mr-2': performance(2) == 'Inclined'}, {'fa-arrow-circle-down': performance(2) == 'Declined'}]"></i>
-                        {{ change(2) }}%
-                    </div>
-                </div>
-                <div class="w-full lg:w-1/5 flex flex-col mx-3 p-2 rounded lg:mt-0 mt-5 border border-gray-300 lg:border-none">
-                    <div class="text-lg font-bold">{{ averageResult(3) }}</div>
-                    <div class="text-gray-600">4th Quarter Average</div>
-                    <div v-if="change(3) == 'No data'">
-                        -
-                    </div>
-                    <div v-else :class="[{'text-green-500': performance(3) == 'Inclined'}, {'text-red-500': performance(3) == 'Declined'}]">
-                        <i class="fas" :class="[{'fa-arrow-circle-up mr-2': performance(3) == 'Inclined'}, {'fa-arrow-circle-down': performance(3) == 'Declined'}]"></i>
-                        {{ change(3) }}%
-                    </div>
-                </div>
+            <div v-show="displayAnalyticsData" class="my-3 p-3 rounded border bg-blue-100 text-sm text-left">
+                 {{ conclusion }}
             </div>
         </template>
         <template v-slot:chart>
-            <analytics-line-chart v-if="displayAnalyticsData" :thisYear="props.thisYear" :lastYear="props.lastYear" :twoYearsAgo="props.twoYearsAgo" :labels="analyticsLabel"></analytics-line-chart>
+            <analytics-line-chart v-if="displayAnalyticsData" :thisYear="props.thisYear" :lastYear="props.lastYear" :twoYearsAgo="props.twoYearsAgo" :labels="analyticsLabel" :filter="heiName != null ? 'HEI' : programName != null ? 'Program' : 'Overall'" :growthRate="quarterlyGrowth" :isCurrentYear="isCurrentYear" :currentQuarter="currentQuarter"></analytics-line-chart>
             <div v-else class="py-10">
                 No data to display
             </div>
@@ -297,18 +287,12 @@
     <charts-container :hasData="true" :title="'Programs Monitored by Month ('+filters.year+')'" :note="evaluatedTotal != 0 ? 'The bar graph compares the number of programs monitored in each month.': null">
         <template v-slot:data>
             <div v-show="evaluatedTotal != 0 && isCurrentYear" class="w-full flex flex-col lg:flex-row items-center justify-center mb-5">
-                <div class="w-full lg:w-1/5 flex flex-col mx-3 p-2 rounded lg:mt-0 mt-5 border border-gray-300 lg:border-none">
+                <div class="w-full lg:w-1/5 flex flex-col mx-3 p-3 rounded lg:mt-0 mt-5 border border-gray-300">
                     <div class="text-lg font-bold">{{ monthlyAverageResult() }}</div>
-                    <div class="text-gray-600">Monthly Average</div>
-                    <div class="text-gray-600 invisible">***</div>
-                </div>
-                <div class="w-full lg:w-1/5 flex flex-col mx-3 p-2 rounded lg:mt-0 mt-5 border border-gray-300 lg:border-none">
+                    <div class="text-blue-500">Monthly Average</div>                </div>
+                <div class="w-full lg:w-1/5 flex flex-col mx-3 p-3 rounded lg:mt-0 mt-5 border border-gray-300">
                     <div class="text-lg font-bold">{{ byMonthData[monthIndex] }}</div>
-                    <div class="text-gray-600">This Month</div>
-                    <div :class="[{'text-green-500': performanceByMonth() == 'Inclined'}, {'text-red-500': performanceByMonth() == 'Declined'}]">
-                        <i class="fas" :class="[{'fa-arrow-circle-up mr-2': performanceByMonth() == 'Inclined'}, {'fa-arrow-circle-down': performanceByMonth() == 'Declined'}]"></i>
-                        {{ changeByMonth() }}%
-                    </div>
+                    <div class="text-blue-500">This Month</div>
                 </div>
             </div>
         </template>
@@ -318,6 +302,11 @@
         </template>
     </charts-container>
 
+    <div v-show="$page.props.auth.user.role != 'Education Supervisor'" class="mx-3 md:mx-8 my-12">
+        <div class="h-0.5 w-full bg-stone-200">
+
+        </div>
+    </div>
     <div v-show="$page.props.auth.user.role != 'Education Supervisor'" class="mx-3 md:mx-8 mt-12 flex flex-col lg:flex-row justify-between border border-gray-300 bg-white p-3 rounded">
         <div class=" font-bold uppercase text-gray-700">
             Overview
@@ -426,13 +415,14 @@ const props = defineProps([
     'isCurrentYear',
     'analyticsLabel',
     'displayAnalyticsData',
+    'totalPrograms',
+    'currentQuarter',
+    'programTotal',
 ]);
 
 
-const averageResult = (index) => {
-  const average = (props.thisYear[index] + props.lastYear[index] + props.twoYearsAgo[index]) / 3;
-  return average.toFixed(0);
-};
+//============================================================================
+// Monthly
 
 const monthlyAverageResult = () => {
     let total = 0;
@@ -444,56 +434,227 @@ const monthlyAverageResult = () => {
     return monthly_average.toFixed(0);
 };
 
-const averageLastTwoYears = (index) => {
-  return (props.lastYear[index] + props.twoYearsAgo[index]) / 2;
-};
 
-const averageLastMonths = () => {
+//===========================================================================
+// Quarterly
 
-    let total = 0;
-    let monthly_average = 0;
-    for (var i = 0; i < props.monthIndex; i++) {
-        total = total + props.byMonthData[i];
+const byQuarterData = (quarterData, quarter) => {
+    let arr = [];
+    let programName = props.programName != null ? props.programName : '';
+    let percentage = quarterData / props.evaluatedTotal * 100;
+    let heiName = props.heiName != null ? props.heiName : '';
+
+    arr.push(quarter);
+    arr.push(props.filters.year);
+    arr.push(quarterData);
+    arr.push(props.evaluatedTotal);
+    arr.push(percentage.toFixed(2));
+    arr.push(heiName);
+    arr.push(programName);
+    arr.push(byQuarterPercentage(quarterData));
+    arr.push(props.totalPrograms);
+    return arr;
+}
+
+const byQuarterPercentage = (quarterData) => {
+    let percentage = 0;
+
+    if (quarterData) {
+        percentage = (quarterData / props.totalPrograms) * 100;
+        return percentage.toFixed(2);
+    } else {
+        percentage = null;
+        return percentage;
     }
-    monthly_average = total / (props.monthIndex);
-    return monthly_average;
-};
+}
 
-const change = (index) => {
-    const thisYearValue = props.thisYear[index];
-    const lastTwoYearsAverage = averageLastTwoYears(index);
-    const difference = thisYearValue - lastTwoYearsAverage;
+const performance = () => {
+    let percentage = 0;
 
-    if (lastTwoYearsAverage == 0) {
-        return "No data";
+    if (props.program || props.hei) {
+        percentage = (props.evaluatedTotal / props.programTotal) * 100;
+    } else {
+        percentage = (props.evaluatedTotal / props.totalPrograms) * 100;
+    }
+
+    if (percentage <= 20) {
+        return "Very Low";
+    } else if (percentage > 20 && percentage <= 40) {
+        return "Low";
+    } else if (percentage > 40 && percentage <= 60) {
+        return "Moderate";
+    } else if (percentage > 60 && percentage <= 80) {
+        return "High";
+    } else if (percentage > 80) {
+        return "Very High";
+    }
+}
+
+const monitoredPercentage = (role) => {
+
+    let description = "";
+    let percentage = 0;
+    let performance = "";
+
+    let threshold = props.currentQuarter == 1 ? 25 : props.currentQuarter == 2 ? 50 : props.currentQuarter == 3 ? 75 : props.currentQuarter == 4 ? 100 : null;
+
+    if (props.program || props.hei) {
+        percentage = (props.evaluatedTotal / props.programTotal) * 100;
+    } else {
+        percentage = (props.evaluatedTotal / props.totalPrograms) * 100;
+    }
+
+    let percentageFloat = parseFloat(percentage);
+    let excess = percentageFloat - 100;
+
+    let progOrHei = props.programName ? " in " + props.programName : props.heiName ? " in " + props.heiName : "";
+    let advice = "";
+    
+    if (percentage <= 20) {
+        performance = "This indicates <b class='text-red-500'>very low monitoring performance</b>, which means that only a small fraction of programs are monitored. ";
+        advice = "Immediate intervention is needed to significantly increase the monitoring rate and address the large gap in performance.";
+    } else if (percentage > 20 && percentage <= 40) {
+        performance = "This indicates <b class='text-red-500'>low monitoring performance</b>, which means that less than half of the programs" + progOrHei + " are monitored. ";
+        advice = "Immediate action is necessary to improve the monitoring rate and bring it closer to the expected threshold."
+    } else if (percentage > 40 && percentage <= 60) {
+        performance = "This indicates <b class='text-green-600'>moderate monitoring performance</b>, which means that about half of the programs are monitored. ";
+        advice = "Continued effort is required to reach the target."
+    } else if (percentage > 60 && percentage <= 80) {
+        performance = "This indicates <b class='text-blue-500'>high monitoring performance</b>, which means that the majority of programs are monitored. ";
+        advice = "Continued effort is essential to maintain momentum and meet the full target.";
+    } else if (percentage > 80 && percentage <= 100) {
+        performance = "This indicates <b class='text-blue-500'>very high monitoring performance</b>, which means that (nearly) all programs are monitored. ";
+        advice = "Maintain the current level of performance with continued diligence.";
+    } else if (percentage > 100) {
+        performance = "This <b class='text-blue-500'>very high performance</b> indicates that not only were all programs monitored" + progOrHei + ", but there was also an additional " + excess.toFixed(2) + "% of coverage beyond the total number of programs. ";
+        advice = "Maintain the current level of performance with continued diligence.";
     }
     
+
+    let currentQuarter = props.currentQuarter == 1 ? "Q1" : props.currentQuarter == 2 ? "Q2" : props.currentQuarter == 3 ? "Q3" : props.currentQuarter == 4 ? "Q4" : null;
+
     
-    const percentageChange = (difference / lastTwoYearsAverage) * 100;
+        if (props.program) {
+            if (props.isCurrentYear) {
+                description = "As of " + currentQuarter + " " + props.filters.year + ", " + props.evaluatedTotal + " programs were monitored, which is " + percentage.toFixed(2) + "% of the " + props.programTotal + " programs available" + progOrHei + ". " + performance + advice;
+            } else {
+                description = "In " + props.filters.year + ", " + props.evaluatedTotal + " "+ props.programName +" programs were monitored, which is " + percentage.toFixed(2) + "% of the " + props.programTotal + " programs available. " + performance;
+            }
+        } else if (props.hei) {
+            if (props.isCurrentYear) {
+                description = "As of " + currentQuarter + " " + props.filters.year + ", " + props.evaluatedTotal + " programs were monitored, which is " + percentage.toFixed(2) + "% of the " + props.programTotal + " programs available" + progOrHei + ". " + performance + advice;
+            } else {
+                description = "In " + props.filters.year + ", " + props.evaluatedTotal + " programs in the "+ props.heiName +" were monitored, which is " + percentage.toFixed(2) + "% of the " + props.programTotal + " programs available. " + performance;
+            }
+        } else {
+            if (props.isCurrentYear) {
+                description = "As of " + currentQuarter + " " + props.filters.year + ", " + props.evaluatedTotal + " programs were monitored, which is " + percentage.toFixed(2) + "% of the " + props.totalPrograms + " programs available. " + performance + advice;
+                
+            } else {
+                description = "In " + props.filters.year + ", " + props.evaluatedTotal + " programs were monitored, which is " + percentage.toFixed(2) + "% of the " + props.totalPrograms + " programs available. " + performance;
+            }
+        }
+
+    return description;
     
-    return percentageChange.toFixed(2);
-};
+}
 
-const performance = (index) => {
-  const thisYearValue = props.thisYear[index];
-  const lastTwoYearsAverage = averageLastTwoYears(index);
-  return thisYearValue > lastTwoYearsAverage ? 'Inclined' : 'Declined';
-};
+//============================================================================================================
+// Analytics (Line Graph)
 
-const changeByMonth = () => {
-  const thisMonthValue = props.byMonthData[props.monthIndex];
-  const lastMonthsAverage = averageLastMonths();
-  const difference = thisMonthValue - lastMonthsAverage;
-  const percentageChange = (difference / lastMonthsAverage) * 100;
-  return percentageChange.toFixed(2);
-};
+const getQuarterlyGrowth = (index, data) => {
 
-const performanceByMonth = () => {
-  const thisMonthValue = props.byMonthData[props.monthIndex];
-  const lastMonthsAverage = averageLastMonths();
-  return thisMonthValue > lastMonthsAverage ? 'Inclined' : 'Declined';
-};
+    if (index == 0 || data[index] == 0 || data[index-1] == 0) {
+        return 0;
+    }
+    
+    let current = data[index];
+    let previous = data[index - 1];
+    
+    let rate = ((current - previous) / previous) * 100;
 
+    return rate.toFixed(2);
+
+}
+
+// Reactive Data: Cumulative totals and quarterly growth for each year
+const cumulativeTotals = ref({
+  twoYearsAgo: props.twoYearsAgo[0] + props.twoYearsAgo[1] + props.twoYearsAgo[2] + props.twoYearsAgo[3],
+  lastYear: props.lastYear[0] + props.lastYear[1] + props.lastYear[2] + props.lastYear[3],
+  thisYear: props.thisYear[0] + props.thisYear[1] + props.thisYear[2] + props.thisYear[3],
+});
+
+const quarterlyGrowth = ref({
+  twoYearsAgo: [0, parseFloat(getQuarterlyGrowth(1, props.twoYearsAgo)), parseFloat(getQuarterlyGrowth(2, props.twoYearsAgo)), parseFloat(getQuarterlyGrowth(3, props.twoYearsAgo))],
+  lastYear: [0, parseFloat(getQuarterlyGrowth(1, props.lastYear)), parseFloat(getQuarterlyGrowth(2, props.lastYear)), parseFloat(getQuarterlyGrowth(3, props.lastYear))],
+  thisYear: [0, parseFloat(getQuarterlyGrowth(1, props.thisYear)), parseFloat(getQuarterlyGrowth(2, props.thisYear)), parseFloat(getQuarterlyGrowth(3, props.thisYear))],
+});
+
+
+// Computed Conclusion based on the data
+const conclusion = computed(() => {
+  let conclusion = "";
+
+    // Cumulative Totals comparison
+    
+    if (cumulativeTotals.value['thisYear'] > cumulativeTotals.value['lastYear'] && cumulativeTotals.value['thisYear'] > cumulativeTotals.value['twoYearsAgo']) {
+        // Highest cumulative growth
+        conclusion = props.filters.year + " has shown the highest overall cumulative growth compared to previous years.";
+    } else if (cumulativeTotals.value['thisYear'] < cumulativeTotals.value['lastYear'] && cumulativeTotals.value['thisYear'] < cumulativeTotals.value['twoYearsAgo']) {
+        // Lowest cumulative growth
+        conclusion = props.filters.year + " has the lowest overall cumulative growth compared to previous years, indicating a decline.";
+    } else {
+        // Moderate cumulative growth
+        conclusion = props.filters.year + "'s cumulative growth is moderate compared to previous years.";
+    }
+
+
+    // New condition: Check for steady or volatile growth
+
+    if (quarterlyGrowth.value['thisYear'].every(q => q > 0)) {
+        // If all quarters have positive growth
+        conclusion += " Additionally, the growth in " + props.filters.year + " was steady, indicating a consistent upward trend.";
+    } else if (quarterlyGrowth.value['thisYear'].some(q => q < 0) && quarterlyGrowth.value['thisYear'].some(q => q > 0)) {
+        // Mixed growth (some quarters positive, some negative)
+        conclusion += " However, " + props.filters.year + " experienced a mix of growth and decline, indicating some volatility in program monitoring.";
+    } else if (quarterlyGrowth.value['thisYear'].every(q => q < 0)) {
+        // All quarters have negative growth
+        conclusion += " Unfortunately, " + props.filters.year + " faced consistent declines throughout the year.";
+    }
+
+
+
+
+    // Additional quarter-specific analysis (e.g., if Q3 was particularly strong or weak)
+    if ((props.currentQuarter > 2 && props.isCurrentYear) || (!props.isCurrentYear)) {
+        if (quarterlyGrowth.value['thisYear'][2] > quarterlyGrowth.value['thisYear'][1]) {
+            // Q3 stronger than Q2
+            conclusion += " The third quarter of " + props.filters.year + " showed significant improvement compared to the second quarter.";
+        } else if (quarterlyGrowth.value['thisYear'][2] < quarterlyGrowth.value['thisYear'][1]) {
+            // Q3 weaker than Q2
+            conclusion += " The third quarter of " + props.filters.year + " saw a decline in performance compared to the second quarter.";
+        } else if (quarterlyGrowth.value['thisYear'][2] == quarterlyGrowth.value['thisYear'][1]) {
+            // Q3 balanced with Q2
+            conclusion += " The third quarter of " + props.filters.year + " remained consistent with the second quarter, showing no significant change in performance.";
+        }
+    }
+    
+    // Check if Q4 shows recovery or decline
+
+    if ((props.currentQuarter > 3 && props.isCurrentYear) || (!props.isCurrentYear)) {
+        if (props.thisYear[3] > props.thisYear[4]) {
+        conclusion += " However, there was a recovery in the fourth quarter, showing signs of improvement.";
+        } else {
+            conclusion += " Unfortunately, the fourth quarter also showed signs of decline, suggesting challenges in maintaining growth.";
+        }
+    }
+
+    return conclusion;
+    
+});
+
+
+//======================================================================================================
 
 
 const query = useForm({

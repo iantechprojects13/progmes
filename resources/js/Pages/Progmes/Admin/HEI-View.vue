@@ -26,7 +26,7 @@
                                 Name</th>
                             <td class="px-3 py-2 border border-gray-400">{{ institution.name }}</td>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                             <th class="text-right align-top w-1/5 px-3 py-2 border border-gray-400">Programs</th>
                             <td class="px-3 py-2 border border-gray-400">
                                 <div>
@@ -34,8 +34,41 @@
                                         <li v-if="institution.active_program.length == 0">
                                             Empty
                                         </li>
-                                        <li v-else v-for="(program, index) in institution.active_program" :key="program.id">
-                                            {{index+1}}. {{ program.program.program }}
+                                        <li v-else v-for="program in institution.active_program" :key="program.id">
+                                            {{ program.program.program }}
+                                            <span v-if="program.program?.major != null">
+                                                - {{ program.program?.major }}
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr> -->
+                        
+                    </tbody>
+                </table>
+                <div class="mt-8 mb-3 text-lg font-bold">
+                    Program List
+                </div>
+                <!-- <table class="w-full">
+                    <thead>
+                        <tr class="text-left">
+                            <th class="p-3 bg-stone-200">Program</th>
+                            <th class="p-3 bg-stone-200 text-right">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="p-3">
+                                <div>
+                                    <ul>
+                                        <li v-if="institution.active_program.length == 0">
+                                            Empty
+                                        </li>
+                                        <li v-else v-for="program in institution.active_program" :key="program.id">
+                                            {{ program.program.program }}
                                             <span v-if="program.program?.major != null">
                                                 - {{ program.program?.major }}
                                             </span>
@@ -45,7 +78,27 @@
                             </td>
                         </tr>
                     </tbody>
-                </table>
+                </table> -->
+                <content-table>
+                    <template v-slot:table-head>
+                        <th class="p-2 pl-3">Program</th>
+                    </template>
+                    <template v-slot:table-body>
+                        <tr v-if="institution.active_program.length == 0">
+                            <td colspan="2" class="py-10 items-center text-center">
+                                No data found
+                            </td>
+                        </tr>
+                        <tr v-else v-for="(program, index) in institution.active_program" :key="program.id">
+                            <td class="p-2 pl-3" :class="{'bg-gray-100': index % 2 == 1}">
+                                {{ program.program.program }}
+                                <span v-if="program.program?.major != null">
+                                    - {{ program.program?.major }}
+                                </span>
+                            </td>
+                        </tr>
+                    </template>
+                </content-table>
             </div>
         </template>
     </content-container>

@@ -30,7 +30,6 @@
                 chartOptions: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    indexAxis: this.orientation,
                     legends: false,
                     label: true,
                     scales: {
@@ -68,7 +67,6 @@
             'dataItem',
             'labels',
             'color',
-            'orientation',
         ],
     }
 </script>
