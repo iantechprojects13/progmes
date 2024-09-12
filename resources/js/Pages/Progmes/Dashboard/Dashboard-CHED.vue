@@ -241,15 +241,9 @@
                             <div class="bg-white border border-gray-300 rounded p-5 mt-2 lg:mt-0 w-full">
                                 <div v-if="performance()" class="font-bold">{{ performance() }}</div>
                                 <div v-else class="font-bold">-</div>
-                                <div class="text-blue-500">Monitoring Performance</div>
+                                <div class="text-blue-500">Monitoring Performance <i @click="toggleScaleModal" class="fas fa-question-circle cursor-pointer" title="Show Performance Criteria"></i></div>
                             </div>
                         </div>
-                        <!-- <div class="mt-0 lg:mt-3">
-                            <div class="bg-white border border-gray-300 rounded p-5 mt-2 lg:mt-0 w-full">
-                                <div class="text-lg font-bold">{{ evaluatedTotal }}</div>
-                                <div class="text-blue-500">Total</div>
-                            </div>
-                        </div> -->
                     </div>
                 <div class="flex items-center text-center w-full mt-8 lg:mt-0">
                     <div v-if="evaluatedTotal == 0" class="w-full text-center">No data to display</div>
@@ -370,6 +364,43 @@
             </div>
         </div>
     </div>
+
+    <modal :showModal="showScaleModal" @close="toggleScaleModal" width="sm" height="long" title="Monitoring Performance Scale">
+        <div>
+            <div class="flex flex-col">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b">
+                            <th class="p-2">Percentage Range</th>
+                            <th class="p-2">Performance Level</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b">
+                            <td class="p-2">0% - 20%</td>
+                            <td class="p-2 text-red-500">Very Low</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-2">21% - 40%</td>
+                            <td class="p-2 text-red-500">Low</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-2">41% - 60%</td>
+                            <td class="p-2 text-green-600">Moderate</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-2">61% - 80%</td>
+                            <td class="p-2 text-blue-500">High</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-2">81% - 100% or above</td>
+                            <td class="p-2 text-blue-500">Very High</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </modal>
     
 
     <Notification :message="$page.props.flash.success" type="success"/>
@@ -417,8 +448,65 @@ const props = defineProps([
     'displayAnalyticsData',
     'totalPrograms',
     'currentQuarter',
-    'programTotal',
 ]);
+
+const showScaleModal = ref(false);
+
+const query = useForm({
+    academicyear: ref(props.academicyear),
+    filter: ref(props.filters.filter) != null ? ref(props.filters.filter) : null,
+    hei: ref(props.hei) != null ? ref(props.hei) : null,
+    program: ref(props.program) != null ? ref(props.program) : null,
+    year: ref(props.filters.year) != null ? ref(props.filters.year) : null,
+});
+
+function toggleScaleModal() {
+    showScaleModal.value = !showScaleModal.value;
+}
+
+function submit() {
+    query.get("/ched/dashboard", {
+        preserveState: false,
+        preserveScroll: true,
+        replace: true,
+    });
+}
+
+function selectAll() {
+    if (query.filter == null) {
+        query.hei = null;
+        query.program = null;
+        query.get("/ched/dashboard", {
+            preserveState: false,
+            preserveScroll: true,
+            replace: true,
+        });
+    }
+}
+
+function selectHEI() {
+    query.program = null;
+    query.get("/ched/dashboard", {
+        preserveState: false,
+        preserveScroll: true,
+        replace: true,
+    });
+}
+
+function selectProgram() {
+    query.hei = null;
+    query.get("/ched/dashboard", {
+        preserveState: false,
+        preserveScroll: true,
+        replace: true,
+    });
+}
+
+function setAcadYear() {
+    router.post('/set-academic-year', [props.academicyear]);
+}
+
+
 
 
 //============================================================================
@@ -471,11 +559,7 @@ const byQuarterPercentage = (quarterData) => {
 const performance = () => {
     let percentage = 0;
 
-    if (props.program || props.hei) {
-        percentage = (props.evaluatedTotal / props.programTotal) * 100;
-    } else {
-        percentage = (props.evaluatedTotal / props.totalPrograms) * 100;
-    }
+    percentage = (props.evaluatedTotal / props.totalPrograms) * 100;
 
     if (percentage <= 20) {
         return "Very Low";
@@ -492,68 +576,106 @@ const performance = () => {
 
 const monitoredPercentage = (role) => {
 
-    let description = "";
+    let progOrHei = props.programName ? " in " + props.programName : props.heiName ? " in " + props.heiName : "";
     let percentage = 0;
     let performance = "";
-
+    let advice = "";
+    let description = "";
+    let currentQuarter = props.currentQuarter == 1 ? "Q1" : props.currentQuarter == 2 ? "Q2" : props.currentQuarter == 3 ? "Q3" : props.currentQuarter == 4 ? "Q4" : null;
     let threshold = props.currentQuarter == 1 ? 25 : props.currentQuarter == 2 ? 50 : props.currentQuarter == 3 ? 75 : props.currentQuarter == 4 ? 100 : null;
+    let targetThreshold = 0;
+    let thresholdPercentage = threshold / 100;
+    let overallPercentage = 0; 
 
-    if (props.program || props.hei) {
-        percentage = (props.evaluatedTotal / props.programTotal) * 100;
-    } else {
-        percentage = (props.evaluatedTotal / props.totalPrograms) * 100;
+
+    percentage = (props.evaluatedTotal / props.totalPrograms) * 100;
+    
+    
+    if (props.isCurrentYear) {
+        percentage = (percentage / threshold) * 100;
+        
+        targetThreshold = props.totalPrograms * thresholdPercentage;
+        overallPercentage = ((props.evaluatedTotal / props.totalPrograms) * 100).toFixed(2);
     }
+    
+
 
     let percentageFloat = parseFloat(percentage);
     let excess = percentageFloat - 100;
 
-    let progOrHei = props.programName ? " in " + props.programName : props.heiName ? " in " + props.heiName : "";
-    let advice = "";
     
-    if (percentage <= 20) {
-        performance = "This indicates <b class='text-red-500'>very low monitoring performance</b>, which means that only a small fraction of programs are monitored. ";
-        advice = "Immediate intervention is needed to significantly increase the monitoring rate and address the large gap in performance.";
-    } else if (percentage > 20 && percentage <= 40) {
-        performance = "This indicates <b class='text-red-500'>low monitoring performance</b>, which means that less than half of the programs" + progOrHei + " are monitored. ";
-        advice = "Immediate action is necessary to improve the monitoring rate and bring it closer to the expected threshold."
-    } else if (percentage > 40 && percentage <= 60) {
-        performance = "This indicates <b class='text-green-600'>moderate monitoring performance</b>, which means that about half of the programs are monitored. ";
-        advice = "Continued effort is required to reach the target."
-    } else if (percentage > 60 && percentage <= 80) {
-        performance = "This indicates <b class='text-blue-500'>high monitoring performance</b>, which means that the majority of programs are monitored. ";
-        advice = "Continued effort is essential to maintain momentum and meet the full target.";
-    } else if (percentage > 80 && percentage <= 100) {
-        performance = "This indicates <b class='text-blue-500'>very high monitoring performance</b>, which means that (nearly) all programs are monitored. ";
-        advice = "Maintain the current level of performance with continued diligence.";
-    } else if (percentage > 100) {
-        performance = "This <b class='text-blue-500'>very high performance</b> indicates that not only were all programs monitored" + progOrHei + ", but there was also an additional " + excess.toFixed(2) + "% of coverage beyond the total number of programs. ";
-        advice = "Maintain the current level of performance with continued diligence.";
+
+    
+
+    console.log("Evaluated total: " + props.evaluatedTotal);
+    console.log("Total programs: " + props.totalPrograms);
+    console.log("Percentage overall: " + ((props.evaluatedTotal / props.totalPrograms)*100).toFixed(2));
+    console.log("Threshold: " + thresholdPercentage);
+    console.log("Threshold programs: " + (props.totalPrograms * thresholdPercentage).toFixed(0));
+    console.log("Threshold percentage: " + ((props.evaluatedTotal / (props.totalPrograms * thresholdPercentage))*100).toFixed(2));
+    
+
+    
+
+
+    if (!props.isCurrentYear) {
+        if (percentage <= 20) {
+            performance = "This indicates <b class='text-red-500'>very low monitoring performance</b>, which means that only a small fraction of programs are monitored. ";
+        } else if (percentage > 20 && percentage <= 40) {
+            performance = "This indicates <b class='text-red-500'>low monitoring performance</b>, which means that less than half of the programs" + progOrHei + " are monitored. ";
+        } else if (percentage > 40 && percentage <= 60) {
+            performance = "This indicates <b class='text-green-600'>moderate monitoring performance</b>, which means that about half of the programs are monitored. ";
+        } else if (percentage > 60 && percentage <= 80) {
+            performance = "This indicates <b class='text-blue-500'>high monitoring performance</b>, which means that the majority of programs are monitored. ";
+        } else if (percentage > 80 && percentage <= 100) {
+            performance = "This indicates <b class='text-blue-500'>very high monitoring performance</b>, which means that (nearly) all programs are monitored. ";
+        } else if (percentage > 100) {
+            performance = "This <b class='text-blue-500'>very high monitoring performance</b> indicates that not only were all programs monitored" + progOrHei + ", but there was also an additional " + excess.toFixed(2) + "% of coverage beyond the total number of programs. ";
+        }  
+    } else {
+        if (percentage <= 20) {
+            performance = "This indicates <b class='text-red-500'>very low monitoring performance</b>, which means that only a small fraction of programs are monitored. ";
+            advice = "Immediate intervention is needed to significantly increase the monitoring rate and address the large gap in performance.";
+        } else if (percentage > 20 && percentage <= 40) {
+            performance = "This indicates <b class='text-red-500'>low monitoring performance</b>, which means that less than half of the programs" + progOrHei + " are monitored. ";
+            advice = "Immediate action is necessary to improve the monitoring rate and bring it closer to the expected threshold."
+        } else if (percentage > 40 && percentage <= 60) {
+            performance = "This indicates <b class='text-green-600'>moderate monitoring performance</b>, which means that about half of the programs are monitored. ";
+            advice = "Continued effort is required to reach the target."
+        } else if (percentage > 60 && percentage <= 80) {
+            performance = "This indicates <b class='text-blue-500'>high monitoring performance</b>, which means that the majority of programs are monitored. ";
+            advice = "Continued effort is essential to maintain momentum and meet the full target.";
+        } else if (percentage > 80 && percentage <= 100) {
+            performance = "This indicates <b class='text-blue-500'>very high monitoring performance</b>, which means that (nearly) all programs are monitored. ";
+            advice = "Maintain the current level of performance with continued diligence.";
+        } else if (percentage > 100) {
+            performance = "This <b class='text-blue-500'>very high performance</b> indicates that not only were all programs monitored" + progOrHei + ", but there was also an additional " + excess.toFixed(2) + "% of coverage beyond the total number of programs. ";
+            advice = "Maintain the current level of performance with continued diligence.";
+        }  
     }
     
 
-    let currentQuarter = props.currentQuarter == 1 ? "Q1" : props.currentQuarter == 2 ? "Q2" : props.currentQuarter == 3 ? "Q3" : props.currentQuarter == 4 ? "Q4" : null;
 
     
-        if (props.program) {
-            if (props.isCurrentYear) {
-                description = "As of " + currentQuarter + " " + props.filters.year + ", " + props.evaluatedTotal + " programs were monitored, which is " + percentage.toFixed(2) + "% of the " + props.programTotal + " programs available" + progOrHei + ". " + performance + advice;
-            } else {
-                description = "In " + props.filters.year + ", " + props.evaluatedTotal + " "+ props.programName +" programs were monitored, which is " + percentage.toFixed(2) + "% of the " + props.programTotal + " programs available. " + performance;
-            }
-        } else if (props.hei) {
-            if (props.isCurrentYear) {
-                description = "As of " + currentQuarter + " " + props.filters.year + ", " + props.evaluatedTotal + " programs were monitored, which is " + percentage.toFixed(2) + "% of the " + props.programTotal + " programs available" + progOrHei + ". " + performance + advice;
-            } else {
-                description = "In " + props.filters.year + ", " + props.evaluatedTotal + " programs in the "+ props.heiName +" were monitored, which is " + percentage.toFixed(2) + "% of the " + props.programTotal + " programs available. " + performance;
-            }
+    if (props.program) {
+        if (props.isCurrentYear) {
+            description = "As of " + currentQuarter + " " + props.filters.year + ", " + props.evaluatedTotal + " programs were monitored " + progOrHei + ", which is " + percentage.toFixed(2) + "% of the target threshold ("+ targetThreshold.toFixed(0) + " programs) for " + currentQuarter + ". "+ performance + advice;
         } else {
-            if (props.isCurrentYear) {
-                description = "As of " + currentQuarter + " " + props.filters.year + ", " + props.evaluatedTotal + " programs were monitored, which is " + percentage.toFixed(2) + "% of the " + props.totalPrograms + " programs available. " + performance + advice;
-                
-            } else {
-                description = "In " + props.filters.year + ", " + props.evaluatedTotal + " programs were monitored, which is " + percentage.toFixed(2) + "% of the " + props.totalPrograms + " programs available. " + performance;
-            }
+            description = "In " + props.filters.year + ", " + props.evaluatedTotal + " "+ props.programName +" programs were monitored, which is " + percentage.toFixed(2) + "% of the " + props.totalPrograms + " programs available. " + performance;
         }
+    } else if (props.hei) {
+        if (props.isCurrentYear) {
+            description = "As of " + currentQuarter + " " + props.filters.year + ", " + props.evaluatedTotal + " programs were monitored " + progOrHei + ", which is " + percentage.toFixed(2) + "% of the target threshold ("+ targetThreshold.toFixed(0) + " programs) for " + currentQuarter + ". " + performance + advice;
+        } else {
+            description = "In " + props.filters.year + ", " + props.evaluatedTotal + " programs in the "+ props.heiName +" were monitored, which is " + percentage.toFixed(2) + "% of the " + props.totalPrograms + " programs available. " + performance;
+        }
+    } else {
+        if (props.isCurrentYear) {
+            description = "As of " + currentQuarter + " " + props.filters.year + ", " + props.evaluatedTotal + " programs were monitored, which is " + percentage.toFixed(2) + "% of the target threshold ("+ targetThreshold.toFixed(0) + " programs) for " + currentQuarter + ". "+ performance + advice;
+        } else {
+            description = "In " + props.filters.year + ", " + props.evaluatedTotal + " programs were monitored, which is " + percentage.toFixed(2) + "% of the " + props.totalPrograms + " programs available. " + performance;
+        }
+    }
 
     return description;
     
@@ -574,7 +696,6 @@ const getQuarterlyGrowth = (index, data) => {
     let rate = ((current - previous) / previous) * 100;
 
     return rate.toFixed(2);
-
 }
 
 // Reactive Data: Cumulative totals and quarterly growth for each year
@@ -653,60 +774,6 @@ const conclusion = computed(() => {
     
 });
 
-
-//======================================================================================================
-
-
-const query = useForm({
-    academicyear: ref(props.academicyear),
-    filter: ref(props.filters.filter) != null ? ref(props.filters.filter) : null,
-    hei: ref(props.hei) != null ? ref(props.hei) : null,
-    program: ref(props.program) != null ? ref(props.program) : null,
-    year: ref(props.filters.year) != null ? ref(props.filters.year) : null,
-});
-
-function submit() {
-    query.get("/ched/dashboard", {
-        preserveState: false,
-        preserveScroll: true,
-        replace: true,
-    });
-}
-
-function selectAll() {
-    if (query.filter == null) {
-        query.hei = null;
-        query.program = null;
-        query.get("/ched/dashboard", {
-            preserveState: false,
-            preserveScroll: true,
-            replace: true,
-        });
-    }
-}
-
-function selectHEI() {
-    query.program = null;
-    query.get("/ched/dashboard", {
-        preserveState: false,
-        preserveScroll: true,
-        replace: true,
-    });
-}
-
-function selectProgram() {
-    query.hei = null;
-    query.get("/ched/dashboard", {
-        preserveState: false,
-        preserveScroll: true,
-        replace: true,
-    });
-}
-
-function setAcadYear() {
-    router.post('/set-academic-year', [props.academicyear]);
-}
-
 </script>
 
 <script>
@@ -718,3 +785,32 @@ import Notification from '../Shared/Notification.vue';
         layout: Layout,
     }
 </script>
+
+<style scoped>
+.tooltipForScale {
+    position: relative;
+    cursor: pointer;
+}
+
+.tooltipForScale::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    right: 0px;
+    bottom: 45px;
+    font-size: 13px;
+    font-weight: normal;
+    width: fit-content;
+    height: fit-content;
+    white-space: nowrap;
+    background-color: #333;
+    color: #eee;
+    padding: 10px;
+    border-radius: 3px;
+    display: none;
+    z-index: 10000;
+}
+
+.tooltipForScale:hover::before {
+    display: block;
+}
+</style>

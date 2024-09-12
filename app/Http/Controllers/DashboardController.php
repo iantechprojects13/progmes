@@ -181,12 +181,20 @@ class DashboardController extends Controller
         ->get()
         ->count();
 
-        $programTotal = null;
 
         if ($program) {
-            $programTotal = InstitutionProgramModel::where('programId', $program)->count();
+            $totalPrograms = InstitutionProgramModel::where('programId', $program)->count();
         } else if ($institution) {
-            $programTotal = InstitutionProgramModel::where('institutionId', $institution)->count();
+            $totalPrograms = InstitutionProgramModel::where('institutionId', $institution)->count();
+        } else {
+            $totalPrograms = EvaluationFormModel::where('effectivity', 'like', '%' . $year . '%')
+            ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
+                $query->whereIn('disciplineId', $disciplineIds);
+            })
+            ->select('institutionProgramId')
+            ->distinct()
+            ->get()
+            ->count();
         }
 
 
@@ -236,7 +244,6 @@ class DashboardController extends Controller
             'displayAnalyticsData' => $year <= $currentYear ? true : false,
             'totalPrograms' => $totalPrograms,
             'currentQuarter' => Carbon::now()->quarter,
-            'programTotal' => $programTotal,
         ]);
     }
 
