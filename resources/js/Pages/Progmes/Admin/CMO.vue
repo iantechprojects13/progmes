@@ -7,7 +7,7 @@
                 <input ref="uploadfile" hidden type="file" @change="evidence_file = $event.target.files[0]" />
                 <button @click.prevent="$refs.uploadfile.click()" :disabled="importing"
                     class="select-none bg-blue-500 hover:bg-blue-600 h-10 px-3 rounded text-white text whitespace-nowrap">
-                    <span v-if="importing"><i class="fas fa-spinner animate-spin"></i></span>
+                    <span v-if="importing"><i class="fas fa-spinner animate-spin mr-3"></i>Importing...</span>
                     <span v-else><i class="fas fa-file-import mr-2 text-base"></i>Import CMO</span>
                 </button>
             </div>

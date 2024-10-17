@@ -19,10 +19,10 @@ class ExcelController extends Controller
         $user = Auth::user();
         
        $request->validate([
-        'file' => 'required|mimes:xlsx,xls,csv',
+        'file' => 'required|mimes:xlsx,xls',
             ], [
                 'file.required' => 'Please select a file.',
-                'file.mimes' => 'The file must be a type of: Excel or CSV.',
+                'file.mimes' => 'The file must be of type: Excel.',
             ]);
         
         $excelContent = [];

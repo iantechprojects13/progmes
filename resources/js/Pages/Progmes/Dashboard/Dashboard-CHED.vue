@@ -785,32 +785,3 @@ import Notification from '../Shared/Notification.vue';
         layout: Layout,
     }
 </script>
-
-<style scoped>
-.tooltipForScale {
-    position: relative;
-    cursor: pointer;
-}
-
-.tooltipForScale::before {
-    content: attr(data-tooltip);
-    position: absolute;
-    right: 0px;
-    bottom: 45px;
-    font-size: 13px;
-    font-weight: normal;
-    width: fit-content;
-    height: fit-content;
-    white-space: nowrap;
-    background-color: #333;
-    color: #eee;
-    padding: 10px;
-    border-radius: 3px;
-    display: none;
-    z-index: 10000;
-}
-
-.tooltipForScale:hover::before {
-    display: block;
-}
-</style>

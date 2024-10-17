@@ -171,17 +171,9 @@ Route::post('/report/generate', [PDFController::class, 'generateReport'])->middl
 Route::get('/report/monitoring/{tool}/{type}', [PDFController::class, 'monitoringReport'])->middleware(['auth'])->name('report.monitoring');
 Route::get('/report/deficiency/{tool}/{type}', [PDFController::class, 'deficiencyReport'])->middleware(['auth'])->name('report.deficiency');
 
-// Route::get('/chart', function () {
-//     return Inertia::render('Progmes/Shared/Charts/DoughnutChart');
-// });
-
-// Route::get('/test', function () {
-//     return Inertia::render('Progmes/Shared/Test');
-// });
-
-Route::get('/api/data', [DashboardController:: class, 'getData']);
 
 Route::get('/login-testuser', [UserController::class, 'userLogin']);
 Route::post('/testuserlogin', [UserController::class, 'testUserLogin']);
+
 
 require __DIR__.'/auth.php';

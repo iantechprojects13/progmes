@@ -4,7 +4,6 @@
             :class="{ 'show md:-translate-y-3': openNotification, 'hide': !openNotification }">
             <div class="flex justify-center md:justify-between items-center text-sm">
                 <div class="mr-3">
-                    <!-- <div v-show="type == 'processing'"><i class="fas fa-spinner animate-spin"></i></div> -->
                     <div v-show="type == 'processing'">
                         <img src="/assets/spinner-light.png" class="animate-spin" width="20">
                     </div>
@@ -16,7 +15,6 @@
                 </div>
                 <div>
                     <button class="ml-5 hover:underline text-sm" @click="closeNotification">
-                        <!-- <i class="fas fa-close"></i> -->
                         OK
                     </button>
                 </div>
