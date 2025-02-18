@@ -132,56 +132,43 @@ class UserController extends Controller
         }
 
         $userlist = User::query()
-        ->when($request->query('search'), function ($query) use ($request) {
-            $query->where(function ($query) use ($request) {
-                $query->where('name', 'like', '%' . $request->query('search') . '%')
-                    ->orWhere('type', 'like', '%' . $request->query('search') . '%')
-                    ->orWhere('role', 'like', '%' . $request->query('search') . '%')
-                    ->orWhereHas('userRole.program', function ($programQuery) use ($request) {
-                        $programQuery->where('program', 'like', '%' . $request->query('search') . '%')
-                            ->orWhere('major', 'like', '%' . $request->query('search') . '%');
-                    })
-                    ->orWhereHas('userRole.institution', function ($institutionQuery) use ($request) {
-                        $institutionQuery->where('name', 'like', '%' . $request->query('search') . '%');
-                    })
-                    ->orWhereHas('userRole.discipline', function ($institutionQuery) use ($request) {
-                        $institutionQuery->where('discipline', 'like', '%' . $request->query('search') . '%');
-                    });
+            ->when($request->query('search'), function ($query) use ($request) {
+                $query->where(function ($query) use ($request) {
+                    $query->where('name', 'like', '%' . $request->query('search') . '%')
+                        ->orWhere('type', 'like', '%' . $request->query('search') . '%')
+                        ->orWhere('role', 'like', '%' . $request->query('search') . '%')
+                        ->orWhereHas('userRole.program', function ($programQuery) use ($request) {
+                            $programQuery->where('program', 'like', '%' . $request->query('search') . '%')
+                                ->orWhere('major', 'like', '%' . $request->query('search') . '%');
+                        })
+                        ->orWhereHas('userRole.institution', function ($institutionQuery) use ($request) {
+                            $institutionQuery->where('name', 'like', '%' . $request->query('search') . '%');
+                        })
+                        ->orWhereHas('userRole.discipline', function ($institutionQuery) use ($request) {
+                            $institutionQuery->where('discipline', 'like', '%' . $request->query('search') . '%');
+                        });
+                });
             })
-            ->where([
-                'isVerified' => null,
-                'isActive' => null,
-            ])->orderBy('name', 'asc');
-        })
-        ->when($request->query('type'), function ($query) use ($request) {
-            $query->where('type', $request->query('type'));
-        })
-        ->where([
-            'isVerified' => null,
-            'isActive' => null,
-        ])
-        ->whereNot('role', 'Super Admin')
-        ->when($role == 'Education Supervisor', function ($query) use ($disciplineList) {
-            $query->whereHas('userRole.program', function ($q) use ($disciplineList) {
-                $q->whereIn('disciplineId', $disciplineList);
-            })->whereHas('userRole.program', function ($q) use ($disciplineList) {
-                $q->whereIn('disciplineId', $disciplineList);
-            });
-        })
-        ->whereHas('userRole', function ($query) use ($request) {
-                $query->where('isActive', 1);
-            }
-        )
-        ->with([
-            'userRole' => function ($query) {
-                $query->where('isActive', 1);
-            },
-            'userRole.discipline',
-            'userRole.program',
-            'userRole.institution'
-        ])
-        ->paginate($show)
-        ->withQueryString();
+            ->when($request->query('type'), function ($query) use ($request) {
+                $query->where('type', $request->query('type'));
+            })
+            ->whereNull('isVerified')
+            ->whereNull('isActive')
+            ->whereNot('role', 'Super Admin')
+            ->when($role == 'Education Supervisor', function ($query) use ($disciplineList) {
+                $query->whereHas('userRole.program', function ($q) use ($disciplineList) {
+                    $q->whereIn('disciplineId', $disciplineList);
+                });
+            })
+            ->with([
+                'userRole',
+                'userRole.discipline',
+                'userRole.program',
+                'userRole.institution'
+            ])
+            ->orderBy('name', 'asc')
+            ->paginate($show)
+            ->withQueryString();
 
         return Inertia::render('Progmes/Admin/User-Request', [
             'user_list' => $userlist,
@@ -264,7 +251,7 @@ class UserController extends Controller
             'users' => User::orderBy('name', 'asc')->get(),
         ]);
     }
-
+    
     public function testUserLogin(Request $request) {
         $testuser = User::find($request->user);
         Auth::login($testuser);
