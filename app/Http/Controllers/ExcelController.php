@@ -49,6 +49,8 @@ class ExcelController extends Controller
             if (empty($data[0]) && empty($data[1])) {
                 continue;
             }
+
+            
             
             CriteriaModel::create([
                 'cmoId' => $newCMO->id,

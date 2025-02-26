@@ -84,9 +84,6 @@
                                 Sign out
                                 </button>
                             </div>
-                            <div>
-                                <!-- <div class="text-xs mt-3">© 2025 ProgMES</div> -->
-                            </div>
                         </div>
                         
                         <div class="absolute top-1/2 -right-4 text-black hidden md:block text-md" :class="{

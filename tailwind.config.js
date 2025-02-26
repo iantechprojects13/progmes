@@ -18,6 +18,7 @@ export default {
             height: {
                 'custom-full': '425px',
                 '96': '24rem',
+                '100': '25rem',
             },
             zIndex: {
                 '60': 60,

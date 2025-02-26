@@ -90,6 +90,7 @@
 
 const refs = {
     programCheckbox,
+    // selectAllCheckbox: ref(null)
 };
 
 const search = ref('');

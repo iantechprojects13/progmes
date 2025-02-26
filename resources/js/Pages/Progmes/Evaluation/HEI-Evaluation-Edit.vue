@@ -22,6 +22,7 @@
                                 {{ $page.props.flash.updated }}
                             </div>
                             <div v-else></div>
+                            
                         </div>
                     </div>
                 </div>

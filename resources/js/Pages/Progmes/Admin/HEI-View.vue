@@ -42,6 +42,8 @@
                                 No data found
                             </td>
                         </tr>
+
+                        
                         <tr v-else v-for="(program, index) in institution.active_program" :key="program.id" :class="{'bg-gray-100': index % 2 == 1}" class="hover:bg-gray-200">
                             <td class="p-2 pl-3" >
                                 {{ program.program.program }}

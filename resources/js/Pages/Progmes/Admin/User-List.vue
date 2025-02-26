@@ -152,6 +152,7 @@
             </button>
         </template>
     </modal>
+    
     <Notification :message="$page.props.flash.success" type="success" />
     <Notification :message="$page.props.flash.failed" type="failed" />
     <Notification :message="$page.props.flash.error" type="failed" />

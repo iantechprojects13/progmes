@@ -6,6 +6,7 @@
         <template v-slot:navigation>
             <user-management-nav :requestCount="requestCount" :showInactive="true" page="inactive"></user-management-nav>
         </template>
+        
         <template v-slot:search>
             <div class="w-full flex flex-row relative items-center">
                 <i class="fa fa-search text-gray-400 absolute left-5"></i>

@@ -13,9 +13,7 @@ import Notification from '../js/Pages/Progmes/Shared/Notification.vue';
 import Loading from '../js/Pages/Progmes/Shared/Loading.vue';
 import Confirmation from '../js/Pages/Progmes/Shared/Confirmation.vue';
 import ConfirmationModal from '../js/Pages/Progmes/Shared/ConfirmationModal.vue';
-
 import DeleteModal from '../js/Pages/Progmes/Shared/DeleteModal.vue';
-
 import Pagination from './Pages/Progmes/Shared/Pagination.vue';
 import Paginator from './Pages/Progmes/Shared/Paginator.vue';
 import ContentContainer from './Pages/Progmes/Shared/ContentContainer.vue';

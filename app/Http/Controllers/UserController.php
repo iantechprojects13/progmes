@@ -181,6 +181,8 @@ class UserController extends Controller
     }
 
 
+    
+
     public function inactive(Request $request) {
         
         $role = Auth::user()->role;
