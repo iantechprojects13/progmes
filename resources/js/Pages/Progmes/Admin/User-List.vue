@@ -5,19 +5,8 @@
     <content-container :hasAdminPanel="true" :pageTitle="canEdit ? 'Active Users List' : 'Users List'" page="user"
         :hasNavigation="canEdit" :hasSearch="true" :hasFilters="true" :data_list="user_list">
         <template v-slot:navigation>
-            <button class="select-none h-12 w-24 hover:bg-gray-100 text-blue-500 border-b-4 relative font-bold border-blue-500">
-                Active
-            </button>
-            <Link :href="route('admin.users.request')">
-            <button class="select-none h-12 w-24 hover:bg-gray-100 text-gray-700 hover:text-black">
-                Request
-            </button>
-            </Link>
-            <Link :href="route('admin.users.inactive')" v-show="showInactive">
-            <button class="select-none h-12 w-24 hover:bg-gray-100 text-gray-700 hover:text-black">
-                Inactive
-            </button>
-            </Link>
+            <user-management-nav :requestCount="requestCount" :showInactive="showInactive" page="list">
+            </user-management-nav>
         </template>
         <template v-slot:search>
             <div class="w-full flex flex-row relative items-center">
@@ -133,6 +122,7 @@
             </content-table>
         </template>
     </content-container>
+    
     <modal :showModal="showFilterModal" @close="toggleFilterModal" width="sm" height="long" title="Filters">
         <div>
             <div class="flex flex-col">
@@ -174,6 +164,7 @@ import { ref, computed } from "vue";
 
 const props = defineProps([
     'user_list',
+    'requestCount',
     'canEdit',
     'canFilter',
     'showRequest',

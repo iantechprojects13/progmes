@@ -26,15 +26,16 @@
                     <tr>
                         <th scope="row"
                             class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right whitespace-nowrap">
+                            Email</th>
+                        <td class="px-3 py-1 align-top border-b border-gray-400 w-full">{{ profile.email }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row"
+                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right whitespace-nowrap">
                             Account
                             Type</th>
                         <td class="px-3 py-1 align-top border-b border-gray-400 w-full">
-                            <div v-if="profile.type == 'CHED'">
-                                Commission on Higher Education
-                            </div>
-                            <div v-else>
-                                Higher Education Institution
-                            </div>
+                            {{ profile.type }}
                         </td>
                     </tr>
                     <tr>
@@ -101,7 +102,7 @@ import { router } from '@inertiajs/vue3';
 
         if (props.hasDiscipline) {
             for (var i = 0; i < props.roles.length; i++) {
-                discipline_list.push(props.roles[i].discipline.discipline);
+                discipline_list.push(props.roles[i].discipline?.discipline);
             }
         }
         return discipline_list;
@@ -110,7 +111,7 @@ import { router } from '@inertiajs/vue3';
     const getProgram = computed(() => {
         let program = '';
         if (props.hasProgram) {
-            program = props.roles[0]?.program.program
+            program = props.roles[0]?.program?.program
         }
         return program;
     });

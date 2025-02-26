@@ -36,6 +36,8 @@ import ComplianceBarGraph from './Pages/Progmes/Shared/Charts/ComplianceBarGraph
 import DistributionChart from './Pages/Progmes/Shared/Charts/DistributionChart.vue';
 import PieChart from './Pages/Progmes/Shared/Charts/PieChart.vue';
 import ChartsContainer from './Pages/Progmes/Shared/Charts/ChartsContainer.vue';
+import UserManagementNav from './Pages/Progmes/Shared/UserManagementNav.vue';
+import TipTapEditor from './Pages/Progmes/Shared/TipTapEditor.vue';
 
 
 
@@ -77,6 +79,8 @@ createInertiaApp({
             .component('ComplianceBarGraph', ComplianceBarGraph)
             .component('DistributionChart', DistributionChart)
             .component('ChartsContainer', ChartsContainer)
+            .component('UserManagementNav', UserManagementNav)
+            .component('TipTapEditor', TipTapEditor)
             .mount(el);
     },
     progress: {

@@ -35,13 +35,21 @@
                             class="w-full rounded placeholder-gray-400 py-2 px-4 text-base border-gray-500">
                         <FormErrorMessage :message="$page.props.errors.name" theme="dark" />
                     </div>
-                    <div class="font-bold mt-5 text-gray-700 text-base">Programs</div>
-                    <div v-if="program_list.length == 0" class="italic text-sm">
-                        No programs found
+                    <div class="italic text-sm mt-8">
+                        Select programs offered by this institution
+                    </div>
+                    <div>
+                        <input type="search" name="search" id="search" placeholder="Search programs"
+                            class="w-full rounded placeholder-gray-400 py-2 px-4 text-base border-gray-500 my-2"
+                            v-model="search">
+                    </div>
+                    <div v-if="program_list.length == 0" class="h-96 border border-gray-500 rounded lg:max-w-xl">
+                        <div class="w-auto p-5 italic text-gray-500">
+                            No programs found
+                        </div>
                     </div>
                     <div v-else
-                        class="h-auto max-h-96 overflow-y-auto border border-gray-500 rounded lg:max-w-xl w-full mx-auto p-3">
-
+                        class=" h-96 overflow-y-auto border border-gray-500 rounded lg:max-w-xl w-full mx-auto p-3">
                         <div v-for="(program, index) in   program_list  " :key="program.id" class="p-2">
                             <div class="mr-2 flex flex-row items-center py-1 border-b border-gray-300">
                                 <input type="checkbox" :id="'programCheck' + index" class="mr-2 text-blue-500"
@@ -80,7 +88,44 @@
     const processing = ref(false);
     const programCheckbox = ref([]);
 
-    const refs = { programCheckbox }
+const refs = {
+    programCheckbox,
+};
+
+const search = ref('');
+
+const program_list = computed(() => {
+    if (search.value === '') {
+        return props.program_list;
+    }
+
+    return props.program_list.filter(program => {
+        return program.program.toLowerCase().includes(search.value.toLowerCase());
+    });
+});
+
+
+
+
+// const selectAll = () => {
+//         const isChecked = refs.selectAllCheckbox.checked;
+//         programCheckbox.value.forEach((checkbox, index) => {
+//             checkbox.checked = isChecked;
+//             if (isChecked) {
+//                 if (!props.programsOffered.includes(props.program_list[index].id)) {
+//                     props.programsOffered.push(props.program_list[index].id);
+//                 }
+//             } else {
+//                 const programIndex = props.programsOffered.indexOf(props.program_list[index].id);
+//                 if (programIndex !== -1) {
+//                     props.programsOffered.splice(programIndex, 1);
+//                 }
+//             }
+//         });
+//     };
+
+
+
 
     const form = reactive({
         id: ref(props.institution.id),

@@ -42,7 +42,7 @@
                                 <Link :href="route('dashboard')"
                                     class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700"
                                     :class="{
-                                        'text-blue-400 bg-slate-800':
+                                        'text-blue-500 bg-white hover:bg-white':
                                             highlight('dashboard'),
                                     }">
                                 <i class="fa fa-pie-chart mr-4 text-xl"></i>
@@ -52,7 +52,7 @@
                                 <Link :href="route('admin.users.list')" v-if="$page.props.auth.user.type == 'CHED'"
                                     class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700"
                                     :class="{
-                                        'text-blue-400 bg-slate-800':
+                                        'text-blue-500 bg-white hover:bg-white':
                                             highlight('adminpanel'),
                                     }">
                                 <i class="fas fa-shield mr-4 text-xl"></i>
@@ -62,7 +62,7 @@
                                 <Link :href="route('evaluation')"
                                     class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700"
                                     :class="{
-                                        'text-blue-400 bg-slate-800':
+                                        'text-blue-500 bg-white hover:bg-white':
                                             highlight('evaluation'),
                                     }">
                                 <i class="fa fa-edit mr-4 text-xl"></i>
@@ -72,7 +72,7 @@
                                 <Link :href="'/myaccount/' + $page.props.auth.user.id"
                                     class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700"
                                     :class="{
-                                        'text-blue-400 bg-slate-800':
+                                        'text-blue-500 bg-white hover:bg-white':
                                             highlight('myaccount'),
                                     }">
                                 <i class="fa fa-user mr-4 text-xl"></i>
@@ -81,8 +81,11 @@
 
                                 <button @click="toggleLogoutModal" :disable="loggingout" class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700">
                                     <i class="fa fa-sign-out mr-4 text-xl"></i>
-                                Log out
+                                Sign out
                                 </button>
+                            </div>
+                            <div>
+                                <!-- <div class="text-xs mt-3">© 2025 ProgMES</div> -->
                             </div>
                         </div>
                         
@@ -114,7 +117,7 @@
         <!-- Page Content -->
         <div class="w-full h-auto relative bg-gray-100 md:pt-0 pb-5">
             <div
-                class="md:hidden sticky top-0 w-full bg-blue-900 text-white flex justify-between text-center h-16 items-center shadow-md z-80 px-4">
+                class="md:hidden sticky top-0 w-full bg-blue-900 text-blue-500 flex justify-between text-center h-16 items-center shadow-md z-80 px-4">
                 <div class="cursor-pointer" @click="toggleSideBar">
                     <i class="fas fa-bars text-xl"></i>
                 </div>
@@ -146,16 +149,16 @@
         </div>
     </div>
     <div>
-        <confirmation :showModal="logoutModal" @close="toggleLogoutModal" title="Confirm Logout" width="md" height="short">
+        <confirmation :showModal="logoutModal" @close="toggleLogoutModal" title="Confirm Exit" width="md" height="short">
             <template v-slot:message>
-                <div>Are you sure you want to log out?</div>
+                <div>Are you sure you want to sign out?</div>
             </template>
             <template v-slot:buttons>
                 <button @click="logout" class="select-none text-white bg-red-500 hover:bg-red-600 h-10 w-20 rounded border">
                     <span v-if="loggingout">
                         <i class="fas fa-spinner animate-spin"></i>
                     </span>
-                    <span v-else>Log out</span>
+                    <span v-else>Sign out</span>
                 </button>
             </template>
         </confirmation>

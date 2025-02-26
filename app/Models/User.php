@@ -62,4 +62,14 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(DisciplineModel::class, RoleModel::class, 'disciplineId', 'id', 'disciplineId', 'id');
     }
+
+    public static function requestCount()
+{
+    return self::query()
+        ->whereNull('isVerified')
+        ->whereNull('isActive')
+        ->whereNot('role', 'Super Admin')
+        ->count();
+}
+
 }

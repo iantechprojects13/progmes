@@ -193,6 +193,7 @@ function submit() {
         },
         preserveState: false,
         preserveScroll: true,
+        replace: true,
     });
 }
 
@@ -207,6 +208,7 @@ function filter() {
         },
         preserveState: true,
         preserveScroll: true,
+        replace: true,
     });
 }
 
@@ -223,6 +225,7 @@ watch(evidence_file, (value) => {
             },
             preserveScroll: true,
             preserveState: false,
+            replace: true,
         }
     );
 });

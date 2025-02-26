@@ -86,13 +86,15 @@ class UserController extends Controller
             },
             'userRole.discipline',
             'userRole.program',
-            'userRole.institution'
-        ])
+            'userRole.institution',
+        ], 'totalRequest')
         ->paginate($show)
         ->withQueryString();
+        
 
         return Inertia::render('Progmes/Admin/User-List', [
             'user_list' => $userlist,
+            'requestCount' => User::requestCount(),
             'canEdit' => $canEdit,
             'canFilter' => $canFilter,
             'showRequest' => $showRequest,
@@ -170,6 +172,7 @@ class UserController extends Controller
 
         return Inertia::render('Progmes/Admin/User-Request', [
             'user_list' => $userlist,
+            'requestCount' => User::requestCount(),
             'canEdit' => $canEdit,
             'canFilter' => $canFilter,
             'showInactive' => $showInactive,
@@ -236,6 +239,7 @@ class UserController extends Controller
 
         return Inertia::render('Progmes/Admin/User-Inactive', [
             'user_list' => $userlist,
+            'requestCount' => User::requestCount(),
             'canEdit' => $canEdit,
             'canFilter' => $canFilter,
             'filters' => $request->only(['search', 'type']) + ['show' => $show ],

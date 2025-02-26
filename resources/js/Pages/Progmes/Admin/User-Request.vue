@@ -4,19 +4,9 @@
     <content-container :hasAdminPanel="true" pageTitle="Request List" page="user" :hasNavigation="true" :hasSearch="true" :hasFilters="true"
         :data_list="user_list">
         <template v-slot:navigation>
-            <Link :href="route('admin.users.list')">
-            <button class="select-none h-12 w-24 hover:bg-gray-100 text-gray-700 hover:text-black">
-                Active
-            </button>
-            </Link>
-            <button class="select-none h-12 w-24 hover:bg-gray-100 text-blue-500 border-b-4 font-bold border-blue-500">
-                Request
-            </button>
-            <Link :href="route('admin.users.inactive')" v-show="showInactive">
-            <button class="select-none h-12 w-24 hover:bg-gray-100 text-gray-700 hover:text-black">
-                Inactive
-            </button>
-            </Link>
+            <user-management-nav :requestCount="requestCount" :showInactive="showInactive" page="request">
+
+            </user-management-nav>
         </template>
         <template v-slot:search>
             <div class="w-full flex flex-row relative items-center">
@@ -160,6 +150,7 @@ import { ref } from "vue";
 
 const props = defineProps([
     'user_list',
+    'requestCount',
     'showInactive',
     'canEdit',
     'canFilter',

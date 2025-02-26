@@ -26,62 +26,15 @@
                                 Name</th>
                             <td class="px-3 py-2 border border-gray-400">{{ institution.name }}</td>
                         </tr>
-                        <!-- <tr>
-                            <th class="text-right align-top w-1/5 px-3 py-2 border border-gray-400">Programs</th>
-                            <td class="px-3 py-2 border border-gray-400">
-                                <div>
-                                    <ul>
-                                        <li v-if="institution.active_program.length == 0">
-                                            Empty
-                                        </li>
-                                        <li v-else v-for="program in institution.active_program" :key="program.id">
-                                            {{ program.program.program }}
-                                            <span v-if="program.program?.major != null">
-                                                - {{ program.program?.major }}
-                                            </span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr> -->
-                        
                     </tbody>
                 </table>
                 <div class="mt-8 mb-3 text-lg font-bold">
                     Program List
                 </div>
-                <!-- <table class="w-full">
-                    <thead>
-                        <tr class="text-left">
-                            <th class="p-3 bg-stone-200">Program</th>
-                            <th class="p-3 bg-stone-200 text-right">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="p-3">
-                                <div>
-                                    <ul>
-                                        <li v-if="institution.active_program.length == 0">
-                                            Empty
-                                        </li>
-                                        <li v-else v-for="program in institution.active_program" :key="program.id">
-                                            {{ program.program.program }}
-                                            <span v-if="program.program?.major != null">
-                                                - {{ program.program?.major }}
-                                            </span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table> -->
                 <content-table>
                     <template v-slot:table-head>
                         <th class="p-2 pl-3">Program</th>
+                        <th class="p-2 pl-3">Major</th>
                     </template>
                     <template v-slot:table-body>
                         <tr v-if="institution.active_program.length == 0">
@@ -89,12 +42,14 @@
                                 No data found
                             </td>
                         </tr>
-                        <tr v-else v-for="(program, index) in institution.active_program" :key="program.id">
-                            <td class="p-2 pl-3" :class="{'bg-gray-100': index % 2 == 1}">
+                        <tr v-else v-for="(program, index) in institution.active_program" :key="program.id" :class="{'bg-gray-100': index % 2 == 1}" class="hover:bg-gray-200">
+                            <td class="p-2 pl-3" >
                                 {{ program.program.program }}
-                                <span v-if="program.program?.major != null">
-                                    - {{ program.program?.major }}
-                                </span>
+                            </td>
+                            <td class="p-2 pl-3">
+                                <div v-if="program.program?.major != null">
+                                    {{ program.program?.major }}
+                                </div>
                             </td>
                         </tr>
                     </template>

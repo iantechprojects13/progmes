@@ -32,10 +32,11 @@
                         <label for="role" class="block font-bold text-gray-800 dark:text-white">Role</label>
                         <select id="role" v-model="form.role" @change="checkRole()"
                             class="border border-gray-500 rounded block w-full p-2"
-                            :class="{ 'text-gray-500': form.role == null }">
-                            <option :value="null">Select role</option>
+                            :class="{ 'text-gray-500': form.role == '' }">
+                            <option value="">Select role</option>
                             <option class="text-gray-800" value="Vice-President for Academic Affairs">Vice-President for
                                 Academic Affairs</option>
+                            <option class="text-gray-800" value="Librarian">Librarian</option>
                             <option class="text-gray-800" value="Dean">Dean</option>
                             <option class="text-gray-800" value="Program Head">Program Head</option>
                         </select>
@@ -115,7 +116,7 @@
 
     const form = reactive({
         institution: ref(props.institution),
-        role: null,
+        role: '',
         discipline: null,
         program: null,
     })

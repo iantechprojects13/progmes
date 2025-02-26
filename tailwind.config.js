@@ -17,6 +17,7 @@ export default {
             },
             height: {
                 'custom-full': '425px',
+                '96': '24rem',
             },
             zIndex: {
                 '60': 60,
@@ -40,6 +41,15 @@ export default {
                 '12': '12rem',
                 '16': '16rem',
                 '18': '18rem',
+            },
+            minHeight: {
+                '6': '6rem',
+                '8': '8rem',
+                '10': '10rem',
+                '12': '12rem',
+                '16': '16rem',
+                '18': '18rem',
+                '96': '24rem',
             }
         },
     },

@@ -4,19 +4,7 @@
     <content-container :hasAdminPanel="true" pageTitle="Inactive Users List" page="user" :hasNavigation="true" :hasSearch="true"
         :hasFilters="true" :data_list="user_list">
         <template v-slot:navigation>
-            <Link :href="route('admin.users.list')">
-            <button class="select-none h-12 w-24 hover:bg-gray-100 text-gray-700 hover:text-black">
-                Active
-            </button>
-            </Link>
-            <Link :href="route('admin.users.request')">
-            <button class="select-none h-12 w-24 hover:bg-gray-100 text-gray-700 hover:text-black">
-                Request
-            </button>
-            </Link>
-            <button class="select-none h-12 w-24 hover:bg-gray-100 text-blue-500 border-b-4 font-bold border-blue-500">
-                Inactive
-            </button>
+            <user-management-nav :requestCount="requestCount" :showInactive="true" page="inactive"></user-management-nav>
         </template>
         <template v-slot:search>
             <div class="w-full flex flex-row relative items-center">
@@ -162,7 +150,7 @@
 import { useForm, router } from "@inertiajs/vue3";
 import { ref, computed } from "vue";
 
-const props = defineProps(["user_list", "canEdit", 'canFilter', "filters"]);
+const props = defineProps(["user_list", 'requestCount', 'page', "canEdit", 'canFilter', "filters"]);
 
 const showFilterModal = ref(false);
 const processing = ref(false);
