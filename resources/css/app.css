@@ -2,12 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-.custom-tooltip {
+.layout-tooltip {
     position: absolute;
     cursor: pointer;
 }
 
-.custom-tooltip::before {
+.layout-tooltip::before {
     content: attr(data-tooltip);
     position: absolute;
     left: 30px;
@@ -24,7 +24,7 @@
     z-index: 5;
 }
 
-.custom-tooltip:hover::before {
+.layout-tooltip:hover::before {
     display: block;
 }
 
@@ -48,7 +48,7 @@
     padding: 10px;
     border-radius: 3px;
     display: none;
-    z-index: 10000;
+    z-index: 50;
 }
 
 .tooltipForActions:hover::before {

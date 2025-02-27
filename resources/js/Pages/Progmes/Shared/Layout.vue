@@ -90,7 +90,7 @@
                                 'fixed top-0 bg-slate-700': !closeSideBar,
                             }">
                             <div v-if="!closeSideBar"
-                                class="sticky top-0 w-8 flex items-center justify-center font-bold cursor-pointer custom-tooltip hover:text-xl transition-all duration-200"
+                                class="sticky top-0 w-8 flex items-center justify-center font-bold cursor-pointer layout-tooltip hover:text-xl transition-all duration-200"
                                 data-tooltip="Close sidebar" @click="
                                     toggleSideBar();
                                     autoHideSideBar(false);
@@ -98,7 +98,7 @@
                                 <i class="fas fa-angle-left"></i>
                             </div>
                             <div v-else
-                                class="absolute top-0 w-8 flex items-center justify-center font-bold cursor-pointer custom-tooltip hover:text-xl transition-all duration-200"
+                                class="absolute top-0 w-8 flex items-center justify-center font-bold cursor-pointer layout-tooltip hover:text-xl transition-all duration-200"
                                 data-tooltip="Open sidebar" @click="
                                     toggleSideBar();
                                     autoHideSideBar(true);
