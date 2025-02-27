@@ -5,8 +5,8 @@
     <div class="md:mx-8 mx-3 mt-8 bg-white p-3 px-5 rounded border border-gray-300">
         <div>
             <i class="fas fa-book mr-2 text-blue-500"></i>
-            <span v-if="program.program?.program">{{ program.program?.program }}</span>
-            <span v-if="program.program?.major">{{ program.program?.major }}</span>
+            <span v-if="program?.program?.program">{{ program?.program?.program }}</span>
+            <span v-if="program?.program?.major">{{ program?.program?.major }}</span>
         </div>
         <div><i class="fas fa-institution mr-3 text-blue-500"></i>{{ program.institution?.name }}</div>
     </div>
