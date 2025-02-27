@@ -128,10 +128,10 @@
                                 class="minreqInput min-h-max resize-none text-sm bg-white rounded w-full overflow-hidden border border-gray-400"
                                 @focus="handleMinreqInput(index)" @input="handleMinreqInput(index)"></textarea>
                         </td>
-                        <td>
+                        <!-- <td>
                             <tip-tap-editor v-model="form.minReq[index]" /> This is the new component
                             
-                        </td>
+                        </td> -->
                     </tr>
                 </template>
             </content-table>
