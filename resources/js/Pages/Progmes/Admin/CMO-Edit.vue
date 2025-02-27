@@ -123,13 +123,13 @@
                                 class="areaInput min-h-max h-10 resize-none text-sm rounded w-full overflow-hidden border border-gray-400"
                                 @focus="handleAreaInput(index)" @input="handleAreaInput(index)"></textarea>
                         </td>
-                        <!-- <td class="min-w-18 py-5 px-2 align-top">
+                        <td class="min-w-18 py-5 px-2 align-top">
                             <textarea ref="minreq" :id="'minReq' + index" v-model="form.minReq[index]" maxlength="5000"
                                 class="minreqInput min-h-max resize-none text-sm bg-white rounded w-full overflow-hidden border border-gray-400"
                                 @focus="handleMinreqInput(index)" @input="handleMinreqInput(index)"></textarea>
-                        </td> -->
+                        </td>
                         <td>
-                            <tip-tap-editor v-model="form.minReq[index]" /> <!-- This is the new component -->
+                            <tip-tap-editor v-model="form.minReq[index]" /> This is the new component
                             
                         </td>
                     </tr>
