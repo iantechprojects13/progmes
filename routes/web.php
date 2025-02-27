@@ -46,7 +46,7 @@ Route::get('/unauthorized', function () {
 // google login
 Route::controller(App\Http\Controllers\Auth\GoogleAuthController::class)->group(function () {
     Route::get('/social/google', 'redirect')->name('auth.google');
-    Route::get('/social/google/callback', 'callback');
+    Route::get('/auth/google/callback', 'callback');
 });
 
 
