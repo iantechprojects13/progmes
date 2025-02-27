@@ -6,7 +6,6 @@
         <div class="text-left w-full"><i class="fas fa-institution mr-3 text-blue-500"></i>{{ institution }}</div>
         <div class="mt-5 lg:mt-0 w-full lg:w-auto">
             <select @change="submit" v-model="query.academicYear" id="academicYearSelect" class="w-full border-gray-400 hover:border-gray-500 cursor-pointer lg:w-40 h-10 rounded text-sm">
-                <option value="2023-2024">A.Y. 2023-24</option>
                 <option value="2024-2025">A.Y. 2024-25</option>
                 <option value="2025-2026">A.Y. 2025-26</option>
                 <option value="2026-2027">A.Y. 2026-27</option>
