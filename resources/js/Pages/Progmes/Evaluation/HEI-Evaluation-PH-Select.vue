@@ -8,7 +8,7 @@
             <span v-if="program?.program?.program">{{ program?.program?.program }}</span>
             <span v-if="program?.program?.major">{{ program?.program?.major }}</span>
         </div>
-        <div><i class="fas fa-institution mr-3 text-blue-500"></i>{{ program.institution?.name }}</div>
+        <div><i class="fas fa-institution mr-3 text-blue-500"></i>{{ program?.institution?.name }}</div>
     </div>
     <content-container :hideTopBorder="true">
         <template v-slot:main-content>
@@ -22,10 +22,10 @@
                     </th>
                 </template>
                 <template v-slot:table-body>
-                    <tr v-if="program.evaluation_form.length == 0">
+                    <tr v-if="program?.evaluation_form?.length == 0">
                         <td colspan="3" class="text-center py-10">No compliance evaluation tool found</td>
                     </tr>
-                    <tr v-else v-for="(item, index) in program.evaluation_form" :key="item.id"
+                    <tr v-else v-for="(item, index) in program?.evaluation_form" :key="item.id"
                         class="hover:bg-gray-200 border-b" :class="{'bg-gray-100': index % 2 == 1}">
                         <td class="p-3 align-middle">
                             <i class="fas fa-file text-lg mr-2"></i>{{ item.effectivity }}

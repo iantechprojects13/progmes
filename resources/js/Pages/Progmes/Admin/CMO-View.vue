@@ -76,7 +76,9 @@
                     <tr v-else v-for="(item, index) in cmo.criteria" :key="item.id" class="hover:bg-gray-200 align-top"
                         :class="{'bg-gray-100' : index % 2 == 1}">
                         <td class="p-3">{{item.itemNo}}</td>
-                        <td class="p-3 whitespace-normal">{{item.area}}</td>
+                        <td class="p-3 whitespace-normal">
+                            <div v-html="item.area"></div>
+                        </td>
                         <td class="p-3 whitespace-normal">
                             <div v-html="item.minimumRequirement"></div>
                         </td>
@@ -101,3 +103,10 @@
         layout: Layout,
     }
 </script>
+
+<style>
+a {
+    color: blue;
+}
+
+</style>

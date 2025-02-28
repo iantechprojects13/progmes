@@ -41,45 +41,57 @@
                             <div class="my-4 pt-5 border-t" @click="mobileSideBar">
                                 <Link :href="route('dashboard')"
                                     class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700"
-                                    :class="{
+                                    :class="[{
                                         'text-blue-500 bg-white hover:bg-white':
                                             highlight('dashboard'),
-                                    }">
+                                    }, {
+                                        'text-gray-200 hover:text-blue-500':
+                                            !highlight('dashboard'),
+                                    }]">
                                 <i class="fa fa-pie-chart mr-4 text-xl"></i>
                                 Dashboard
                                 </Link>
 
                                 <Link :href="route('admin.users.list')" v-if="$page.props.auth.user.type == 'CHED'"
                                     class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700"
-                                    :class="{
+                                    :class="[{
                                         'text-blue-500 bg-white hover:bg-white':
                                             highlight('adminpanel'),
-                                    }">
+                                    }, {
+                                        'text-gray-200 hover:text-blue-500':
+                                            !highlight('adminpanel'),
+                                    }]">
                                 <i class="fas fa-shield mr-4 text-xl"></i>
                                 Admin Panel
                                 </Link>
 
                                 <Link :href="route('evaluation')"
                                     class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700"
-                                    :class="{
+                                    :class="[{
                                         'text-blue-500 bg-white hover:bg-white':
                                             highlight('evaluation'),
-                                    }">
+                                    }, {
+                                        'text-gray-200 hover:text-blue-500':
+                                            !highlight('evaluation'),
+                                    }]">
                                 <i class="fa fa-edit mr-4 text-xl"></i>
                                 Evaluation
                                 </Link>
 
                                 <Link :href="'/myaccount/' + $page.props.auth.user.id"
                                     class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700"
-                                    :class="{
+                                    :class="[{
                                         'text-blue-500 bg-white hover:bg-white':
                                             highlight('myaccount'),
-                                    }">
+                                    }, {
+                                        'text-gray-200 hover:text-blue-500':
+                                            !highlight('myaccount'),
+                                    }]">
                                 <i class="fa fa-user mr-4 text-xl"></i>
                                 My Account
                                 </Link>
 
-                                <button @click="toggleLogoutModal" :disable="loggingout" class="select-none block w-full text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700">
+                                <button @click="toggleLogoutModal" :disable="loggingout" class="select-none block w-full text-gray-200 hover:text-red-500 text-start px-3 my-1 rounded-lg py-2 hover:bg-stone-700">
                                     <i class="fa fa-sign-out mr-4 text-xl"></i>
                                 Sign out
                                 </button>
