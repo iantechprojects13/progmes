@@ -14,54 +14,45 @@
             </div>
         </template>
         <template v-slot:main-content>
-            <div class="border border-gray-300 mb-5 rounded mt-3 p-5 md:p-8">
-                <table>
-                    <tbody>
-                        <tr>
-                            <td class="px-1 py-0.5 align-text-top">No</td>
-                            <td class="px-5 py-0.5 align-text-top">:</td>
-                            <td class="px-1 py-0.5 align-text-top">
-                                    {{ cmo.number }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-1 py-0.5 align-text-top">Series</td>
-                            <td class="px-5 py-0.5 align-text-top">:</td>
-                            <td class="px-1 py-0.5 align-text-top">
-                                {{ cmo.series }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-1 py-0.5 align-text-top">Version</td>
-                            <td class="px-5 py-0.5 align-text-top">:</td>
-                            <td class="px-1 py-0.5 align-text-top">
-                                {{ cmo.version }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-1 py-0.5 align-text-top">Program</td>
-                            <td class="px-5 py-0.5 align-text-top">:</td>
-                            <td class="px-1 py-0.5 align-text-top">
-                                {{ cmo.program?.program }}
-                                <span v-if="cmo.program?.major != null">
-                                    - {{ cmo.program?.major }}
-                                </span>
-                            </td>
-                        </tr>
-                        <tr v-show="!$page.url.includes('/admin/CMOs/draft')">
-                            <td class="px-1 py-0.5 align-text-top">Active Status</td>
-                            <td class="px-5 py-0.5 align-text-top">:</td>
-                            <td class="px-1 py-0.5 align-text-top text-xs">
-                                <div v-if="cmo.isActive" class=" bg-green-500 text-white w-fit px-1 rounded">
-                                    Active
-                                </div>
-                                <div v-else class="bg-gray-500 text-white w-fit px-1 rounded">
-                                    Not Active
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="border border-gray-400 mb-5 rounded mt-3 p-5 md:p-8 bg-gray-100 shadow-md">
+                <div class="flex flex-col md:flex-row md:items-center">
+                    <div class="w-full md:w-1/2">
+                        <div class="font-semibold text-gray-700">No:</div>
+                        <div class="text-gray-900">{{ cmo.number }}</div>
+                    </div>
+                    <div class="w-full md:w-1/2 mt-3 md:mt-0">
+                        <div class="font-semibold text-gray-700">Series:</div>
+                        <div class="text-gray-900">{{ cmo.series }}</div>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row md:items-center mt-3">
+                    <div class="w-full md:w-1/2">
+                        <div class="font-semibold text-gray-700">Version:</div>
+                        <div class="text-gray-900">{{ cmo.version }}</div>
+                    </div>
+                    <div class="w-full md:w-1/2 mt-3 md:mt-0">
+                        <div class="font-semibold text-gray-700">Program:</div>
+                        <div class="text-gray-900">
+                            {{ cmo.program?.program }}
+                            <span v-if="cmo.program?.major != null">
+                                - {{ cmo.program?.major }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div v-show="!$page.url.includes('/admin/CMOs/draft')" class="flex flex-col md:flex-row md:items-center mt-3">
+                    <div class="w-full md:w-1/2">
+                        <div class="font-semibold text-gray-700">Active Status:</div>
+                        <div class="text-xs">
+                            <div v-if="cmo.isActive" class="bg-green-500 text-white w-fit px-2 py-1 rounded">
+                                Active
+                            </div>
+                            <div v-else class="bg-gray-500 text-white w-fit px-2 py-1 rounded">
+                                Not Active
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <content-table>
                 <template v-slot:table-head>
