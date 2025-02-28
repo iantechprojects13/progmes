@@ -1,130 +1,73 @@
 <template>
-
     <Head title="My Account" />
     <page-title title="My Account" />
     <content-container>
         <template v-slot:content-title>
-            <div class="flex flex-row items-center justify-between">
+            <div class="flex flex-row items-center justify-between mt-6">
                 <div class="flex flex-row">
                     <div class="mr-3">
                         <i class="fas fa-user text-blue-500"></i>
                     </div>
-                    <div class="font-bold">Account Information</div>
+                    <div class="font-bold text-xl">My Account</div>
                 </div>
             </div>
         </template>
         <template v-slot:main-content>
-            <div class="my-8 mx-3 md:mx-5">
-                <table class="border border-gray-400">
-                    <tr>
-                        <th scope="row"
-                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right whitespace-nowrap">
-                            Name</th>
-                        <td class="px-3 py-1 align-top border-b border-gray-400 w-full">{{ profile.name }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row"
-                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right whitespace-nowrap">
-                            Email</th>
-                        <td class="px-3 py-1 align-top border-b border-gray-400 w-full">{{ profile.email }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row"
-                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right whitespace-nowrap">
-                            Account
-                            Type</th>
-                        <td class="px-3 py-1 align-top border-b border-gray-400 w-full">
-                            <div v-if="profile.type == 'CHED'">
-                                Commission on Higher Education
-                            </div>
-                            <div v-else>
-                                Higher Education Institution
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"
-                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right whitespace-nowrap">
-                            Role</th>
-                        <td class="px-3 py-1 align-top border-b border-gray-400 w-full">{{ profile.role }}</td>
-                    </tr>
-                    <tr v-show="hasInstitution">
-                        <th scope="row"
-                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right whitespace-nowrap">
-                            HEI Name</th>
-                        <td class="px-3 py-1 align-top border-b border-gray-400 w-full">
-                            {{ getInstitution }}
-                        </td>
-                    </tr>
-                    <tr v-show="hasDiscipline">
-                        <th scope="row"
-                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right whitespace-nowrap">
-                            Discipline</th>
-                        <td class="px-3 py-1 align-top border-b border-gray-400 w-full">
-                            <div v-for="(item, index) in disciplineArray" :key="index">
-                                {{ item }}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr v-show="hasProgram">
-                        <th scope="row"
-                            class="px-3 py-1 align-top border-b border-gray-400 border-r font-bold text-right whitespace-nowrap">
-                            Program</th>
-                        <td class="px-3 py-1 align-top border-b border-gray-400 w-full">
-                            {{getProgram}}
-                        </td>
-                    </tr>
-                </table>
+            <div class="my-8 mx-3 md:mx-5 bg-gray-200 p-6 rounded-lg shadow-lg">
+                <div class="flex flex-col items-center">
+                    <!-- Profile Avatar -->
+                    <img :src="profile.avatar" alt="User Profile" 
+                        class="rounded-full border-4 border-gray-300 shadow-lg w-32 h-32">
+                    <!-- Name and Email -->
+                    <h1 class="text-gray-800 text-2xl font-bold mt-3 flex items-center">
+                        <i class="fas fa-id-card mr-2 text-blue-500"></i> {{ profile.name }}
+                    </h1>
+                    <p class="text-gray-600">{{ profile.email }}</p>
+                    <!-- Social Links -->
+                    <div class="mt-3 flex space-x-4">
+                        <a v-if="profile.twitter" :href="profile.twitter" target="_blank" class="text-blue-500 hover:underline">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a v-if="profile.linkedin" :href="profile.linkedin" target="_blank" class="text-blue-700 hover:underline">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+                <!-- Account Details -->
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-300 p-4 rounded-lg shadow flex items-center">
+                        <i class="fas fa-user-tag text-blue-500 mr-2"></i>
+                        <div>
+                            <h2 class="text-gray-700 font-semibold">Type</h2>
+                            <p class="text-gray-900">{{ profile.type || 'N/A' }}</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-300 p-4 rounded-lg shadow flex items-center">
+                        <i class="fas fa-briefcase text-blue-500 mr-2"></i>
+                        <div>
+                            <h2 class="text-gray-700 font-semibold">Role</h2>
+                            <p class="text-gray-900">{{ profile.role || 'N/A' }}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </template>
     </content-container>
 </template>
 
 <script setup>
-    import { computed, ref } from 'vue';
+import { computed } from 'vue';
+import Layout from '../Shared/Layout.vue';
 
-    const props = defineProps([
-        'profile',
-        'roles',
-        'isAdmin',
-        'hasDiscipline',
-        'hasInstitution',
-        'hasProgram',
-    ]);
+defineOptions({
+    layout: Layout,
+});
 
-    const disciplineArray = computed(() => {
-        let discipline_list = [];
-
-        if (props.hasDiscipline) {
-            for (var i = 0; i < props.roles.length; i++) {
-                discipline_list.push(props.roles[i].discipline.discipline);
-            }
-        }
-        return discipline_list;
-    });
-
-    const getProgram = computed(() => {
-        let program = '';
-        if (props.hasProgram) {
-            program = props.roles[0]?.program.program
-        }
-        return program;
-    });
-
-    const getInstitution = computed(() => {
-        let institution = '';
-        if (props.hasInstitution) {
-            institution = props.roles[0]?.institution.name
-        }
-        return institution;
-    });
-
-
+const props = defineProps(['profile', 'roles']);
 </script>
 
-<script>
-    import Layout from '../Shared/Layout.vue';
-    export default {
-        layout: Layout,
-    }
-</script>
+<style scoped>
+.text-gray-900 {
+    font-weight: 600;
+}
+</style>
