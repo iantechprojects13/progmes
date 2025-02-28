@@ -101,3 +101,10 @@
         layout: Layout,
     }
 </script>
+
+<style>
+a {
+    color: blue;
+}
+
+</style>

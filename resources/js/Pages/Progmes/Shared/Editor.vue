@@ -118,7 +118,7 @@ onMounted(() => {
       TextStyle,
       Color,
       Link.configure({
-        openOnClick: false,
+        openOnClick: true,
         HTMLAttributes: {
           class: 'text-blue-500 underline'
         }

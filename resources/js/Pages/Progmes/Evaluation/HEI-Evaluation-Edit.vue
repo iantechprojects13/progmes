@@ -373,11 +373,34 @@ const props = defineProps([
     'filters',
 ]);
 
+
+// Prevent user from leaving the page with unsaved changes (when pressing F5 or refresh button of the browser)
 const handleBeforeUnload = (event) => {
     if (hasUpdate.value) {
+        event.preventDefault();
         event.returnValue = true;
+        return event.returnValue;
     }
 };
+
+// Prevent user from leaving the page with unsaved changes (when pressing back button of the browser)
+const handlePopState = (event) => {
+    if (hasUpdate.value) {
+        if (!window.confirm('You have unsaved changes. Do you want to leave?')) {
+            event.preventDefault();
+            window.history.pushState(null, '', window.location.href); // Restore state to prevent navigation
+        } else {
+            window.removeEventListener('popstate', handlePopState);
+            window.location.href = '/evaluation';
+        }
+    }
+};
+
+// Add a new history entry to trap the back button
+window.history.pushState(null, '', window.location.href);
+
+// Listen for back button presses
+window.addEventListener('popstate', handlePopState);
 
 // Mount, Unmount
 onMounted(() => {
@@ -643,14 +666,6 @@ function filter() {
             return {
                 itemsLayout: 'list',
             }
-        },
-        methods: {
-            listLayout() {
-                this.itemsLayout = 'list';
-            },
-            gridLayout() {
-                this.itemsLayout = 'grid';
-            },
         },
 
     }
