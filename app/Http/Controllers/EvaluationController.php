@@ -94,7 +94,7 @@ class EvaluationController extends Controller
         ])
         ->withQueryString();
 
-        return Inertia::render('Progmes/Evaluation/CHED-Evaluation-Select', [
+        return Inertia::render('Evaluation/CHED-Evaluation-Select', [
             'complianceTools' => $complianceTools,
             'filters' => $request->only(['search', 'status']) + ['show' => $show, 'academicYear' => $acadYear ],
             'canEvaluate' => $canEvaluate,
@@ -151,7 +151,7 @@ class EvaluationController extends Controller
         ])
         ->withQueryString();
 
-        return Inertia::render('Progmes/Evaluation/CHED-Evaluation-Monitored', [
+        return Inertia::render('Evaluation/CHED-Evaluation-Monitored', [
             'complianceTools' => $complianceTools,
             'filters' => $request->only(['search']) + ['show' => $show, 'academicYear' => $acadYear ],
             'canEvaluate' => $canEvaluate,
@@ -170,7 +170,7 @@ class EvaluationController extends Controller
             $evalFormQuery->orderBy('effectivity', 'asc');
         }, 'evaluationForm.item'])->first();
         
-        return Inertia::render('Progmes/Evaluation/HEI-Evaluation-PH-Select', [
+        return Inertia::render('Evaluation/HEI-Evaluation-PH-Select', [
             'program' => $institutionProgram,
         ]);
     }
@@ -220,7 +220,7 @@ class EvaluationController extends Controller
         ])
         ->withQueryString();
 
-        return Inertia::render('Progmes/Evaluation/HEI-Evaluation-Select', [
+        return Inertia::render('Evaluation/HEI-Evaluation-Select', [
             'complianceTools' => $complianceTools,
             'filters' => $request->only(['search']) + ['show' => $show, 'academicYear' => $acadYear ],
             'institution' => $institutionName,
@@ -273,7 +273,7 @@ class EvaluationController extends Controller
         ])
         ->withQueryString();
 
-        return Inertia::render('Progmes/Evaluation/HEI-Evaluation-Monitored', [
+        return Inertia::render('Evaluation/HEI-Evaluation-Monitored', [
             'complianceTools' => $complianceTools,
             'filters' => $request->only(['search']) + ['show' => $show, 'academicYear' => $acadYear ],
             'institution' => $institutionName,

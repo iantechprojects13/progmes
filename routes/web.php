@@ -39,7 +39,7 @@ Route::get('/', function () {
 })->name('homepage');
 
 Route::get('/unauthorized', function () {
-    return Inertia::render('Progmes/Others/Unauthorized');
+    return Inertia::render('Others/Unauthorized');
 })->middleware('auth', 'registered')->name('unauthorized');
 
 
@@ -172,11 +172,11 @@ Route::get('/report/monitoring/{tool}/{type}', [PDFController::class, 'monitorin
 Route::get('/report/deficiency/{tool}/{type}', [PDFController::class, 'deficiencyReport'])->middleware(['auth'])->name('report.deficiency');
 
 // Route::get('/chart', function () {
-//     return Inertia::render('Progmes/Shared/Charts/DoughnutChart');
+//     return Inertia::render('Shared/Charts/DoughnutChart');
 // });
 
 // Route::get('/test', function () {
-//     return Inertia::render('Progmes/Shared/Test');
+//     return Inertia::render('Shared/Test');
 // });
 
 Route::get('/api/data', [DashboardController:: class, 'getData']);

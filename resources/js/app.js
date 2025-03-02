@@ -7,35 +7,33 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import { Head, Link } from '@inertiajs/vue3';
 
-import AdminPanel from '../js/Pages/Progmes/Shared/AdminPanel.vue';
-import Modal from '../js/Pages/Progmes/Shared/Modal.vue';
-import Notification from '../js/Pages/Progmes/Shared/Notification.vue';
-import Loading from '../js/Pages/Progmes/Shared/Loading.vue';
-import Confirmation from '../js/Pages/Progmes/Shared/Confirmation.vue';
-import ConfirmationModal from '../js/Pages/Progmes/Shared/ConfirmationModal.vue';
-import DeleteModal from '../js/Pages/Progmes/Shared/DeleteModal.vue';
-import Pagination from './Pages/Progmes/Shared/Pagination.vue';
-import Paginator from './Pages/Progmes/Shared/Paginator.vue';
-import ContentContainer from './Pages/Progmes/Shared/ContentContainer.vue';
-import ContentTable from './Pages/Progmes/Shared/ContentTable.vue';
-import ContentTableAction from './Pages/Progmes/Shared/ContentTableAction.vue';
-import FormErrorMessage from './Pages/Progmes/Shared/FormErrorMessage.vue';
-import DropdownOption from './Pages/Progmes/Shared/DropdownOption.vue';
-import PageTitle from './Pages/Progmes/Shared/PageTitle.vue';
-import TextEditor from './Pages/Progmes/Shared/TextEditor.vue';
-import DoughnutChart from './Pages/Progmes/Shared/Charts/DoughnutChart.vue';
-import ComplianceProgress from './Pages/Progmes/Shared/Charts/ComplianceProgress.vue';
-import ComplianceStatus from './Pages/Progmes/Shared/Charts/ComplianceStatus.vue';
-import BarChart from './Pages/Progmes/Shared/Charts/BarChart.vue';
-import GroupBarChart from './Pages/Progmes/Shared/Charts/GroupBarChart.vue';
-import AnalyticsLineChart from './Pages/Progmes/Shared/Charts/AnalyticsLineChart.vue';
-import LineChart from './Pages/Progmes/Shared/Charts/LineChart.vue';
-import ComplianceBarGraph from './Pages/Progmes/Shared/Charts/ComplianceBarGraph.vue';
-import DistributionChart from './Pages/Progmes/Shared/Charts/DistributionChart.vue';
-import PieChart from './Pages/Progmes/Shared/Charts/PieChart.vue';
-import ChartsContainer from './Pages/Progmes/Shared/Charts/ChartsContainer.vue';
-import UserManagementNav from './Pages/Progmes/Shared/UserManagementNav.vue';
-import TipTapEditor from './Pages/Progmes/Shared/TipTapEditor.vue';
+import AdminPanel from '../js/Shared/AdminPanel.vue';
+import Modal from '../js/Shared/Modal.vue';
+import Notification from '../js/Shared/Notification.vue';
+import Confirmation from '../js/Shared/Confirmation.vue';
+import ConfirmationModal from '../js/Shared/ConfirmationModal.vue';
+import DeleteModal from '../js/Shared/DeleteModal.vue';
+import Pagination from './Shared/Pagination.vue';
+import Paginator from './Shared/Paginator.vue';
+import ContentContainer from './Shared/ContentContainer.vue';
+import ContentTable from './Shared/ContentTable.vue';
+import FormErrorMessage from './Shared/FormErrorMessage.vue';
+import DropdownOption from './Shared/DropdownOption.vue';
+import PageTitle from './Shared/PageTitle.vue';
+import TextEditor from './Shared/TextEditor.vue';
+import DoughnutChart from './Shared/Charts/DoughnutChart.vue';
+import ComplianceProgress from './Shared/Charts/ComplianceProgress.vue';
+import ComplianceStatus from './Shared/Charts/ComplianceStatus.vue';
+import BarChart from './Shared/Charts/BarChart.vue';
+import GroupBarChart from './Shared/Charts/GroupBarChart.vue';
+import AnalyticsLineChart from './Shared/Charts/AnalyticsLineChart.vue';
+import LineChart from './Shared/Charts/LineChart.vue';
+import ComplianceBarGraph from './Shared/Charts/ComplianceBarGraph.vue';
+import DistributionChart from './Shared/Charts/DistributionChart.vue';
+import PieChart from './Shared/Charts/PieChart.vue';
+import ChartsContainer from './Shared/Charts/ChartsContainer.vue';
+import UserManagementNav from './Shared/UserManagementNav.vue';
+import TipTapEditor from './Shared/TipTapEditor.vue';
 
 
 
@@ -54,7 +52,6 @@ createInertiaApp({
             .component('Modal', Modal)
             .component('Notification', Notification)
             .component('Confirmation', Confirmation)
-            .component('Loading', Loading)
             .component('ConfirmationModal', ConfirmationModal)
             .component('DeleteModal', DeleteModal)
             .component('Pagination', Pagination)
@@ -62,7 +59,6 @@ createInertiaApp({
             .component('ContentContainer', ContentContainer)
             .component('ContentTable', ContentTable)
             .component('FormErrorMessage', FormErrorMessage)
-            .component('ContentTableAction', ContentTableAction)
             .component('DropdownOption', DropdownOption)
             .component('PageTitle', PageTitle)
             .component('TextEditor', TextEditor)
@@ -81,8 +77,11 @@ createInertiaApp({
             .component('TipTapEditor', TipTapEditor)
             .mount(el);
     },
-    progress: {
-        color: '#5dade2',
-        showSpinner: false,
-    },
+    progress: false,
+    
+    // {
+    //     color: '#5dade2',
+    //     showSpinner: false,
+    // },
+    
 });

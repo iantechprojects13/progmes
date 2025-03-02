@@ -45,7 +45,7 @@ class CHEDFormController extends Controller
         $percentage = intval(round((($compliedCount + $notCompliedCount + $notApplicableCount)/$evaluationTool->item->count())*100));
         $progress = [$compliedCount, $notCompliedCount, $notApplicableCount, $percentage];
 
-        return Inertia::render('Progmes/Evaluation/CHED-Evaluation-View', [
+        return Inertia::render('Evaluation/CHED-Evaluation-View', [
             'evaluation_tool' => $evaluationTool,
             'progress' => $progress,
             'showEvaluation' => $showEvaluation,
@@ -111,7 +111,7 @@ class CHEDFormController extends Controller
             ->withQueryString();
 
         if($tool->status == 'Submitted' || $tool->status == 'For re-evaluation' || $tool->status == 'Locked') {
-            return Inertia::render('Progmes/Evaluation/CHED-Evaluation-Edit', [
+            return Inertia::render('Evaluation/CHED-Evaluation-Edit', [
                 'evaluation' => $tool,
                 'items' => $complianceTool,
                 'filters' => $request->only(['search', 'selfEvaluationStatus', 'evaluationStatus']),
@@ -205,7 +205,7 @@ class CHEDFormController extends Controller
     public function report($tool) {
         $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.institution', 'institution_program.program')->first();
         
-        return Inertia::render('Progmes/Evaluation/CHED-Evaluation-Report-Create', [
+        return Inertia::render('Evaluation/CHED-Evaluation-Report-Create', [
             'tool' => $evaluationTool,
         ]);
     }

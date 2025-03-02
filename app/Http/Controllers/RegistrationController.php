@@ -23,12 +23,12 @@ class RegistrationController extends Controller
 {   
     
     public function index () {
-        return Inertia::render('Progmes/Auth/Register-Select');
+        return Inertia::render('Auth/Register-Select');
     }
 
     
     public function accountCHED () {
-        return Inertia::render('Progmes/Auth/Register-CHED', [
+        return Inertia::render('Auth/Register-CHED', [
             'discipline_list' => DisciplineModel::select('id', 'discipline')->orderBy('discipline', 'asc')->get(),
         ]);
     }
@@ -56,7 +56,7 @@ class RegistrationController extends Controller
             }
         }
         
-        return Inertia::render('Progmes/Auth/Register-HEI', [
+        return Inertia::render('Auth/Register-HEI', [
             'institution_list' => InstitutionModel::orderBy('name', 'asc')->get(),
             'discipline_list' => $discipline_list,
             'program_list' => $program_list,
@@ -192,7 +192,7 @@ class RegistrationController extends Controller
     }
 
     public function pending() {
-        return Inertia::render('Progmes/Auth/Register-Success');
+        return Inertia::render('Auth/Register-Success');
     }
 
     public function deactivate(User $user) {
@@ -316,7 +316,7 @@ class RegistrationController extends Controller
         }
         
         
-        return Inertia::render('Progmes/Auth/Account', [
+        return Inertia::render('Auth/Account', [
             'profile' => Auth::user(),
             'roles' => $roles,
             'hasDiscipline' => $hasDiscipline,
@@ -375,7 +375,7 @@ class RegistrationController extends Controller
         }
         
 
-        return Inertia::render('Progmes/Admin/Profile-View', [
+        return Inertia::render('Admin/Profile-View', [
             'profile' => $user,
             'roles' => $roles,
             'canChangeRole' => $canChangeRole,

@@ -10,7 +10,7 @@ class AdminSettingsController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Progmes/Admin/Settings', [
+        return Inertia::render('Admin/Settings', [
             'settings' => AdminSettingsModel::all(),
         ]);
     }

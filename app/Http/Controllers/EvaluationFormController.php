@@ -88,7 +88,7 @@ class EvaluationFormController extends Controller
         ->paginate($show)
         ->withQueryString();
         
-        return Inertia::render('Progmes/Admin/EvaluationForm', [
+        return Inertia::render('Admin/EvaluationForm', [
             'program_list' => $program_list,
             'effectivity' => $defaultAcademicYear,
             'academicYear' => $defaultAcademicYear,
@@ -121,7 +121,7 @@ class EvaluationFormController extends Controller
 
     public function view(EvaluationFormModel $evaluation) {
         $evaluationForm = EvaluationFormModel::where('id', $evaluation->id)->first();
-        return Inertia::render('Progmes/Admin/EvaluationForm-View', [
+        return Inertia::render('Admin/EvaluationForm-View', [
             'evaluationForm' => $evaluationForm,
             'items' => EvaluationItemModel::where('evaluationFormId',  $evaluation->id)->with('criteria')->get(),
         ]);

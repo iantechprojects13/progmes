@@ -26,7 +26,7 @@ class AuthenticatedSessionController extends Controller
         }
 
 
-        return Inertia::render('Progmes/Auth/Login');
+        return Inertia::render('Auth/Login');
     }
 
     /**

@@ -198,7 +198,7 @@ class DashboardController extends Controller
         }
 
 
-        return Inertia::render('Progmes/Dashboard/Dashboard-CHED', [
+        return Inertia::render('Dashboard/Dashboard-CHED', [
             'complianceTool' => $complianceTools->map(fn($item) => [
                 'id' => $item->id,
                 'status' => $item->status,
@@ -292,7 +292,7 @@ class DashboardController extends Controller
         [$thisYear, $lastYear, $twoYearsAgo] = $yearsData;
 
 
-        return Inertia::render('Progmes/Dashboard/Dashboard-CHED-Overview', [
+        return Inertia::render('Dashboard/Dashboard-CHED-Overview', [
             
         ]);
     }
@@ -373,7 +373,7 @@ class DashboardController extends Controller
         })
         ->orderBy('program', 'asc')->orderBy('major', 'asc')->get();
 
-        return Inertia::render('Progmes/Dashboard/Dashboard-HEI', [
+        return Inertia::render('Dashboard/Dashboard-HEI', [
             'complianceTool' => $complianceTools->map(fn($item) => [
                 'id' => $item->id,
                 'status' => $item->status,

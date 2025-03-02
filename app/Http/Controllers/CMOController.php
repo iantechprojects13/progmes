@@ -69,7 +69,7 @@ class CMOController extends Controller
         ->paginate($show)
         ->withQueryString();
 
-        return Inertia::render('Progmes/Admin/CMO', [
+        return Inertia::render('Admin/CMO', [
             'cmo_list' => $activelist,
             'canImport' => $canImport,
             'canDraft' => $canDraft,
@@ -122,7 +122,7 @@ class CMOController extends Controller
         ->paginate($show)
         ->withQueryString();
         
-        return Inertia::render('Progmes/Admin/CMO-Draft', [
+        return Inertia::render('Admin/CMO-Draft', [
             'cmo_list' => $draftlist,
             'canEdit' => $canEdit,
             'filters' => $request->only(['search']) + ['show' => $show ],
@@ -130,12 +130,12 @@ class CMOController extends Controller
     }
 
     public function create() {
-        return Inertia::render('Progmes/Admin/CMO-Create');
+        return Inertia::render('Admin/CMO-Create');
     }
 
     public function view(CMOModel $cmo) {
         $cmoModel = CMOModel::where('id', $cmo->id)->with('discipline', 'program', 'criteria')->first();
-        return Inertia::render('Progmes/Admin/CMO-View',[
+        return Inertia::render('Admin/CMO-View',[
             'cmo' => $cmoModel,
         ]);
     }
@@ -166,7 +166,7 @@ class CMOController extends Controller
         }
 
 
-        return Inertia::render('Progmes/Admin/CMO-Edit', [
+        return Inertia::render('Admin/CMO-Edit', [
             'cmo' => $cmo,
             'discipline_list' => $disciplineList,
             'program_list' => $programList,

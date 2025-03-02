@@ -92,7 +92,7 @@ class HEIFormController extends Controller
         $progress = [$compliedCount, $notCompliedCount, $notApplicableCount, $percentage];
         
 
-        return Inertia::render('Progmes/Evaluation/HEI-Evaluation-View', [
+        return Inertia::render('Evaluation/HEI-Evaluation-View', [
             'evaluation_tool' => $evaluationTool,
             'progress' => $progress,
             'showEvaluation' => $showEvaluation,
@@ -174,7 +174,7 @@ class HEIFormController extends Controller
             $progress = [ $complied, $notComplied, $notApplicable, $percentage];
 
             if($tool->status == 'In progress') {
-                return Inertia::render('Progmes/Evaluation/HEI-Evaluation-Edit', [
+                return Inertia::render('Evaluation/HEI-Evaluation-Edit', [
                     'evaluation' => $tool,
                     'items' => $complianceTool,
                     'progress' => $progress,

@@ -92,7 +92,7 @@ class UserController extends Controller
         ->withQueryString();
         
 
-        return Inertia::render('Progmes/Admin/User-List', [
+        return Inertia::render('Admin/User-List', [
             'user_list' => $userlist,
             'requestCount' => User::requestCount(),
             'canEdit' => $canEdit,
@@ -170,7 +170,7 @@ class UserController extends Controller
             ->paginate($show)
             ->withQueryString();
 
-        return Inertia::render('Progmes/Admin/User-Request', [
+        return Inertia::render('Admin/User-Request', [
             'user_list' => $userlist,
             'requestCount' => User::requestCount(),
             'canEdit' => $canEdit,
@@ -239,7 +239,7 @@ class UserController extends Controller
         ->paginate($show)
         ->withQueryString();
 
-        return Inertia::render('Progmes/Admin/User-Inactive', [
+        return Inertia::render('Admin/User-Inactive', [
             'user_list' => $userlist,
             'requestCount' => User::requestCount(),
             'canEdit' => $canEdit,
@@ -251,7 +251,7 @@ class UserController extends Controller
 
 
     public function userLogin() {
-        return Inertia::render('Progmes/Auth/TestLogin', [
+        return Inertia::render('Auth/TestLogin', [
             'users' => User::orderBy('name', 'asc')->get(),
         ]);
     }

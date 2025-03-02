@@ -42,7 +42,7 @@ class InstitutionController extends Controller
         ->paginate($show)
         ->withQueryString();
 
-        return Inertia::render('Progmes/Admin/HEI', [
+        return Inertia::render('Admin/HEI', [
             'institution_list' => $institutionlist,
             'canEdit' => $canEdit,
             'canAdd' => $canAdd,
@@ -53,7 +53,7 @@ class InstitutionController extends Controller
 
     public function create()
     {
-        return Inertia::render('Progmes/Admin/HEI-Create', [
+        return Inertia::render('Admin/HEI-Create', [
             'program_list' => ProgramModel::orderBy('program', 'asc')->orderBy('major', 'asc')->get(),
         ]);
     }
@@ -93,7 +93,7 @@ class InstitutionController extends Controller
         ->with('active_program.program')
         ->first();
 
-        return Inertia::render('Progmes/Admin/HEI-View', [
+        return Inertia::render('Admin/HEI-View', [
             'institution' => $institutionModel,
         ]);
         
@@ -110,7 +110,7 @@ class InstitutionController extends Controller
             }
         }
 
-        return Inertia::render('Progmes/Admin/HEI-Edit', [
+        return Inertia::render('Admin/HEI-Edit', [
             'institution' => $institutionModel,
             'programsOffered' => $programsOffered,
             'program_list' => ProgramModel::orderBy('program', 'asc')->orderBy('major', 'asc')->get(),

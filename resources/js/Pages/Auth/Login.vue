@@ -1,79 +1,52 @@
-<script setup>
-import Checkbox from '@/Components/Checkbox.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-
-defineProps({
-    canResetPassword: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
-    },
-});
-
-const form = useForm({
-    email: '',
-    password: '',
-    remember: false,
-});
-
-const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => form.reset('password'),
-    });
-};
-</script>
-
 <template>
-    <GuestLayout>
 
-        <Head title="Log in" />
+    <Head title="Login" />
+    <div class="w-full flex h-screen select-none">
+        <div class="w-full h-screen flex text-center items-center justify-center"
+            style="background-size: cover; background-position: center; background-image: linear-gradient(#252525c7, #252525c7), url(assets/ched-office.jpg); background-size: auto 100%;">
+            <div class="-mt-10 md:mt-5">
+                <div class="w-full text-white">
+                    <img src="assets/ched-logo.png" width="100" class="mx-auto mb-5 lg:hidden">
+                    <p class="text-3xl lg:text-5xl font-bold">CHED RO XI</p>
+                    <br>
+                    <p class="text-3xl lg:text-5xl font-bold text-yellow-400">ProgMES</p>
+                    <br>
+                    <p class="lg:w-3/4 md:w-4/6 w-11/12 mx-auto text-xl lg:text-3xl">A Web-based Program Monitoring and
+                        Evaluation
+                        System</p>
+                </div>
+                <div class="p-3 rounded shadow-md w-full text-center lg:hidden mx-auto mt-5">
+                    <a :href="route('auth.google')">
+                        <button class="active:bg-blue-500 hover:bg-blue-100 active:text-white bg-white font-bold py-0 px-3 rounded-full flex items-center
+                justify-center border-2 border-gray-400 mx-auto">
+                            <img src="assets/google.png" width="40" class="p-1 inline top-0 mr-1">
+                            Sign in with Google
+                        </button>
+                    </a>
+                </div>
+            </div>
 
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-            {{ status }}
         </div>
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autofocus
-                    autocomplete="username" />
-
-                <InputError class="mt-2" :message="form.errors.email" />
+        <div class="h-screen bg-white lg:flex items-center justify-center w-4/12 hidden">
+            <div class="text-center">
+                <div class="w-full text-center justify-center">
+                    <img src="assets/ched-logo.png" width="75" class="mx-auto">
+                </div>
+                <div class="my-7 mx-auto">
+                    <h1 class="text-3xl font-bold tracking-tighter">SIGN IN</h1>
+                    <p class="text-gray-700 text-sm">to continue to ProgMES</p>
+                </div>
+                <a :href="route('auth.google')">
+                    <button class="active:bg-blue-500 hover:bg-blue-100 active:text-white font-bold px-3 py-0 rounded-full flex items-center
+                        justify-center border-2 border-gray-500 mx-auto">
+                        <img src="assets/google.png" width="40" class="p-1 inline top-0 mr-1">
+                        Sign in with Google
+                    </button>
+                </a>
+                <!-- <div class="mt-5">
+                    <Link href="/login-testuser" class="hover:underline">Test-user login</Link>
+                </div> -->
             </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput id="password" type="password" class="mt-1 block w-full" v-model="form.password" required
-                    autocomplete="current-password" />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
-                </label>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <Link v-if="canResetPassword" :href="route('password.request')"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                Forgot your password?
-                </Link>
-
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
-                </PrimaryButton>
-            </div>
-        </form>
-    </GuestLayout>
+        </div>
+    </div>
 </template>
