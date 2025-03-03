@@ -21,9 +21,8 @@
                             class="border border-gray-500 rounded block w-full p-2"
                             :class="{ 'text-gray-500': form.institution == null }">
                             <option :value="null">Select institution</option>
-                            <option class="text-gray-800" v-for="institution in institution_list" :key="institution.id"
-                                :value="institution.id">{{
-                                institution.name }}</option>
+                            <option class="text-gray-800" v-for="institution in sortedInstitutionList" :key="institution.id"
+                                :value="institution.id">{{ institution.name }}</option>
                         </select>
                         <form-error-message :message="$page.props.errors.institution" theme="dark" />
                     </div>
@@ -49,9 +48,8 @@
                             class="border border-gray-500 rounded block w-full p-2"
                             :class="{ 'text-gray-500': form.discipline == null }">
                             <option :value="null">Select discipline</option>
-                            <option class="text-gray-800" v-for="discipline in discipline_list" :key="discipline.id"
-                                :value="discipline.id">{{
-                                discipline.discipline }}</option>
+                            <option class="text-gray-800" v-for="discipline in sortedDisciplineList" :key="discipline.id"
+                                :value="discipline.id">{{ discipline.discipline }}</option>
                         </select>
                         <form-error-message :message="$page.props.errors.discipline" theme="dark" />
                     </div>
@@ -64,7 +62,7 @@
                             class="border border-gray-500 rounded block w-full p-2"
                             :class="{ 'text-gray-500': form.program == null }">
                             <option :value="null">Select program</option>
-                            <option class="text-gray-800" v-for="program in program_list" :key="program.id"
+                            <option class="text-gray-800" v-for="program in sortedProgramList" :key="program.id"
                                 :value="program.program.id">
                                 {{ program.program?.program }}
                                 <span v-if="program.program?.major"> - {{ program.program?.major
@@ -85,7 +83,7 @@
 </template>
 
 <script setup>
-    import { reactive, ref, watch } from 'vue';
+    import { reactive, ref, watch, computed } from 'vue';
     import { router } from '@inertiajs/vue3';
 
     const props = defineProps([
@@ -125,6 +123,30 @@
     const role = reactive({
         isDean: false,
         isPH: false,
+    });
+
+    const sortedProgramList = computed(() => {
+        return [...props.program_list].sort((a, b) => {
+            if (a.program.program < b.program.program) return -1;
+            if (a.program.program > b.program.program) return 1;
+            return 0;
+        });
+    });
+    
+    const sortedInstitutionList = computed(() => {
+        return [...props.institution_list].sort((a, b) => {
+            if (a.name < b.name) return -1;
+            if (a.name > b.name) return 1;
+            return 0;
+        });
+    });
+
+    const sortedDisciplineList = computed(() => {
+        return [...props.discipline_list].sort((a, b) => {
+            if (a.discipline < b.discipline) return -1;
+            if (a.discipline > b.discipline) return 1;
+            return 0;
+        });
     });
 
 

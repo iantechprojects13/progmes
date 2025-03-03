@@ -170,54 +170,103 @@
             <div class="mt-4 text-white text-lg text-center">Please wait...</div>
         </div>
     </div>
+
+    <!-- Notifications -->
+    <TransitionGroup name="notifications" tag="div" class="fixed bottom-0 right-0 z-90 p-4 space-y-2">
+        <div v-for="notification in activeNotifications" :key="notification.id"
+          class="bg-stone-800 text-white p-5 w-full md:max-w-md flex justify-between items-center">
+          <div class="flex justify-center md:justify-between items-center text-sm">
+            <div class="mr-3">
+              <div v-show="notification.type == 'processing'">
+                <img src="/assets/spinner-light.png" class="animate-spin" width="20">
+              </div>
+              <div v-show="notification.type == 'success'">
+                <i class="fas fa-check-circle text-xl text-green-400"></i>
+              </div>
+              <div v-show="notification.type == 'failed'">
+                <i class="fas fa-times-circle text-xl text-red-400"></i>
+              </div>
+            </div>
+            <div>{{ notification.message }}</div>
+          </div>
+          <button @click="closeNotification(notification.id)" class="text-gray-400 hover:text-white ml-3">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+    </TransitionGroup>
     
-
-    <!-- Success Notification -->
-<Notification v-if="this.$page && this.$page.props.flash.success" :message="$page.props.flash.success" type="success" />
-<Notification v-if="this.$page && this.$page.props.flash.updated" :message="$page.props.flash.updated" type="success" />
-<Notification v-if="this.$page && this.$page.props.flash.deleted" :message="$page.props.flash.deleted" type="success" />
-<Notification v-if="this.$page && this.$page.props.flash.uploaded" :message="$page.props.flash.uploaded" type="success" />
-
-<!-- Failed Notification -->
-<Notification v-if="this.$page && this.$page.props.flash.failed" :message="$page.props.flash.failed" type="failed" />
-<Notification v-if="this.$page && this.$page.props.flash.error" :message="$page.props.flash.error" type="failed" />
-<Notification v-if="this.$page && this.$page.props.errors.link" :message="$page.props.errors.link" type="failed" />
-<Notification v-if="this.$page && this.$page.props.errors.file" :message="$page.props.errors.file" type="failed" />
 
 </template>
 
 <script setup>
-import { router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { router, usePage } from '@inertiajs/vue3';
+import { ref, watch } from 'vue';
 
+const page = usePage();
+const activeNotifications = ref([]);
+const notificationDuration = 20000;
 const logoutModal = ref(false);
 const loggingout = ref(false);
 const loading = ref(false);
 
+function closeNotification(id) {
+  activeNotifications.value = activeNotifications.value.filter(n => n.id !== id);
+}
+
+function showNotification(message, type) {
+  if (!message) return;
+  
+  const notification = {
+    id: Date.now(),
+    message,
+    type
+  };
+  
+  activeNotifications.value.push(notification);
+  
+  setTimeout(() => {
+    closeNotification(notification.id);
+  }, notificationDuration);
+}
+
+watch(() => page.props.flash, (newFlash) => {
+  if (newFlash.success) showNotification(newFlash.success, 'success');
+  if (newFlash.updated) showNotification(newFlash.updated, 'success');
+  if (newFlash.deleted) showNotification(newFlash.deleted, 'success');
+  if (newFlash.uploaded) showNotification(newFlash.uploaded, 'success');
+  if (newFlash.failed) showNotification(newFlash.failed, 'failed');
+  if (newFlash.error) showNotification(newFlash.error, 'failed');
+}, { deep: true });
+
 router.on('start', () => {
-    loading.value = true;
-    document.body.style.overflow = 'hidden';
+  loading.value = true;
+  document.body.style.overflow = 'hidden';
 });
 
 router.on('finish', () => {
-    loading.value = false;
-    document.body.style.overflow = 'auto';
+  loading.value = false;
+  document.body.style.overflow = 'auto';
 });
 
 function toggleLogoutModal() {
-    logoutModal.value = !logoutModal.value;
+  logoutModal.value = !logoutModal.value;
 }
 
 function logout() {
-    router.post('/logout', loggingout.value, {
-        onStart: () => {
-            loggingout.value = true;
-        },
-        onFinish: () => {
-            loggingout.value = false;
-        }
-    });
+  router.post('/logout', loggingout.value, {
+    onStart: () => {
+      loggingout.value = true;
+    },
+    onFinish: () => {
+      loggingout.value = false;
+    }
+  });
 }
+
+// Make closeNotification available to template
+defineExpose({
+  closeNotification
+});
 </script>
 
 <script>
@@ -330,7 +379,14 @@ function logout() {
             hideUserOption() {
                 this.userOption = false;
             },
-        },
+    },
+
+    props: {
+        activeNotifications: {
+            type: Array,
+            required: true
+        }
+    },
 
         mounted() {
             window.addEventListener("resize", this.handleResize);
@@ -340,4 +396,26 @@ function logout() {
             }
         },
     };
+    
 </script>
+
+<style scoped>
+    .notifications-enter-active,
+    .notifications-leave-active {
+    transition: all 0.3s ease;
+    }
+
+    .notifications-enter-from {
+    opacity: 0;
+    transform: translateY(30px);
+    }
+
+    .notifications-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+    }
+
+    .notifications-move {
+    transition: transform 0.3s ease;
+    }
+</style>
