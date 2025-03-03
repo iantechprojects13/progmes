@@ -3,7 +3,7 @@
     <Head title="Edit CMO" />
     <content-container :hasAdminPanel="true">
         <template v-slot:content-title>
-            <div class="w-full flex flex-row items-center justify-between">
+            <div class="w-full flex flex-row items-center justify-between ">
                 <div class="w-full flex flex-row items-center">
                     <Link :href="$page.url.includes('/admin/CMOs/draft') ? '/admin/CMOs/draft' : '/admin/CMOs/'">
                     <button class="w-8 h-8 rounded-full hover:bg-gray-200 tooltipForActions" data-tooltip="Back"><i class="fas fa-arrow-left"></i></button>
@@ -123,11 +123,6 @@
                                 class="areaInput min-h-max h-10 resize-none text-sm rounded w-full overflow-hidden border border-gray-400"
                                 @focus="handleAreaInput(index)" @input="handleAreaInput(index)"></textarea>
                         </td>
-                        <!-- <td class="min-w-18 py-5 px-2 align-top">
-                            <textarea ref="minreq" :id="'minReq' + index" v-model="form.minReq[index]" maxlength="5000"
-                                class="minreqInput min-h-max resize-none text-sm bg-white rounded w-full overflow-hidden border border-gray-400"
-                                @focus="handleMinreqInput(index)" @input="handleMinreqInput(index)"></textarea>
-                        </td> -->
                         <td>
                             <tip-tap-editor v-model="form.minReq[index]" />
                             
