@@ -170,13 +170,13 @@
             <div class="mt-4 text-white text-lg">Please wait...</div>
         </div>
     </div>
-
+    
 
     <!-- Success Notification -->
     <Notification v-for="(msg, type) in this.$page.props.flash" :key="type" :message="msg" :type="type" />
     
     <!-- Error Notification -->
-    <Notification :message="$page.props.flash.failed" type="failed" />
+    <Notification :message="this.$page.props.flash.failed" type="failed" />
     <Notification v-for="(msg, key) in this.$page.props.errors" :key="key" :message="msg" type="failed" />
 
 
