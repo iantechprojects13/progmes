@@ -109,7 +109,9 @@
                             </button>
                             <button v-show="canEvaluate"
                              @click="evaluate(item.id)" 
-                                class="select-none h-8 w-8 text-center text-xl hover:bg-gray-300 rounded-full text-blue-500 hover:text-blue-600 tooltipForActions"
+                                :disabled="item.status === 'In progress'"
+                                :class="{'text-gray-500 hover:text-gray-600 cursor-not-allowed': item.status === 'In progress', 'text-blue-500 hover:text-blue-600': item.status !== 'In progress'}"
+                                class="select-none h-8 w-8 text-center text-xl hover:bg-gray-300 rounded-full tooltipForActions"
                                 data-tooltip="Evaluate">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -133,7 +135,9 @@
                             </button>
                             <button v-show="canEvaluate"
                              @click="setId(item.id); monitoredModal = true;"
-                                class="select-none h-8 w-8 text-center text-xl hover:bg-gray-300 rounded-full text-blue-500 hover:text-blue-600 tooltipForActions"
+                                :disabled="item.status === 'In progress'"
+                                :class="{'text-gray-500 hover:text-gray-600 cursor-not-allowed': item.status === 'In progress', 'text-blue-500 hover:text-blue-600': item.status !== 'In progress'}"
+                                class="select-none h-8 w-8 text-center text-xl hover:bg-gray-300 rounded-full tooltipForActions"
                                 data-tooltip="Mark as monitored">
                                 <i class="fas fa-check"></i>
                             </button>

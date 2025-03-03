@@ -29,10 +29,12 @@
 </template>
 
 <script setup>
-    const props = defineProps([
-        'title',
-        'showModal',
-    ]);
+import { defineProps, watch } from 'vue';
+
+const props = defineProps([
+    'title',
+    'showModal',
+]);
 
 
 watch(() => props.showModal, (newVal) => {

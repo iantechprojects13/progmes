@@ -85,7 +85,7 @@
                                 Not Active
                             </div>
                         </td>
-                        <td class="p-2 pr-5 text-right whitespace-nowrap">
+                        <!-- <td class="p-2 pr-5 text-right whitespace-nowrap">
                             <button @click="view(cmo.id)"
                                 class="select-none h-8 w-8 text-xl text-center rounded-full hover:bg-gray-300 text-green-500 hover:text-green-600 tooltipForActions"
                                 data-tooltip="View">
@@ -109,6 +109,44 @@
                                 data-tooltip="Delete">
                                 <i class="fas fa-trash"></i>
                             </button>
+                        </td> -->
+                        <td class="p-2 pr-5 text-right whitespace-nowrap">
+                            <button @click="view(cmo.id)"
+                                class="select-none h-8 w-8 text-xl text-center rounded-full hover:bg-gray-300 text-green-500 hover:text-green-600 tooltipForActions"
+                                data-tooltip="View">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        
+                            <button v-show="canEdit"
+                                @click="toggleConfirmationModal(cmo, 'deleteCMO', 'Delete Published CMO')"
+                                class="select-none h-8 w-8 text-xl text-center rounded-full hover:bg-gray-300 text-red-500 hover:text-red-600 tooltipForActions"
+                                data-tooltip="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+
+                            <div class="inline-block" v-show="canEdit">
+                                <button @click="toggleStatusDropdown($event, index)"
+                                    class="select-none h-8 w-8 text-xl text-center rounded-full hover:bg-gray-300 text-gray-600 tooltipForActions" data-tooltip="Options">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                
+                                <div v-if="activeDropdownIndex === index" 
+                                    class="fixed z-50 bg-gray-100 rounded-md shadow-lg py-1 min-w-[140px] transform -translate-x-full"
+                                    :style="{ left: dropdownPosition.x + 'px', top: dropdownPosition.y + 'px' }">
+                                    <button 
+                                        v-if="cmo.isActive"
+                                        @click="toggleConfirmationModal(cmo, 'deactivate', 'Deactivate CMO')"
+                                        class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+                                        Mark as Inactive
+                                    </button>
+                                    <button 
+                                        v-else
+                                        @click="toggleConfirmationModal(cmo, 'activate', 'Activate CMO')"
+                                        class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+                                        Mark as Active
+                                    </button>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 </template>
@@ -144,6 +182,8 @@
             </button>
         </template>
     </modal>
+
+    <Notication type="success" :message="$page.props.flash.success" />
    
     <Confirmation :showModal="confirmationModal" @close="closeModal" :title="title" :modaltype="modaltype" :selected="selectedCMO" width="md" height="short"/>
 </template>
@@ -241,8 +281,12 @@ watch(evidence_file, (value) => {
                 selectedCMO: "",
                 modaltype: "",
                 title: "",
+                activeDropdownIndex: null,
+                dropdownPosition: { x: 0, y: 0 },
             };
         },
+
+        layout: Layout,
 
         methods: {
             openUploadModal() {
@@ -260,8 +304,36 @@ watch(evidence_file, (value) => {
                 this.confirmationModal = false;
                 this.uploadModal = false;
             },
-        },
 
-        layout: Layout,
+            toggleStatusDropdown(event, index) {
+                if (this.activeDropdownIndex === index) {
+                    this.activeDropdownIndex = null;
+                } else {
+                    this.activeDropdownIndex = index;
+                    this.dropdownPosition = {
+                        x: event.clientX - 20, // Adjust left offset
+                        y: event.clientY + 10  // Keep vertical offset
+                    };
+                }
+            },
+        },
+        mounted() {
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.relative')) {
+                    this.activeDropdownIndex = null;
+                }
+            });
+        },
     };
 </script>
+
+<style scoped>
+.relative {
+    position: relative;
+}
+
+.absolute {
+    position: absolute;
+}
+</style>

@@ -75,6 +75,12 @@
         <i class="fas fa-table"></i>
       </button>
 
+      <button 
+        @click="editor?.chain().focus().addRowAfter().run()"
+        class="p-2 hover:bg-gray-100 rounded transition-colors tooltipForActions" data-tooltip="Add Row"
+      >
+        <i class="fas fa-arrow-down"></i>
+      </button>
 
       <button 
         @click="editor?.chain().focus().addColumnAfter().run()"
@@ -84,16 +90,9 @@
       </button>
 
       <button 
-        @click="editor?.chain().focus().addRowAfter().run()"
-        class="p-2 hover:bg-gray-100 rounded transition-colors tooltipForActions" data-tooltip="Add Row"
-      >
-        <i class="fas fa-arrow-down"></i>
-      </button>
-
-      <button 
         @click="editor?.chain().focus().deleteTable().run()"
         :disabled="!editor?.can().deleteTable()"
-        class="p-2 hover:bg-gray-100 rounded transition-colors"
+        class="p-2 hover:bg-gray-100 rounded transition-colors tooltipForActions" data-tooltip="Delete table"
       >
         <i class="fas fa-trash-alt"></i>
       </button>
