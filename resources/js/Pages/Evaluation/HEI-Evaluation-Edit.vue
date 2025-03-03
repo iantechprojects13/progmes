@@ -1,16 +1,6 @@
 <template>
     <Head title="Program Self-Evaluation Tool" />
     <page-title title="Program Self-Evaluation" />
-
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-800 p-8">
-        <h1 class="text-3xl font-bold text-white mb-2">Program Application</h1>
-        <p class="text-blue-100">Program Self-Evaluation Tool</p>
-    </div>
-
-    <content-container :hasStickyDiv="true" :hasSearch="true" :hasFilters="true" :hasTopMainContent="true">
-        <!-- Rest of your content -->
-    </content-container>
-</template>
     <content-container :hasStickyDiv="true" :hasSearch="true" :hasFilters="true" :hasTopMainContent="true">
         <template v-slot:content-title>
             <div class="w-full flex flex-col md:flex-row justify-between items-center">
