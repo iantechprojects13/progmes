@@ -22,16 +22,9 @@
                     <h1 class="text-gray-800 text-2xl font-bold mt-3 flex items-center">
                         <i class="fas fa-id-card mr-2 text-blue-500"></i> {{ profile.name }}
                     </h1>
-                    <p class="text-gray-600">{{ profile.email }}</p>
-                    <!-- Social Links -->
-                    <div class="mt-3 flex space-x-4">
-                        <a v-if="profile.twitter" :href="profile.twitter" target="_blank" class="text-blue-500 hover:underline">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a v-if="profile.linkedin" :href="profile.linkedin" target="_blank" class="text-blue-700 hover:underline">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                    </div>
+                    <p class="text-gray-600 flex items-center font-bold">
+                        <i class="fas fa-envelope mr-2 text-blue-500"></i> {{ profile.email }}
+                    </p>
                 </div>
                 <!-- Account Details -->
                 <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
