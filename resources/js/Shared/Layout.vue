@@ -166,19 +166,23 @@
     <!-- Loading -->
     <div v-if="loading" class="fixed inset-0 z-[999] flex items-center justify-center bg-black bg-opacity-70">
         <div class="text-center">
-            <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-            <div class="mt-4 text-white text-lg">Please wait...</div>
+            <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <div class="mt-4 text-white text-lg text-center">Please wait...</div>
         </div>
     </div>
     
 
     <!-- Success Notification -->
-    <Notification v-for="(msg, type) in this.$page.props.flash" :key="type" :message="msg" :type="type" />
-    
-    <!-- Error Notification -->
-    <Notification :message="this.$page.props.flash.failed" type="failed" />
-    <Notification v-for="(msg, key) in this.$page.props.errors" :key="key" :message="msg" type="failed" />
+    <Notification v-if="this.$page.props.flash.success" :message="$page.props.flash.success" type="success" />
+    <Notification v-if="this.$page.props.flash.updated" :message="$page.props.flash.updated" type="success" />
+    <Notification v-if="this.$page.props.flash.deleted" :message="$page.props.flash.deleted" type="success" />
+    <Notification v-if="this.$page.props.flash.uploaded" :message="$page.props.flash.uploaded" type="success" />
 
+    <!-- Failed Notification -->
+    <Notification v-if="this.$page.props.flash.failed" :message="$page.props.flash.failed" type="failed" />
+    <Notification v-if="this.$page.props.flash.error" :message="$page.props.flash.error" type="failed" />
+    <Notification v-if="this.$page.props.errors.link" :message="$page.props.errors.link" type="failed" />
+    <Notification v-if="this.$page.props.errors.file" :message="$page.props.errors.file" type="failed" />
 
 </template>
 
