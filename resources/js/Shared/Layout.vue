@@ -173,16 +173,16 @@
     
 
     <!-- Success Notification -->
-    <Notification v-if="this.$page.props.flash.success" :message="$page.props.flash.success" type="success" />
-    <Notification v-if="this.$page.props.flash.updated" :message="$page.props.flash.updated" type="success" />
-    <Notification v-if="this.$page.props.flash.deleted" :message="$page.props.flash.deleted" type="success" />
-    <Notification v-if="this.$page.props.flash.uploaded" :message="$page.props.flash.uploaded" type="success" />
+<Notification v-if="this.$page && this.$page.props.flash.success" :message="$page.props.flash.success" type="success" />
+<Notification v-if="this.$page && this.$page.props.flash.updated" :message="$page.props.flash.updated" type="success" />
+<Notification v-if="this.$page && this.$page.props.flash.deleted" :message="$page.props.flash.deleted" type="success" />
+<Notification v-if="this.$page && this.$page.props.flash.uploaded" :message="$page.props.flash.uploaded" type="success" />
 
-    <!-- Failed Notification -->
-    <Notification v-if="this.$page.props.flash.failed" :message="$page.props.flash.failed" type="failed" />
-    <Notification v-if="this.$page.props.flash.error" :message="$page.props.flash.error" type="failed" />
-    <Notification v-if="this.$page.props.errors.link" :message="$page.props.errors.link" type="failed" />
-    <Notification v-if="this.$page.props.errors.file" :message="$page.props.errors.file" type="failed" />
+<!-- Failed Notification -->
+<Notification v-if="this.$page && this.$page.props.flash.failed" :message="$page.props.flash.failed" type="failed" />
+<Notification v-if="this.$page && this.$page.props.flash.error" :message="$page.props.flash.error" type="failed" />
+<Notification v-if="this.$page && this.$page.props.errors.link" :message="$page.props.errors.link" type="failed" />
+<Notification v-if="this.$page && this.$page.props.errors.file" :message="$page.props.errors.file" type="failed" />
 
 </template>
 
