@@ -170,7 +170,7 @@
             <div class="mt-4 text-white text-lg text-center">Please wait...</div>
         </div>
     </div>
-
+    
     <!-- Notifications -->
     <TransitionGroup name="notifications" tag="div" class="fixed bottom-0 right-0 z-90 p-4 space-y-2">
         <div v-for="notification in activeNotifications" :key="notification.id"
@@ -204,7 +204,7 @@ import { ref, watch } from 'vue';
 
 const page = usePage();
 const activeNotifications = ref([]);
-const notificationDuration = 20000;
+const notificationDuration = 7000;
 const logoutModal = ref(false);
 const loggingout = ref(false);
 const loading = ref(false);
