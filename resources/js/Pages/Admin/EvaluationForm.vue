@@ -122,12 +122,10 @@
                             <label class="font-bold text-gray-700" for="cmo">CHED Memorandum Order</label>
                             <input id="cmo" type="text" disabled class="w-full text-sm rounded border-gray-400 my-0.5" :value="
                                     deployment.program?.active_cmo != null
-                                        ? 'CMO ' +
+                                        ? 'CMO No.' +
                                         deployment.program.active_cmo.number +
-                                        ', S. ' +
-                                        deployment.program.active_cmo.series +
-                                        ', Version ' +
-                                        deployment.program.active_cmo.version
+                                        ', Series of ' +
+                                        deployment.program.active_cmo.series
                                         : 'No Active CMO'
                                 " />
                         </div>

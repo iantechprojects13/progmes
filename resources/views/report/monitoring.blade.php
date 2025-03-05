@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ asset('assets/cropped-ched_logo.png') }}" type="image/x-icon">
     <title>Program Monitoring Report</title>
     <style>
         @page {
@@ -143,11 +144,11 @@
                 <tbody>
                     @foreach ($tool->item as $item)
                     <tr>
-                        <td>{{ $item->criteria->area }}</td>
-                        <td>{{ $item->criteria->minimumRequirement }}</td>
-                        <td>{{ $item->findings }}</td>
-                        <td>{{ $item->recommendations }}</td>
-                        <td>{{ $item->evaluationStatus }}</td>
+                        <td>{{ strip_tags($item->criteria->area) }}</td>
+                        <td>{{ strip_tags($item->criteria->minimumRequirement) }}</td>
+                        <td>{{ strip_tags($item->findings) }}</td>
+                        <td>{{ strip_tags($item->recommendations) }}</td>
+                        <td>{{ strip_tags($item->evaluationStatus) }}</td>
                     </tr>
                     @endforeach
                 </tbody>

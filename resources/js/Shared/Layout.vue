@@ -99,7 +99,7 @@
                         </div>
                         
                         <!-- Sidebar Toggle -->
-                        <div class="absolute top-1/2 -right-6 text-gray-400 hidden md:block text-md"
+                        <div class="absolute top-1/2 -right-4 text-gray-400 hidden md:block text-md"
                             :class="{ 'fixed top-0 bg-slate-700': !closeSideBar }">
                             <div class="w-8 flex items-center justify-center font-bold cursor-pointer layout-tooltip hover:text-black hover:text-xl transition-all duration-200"
                                 :data-tooltip="closeSideBar ? 'Open sidebar' : 'Close sidebar'"
@@ -111,6 +111,7 @@
                 </div>
             </div>
         </div>
+        
 
         <!-- Page Content -->
         <div class="w-full h-auto relative bg-white md:pt-0 pb-5">

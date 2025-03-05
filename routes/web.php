@@ -127,14 +127,17 @@ Route::get('/admin/CMOs/draft', [CMOController::class, 'draft'])->middleware('au
 Route::get('/admin/CMOs/draft/{cmo}/view', [CMOController::class, 'view'])->middleware('auth', 'type.ched', 'cmo.draft')->name('admin.cmo.draft.view');
 Route::get('/admin/CMOs/draft/{id}/edit', [CMOController::class, 'edit'])->name('admin.cmo.edit');
 Route::get('admin/CMOs/{cmo}/view', [CMOController::class, 'view'])->middleware('auth', 'type.ched')->name('admin.cmo.show');
-Route::post('/admin/CMOs/create/import', [ExcelController::class, 'importExcel'])->name('admin.cmo.import');
 Route::post('/admin/CMOs/store', [CMOController::class, 'store'])->middleware('auth')->name('admin.cmo.store');
-Route::post('/admin/CMOs/save-and-publish', [CMOController::class, 'saveAndPublish'])->middleware('auth')->name('admin.cmo.save.publish');
+Route::post('/admin/CMOs/update', [CMOController::class, 'update'])->middleware('auth', 'type.ched')->name('admin.cmo.update');
 Route::post('/admin/CMOs/save-as-draft', [CMOController::class, 'saveAsDraft'])->middleware('auth')->name('admin.cmo.save.draft');
+Route::post('/admin/CMOs/save-and-publish', [CMOController::class, 'saveAndPublish'])->middleware('auth')->name('admin.cmo.save.publish');
 Route::get('/admin/CMOs/publish/{cmo}', [CMOController::class, 'publish'])->middleware('auth')->name('admin.cmo.publish');
 Route::get('/admin/CMOs/delete/{id?}', [CMOController::class, 'destroy'])->middleware('auth')->name('admin.cmo.delete');
 Route::get('/admin/CMOs/activate/{id?}', [CMOController::class, 'activate'])->middleware('auth')->name('admin.cmo.activate');
 Route::get('/admin/CMOs/deactivate/{id?}', [CMOController::class, 'deactivate'])->middleware('auth')->name('admin.cmo.deactivate');
+
+//Importing CMO
+Route::post('/admin/CMOs/create/import', [ExcelController::class, 'importExcel'])->name('admin.cmo.import');
 
 //Evaluation Tool
 Route::get('/admin/tool', [EvaluationFormController::class, 'index'])->middleware('auth', 'type.ched')->name('admin.form.list');
@@ -168,8 +171,8 @@ Route::post('/evaluation/notify', [EvaluationController::class, 'sendEmail'])->m
 //Generate Report
 Route::post('/report', [PDFController::class, 'report'])->middleware(['auth'])->name('report.create');
 Route::post('/report/generate', [PDFController::class, 'generateReport'])->middleware(['auth'])->name('report.generate');
-Route::get('/report/monitoring/{tool}/{type}', [PDFController::class, 'monitoringReport'])->middleware(['auth'])->name('report.monitoring');
-Route::get('/report/deficiency/{tool}/{type}', [PDFController::class, 'deficiencyReport'])->middleware(['auth'])->name('report.deficiency');
+Route::get('/report/monitoring/{tool}/{orientation}/{type}', [PDFController::class, 'monitoringReport'])->middleware(['auth'])->name('report.monitoring');
+Route::get('/report/deficiency/{tool}/{orientation}/{type}', [PDFController::class, 'deficiencyReport'])->middleware(['auth'])->name('report.deficiency');
 
 // Route::get('/chart', function () {
 //     return Inertia::render('Shared/Charts/DoughnutChart');

@@ -19,17 +19,23 @@
                             <option value="deficiency">Deficiency</option>
                         </select>
                     </div>
+                    
                     <div class="flex flex-row items-center w-full md:w-auto mt-3 md:mt-0">
-                        <a :href="submitReport.type == 'monitoring' ? '/report/monitoring/' + tool.id + '/view' : '/report/deficiency/' + tool.id + '/view'" target="_blank" class="mr-2">
+                        <a :href="submitReport.type == 'monitoring' ? '/report/monitoring/' + tool.id + '/'+ submitReport.orientation + '/view' : '/report/deficiency/' + tool.id + '/'+ submitReport.orientation + '/view'" target="_blank" class="mr-2">
                             <button class="select-none bg-green-500 hover:bg-green-600 text-white h-10 px-2 rounded whitespace-nowrap">
                                 <i class="fas fa-eye mr-2"></i>Preview
                             </button>
                         </a>
-                        <a :href="submitReport.type == 'monitoring' ? '/report/monitoring/' + tool.id + '/download' : '/report/deficiency/' + tool.id + '/download'" target="_blank" class="mr-2">
+                        <a :href="submitReport.type == 'monitoring' ? '/report/monitoring/' + tool.id + '/'+ submitReport.orientation + '/download' : '/report/deficiency/' + tool.id + '/'+ submitReport.orientation + '/download'" target="_blank" class="mr-2">
                             <button class="select-none bg-green-500 hover:bg-green-600 text-white h-10 px-2 rounded whitespace-nowrap">
                                 <i class="fas fa-download mr-2"></i>Download
                             </button>
                         </a>
+                        
+                    <button @click="toggleOptionsModal"
+                    class="w-16 h-10 mx-2 text text-white bg-gray-500 hover:bg-gray-600 rounded">
+                    <i class="fas fa-cog"></i>
+                </button>
                         <button ref="saveBtn" @click="generate" class="select-none bg-blue-500 hover:bg-blue-600 text-white w-24 h-10 rounded" :disabled="generatingReport">
                             Save
                         </button>
@@ -45,50 +51,68 @@
         </template>
         <template v-slot:main-content>
             <div class="p-5 text-left">
-                <div class="flex items-center lg:flex-row flex-col">
-                    <label for="institution" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">HEI Name</label>
-                    <input type="text" id="institution" class="w-full rounded bg-gray-200" :value="tool.institution_program.institution.name" disabled>
-                </div>
-                <div class="mt-3 flex items-center lg:flex-row flex-col">
-                    <label for="program" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Program</label>
-                    <input type="text" id="program" class="w-full rounded bg-gray-200" :value="tool.institution_program.program.program" disabled>
-                </div>
-                <div class="mt-3 flex items-center lg:flex-row flex-col">
-                    <label for="effectivity" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Effectivity</label>
-                    <input type="text" id="effectivity" class="w-full rounded bg-gray-200" :value="'A.Y. '+tool.effectivity" disabled>
-                </div>
-                <div class="mt-3 flex items-center lg:flex-row flex-col">
-                    <label for="evaluationDate" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Evaluation Date</label>
-                    <input type="date" id="evaluationDate" class="w-full rounded" placeholder="Monitoring/Evaluation Date" v-model="report.evaluationDate">
-                </div>
-                <div class="mt-3 flex items-center lg:flex-row flex-col">
-                    <label for="conforme" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Conforme</label>
-                    <input maxlength="255" type="text" id="conforme" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Conforme" v-model="report.conforme1">
-                    <input maxlength="255" type="text" id="conformeTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="report.conforme1Title">
-                </div>
-                <div class="mt-3 flex items-center lg:flex-row flex-col">
-                    <label for="conforme" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Conforme</label>
-                    <input maxlength="255" type="text" id="conforme" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Conforme" v-model="report.conforme2">
-                    <input maxlength="255" type="text" id="conformeTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="report.conforme2Title">
-                </div>
-                <div class="mt-3 flex items-center lg:flex-row flex-col">
-                    <label for="evaluatedBy" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Evaluated by</label>
-                    <input maxlength="255" type="text" id="evaluatedBy" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Evaluated by" v-model="report.evaluatedBy">
-                    <input maxlength="255" type="text" id="evaluatedByTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="report.evaluatedByTitle">
-                </div>
-                <div class="mt-3 flex items-center lg:flex-row flex-col">
-                    <label for="reviewedBy" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Reviewed by</label>
-                    <input maxlength="255" type="text" id="reviewedBy" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Reviewed by" v-model="report.reviewedBy">
-                    <input maxlength="255" type="text" id="reviewedByTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="report.reviewedByTitle">
-                </div>
-                <div class="mt-3 flex items-center lg:flex-row flex-col">
-                    <label for="notedBy" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right">Noted by</label>
-                    <input maxlength="255" type="text" id="notedBy" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1" placeholder="Noted by" v-model="report.notedBy">
-                    <input maxlength="255" type="text" id="notedByTitle" class="w-full lg:w-1/2 rounded" placeholder="Title" v-model="report.notedByTitle">
-                </div>
+            <div class="flex items-center lg:flex-row flex-col">
+                <label for="institution" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right text-gray-700">HEI Name</label>
+                <input type="text" id="institution" class="w-full rounded bg-gray-100 text-gray-700" :value="tool.institution_program.institution.name" disabled>
+            </div>
+            <div class="mt-3 flex items-center lg:flex-row flex-col">
+                <label for="program" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right text-gray-700">Program</label>
+                <input type="text" id="program" class="w-full rounded bg-gray-100 text-gray-700" :value="tool.institution_program.program.program" disabled>
+            </div>
+            <div class="mt-3 flex items-center lg:flex-row flex-col">
+                <label for="effectivity" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right text-gray-700">Effectivity</label>
+                <input type="text" id="effectivity" class="w-full rounded bg-gray-100 text-gray-700" :value="'A.Y. '+tool.effectivity" disabled>
+            </div>
+            <div class="mt-3 flex items-center lg:flex-row flex-col">
+                <label for="evaluationDate" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right text-gray-700">Evaluation Date</label>
+                <input type="date" id="evaluationDate" class="w-full rounded bg-gray-white text-gray-700" placeholder="Monitoring/Evaluation Date" v-model="report.evaluationDate">
+            </div>
+            <div class="mt-3 flex items-center lg:flex-row flex-col">
+                <label for="conforme" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right text-gray-700">Conforme</label>
+                <input maxlength="255" type="text" id="conforme" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1 bg-gray-white text-gray-700" placeholder="Conforme" v-model="report.conforme1">
+                <input maxlength="255" type="text" id="conformeTitle" class="w-full lg:w-1/2 rounded bg-gray-white text-gray-700" placeholder="Title" v-model="report.conforme1Title">
+            </div>
+            <div class="mt-3 flex items-center lg:flex-row flex-col">
+                <label for="conforme" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right text-gray-700">Conforme</label>
+                <input maxlength="255" type="text" id="conforme" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1 bg-gray-white text-gray-700" placeholder="Conforme" v-model="report.conforme2">
+                <input maxlength="255" type="text" id="conformeTitle" class="w-full lg:w-1/2 rounded bg-gray-white text-gray-700" placeholder="Title" v-model="report.conforme2Title">
+            </div>
+            <div class="mt-3 flex items-center lg:flex-row flex-col">
+                <label for="evaluatedBy" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right text-gray-700">Evaluated by</label>
+                <input maxlength="255" type="text" id="evaluatedBy" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1 bg-gray-white text-gray-700" placeholder="Evaluated by" v-model="report.evaluatedBy">
+                <input maxlength="255" type="text" id="evaluatedByTitle" class="w-full lg:w-1/2 rounded bg-gray-white text-gray-700" placeholder="Title" v-model="report.evaluatedByTitle">
+            </div>
+            <div class="mt-3 flex items-center lg:flex-row flex-col">
+                <label for="reviewedBy" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right text-gray-700">Reviewed by</label>
+                <input maxlength="255" type="text" id="reviewedBy" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1 bg-gray-white text-gray-700" placeholder="Reviewed by" v-model="report.reviewedBy">
+                <input maxlength="255" type="text" id="reviewedByTitle" class="w-full lg:w-1/2 rounded bg-gray-white text-gray-700" placeholder="Title" v-model="report.reviewedByTitle">
+            </div>
+            <div class="mt-3 flex items-center lg:flex-row flex-col">
+                <label for="notedBy" class="font-bold whitespace-nowrap w-full lg:mr-3 lg:w-32 text-start lg:text-right text-gray-700">Noted by</label>
+                <input maxlength="255" type="text" id="notedBy" class="w-full lg:w-1/2 rounded lg:mr-2 lg:mb-0 mb-1 bg-gray-white text-gray-700" placeholder="Noted by" v-model="report.notedBy">
+                <input maxlength="255" type="text" id="notedByTitle" class="w-full lg:w-1/2 rounded bg-gray-white text-gray-700" placeholder="Title" v-model="report.notedByTitle">
+            </div>
             </div>
         </template>
     </content-container>
+    <modal :showModal="showOptionsModal" @close="toggleOptionsModal" width="md" height="long" title="Paper Options" :hasCancelButton="true">
+        <div class="w-full items-center md:mr-2 mt-3 md:mt-0">
+            <div class="mt-2">
+                <label class="mr-2">
+                    <input type="radio" v-model="submitReport.orientation" value="portrait" class="mr-1"> Portrait
+                </label>
+                <label>
+                    <input type="radio" v-model="submitReport.orientation" value="landscape" class="mr-1"> Landscape
+                </label>
+            </div>
+        </div>
+        <template v-slot:custom-button>
+            <button @click="showOptionsModal = false" class="text-white bg-green-600 hover:bg-green-700 w-20 rounded h-10">
+                Done
+            </button>
+        </template>
+    </modal>
+
 </template>
 
 <script setup>
@@ -99,6 +123,11 @@ const props = defineProps([
     'tool',
 ]);
 
+const showOptionsModal = ref(false);
+
+function toggleOptionsModal() {
+    showOptionsModal.value = !showOptionsModal.value;
+}
 
 const saveBtn = ref(null);
 const refs = { saveBtn };
@@ -141,6 +170,7 @@ const generatingReport = ref(false);
 
 const submitReport = reactive({
     type: 'monitoring',
+    orientation: 'portrait',
     id: ref(props.tool),
 });
 

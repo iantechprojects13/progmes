@@ -22,6 +22,10 @@
                     <template v-slot:options>
                         <div class="w-48">
                             <button class="py-1.5 hover:bg-gray-200 w-full text-left indent-7" ref="saveBtn"
+                                @click.prevent="update">
+                                Save changes
+                            </button>
+                            <button class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
                                 @click.prevent="saveAsDraft">
                                 Save as draft
                             </button>
@@ -119,10 +123,12 @@
                             {{ index + 1 }}
                         </td>
                         <td class="min-w-18 max-w-sm py-3 px-2 align-top">
-                            <tip-tap-editor v-model="form.area[index]" />
+                            <tip-tap-editor 
+                                :model-value="form.area[index]"
+                            />
                         </td>
                         <td class="min-w-18 max-w-xl py-3 px-2 align-top">
-                            <tip-tap-editor v-model="form.minReq[index]" />
+                            <tip-tap-editor v-model="form.minReq[index]"/>
                             
                         </td>
                     </tr>
@@ -147,6 +153,9 @@
         window.removeEventListener('keydown', handleKeyDown);
     });
 
+
+
+    // Ctrl + S to save changes
     const handleKeyDown = (event) => {
         if (event.ctrlKey || event.metaKey) {
             if (event.key === 's' || event.key === 'S') {
@@ -181,15 +190,7 @@
         return minreq;
     });
 
-    function addRow() {
-        form.other_discipline.push(null);
-    };
-
-    function removeRow(index) {
-        form.other_discipline.splice(index, 1);
-    };
-
-    const form = useForm({
+    const form = reactive({
         id: ref(props.cmo.id),
         discipline:
             ref(props.cmo.disciplineId) !== null
@@ -204,9 +205,11 @@
         minReq: minReqArray,
     });
 
-    function publish() {
-        router.post("/admin/CMOs/save-and-publish", form, {
+    function update() {
+        router.post("/admin/CMOs/update", form, {
             replace: true,
+            preserveState: true,
+            preserveScroll: true,
         });
     }
 
@@ -215,6 +218,13 @@
             replace: true,
         });
     }
+
+    function publish() {
+        router.post("/admin/CMOs/save-and-publish", form, {
+            replace: true,
+        });
+    }
+
 </script>
 
 <script>

@@ -95,7 +95,6 @@
         </template>
         <template v-slot:options>
             <div class="mr-1">
-                
                 <button @click="toggleFilterModal"
                     class="w-10 h-10 hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
                     data-tooltip="Filters">
@@ -165,48 +164,11 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="h-32 min-w-16 p-2 relative group">
-                            <textarea maxlength="5000" ref="findingsInput" v-model="item.findings" :name="'findings' + index"
-                                :id="'findings' + index"
-                                class="w-full min-w-md h-32 rounded border-gray-500 resize-none group custom-scrollbar"
-                                placeholder="Input findings here" @input="handleFindingsInput(index, item.id)">
-                                            </textarea>
-                            <button @click="openFindingsEditor(index)"
-                                class="absolute bottom-10 left-52 text-gray-500 hover:text-black group-focus-within:visible invisible tooltipForActions"
-                                data-tooltip="Open editor">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                            <text-editor title="Findings" :showModal="isFindingsEditorOpen && textEditorIndex == index"
-                                @close="closeFindingsEditor">
-                                <textarea maxlength="5000" ref="findingstexteditor" v-model="item.findings"
-                                    :name="'findingsEditor' + index" :id="'findingsEditor' + index"
-                                    class="w-full h-32 rounded border-gray-500 resize-none group"
-                                    placeholder="Input findings here" @focus="handleFindingsEditorInput(index)"
-                                    @input="handleFindingsEditorInput(index, item.id)">
-                                                </textarea>
-                            </text-editor>
+                        <td class="h-32 min-w-[21rem] p-2 relative group">
+                            <tip-tap-editor v-model="item.findings"></tip-tap-editor>
                         </td>
-                        <td class="h-32 min-w-16 p-2 relative group">
-                            <textarea maxlength="5000" ref="recommendationsInput" v-model="item.recommendations"
-                                :name="'recommendations' + index" :id="'recommendations' + index"
-                                class="w-full h-32 rounded border-gray-500 resize-none group custom-scrollbar"
-                                placeholder="Input comments here" @input="handleRecommendationsInput(index, item.id)">
-                                            </textarea>
-                            <button @click="openRecommendationsEditor(index)"
-                                class="absolute bottom-10 left-52 text-gray-500 hover:text-black group-focus-within:visible invisible tooltipForActions"
-                                data-tooltip="Open editor">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                            <text-editor title="Comments/Recommendations"
-                                :showModal="isRecommendationsEditorOpen && textEditorIndex == index"
-                                @close="closeRecommendationsEditor">
-                                <textarea maxlength="5000" ref="recommendationstexteditor" v-model="item.findings"
-                                    :name="'recommendationsEditor' + index" :id="'recommendationsEditor' + index"
-                                    class="w-full h-32 rounded border-gray-500 resize-none group"
-                                    placeholder="Input findings here" @focus="handleRecommendationEditorInput(index)"
-                                    @input="handleRecommendationEditorInput(index, item.id)">
-                                                </textarea>
-                            </text-editor>
+                        <td class="h-32 min-w-[21rem] p-2 relative group">
+                            <tip-tap-editor v-model="item.recommendations" />
                         </td>
                         <td class="h-32 p-3 min-w-8">
                             <div class="w-full h-full">
@@ -257,11 +219,14 @@
             </button>
         </template>
     </modal>
+    <pre>
+        {{ items.data.length }}
+    </pre>
 </template>
 
 <script setup>
 
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, reactive, computed } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
 
 const props = defineProps([
@@ -275,6 +240,22 @@ const props = defineProps([
     'auth',
     'filters',
 ]);
+
+const itemsArray = computed(() => {
+    return props.items.data.map(item => ({
+        id: item.id,
+        findings: item.findings,
+        recommendations: item.recommendations,
+        evaluationStatus: item.evaluationStatus,
+    }));
+});
+
+
+
+const form = reactive({
+    id: ref(props.evaluation.id),
+    items: ref(itemsArray),
+    });
 
 const handleBeforeUnload = (event) => {
     if (hasUpdate.value) {
@@ -370,24 +351,6 @@ function handleChangeStatus(id) {
 
 
 
-function openFindingsEditor(index) {
-    isFindingsEditorOpen.value = true;
-    textEditorIndex.value = index;
-}
-
-function closeFindingsEditor() {
-    isFindingsEditorOpen.value = false;
-}
-
-function openRecommendationsEditor(index) {
-    isRecommendationsEditorOpen.value = true;
-    textEditorIndex.value = index;
-}
-
-function closeRecommendationsEditor() {
-    isRecommendationsEditorOpen.value = false;
-}
-
 // CTRL + S function
 const handleKeyDown = (event) => {
     if (event.ctrlKey || event.metaKey) {
@@ -400,21 +363,13 @@ const handleKeyDown = (event) => {
 
 
 function update() {
-    router.post('/ched/evaluation/update', {
-        id: props.evaluation.id,
-        items: props.items,
-        rows: updatedRows.value,
-    }, {
-        onStart: () => {
-            saving.value = true;
-        },
-        onFinish: () => {
-            saving.value = false;
-        },
+    router.post('/ched/evaluation/update', form, {
+        replace: true,
         preserveState: false,
         preserveScroll: true,
     });
 }
+
 
 const processing = ref(false);
 const showFilterModal = ref(false);

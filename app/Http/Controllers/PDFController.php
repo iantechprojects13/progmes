@@ -39,7 +39,7 @@ class PDFController extends Controller
         return redirect()->back()->with('success', 'Changes saved.');
    }
 
-   public function deficiencyReport($tool, $type) {
+   public function deficiencyReport($tool, $orientation = 'portrait', $type) {
         
         $complianceTool = EvaluationFormModel::where('id', $tool)
         ->with(['item' => function ($toolQuery) {
@@ -52,7 +52,7 @@ class PDFController extends Controller
         ];
         
         $fileName = 'Deficiency-Report-'. time() . '.pdf';
-        $report = Pdf::loadView('report.deficiency', $data);
+        $report = Pdf::loadView('report.deficiency', $data)->setPaper('a4', $orientation);
         
         if ($type == 'view') {
             return $report->stream($fileName);
@@ -63,26 +63,26 @@ class PDFController extends Controller
         }
    }
 
-   public function monitoringReport($tool, $type) {
+    public function monitoringReport($tool, $orientation = 'portrait', $type) {
 
-        $complianceTool = EvaluationFormModel::where('id', $tool)
-        ->with(['item', 'cmo', 'item.criteria', 'institution_program.program', 'institution_program.institution'])
-        ->first();
+      $complianceTool = EvaluationFormModel::where('id', $tool)
+      ->with(['item', 'cmo', 'item.criteria', 'institution_program.program', 'institution_program.institution'])
+      ->first();
 
-        $data = [
+      $data = [
             'tool' => $complianceTool,
-        ];
-        
-        $fileName = 'Monitoring-Report-'. time() . '.pdf';
-        $report = Pdf::loadView('report.monitoring', $data);
-        
-        if ($type == 'view') {
+      ];
+      
+      $fileName = 'Monitoring-Report-'. time() . '.pdf';
+      $report = Pdf::loadView('report.monitoring', $data)->setPaper('a4', $orientation);
+      
+      if ($type == 'view') {
             return $report->stream($fileName);
-        } else if ($type == 'download') {
+      } else if ($type == 'download') {
             return $report->download($fileName);
-        } else {
+      } else {
             return redirect()->back()->with('failed', 'Failed to create monitoring/evaluation report.');
-        }
+      }
 
-   }
+}
 }

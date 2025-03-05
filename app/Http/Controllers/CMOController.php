@@ -205,6 +205,38 @@ class CMOController extends Controller
         return redirect()->route('admin.cmo.list')->with('success', 'CMO successfully published.');
     }
 
+    // Updates the changes in the CMO edit
+    public function update(Request $request) {
+
+        CMOModel::where('id', $request->id)->update([
+            'disciplineId' => $request->discipline,
+            'programId' => $request->program,
+            'number' => $request->number,
+            'series' => $request->series,
+            'version' => $request->version,
+            'status' => 'draft',
+        ]);
+
+        $criteria = CriteriaModel::where('cmoId', $request->id)->get();
+
+        foreach ($criteria as $index => $item) {
+            $criteriaModel = CriteriaModel::where('cmoId', $request->id)
+                ->where('itemNo', $index + 1)
+                ->first();
+
+            if ($criteriaModel) {
+                $criteriaModel->update([
+                    'area' => $request->area[$index],
+                    'minimumRequirement' => $request->minReq[$index],
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'All changes saved.');
+
+    }
+
+
     public function saveAsDraft(Request $request) {
 
         CMOModel::where('id', $request->id)->update([
@@ -235,6 +267,7 @@ class CMOController extends Controller
         return redirect()->route('admin.cmo.draft')->with('success', 'CMO saved as draft.');
 
     }
+
 
     public function publish($cmo) {
         $cmoModel = CMOModel::find($cmo);

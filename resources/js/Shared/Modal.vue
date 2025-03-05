@@ -22,7 +22,7 @@
                 <slot></slot>
             </div>
             <div class="py-4 px-5 border-t-2 border-gray-100 text-right">
-                <button
+                <button v-if="!hasCancelButton"
                     class="select-none text-gray-700 hover:text-black hover:bg-stone-200 h-10 w-20 rounded border border-gray-400 mr-1"
                     @click="closeModal">
                     Cancel
@@ -58,6 +58,7 @@ import { watch } from 'vue';
         'showModal',
         'width',
         'height',
+        'hasCancelButton',
     ]);
 
     watch(() => props.showModal, (newVal) => {

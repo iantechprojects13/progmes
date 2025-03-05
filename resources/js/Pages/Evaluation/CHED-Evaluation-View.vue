@@ -26,7 +26,6 @@
                         <i class="fas fa-book mr-3 text-blue-500"></i>
                         <div>
                             {{ evaluation_tool.institution_program.program?.program }}
-                            <span></span>
                         </div>
                     </div>
                     <div class="w-auto flex flex-row items-center">
@@ -77,8 +76,8 @@
                             <div class="font-bold">{{ item.criteria.area }}</div>
                             <div v-html="item.criteria.minimumRequirement"></div>
                         </td>
-                        <td class="p-3 whitespace-normal text-justify max-w-xl">{{ item.actualSituation }}</td>
-                        <td class="p-3">{{ item.selfEvaluationStatus }}</td>
+                        <td class="p-3 whitespace-normal text-justify max-w-xl" v-html="item.actualSituation"></td>
+                        <td class="p-3" v-html="item.selfEvaluationStatus"></td>
                         <td class="p-3">
                             <div v-for="file in item.evidence" :key="file.id" class="w-full">
                                 <a class="px-1 text-gray-600 hover:text-blue-500 m-1 rounded" :href="file.url"
@@ -92,11 +91,9 @@
                                 </a>
                             </div>
                         </td>
-                        <td v-show="showEvaluation" class="p-3 whitespace-normal">
-                            {{ item.findings }}
+                        <td v-show="showEvaluation" class="p-3 whitespace-normal" v-html="item.findings">
                         </td>
-                        <td v-show="showEvaluation" class="p-3 whitespace-normal">
-                            {{ item.recommendations }}
+                        <td v-show="showEvaluation" class="p-3 whitespace-normal" v-html="item.recommendations">
                         </td>
                         <td v-show="showEvaluation" class="p-3">
                             <div class="px-1 py-0.5 w-fit rounded text-white"

@@ -1,5 +1,5 @@
 <template>
-    <div class="px-3 md:px-16 pt-4 md:text-gray-200 md:bg-blue-900 z-60">
+    <div class="px-3 md:px-8 pt-4 md:text-gray-200 md:bg-blue-900 z-60">
         <h1 class="text-xl font-bold">Admin Panel</h1>
         <div class="mt-3 w-full z-40 text-gray-700 font-bold text-base md:pb-0">
             <div class="text-right">

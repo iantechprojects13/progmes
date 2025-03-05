@@ -5,19 +5,13 @@
     <content-container :hasStickyDiv="true" :hasSearch="true" :hasFilters="true" :hasTopMainContent="true">
         <template v-slot:content-title>
             <div class="w-full flex flex-col md:flex-row justify-between items-center">
-                <!-- Left Section -->
                 <div class="w-full flex flex-row items-center">
-                    <!-- Back Button and Title -->
                     <div class="w-full flex flex-row items-center">
                         <Link href="/evaluation">
-                            <button class="w-8 h-8 rounded-full hover:bg-gray-200 tooltipForActions" data-tooltip="Back">
-                                <i class="fas fa-arrow-left"></i>
-                            </button>
+                        <button class="w-8 h-8 rounded-full hover:bg-gray-200 tooltipForActions" data-tooltip="Back"><i class="fas fa-arrow-left"></i></button>
                         </Link>
                         <div class="ml-3 font-bold">Self-Evaluate</div>
                     </div>
-            
-                    <!-- Status Messages -->
                     <div class="w-full flex flex-row justify-between ml-2">
                         <div class="text-gray-500 h-10 lg:ml-1 flex items-center mr-5">
                             <div v-if="hasUpdate" class="text-red-500">
@@ -31,28 +25,19 @@
                         </div>
                     </div>
                 </div>
-            
-                <!-- Right Section - Action Buttons -->
                 <div class="w-full md:w-fit md:mt-0 mt-3 flex flex-row justify-center">
                     <div class="w-full flex flex-row">
-                        <button 
-                            v-if="progress[3] == 100 && evaluation.evaluationDate != null"
-                            @click="toggleResubmitModal" 
+                        <button @click="toggleResubmitModal" v-if="progress[3] == 100 && evaluation.evaluationDate != null"
                             class="select-none whitespace-nowrap px-3 w-fit text-white bg-blue-500 hover:bg-blue-600 h-10 rounded mr-1">
                             Resubmit
                         </button>
-                        <button 
-                            v-else-if="progress[3] == 100 && evaluation.evaluationDate == null"
-                            @click="toggleReadyForVisitModal" 
+                        <button @click="toggleReadyForVisitModal" v-else-if="progress[3] == 100 && evaluation.evaluationDate == null"
                             class="select-none whitespace-nowrap px-3 w-fit text-white bg-gray-700 hover:bg-gray-800 h-10 rounded mr-1">
                             Ready for visit
                         </button>
-                        <button 
-                            @click="update" 
-                            ref="saveBtn" 
-                            :disabled="saving"
-                            class="w-full select-none whitespace-nowrap cursor-pointer bg-blue-500 text-white h-10 rounded px-2">
-                            Save Changes
+                        <button @click="update" ref="saveBtn" :disabled="saving"
+                            class="w-full select-none whitespace-nowrap cursor-pointer bg-blue-500 text-white h-10 rounded px-2">Save
+                            Changes
                         </button>
                     </div>
                 </div>
@@ -83,39 +68,44 @@
             </div>
         </template>
         <template v-slot:top-main-content>
-            <div class="flex flex-col xl:flex-row items-center justify-between w-full rounded border border-gray-300 bg-white my-3 p-5">
-            <div class="w-full text-left space-y-2">
-                <div class="flex items-center">
-                <i class="fas fa-institution mr-3 text-blue-500"></i>
-                <div>{{ evaluation.institution_program.institution?.name }}</div>
+            <div class="flex flex-col xl:flex-row items-center justify-between w-auto rounded border border-gray-300 bg-white my-3 p-5">
+                <div class="w-full text-left">
+                    <div class="w-auto flex flex-row items-center">
+                        <i class="fas fa-institution mr-3 text-blue-500"></i>
+                        <div>{{ evaluation.institution_program.institution?.name }}</div>
+                    </div>
+                    <div class="w-auto flex flex-row items-center">
+                        <i class="fas fa-book mr-3 text-blue-500"></i>
+                        <div>
+                            {{ evaluation.institution_program.program?.program }}
+                            <span></span>
+                        </div>
+                    </div>
+                    <div class="w-auto flex flex-row items-center">
+                        <i class="fas fa-calendar-check mr-3 text-blue-500"></i>
+                        <div>A.Y. {{ evaluation.effectivity }}</div>
+                    </div>
                 </div>
-                <div class="flex items-center">
-                <i class="fas fa-book mr-3 text-blue-500"></i>
-                <div>{{ evaluation.institution_program.program?.program }}</div>
+                <div class="xl:w-auto w-full text-right mt-5 xl:mt-0">
+                    <div class="flex flex-col md:flex-row lg:mt-0 md:w-auto w-full">
+                        <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-300 bg-white">
+                            <div class="w-full font-bold ">{{ progress[0] }}</div>
+                            <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Complied</div>
+                        </div>
+                        <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-300 bg-white">
+                            <div class="w-full font-bold">{{ progress[1] }}</div>
+                            <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Not Complied</div>
+                        </div>
+                        <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-300 bg-white">
+                            <div class="w-full font-bold">{{ progress[2] }}</div>
+                            <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Not Applicable</div>
+                        </div>
+                        <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-300 bg-white">
+                            <div class="w-full font-bold">{{ progress[3] }}%</div>
+                            <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Progress</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex items-center">
-                <i class="fas fa-calendar-check mr-3 text-blue-500"></i>
-                <div>A.Y. {{ evaluation.effectivity }}</div>
-                </div>
-            </div>
-            <div class="xl:w-auto w-full text-right mt-5 xl:mt-0 space-y-2 xl:space-y-0 xl:space-x-2 flex flex-col xl:flex-row">
-                <div class="flex flex-col text-center p-2 px-3 w-full xl:w-auto rounded border border-gray-300 bg-white">
-                <div class="font-bold">{{ progress[0] }}</div>
-                <div class="font-bold text-blue-500 text-sm">Complied</div>
-                </div>
-                <div class="flex flex-col text-center p-2 px-3 w-full xl:w-auto rounded border border-gray-300 bg-white">
-                <div class="font-bold">{{ progress[1] }}</div>
-                <div class="font-bold text-blue-500 text-sm">Not Complied</div>
-                </div>
-                <div class="flex flex-col text-center p-2 px-3 w-full xl:w-auto rounded border border-gray-300 bg-white">
-                <div class="font-bold">{{ progress[2] }}</div>
-                <div class="font-bold text-blue-500 text-sm">Not Applicable</div>
-                </div>
-                <div class="flex flex-col text-center p-2 px-3 w-full xl:w-auto rounded border border-gray-300 bg-white">
-                <div class="font-bold">{{ progress[3] }}%</div>
-                <div class="font-bold text-blue-500 text-sm">Progress</div>
-                </div>
-            </div>
             </div>
         </template>
         <template v-slot:search>
@@ -236,11 +226,11 @@
                         <td class="p-3 pr-5 text-right whitespace-nowrap">
                             <div class="w-full text-right text-sm visible" ref="actionButtons"
                                 :class="{ 'invisible': item.selfEvaluationStatus == 'Not applicable' }">
-                                <!-- <button @click=" fileModal = true; fileItem = item.id; $refs.inputEvidenceFile.click()"
+                                <button @click=" fileModal = true; fileItem = item.id; $refs.inputEvidenceFile.click()"
                                     class="rounded bg-green-600 hover:bg-green-700 text-white h-8 mr-1 px-2 tooltipForActions" data-tooltip="Upload file"
                                     :disabled="item.selfEvaluationStatus == 'Not applicable'">
                                     <i class="fas fa-upload mr-2"></i>File
-                                </button> -->
+                                </button>
                                 <button @click="linkModal = true; evidenceLink = null; linkItem = item.id"
                                     class="rounded bg-green-600 hover:bg-green-700 text-white h-8 px-2 tooltipForActions" data-tooltip="Drop link"
                                     :disabled="item.selfEvaluationStatus == 'Not applicable'">
@@ -334,6 +324,9 @@
                 v-model="evidenceLink">
             </textarea>
         </div>
+        <div v-if="$page.props.errors.link" class="text-red-500">
+            {{$page.props.errors.link}}
+        </div>
         <template v-slot:custom-button>
             <button @click="submitLink" :disabled="uploadingLink"
                 class="text-white bg-blue-600 hover:bg-blue-700 w-24 py-2 px-3 rounded border">
@@ -361,10 +354,7 @@
 <script setup>
 // Imports
 import { ref, onMounted, onUnmounted, computed, reactive, watch } from 'vue';
-import { useForm, router, usePage } from '@inertiajs/vue3';
-
-// Inject $page object
-const { $page } = usePage();
+import { useForm, router } from '@inertiajs/vue3';
 
 // Props
 const props = defineProps([
@@ -374,34 +364,11 @@ const props = defineProps([
     'filters',
 ]);
 
-
-// Prevent user from leaving the page with unsaved changes (when pressing F5 or refresh button of the browser)
 const handleBeforeUnload = (event) => {
     if (hasUpdate.value) {
-        event.preventDefault();
         event.returnValue = true;
-        return event.returnValue;
     }
 };
-
-// Prevent user from leaving the page with unsaved changes (when pressing back button of the browser)
-const handlePopState = (event) => {
-    if (hasUpdate.value) {
-        if (!window.confirm('You have unsaved changes. Do you want to leave?')) {
-            event.preventDefault();
-            window.history.pushState(null, '', window.location.href); // Restore state to prevent navigation
-        } else {
-            window.removeEventListener('popstate', handlePopState);
-            window.location.href = '/evaluation';
-        }
-    }
-};
-
-// Add a new history entry to trap the back button
-window.history.pushState(null, '', window.location.href);
-
-// Listen for back button presses
-window.addEventListener('popstate', handlePopState);
 
 // Mount, Unmount
 onMounted(() => {
@@ -565,7 +532,7 @@ function submitLink() {
         onFinish: () => {
             uploadingLink.value = false;
         },
-        preserveState: false,
+        preserveState: true,
         preserveScroll: true,
     });
 }
@@ -667,6 +634,14 @@ function filter() {
             return {
                 itemsLayout: 'list',
             }
+        },
+        methods: {
+            listLayout() {
+                this.itemsLayout = 'list';
+            },
+            gridLayout() {
+                this.itemsLayout = 'grid';
+            },
         },
 
     }

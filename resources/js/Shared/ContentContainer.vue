@@ -2,7 +2,6 @@
     <div v-show="hasAdminPanel" class="md:sticky md:-top-14 z-60">
         <admin-panel/>
     </div>
-    <div class="md:mx-8">
         <div v-show="pageTitle" class="px-3 md:px-8 mt-5">
             <div class="flex flex-row items-center">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between my-3 w-full bg-white p-5 py-3 rounded-lg border border-gray-300">
@@ -63,7 +62,6 @@
                 </div>
             </div>
         </div>
-    </div>
     <div v-show="hasModal">
         <slot name="modal"></slot>
     </div>
