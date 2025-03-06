@@ -206,17 +206,24 @@ class CMOController extends Controller
     }
 
     // Updates the changes in the CMO edit
-    public function update(Request $request) {
+    public function update(Request $request) 
+    {
+        
+        $cmo = CMOModel::find($request->id);
 
-        CMOModel::where('id', $request->id)->update([
-            'disciplineId' => $request->discipline,
-            'programId' => $request->program,
-            'number' => $request->number,
-            'series' => $request->series,
-            'version' => $request->version,
-            'status' => 'draft',
-        ]);
+        
+        if ($cmo) {
+            $cmo->update([
+                'disciplineId' => $request->discipline,
+                'programId' => $request->program,
+                'number' => $request->number,
+                'series' => $request->series,
+                'version' => $request->version,
+                'status' => 'draft',
+            ]);
+        }
 
+        
         $criteria = CriteriaModel::where('cmoId', $request->id)->get();
 
         foreach ($criteria as $index => $item) {
@@ -233,8 +240,8 @@ class CMOController extends Controller
         }
 
         return redirect()->back()->with('success', 'All changes saved.');
-
     }
+
 
 
     public function saveAsDraft(Request $request) {

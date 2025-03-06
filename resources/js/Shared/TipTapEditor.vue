@@ -175,7 +175,7 @@
         StarterKit.configure({
           bulletList: true,
           placeholder: {
-            placeholder: 'Start writing...'
+            placeholder: 'Input text here...',
           }
         }),
         TextStyle,

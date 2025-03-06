@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{{ asset('assets/cropped-ched_logo.png') }}" type="image/x-icon">
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <title>Program Monitoring Report</title>
     <style>
         @page {
@@ -153,36 +154,39 @@
                     @endforeach
                 </tbody>
             </table>
-            <div style="margin-top: 75px; width: 100%;">
-                <div style="margin-left: 10px; page-break-inside: avoid;">
+
+            <!-- Signatories -->
+            <div style="margin-top: 75px; width: 100%; flex-wrap: wrap; display: flex; justify-content: center;">
+                <div style="margin-left: 10px; page-break-inside: avoid; width: 50%; background-color: aqua;">
                     <div>Conforme:</div>
                     <div style="margin: 8px 20px;">
                         <div>{{ $tool->conforme1 }}</div>
                         <div>{{ $tool->conforme1Title }}</div>
                     </div>
                 </div>
-                <div style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid;">
+                <div
+                    style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid; width: 50%; background-color: blueviolet;">
                     <div>Conforme:</div>
                     <div style="margin: 8px 20px;">
                         <div>{{ $tool->conforme2 }}</div>
                         <div>{{ $tool->conforme2Title }}</div>
                     </div>
                 </div>
-                <div style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid;">
+                <div style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid; width: 40%;">
                     <div>Evaluated by:</div>
                     <div style="margin: 8px 20px;">
                         <div>{{ $tool->evaluatedBy }}</div>
                         <div>{{ $tool->evaluatedByTitle }}</div>
                     </div>
                 </div>
-                <div style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid;">
+                <div style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid; width: 40%;">
                     <div>Reviewed by:</div>
                     <div style="margin: 8px 20px;">
                         <div>{{ $tool->reviewedBy }}</div>
                         <div>{{ $tool->reviewedByTitle }}</div>
                     </div>
                 </div>
-                <div style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid;">
+                <div style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid; width: 40%;">
                     <div>Noted by:</div>
                     <div style="margin: 8px 20px;">
                         <div>{{ $tool->notedBy }}</div>

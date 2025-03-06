@@ -96,12 +96,13 @@
                         <td v-show="showEvaluation" class="p-3 whitespace-normal" v-html="item.recommendations">
                         </td>
                         <td v-show="showEvaluation" class="p-3">
-                            <div class="px-1 py-0.5 w-fit rounded text-white"
+                            <div class="px-1 py-0.5 w-fit rounded text-white text-sm"
                                 :class="[{ 'bg-blue-500': item.evaluationStatus == 'Complied' },
                                 {'bg-red-500' : item.evaluationStatus == 'Not complied'},
                                 {'bg-gray-600' :item.evaluationStatus == 'Not applicable'},
+                                {'bg-green-600' :item.evaluationStatus == null},
                                 ]"
-                                >{{ item.evaluationStatus }}
+                                >{{ item.evaluationStatus == NULL ? 'No status' : item.evaluationStatus }}
                             </div>
                         </td>
                     </tr>

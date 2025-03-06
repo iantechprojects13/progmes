@@ -186,26 +186,23 @@ class HEIFormController extends Controller
         }
         
     }
-
+    
 
     public function update(Request $request) {
+        
+        foreach ($request->items as $item) {
 
-        foreach ($request->items['data'] as $item) {
+            $evaluationItem = EvaluationItemModel::find($item['id']);
 
-            if (in_array($item['id'], $request->rows)) {
-                
-                $evaluationItem = EvaluationItemModel::find($item['id']);
-
-                if ($evaluationItem) {
-                    $evaluationItem->update([
-                        'actualSituation' => $item['actualSituation'],
-                        'selfEvaluationStatus' => $item['selfEvaluationStatus'],
-                    ]);
-                }
+            if ($evaluationItem) {
+                $evaluationItem->update([
+                    'actualSituation' => $item['actualSituation'] ?? null,
+                    'selfEvaluationStatus' => $item['selfEvaluationStatus'] ?? null,
+                ]);
             }
         }
-
-        return redirect()->back()->with('updated', 'All changes saved.');
+    
+        return redirect()->back()->with('success', 'All changes saved.');
     }
 
     public function upload(Request $request) {

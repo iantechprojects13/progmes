@@ -3,12 +3,9 @@
     <page-title title="My Account" />
     <content-container>
         <template v-slot:content-title>
-            <div class="flex flex-row items-center justify-between mt-6">
+            <div class="flex flex-row items-center justify-between">
                 <div class="flex flex-row">
-                    <div class="mr-3">
-                        <i class="fas fa-user text-blue-500"></i>
-                    </div>
-                    <div class="font-bold text-xl">My Account</div>
+                    <div class="font-bold text">My Account Details</div>
                 </div>
             </div>
         </template>

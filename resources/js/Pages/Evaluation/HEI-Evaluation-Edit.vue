@@ -1,5 +1,4 @@
 <template>
-
     <Head title="Program Self-Evaluation Tool" />
     <page-title title="Program Self-Evaluation" />
     <content-container :hasStickyDiv="true" :hasSearch="true" :hasFilters="true" :hasTopMainContent="true">
@@ -11,18 +10,6 @@
                         <button class="w-8 h-8 rounded-full hover:bg-gray-200 tooltipForActions" data-tooltip="Back"><i class="fas fa-arrow-left"></i></button>
                         </Link>
                         <div class="ml-3 font-bold">Self-Evaluate</div>
-                    </div>
-                    <div class="w-full flex flex-row justify-between ml-2">
-                        <div class="text-gray-500 h-10 lg:ml-1 flex items-center mr-5">
-                            <div v-if="hasUpdate" class="text-red-500">
-                                *Changes unsaved.
-                            </div>
-                            <div v-else-if="$page.props.flash.updated">
-                                <i class="fas fa-check-circle text-green-500 mr-1"></i>
-                                {{ $page.props.flash.updated }}
-                            </div>
-                            <div v-else></div>
-                        </div>
                     </div>
                 </div>
                 <div class="w-full md:w-fit md:mt-0 mt-3 flex flex-row justify-center">
@@ -46,18 +33,7 @@
         <template v-slot:sticky-div>
             <div class="w-full flex items-end px-3 md:px-5 py-2">
                 <div class="w-full flex flex-row justify-between ml-2">
-                    <div class="text-gray-500 h-10 lg:ml-1 flex items-center mr-5">
-                        <div v-if="hasUpdate" class="text-red-500">
-                            <div>
-                                *Changes unsaved.
-                            </div>
-                        </div>
-                        <div v-else-if="$page.props.flash.updated">
-                            <i class="fas fa-check-circle text-green-500 mr-1"></i>
-                            {{ $page.props.flash.updated }}
-                        </div>
-                        <div v-else></div>
-                    </div>
+                    <div></div>
                 </div>
                 <div class="flex flex-row">
                     <button @click="update" ref="saveBtn" :disabled="saving"
@@ -147,7 +123,7 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="items.data.length == 0">
-                        <td colspan="6" class=" text-center items-center py-10">
+                        <td colspan="6" class="text-gray-500 text-center items-center py-10">
                             No data
                         </td>
                     </tr>
@@ -164,27 +140,8 @@
                             <div class="flex flex-col text-justify" v-html="item.criteria.minimumRequirement">
                             </div>
                         </td>
-                        <td class="h-32 min-w-16 p-2 relative group">
-                            <textarea maxlength="5000" ref="actualSituationInput" v-model="item.actualSituation"
-                                :name="'actualSituation' + index" :id="'actualSituation' + index"
-                                class="w-full min-w-md h-32 rounded border border-gray-500 resize-none group custom-scrollbar"
-                                :disabled="item.selfEvaluationStatus == 'Not applicable'"
-                                placeholder="Input actual situation here" @input="handleTextInput(index, item.id)">
-                            </textarea>
-                            <button @click="openEditor(index)"
-                                class="absolute bottom-10 left-52 text-gray-500 hover:text-black group-focus-within:visible invisible tooltipForActions"
-                                data-tooltip="Open editor">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                            <text-editor title="Actual Situation" :showModal="isEditorOpen && textEditorIndex == index"
-                                @close="closeEditor">
-                                <textarea maxlength="5000" ref="texteditor" v-model="item.actualSituation"
-                                    :name="'actualSituationEditor' + index" :id="'actualSituationEditor' + index"
-                                    class="w-full h-32 rounded border border-gray-500 resize-none group"
-                                    placeholder="Input actual situation here" @focus="handleTextEditorInput(index)"
-                                    @input="handleTextEditorInput(index, item.id)">
-                            </textarea>
-                            </text-editor>
+                        <td class="h-32 min-w-[21rem] max-w-md p-2 relative group">
+                            <tip-tap-editor v-model="item.actualSituation" @input="hasInput()"></tip-tap-editor>
                         </td>
                         <td class="h-auto p-3 w-16 flex flex-col justify-center">
                             <div class="flex flex-col"
@@ -200,7 +157,7 @@
                                             Link
                                         </span>
                                     </a>
-                                    <button @click="deleteModal = true; toDelete = file.id"
+                                    <button @click="toggleDeleteModal(); toDelete = file.id"
                                         class="text-gray-500 hover:text-red-500 tooltipForActions"
                                         :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate"
                                         :class="{ 'grayscale text-gray-500': hasUpdate }"
@@ -226,13 +183,8 @@
                         <td class="p-3 pr-5 text-right whitespace-nowrap">
                             <div class="w-full text-right text-sm visible" ref="actionButtons"
                                 :class="{ 'invisible': item.selfEvaluationStatus == 'Not applicable' }">
-                                <button @click=" fileModal = true; fileItem = item.id; $refs.inputEvidenceFile.click()"
-                                    class="rounded bg-green-600 hover:bg-green-700 text-white h-8 mr-1 px-2 tooltipForActions" data-tooltip="Upload file"
-                                    :disabled="item.selfEvaluationStatus == 'Not applicable'">
-                                    <i class="fas fa-upload mr-2"></i>File
-                                </button>
                                 <button @click="linkModal = true; evidenceLink = null; linkItem = item.id"
-                                    class="rounded bg-green-600 hover:bg-green-700 text-white h-8 px-2 tooltipForActions" data-tooltip="Drop link"
+                                    class="rounded bg-blue-500  text-gray-100 h-8 px-2 tooltipForActions" data-tooltip="Drop link"
                                     :disabled="item.selfEvaluationStatus == 'Not applicable'">
                                     <i class="fas fa-upload mr-2"></i>Link
                                 </button>
@@ -243,6 +195,12 @@
             </content-table>
         </template>
     </content-container>
+
+    <!-- has changes warning -->
+    <div v-if="hasChanges" class="w-auto h-auto bg-yellow-400 fixed z-[100] bottom-2 left-2 p-2 rounded flex items-center">
+        <i class="fas fa-exclamation-triangle mr-2"></i>
+        <span>Changes unsaved. You can press Ctrl + S to save.</span>
+    </div>
 
     <!-- Filter Modal -->
     <modal :showModal="showFilterModal" @close="toggleFilterModal" width="sm" height="long" title="Filters">
@@ -316,7 +274,7 @@
         <input type="file" hidden ref="inputEvidenceFile" id="inputEvidenceFile"
             @change="evidenceFile = $event.target.files[0]">
     </div>
-
+    
     <!-- Upload link modal -->
     <modal :showModal="linkModal" title="Evidence Link" @close="linkModal = false" width="lg" height="long">
         <div class="text-center">
@@ -349,12 +307,29 @@
             </button>
         </template>
     </confirmation-modal>
+
+
+    <confirmation @close="toggleDeleteModal" :showModal="resubmitModal" title="Delete link" width="md" height="short">
+        <template v-slot:message>
+            Are you sure you want to delete this evidence file/link? This action can't be undone.
+        </template>
+        
+        <template v-slot:buttons>
+            <button class="select-none text-white h-10 w-20 rounded bg-red-500 hover:bg-red-600"
+                @click="deleteLink">Delete
+            </button>
+        </template>
+    </confirmation>
 </template>
 
 <script setup>
 // Imports
-import { ref, onMounted, onUnmounted, computed, reactive, watch } from 'vue';
+import { ref, onMounted, onUnmounted, computed, reactive, watch, provide } from 'vue';
 import { useForm, router } from '@inertiajs/vue3';
+
+
+
+provide('hasChanges', true);
 
 // Props
 const props = defineProps([
@@ -364,8 +339,24 @@ const props = defineProps([
     'filters',
 ]);
 
+const itemsArray = computed(() => {
+    return props.items.data.map(item => ({
+        id: item.id,
+        actualSituation: item.actualSituation,
+        selfEvaluationStatus: item.selfEvaluationStatus,
+    }));
+});
+
+const form = reactive({
+    id: ref(props.evaluation.id),
+    items: ref(itemsArray),
+});
+
+
+
+
 const handleBeforeUnload = (event) => {
-    if (hasUpdate.value) {
+    if (hasChanges.value) {
         event.returnValue = true;
     }
 };
@@ -416,8 +407,19 @@ const submitting = ref(false);
 
 const processing = ref(false);
 const showFilterModal = ref(false);
+const hasChanges = ref(false);
 
 const refs = { actualSituationInput, selfEvaluationStatus, actionButtons, evidenceFiles, saveBtn, texteditor, inputEvidenceFile };
+
+function hasInput() {
+    hasChanges.value = true;
+}
+
+
+function toggleDeleteModal() {
+    deleteModal.value = !deleteModal.value;
+}
+
 
 // Functions
 function handleTextInput(index, id) {
@@ -475,15 +477,6 @@ function getRowsWithUpdates(id) {
 }
 
 
-function openEditor(index) {
-    isEditorOpen.value = true;
-    textEditorIndex.value = index;
-}
-
-function closeEditor() {
-    isEditorOpen.value = false;
-}
-
 function toggleReadyForVisitModal() {
 readyForVisitModal.value = !readyForVisitModal.value;
 }
@@ -502,20 +495,12 @@ const handleKeyDown = (event) => {
     }
 };
 
+
 function update() {
-    router.post('/hei/evaluation/update', {
-        id: props.evaluation.id,
-        items: props.items,
-        rows: updatedRows.value,
-    }, {
-        onStart: () => {
-            saving.value = true;
-        },
-        onFinish: () => {
-            saving.value = false;
-        },
-        preserveScroll: true,
+    router.post('/hei/evaluation/update', form, {
+        replace: true,
         preserveState: false,
+        preserveScroll: true,
     });
 }
 
@@ -527,10 +512,10 @@ function submitLink() {
         rows: updatedRows.value,
     }, {
         onStart: () => {
-            uploadingLink.value = true;
+            linkModal.value = true;
         },
-        onFinish: () => {
-            uploadingLink.value = false;
+        onSuccess: () => {
+            linkModal.value = false;
         },
         preserveState: true,
         preserveScroll: true,
@@ -541,7 +526,7 @@ function submitLink() {
 function deleteLink() {
     router.post('/hei/evaluation/link/delete', {
         'id': props.evaluation.id,
-        'item': toDelete.value
+        'item': toDelete.value,
     }, {
         onStart: () => {
             deleting.value = true;
@@ -624,6 +609,7 @@ function filter() {
         preserveScroll: true,
     });
 }
+
 </script>
 
 <script>

@@ -78,21 +78,17 @@
                             </div>
                         </td>
                         <td class="p-2 pr-5 text-left whitespace-nowrap">
-                            <div v-if="program.evaluation_form[0]?.status == 'In progress' || program.evaluation_form[0]?.status == 'Deployed'"
-                            class="bg-green-600 text-white w-fit px-1 rounded text-xs">
-                                In Progress
-                            </div>
-                            <div v-else-if="program.evaluation_form[0]?.status == 'Submitted'"
-                                class="bg-green-600 text-white w-fit px-1 rounded text-xs">
-                                Ready for visit
-                            </div>
-                            <div v-else-if="program.evaluation_form[0]?.status == 'For re-evaluation'"
-                                class="bg-green-600 text-white w-fit px-1 rounded text-xs">
-                                For re-evaluation
-                            </div>
-                            <div v-else-if="program.evaluation_form[0]?.status == 'Monitored'"
-                                class="bg-blue-500 text-white w-fit px-1 rounded text-xs">
-                                Monitored
+                            <div :class="{
+                                'bg-green-600': ['In progress', 'Deployed', 'Submitted', 'For re-evaluation'].includes(program.evaluation_form[0]?.status),
+                                'bg-blue-500': program.evaluation_form[0]?.status == 'Monitored',
+                                'bg-red-500': program.evaluation_form[0]?.status == 'Locked'
+                            }" class="text-white w-fit px-1 rounded text-xs">
+                                {{ program.evaluation_form[0]?.status == 'In progress' ? 'In Progress' :
+                                   program.evaluation_form[0]?.status == 'Deployed' ? 'Deployed' :
+                                   program.evaluation_form[0]?.status == 'Submitted' ? 'Ready for visit' :
+                                   program.evaluation_form[0]?.status == 'For re-evaluation' ? 'For re-evaluation' :
+                                   program.evaluation_form[0]?.status == 'Monitored' ? 'Monitored' :
+                                   program.evaluation_form[0]?.status == 'Locked' ? 'Locked' : '' }}
                             </div>
                         </td>
                     </tr>

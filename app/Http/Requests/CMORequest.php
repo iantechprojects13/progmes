@@ -24,7 +24,7 @@ class CMORequest extends FormRequest
         return [
             'discipline' => 'required',
             'program' => 'required',
-            'number' => 'required|integer',
+            'number' => 'required|integer|between:1,100',
             'series' => 'required|integer|between:2000,2100',
             'version' => 'required|integer|between:1,100',
         ];
