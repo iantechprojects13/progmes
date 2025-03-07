@@ -62,7 +62,7 @@
 
                 <template v-slot:table-body>
                     <tr v-if="complianceTools.data.length == 0">
-                        <td colspan="3" class="p-3 py-10 text-center">No evaluation tool found</td>
+                        <no-search-result text="evaluation tool"/>
                     </tr>
                     <tr v-else v-for="(item, index) in complianceTools.data" :key="item.id" class="hover:bg-gray-200"
                         :class="{'bg-gray-100': index % 2 == 1}">

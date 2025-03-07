@@ -61,9 +61,7 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="cmo_list.data.length == 0">
-                        <td class="text-center py-10" colspan="3">
-                            No CMO found
-                        </td>
+                        <no-search-result text="CMO"/>
                     </tr>
                     <tr v-else v-for="(cmo, index) in cmo_list.data" :key="cmo.id" class="hover:bg-gray-200 border-b"
                         :class="{ 'bg-gray-100': index % 2 == 1 }">
@@ -85,31 +83,6 @@
                                 Not Active
                             </div>
                         </td>
-                        <!-- <td class="p-2 pr-5 text-right whitespace-nowrap">
-                            <button @click="view(cmo.id)"
-                                class="select-none h-8 w-8 text-xl text-center rounded-full hover:bg-gray-300 text-green-500 hover:text-green-600 tooltipForActions"
-                                data-tooltip="View">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button v-show="canEdit" v-if="!cmo.isActive"
-                                @click="toggleConfirmationModal(cmo, 'activate', 'Activate CMO')"
-                                class="select-none h-8 w-8 text-xl text-center rounded-full hover:bg-gray-300 text-gray-500 hover:text-gray-600 tooltipForActions"
-                                data-tooltip="Activate">
-                                <i class="fas fa-toggle-off"></i>
-                            </button>
-                            <button v-show="canEdit" v-else
-                                @click="toggleConfirmationModal(cmo, 'deactivate', 'Deactivate CMO')"
-                                class="select-none h-8 w-8 text-xl text-center rounded-full hover:bg-gray-300 text-blue-500 hover:text-blue-600 tooltipForActions"
-                                data-tooltip="Deactivate">
-                                <i class="fas fa-toggle-on"></i>
-                            </button>
-                            <button v-show="canEdit"
-                                @click="toggleConfirmationModal(cmo, 'deleteCMO', 'Delete Published CMO')"
-                                class="select-none h-8 w-8 text-xl text-center rounded-full hover:bg-gray-300 text-red-500 hover:text-red-600 tooltipForActions"
-                                data-tooltip="Delete">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td> -->
                         <td class="p-2 pr-5 text-right whitespace-nowrap">
                             <button @click="view(cmo.id)"
                                 class="select-none h-8 w-8 text-xl text-center rounded-full hover:bg-gray-300 text-green-500 hover:text-green-600 tooltipForActions"

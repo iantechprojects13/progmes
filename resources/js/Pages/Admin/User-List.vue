@@ -47,9 +47,7 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="user_list.data.length==0">
-                        <td class="py-10 text-center" colspan="7">
-                            No users found
-                        </td>
+                        <no-search-result text="users"/>
                     </tr>
                     <tr v-else v-for="(user, index) in user_list.data" :key="user.id"
                         class="hover:bg-gray-200 border-b align-top" :class="{ 'bg-gray-100': index % 2 == 1 }">
@@ -80,20 +78,20 @@
                         </td>
                         <td class="p-2">
                             <div v-for="role in user.user_role" :key="role.id">
-                                {{ role.discipline?.discipline }}
+                                {{ role.discipline?.discipline || 'N/A'}}
                             </div>
                         </td>
                         <td class="p-2">
-                            <div v-for="role in user.user_role" :key="role.id">
-                                {{ role.program?.program }}
+                            <div v-for="(role, programIndex) in user.user_role" :key="role.id">
+                                {{ role.program?.program ||  programIndex == 0 ? 'N/A' : '' }}
                                 <span v-if="role.program?.major != null">
                                     - {{ role.program?.major }}
                                 </span>
                             </div>
                         </td>
                         <td class="p-2">
-                            <div v-for="role in user.user_role" :key="role.id">
-                                {{ role.institution?.name }}
+                            <div v-for="(role, institutionIndex) in user.user_role" :key="role.id">
+                                {{ role.institution?.name || institutionIndex == 0 ? 'N/A' : '' }}
                             </div>
                         </td>
                         <td class="p-2 pr-5 text-right whitespace-nowrap">
@@ -171,6 +169,7 @@ const props = defineProps([
 
 const showFilterModal = ref(false);
 const processing = ref(false);
+const searchValue = ref(props.filters.search);
 
 const query = useForm({
     show: props.filters.show != null ? props.filters.show : null,

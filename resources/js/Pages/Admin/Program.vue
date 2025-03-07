@@ -57,9 +57,7 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="program_list.data.length == 0">
-                        <td class="text-center py-10" colspan="4">
-                            No program found
-                        </td>
+                        <no-search-result text="program" />
                     </tr>
                     <tr v-else v-for="(program, index) in program_list.data" :key="program.id"
                         class="hover:bg-gray-200 border-b" :class="{'bg-gray-100': index % 2 == 1}">

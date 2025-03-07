@@ -34,6 +34,7 @@ import PieChart from './Shared/Charts/PieChart.vue';
 import ChartsContainer from './Shared/Charts/ChartsContainer.vue';
 import UserManagementNav from './Shared/UserManagementNav.vue';
 import TipTapEditor from './Shared/TipTapEditor.vue';
+import NoSearchResult from './Shared/NoSearchResult.vue';
 
 
 
@@ -75,6 +76,7 @@ createInertiaApp({
             .component('ChartsContainer', ChartsContainer)
             .component('UserManagementNav', UserManagementNav)
             .component('TipTapEditor', TipTapEditor)
+            .component('NoSearchResult', NoSearchResult)
             .mount(el);
     },
     progress: false,

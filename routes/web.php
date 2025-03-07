@@ -20,6 +20,7 @@ use App\Http\Controllers\InstitutionProgramController;
 use App\Http\Controllers\AdminSettingsController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\EvidenceController;
+use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\PDFController;
 
 
@@ -105,6 +106,9 @@ Route::post('/ched/evaluation/monitored', [CHEDFormController::class, 'monitored
 Route::post('/ched/evaluation/lock', [CHEDFormController::class, 'lock'])->name('form.ched.lock');
 Route::post('/ched/evaluation/unlock', [CHEDFormController::class, 'unlock'])->name('form.ched.unlock');
 
+
+//application
+Route::get('/application', [ApplicationController::class, 'index'])->middleware(['auth', 'user.verified'])->name('application');
 
 //admin-panel
 //USERS

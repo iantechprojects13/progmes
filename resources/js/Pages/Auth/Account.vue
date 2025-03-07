@@ -25,24 +25,49 @@
                 </div>
                 <!-- Account Details -->
                 <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-gray-300 p-4 rounded-lg shadow flex items-center">
+                    <div v-if="profile.type" class="bg-gray-300 p-4 rounded-lg shadow flex items-center">
                         <i class="fas fa-user-tag text-blue-500 mr-2"></i>
                         <div>
                             <h2 class="text-gray-700 font-semibold">Type</h2>
-                            <p class="text-gray-900">{{ profile.type || 'N/A' }}</p>
+                            <p class="text-gray-900">{{ profile.type }}</p>
                         </div>
                     </div>
-                    <div class="bg-gray-300 p-4 rounded-lg shadow flex items-center">
+                    <div v-if="profile.role" class="bg-gray-300 p-4 rounded-lg shadow flex items-center">
                         <i class="fas fa-briefcase text-blue-500 mr-2"></i>
                         <div>
                             <h2 class="text-gray-700 font-semibold">Role</h2>
-                            <p class="text-gray-900">{{ profile.role || 'N/A' }}</p>
+                            <p class="text-gray-900">{{ profile.role }}</p>
+                        </div>
+                    </div>
+                    <div v-if="roles.institution" class="bg-gray-300 p-4 rounded-lg shadow flex items-center">
+                        <i class="fas fa-university text-blue-500 mr-2"></i>
+                        <div>
+                            <h2 class="text-gray-700 font-semibold">Institution</h2>
+                            <p class="text-gray-900">{{ roles.institution }}</p>
+                        </div>
+                    </div>
+                    <div v-if="roles.discipline" class="bg-gray-300 p-4 rounded-lg shadow flex items-center">
+                        <i class="fas fa-book text-blue-500 mr-2"></i>
+                        <div v-for="role in roles" :key="role.id">
+                            <h2 class="text-gray-700 font-semibold">Discipline</h2>
+                            <p class="text-gray-900">{{ roles.discipline }}</p>
+                        </div>
+                    </div>
+                    <div v-if="roles[0]?.program?.program" class="bg-gray-300 p-4 rounded-lg shadow flex items-center">
+                        <i class="fas fa-graduation-cap text-blue-500 mr-2"></i>
+                        <div>
+                            <h2 class="text-gray-700 font-semibold">Program</h2>
+                            <p class="text-gray-900">{{ roles[0].program.program }}</p>
                         </div>
                     </div>
                 </div>
             </div>
         </template>
     </content-container>
+    
+    <pre>
+        {{ roles }}
+    </pre>
 </template>
 
 <script setup>

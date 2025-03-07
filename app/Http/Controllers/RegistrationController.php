@@ -239,11 +239,11 @@ class RegistrationController extends Controller
             $role->save();
         }
         
-        try {
-            Mail::to($acceptedUser->email)->send(new NotificationEmail($acceptedUser->name));
-        } catch (Throwable $thr) {
-            return redirect()->back()->with('failed',  $thr->getMessage());
-        }
+        // try {
+        //     Mail::to($acceptedUser->email)->send(new NotificationEmail($acceptedUser->name));
+        // } catch (Throwable $thr) {
+        //     return redirect()->back()->with('failed',  $thr->getMessage());
+        // }
         
         return redirect()->back()->with('success', $acceptedUser->name .'\'s registration has been approved. Notification email has been sent.');
     }
@@ -272,59 +272,33 @@ class RegistrationController extends Controller
 
 
     //View account
-    public function viewMyAccount($id) {
-
+    public function viewMyAccount($id)
+    {
         $user = Auth::user();
-        $roles = [];
-        $hasDiscipline = false;
-        $hasProgram = false;
-        $hasInstitution = false;
-
+        
         if ($id != $user->id) {
             return redirect('/unauthorized');
         }
 
-        if ($user->role == 'Education Supervisor') {
-            $roles = RoleModel::where(['userId'=> $user->id, 'isActive' => 1])->with('discipline')->get();
-            if($roles) {
-                $hasDiscipline = true;
-            }
-        }
+        $roleRelations = [
+            'Education Supervisor' => ['discipline'],
+            'Vice-President for Academic Affairs' => ['institution'],
+            'Dean' => ['discipline', 'institution'],
+            'Program Head' => ['program', 'institution']
+        ];
 
-        if ($user->role == 'Vice-President for Academic Affairs') {
-            $roles = RoleModel::where(['userId' => $user->id, 'isActive' => 1])->with('institution')->get();
-            if($roles) {
-                $hasInstitution = true;
-            }
-        }
+        $roles = isset($roleRelations[$user->role]) 
+            ? RoleModel::where(['userId' => $user->id, 'isActive' => 1])
+                    ->with($roleRelations[$user->role])
+                    ->get()
+            : [];
 
-        if ($user->role == 'Dean') {
-            $roles = RoleModel::where(['userId' => $user->id, 'isActive' => 1])->with('discipline', 'institution')->get();
-            if($roles) {
-                $hasDiscipline = true;
-                $hasInstitution = true;
-            }
-        }
-
-        if ($user->role == 'Program Head') {
-            $roles = RoleModel::where(['userId' => $user->id, 'isActive' => 1])->with('program', 'institution')->get();
-
-            if($roles) {
-                $hasProgram = true;
-                $hasInstitution = true;
-            }
-        }
-        
-        
         return Inertia::render('Auth/Account', [
-            'profile' => Auth::user(),
+            'profile' => $user,
             'roles' => $roles,
-            'hasDiscipline' => $hasDiscipline,
-            'hasProgram' => $hasProgram,
-            'hasInstitution' => $hasInstitution,
         ]);
     }
-
+    
 
     public function viewUserProfile(User $user) {
 

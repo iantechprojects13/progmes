@@ -74,11 +74,22 @@
                     <tr v-else v-for="(item, index) in evaluation_tool.item" :key="item.id"
                         class="hover:bg-gray-200 align-top" :class="{'bg-gray-100': index % 2 == 1 }">
                         <td class="p-2 whitespace-normal text-justify max-w-xl">
-                            <div class="font-bold">{{ item.criteria.area }}</div>
-                            <div>{{ item.criteria.minimumRequirement }}</div>
+                            <div class="font-bold" v-html="item.criteria.area"></div>
+                            <div v-html="item.criteria.minimumRequirement"></div>
                         </td>
-                        <td class="p-2 whitespace-normal text-justify max-w-xl">{{ item.actualSituation }}</td>
-                        <td class="p-2">{{ item.selfEvaluationStatus }}</td>
+                        <td class="p-2 whitespace-normal text-justify max-w-xl">
+                            <div v-html="item.actualSituation"></div>
+                        </td>
+                        <td class="p-2">
+                            <div class="px-1 py-0.5 w-fit rounded text-white text-sm"
+                                :class="[{ 'bg-blue-500': item.selfEvaluationStatus == 'Complied' },
+                                {'bg-red-500' : item.selfEvaluationStatus == 'Not complied'},
+                                {'bg-gray-600' :item.selfEvaluationStatus == 'Not applicable'},
+                                {'bg-green-600' :item.selfEvaluationStatus == NULL},
+                                ]"
+                                >{{ item.selfEvaluationStatus || 'No status'}}
+                            </div>
+                        </td>
                         <td class="p-2">
                             <div v-for="file in item.evidence" :key="file.id" class="w-full">
                                 <a class="px-1 text-gray-600 hover:text-blue-500 m-1 rounded" :href="file.url"
@@ -99,10 +110,11 @@
                             {{ item.recommendations }}
                         </td>
                         <td v-show="showEvaluation" class="p-2 pr-5 text-right">
-                            <div class="px-1 py-0.5 w-fit rounded text-white"
+                            <div class="px-1 py-0.5 w-fit rounded text-white text-sm"
                                 :class="[{ 'bg-blue-500': item.evaluationStatus == 'Complied' },
                                 {'bg-red-500' : item.evaluationStatus == 'Not complied'},
                                 {'bg-gray-600' :item.evaluationStatus == 'Not applicable'},
+                                {'bg-gray-600' :item.evaluationStatus == NULL},
                                 ]"
                                 >{{ item.evaluationStatus }}
                             </div>

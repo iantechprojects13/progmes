@@ -55,9 +55,7 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="institutionProgramList.data.length == 0">
-                        <td class="text-center py-10" colspan="5">
-                            No compliance evaluation tool found
-                        </td>
+                        <no-search-result text="compliance evaluation tool"/>
                     </tr>
                     <tr v-else v-for="(program, index) in institutionProgramList.data" :key="program.id"
                         class="hover:bg-gray-200 border-b" :class="{ 'bg-gray-100': index % 2 == 1 }">
@@ -68,13 +66,13 @@
                             {{ program.program?.program }}
                         </td>
                         <td class="p-2">
-                            {{ program.program?.major }}
+                            {{ program.program?.major || 'N/A' }}
                         </td>
                         <td class="p-2">
                             <div>
                                 CMO No.{{ program.evaluation_form[0]?.cmo?.number }}
-                                S. {{ program.evaluation_form[0]?.cmo?.series }},
-                                Version {{ program.evaluation_form[0]?.cmo?.version }}
+                                Series of {{ program.evaluation_form[0]?.cmo?.series }}
+                                <!-- Version {{ program.evaluation_form[0]?.cmo?.version }} -->
                             </div>
                         </td>
                         <td class="p-2 pr-5 text-left whitespace-nowrap">

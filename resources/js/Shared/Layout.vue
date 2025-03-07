@@ -81,6 +81,20 @@
                                 Evaluation
                                 </Link>
 
+                                <Link :href="route('application')"
+                                    class="select-none block w-full text-start px-3 my-1 rounded py-2 hover:bg-stone-700"
+                                    :class="[{
+                                        'text-blue-500 bg-white hover:bg-white':
+                                            highlight('application'),
+                                    }, {
+                                        'text-gray-200 hover:text-blue-500':
+                                            !highlight('application'),
+                                    }]"
+                                    :disabled="hasChanges">
+                                <i class="fa fa-user mr-4 text-xl"></i>
+                                Program Application
+                                </Link>
+
                                 <Link :href="'/myaccount/' + $page.props.auth.user.id"
                                     class="select-none block w-full text-start px-3 my-1 rounded py-2 hover:bg-stone-700"
                                     :class="[{
@@ -100,9 +114,21 @@
                                 Sign out
                                 </button>
                             </div>
+
+
+
+
                             <div>
-                                <!-- {{ hasChanges }} -->
+                                <!-- <div>
+                                    <h1>Layout</h1>
+                                    <p>Data from Child: {{ childData.value }}</p>
+                                </div> -->
                             </div>
+
+
+
+
+
                         </div>
                         
                         <!-- Sidebar Toggle -->
@@ -202,13 +228,11 @@
           </button>
         </div>
     </TransitionGroup>
-    
-
 </template>
 
 <script setup>
 import { router, usePage } from '@inertiajs/vue3';
-import { ref, watch, inject } from 'vue';
+import { ref, watch, inject, reactive, provide } from 'vue';
 
 const page = usePage();
 const activeNotifications = ref([]);
@@ -217,6 +241,13 @@ const logoutModal = ref(false);
 const loggingout = ref(false);
 const loading = ref(false);
 const hasChanges = inject('hasChanges');
+
+const childData = reactive({
+    value: null
+});
+
+// Provide it to children
+provide("childData", childData);
 
 
 function closeNotification(id) {
@@ -327,6 +358,9 @@ defineExpose({
                         "Evaluation/CHED-Evaluation-Report-Create",
                         "Evaluation/CHED-Evaluation-Monitored",
                     ],
+                    application: [
+                        "Application/Application-Edit",
+                    ],
                     myaccount: [
                         "Auth/Account",
                     ],
@@ -345,6 +379,8 @@ defineExpose({
                     return this.component.adminpanel.includes(this.$page.component);
                 } else if (btn == "evaluation") {
                     return this.component.evaluation.includes(this.$page.component);
+                } else if (btn == "application") {
+                    return this.component.application.includes(this.$page.component);
                 } else if (btn == "myaccount") {
                     return this.component.myaccount.includes(this.$page.component);
                 }

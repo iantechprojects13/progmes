@@ -7,11 +7,6 @@ ul {
     padding-left: 20px; /* Ensures proper indentation */
 }
 
-Link {
-    text-decoration: none;
-    color: #333;
-}
-
 .layout-tooltip {
     position: absolute;
     cursor: pointer;

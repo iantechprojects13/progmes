@@ -6,6 +6,9 @@
         
         <template v-slot:top-button>
             <Link href="/admin/higher-education-institutions/create">
+                <!-- <div>
+                    <button @click="updateData">Send Data to Layout</button>
+                </div> -->
             <button class="bg-blue-500 hover:bg-blue-600 h-10 px-3 rounded text-white whitespace-nowrap">
                 <i class="fas fa-plus mr-2"></i>Add HEI
             </button>
@@ -37,6 +40,7 @@
             </div>
         </template>
         <template v-slot:main-content>
+            
             <content-table>
                 <template v-slot:table-head>
                     <th class="p-2 pl-5">HEI Name</th>
@@ -46,9 +50,7 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="institution_list.data.length == 0">
-                        <td class="text-center py-10" colspan="3">
-                            No HEI found
-                        </td>
+                        <no-search-result text="HEI"/>
                     </tr>
                     <tr v-else v-for="(hei, index) in institution_list.data" :key="hei.id" class="hover:bg-gray-200 border-b"
                         :class="{'bg-gray-100': index % 2 == 1}">
@@ -106,7 +108,7 @@
 
 <script setup>
 import { router, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
 
 const props = defineProps(['institution_list', 'canEdit', 'canAdd', 'canDelete', 'filters']);
 
@@ -118,6 +120,13 @@ const query = useForm({
     search: props.filters.search,
 });
 
+// Inject the reactive object
+const childData = inject("childData");
+
+// Function to update value
+const updateData = () => {
+    childData.value = "Data from Child!";
+};
 
 function toggleFilterModal() {
     showFilterModal.value = !showFilterModal.value;

@@ -184,7 +184,8 @@
           openOnClick: false,
           HTMLAttributes: {
             target: '_blank',
-            rel: 'noopener noreferrer'
+            rel: 'noopener noreferrer',
+            style: 'color: blue; text-decoration: underline;',
           },
           linkOnPaste: true,
         }),

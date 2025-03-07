@@ -63,9 +63,7 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="cmo_list.data.length == 0">
-                        <td class="text-center py-10" colspan="4">
-                            No draft found
-                        </td>
+                        <no-search-result text="CMO" :search="props.filters.search"/>
                     </tr>
                     <tr v-else v-for="(cmo, index) in cmo_list.data" :key="cmo.id" class="hover:bg-gray-200 border-b"
                         :class="{'bg-gray-100': index % 2 == 1}">
@@ -162,6 +160,7 @@ const cmo_file = ref(null);
 const importing = ref(false);
 const showFilterModal = ref(false);
 const processing = ref(false);
+const searchValue = ref(props.filters.search);
 
 const form = useForm({
     cmo_file: null,

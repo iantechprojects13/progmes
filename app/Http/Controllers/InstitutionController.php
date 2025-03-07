@@ -41,7 +41,7 @@ class InstitutionController extends Controller
         ->orderBy('name')
         ->paginate($show)
         ->withQueryString();
-
+        
         return Inertia::render('Admin/HEI', [
             'institution_list' => $institutionlist,
             'canEdit' => $canEdit,

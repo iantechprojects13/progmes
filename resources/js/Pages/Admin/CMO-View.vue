@@ -14,50 +14,36 @@
             </div>
         </template>
         <template v-slot:main-content>
-            <div class="border border-gray-300 mb-5 rounded mt-3 p-5 md:p-8">
-                <table>
+            <div class="bg-gray-200 p-0.5 rounded-lg shadow-lg mt-5 mb-8">
+                <table class="w-full border rounded-lg overflow-hidden shadow-md bg-white">
                     <tbody>
-                        <tr>
-                            <td class="px-1 py-0.5 align-text-top">No</td>
-                            <td class="px-5 py-0.5 align-text-top">:</td>
-                            <td class="px-1 py-0.5 align-text-top">
-                                    {{ cmo.number }}
-                            </td>
+                        <tr class="border-b">
+                            <th class="text-left align-top w-1/4 px-6 py-3 text-gray-700 font-bold">
+                                No
+                            </th>
+                            <td class="px-6 py-3 text-gray-900">{{ cmo.number || '-' }}</td>
                         </tr>
-                        <tr>
-                            <td class="px-1 py-0.5 align-text-top">Series</td>
-                            <td class="px-5 py-0.5 align-text-top">:</td>
-                            <td class="px-1 py-0.5 align-text-top">
-                                {{ cmo.series }}
-                            </td>
+                        <tr class="border-b">
+                            <th class="text-left align-top w-1/4 px-6 py-3 text-gray-700 font-bold">
+                                Series
+                            </th>
+                            <td class="px-6 py-3 text-gray-900">{{ cmo.series || '-' }}</td>
                         </tr>
-                        <tr>
-                            <td class="px-1 py-0.5 align-text-top">Version</td>
-                            <td class="px-5 py-0.5 align-text-top">:</td>
-                            <td class="px-1 py-0.5 align-text-top">
-                                {{ cmo.version }}
-                            </td>
+                        <tr class="border-b">
+                            <th class="text-left align-top w-1/4 px-6 py-3 text-gray-700 font-bold">
+                                Version
+                            </th>
+                            <td class="px-6 py-3 text-gray-900">{{ cmo.version || '-' }}</td>
                         </tr>
-                        <tr>
-                            <td class="px-1 py-0.5 align-text-top">Program</td>
-                            <td class="px-5 py-0.5 align-text-top">:</td>
-                            <td class="px-1 py-0.5 align-text-top">
-                                {{ cmo.program?.program }}
+                        <tr class="border-b">
+                            <th class="text-left align-top w-1/4 px-6 py-3 text-gray-700 font-bold">
+                                Program
+                            </th>
+                            <td class="px-6 py-3 text-gray-900">
+                                {{ cmo.program?.program || '-' }}
                                 <span v-if="cmo.program?.major != null">
                                     - {{ cmo.program?.major }}
                                 </span>
-                            </td>
-                        </tr>
-                        <tr v-show="!$page.url.includes('/admin/CMOs/draft')">
-                            <td class="px-1 py-0.5 align-text-top">Active Status</td>
-                            <td class="px-5 py-0.5 align-text-top">:</td>
-                            <td class="px-1 py-0.5 align-text-top text-xs">
-                                <div v-if="cmo.isActive" class=" bg-green-500 text-white w-fit px-1 rounded">
-                                    Active
-                                </div>
-                                <div v-else class="bg-gray-500 text-white w-fit px-1 rounded">
-                                    Not Active
-                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -65,9 +51,9 @@
             </div>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="p-3 border-b border-gray-300">Item</th>
-                    <th class="p-3 border-b border-gray-300">Area</th>
-                    <th class="p-3 border-b border-gray-300">Minimum Requirement</th>
+                    <th class="p-3 bg-gray-300">Item</th>
+                    <th class="p-3 bg-gray-300">Area</th>
+                    <th class="p-3 bg-gray-300">Minimum Requirement</th>
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="cmo.length == 0">
