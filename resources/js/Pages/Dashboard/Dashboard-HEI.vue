@@ -1,7 +1,10 @@
 <template>
 
     <Head title="Dashboard" />
-    <page-title title="Dashboard" />
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-800 p-8">
+        <h1 class="text-3xl font-bold text-white mb-2">Dashboard</h1>
+       
+    </div>
     <div class="mx-3 md:mx-8 py-8 lg:py-3 px-5 mt-8 border border-gray-300 rounded bg-white flex flex-col lg:flex-row justify-between items-center">
         <div class="mb-8 lg:mb-0 w-full">
             <div class="flex flex-row items-center">

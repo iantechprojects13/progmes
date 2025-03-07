@@ -1,7 +1,10 @@
 <template>
 
     <Head title="Program Self-Evaluation" />
-    <page-title title="Program Self-Evaluation" />
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-800 p-8">
+        <h1 class="text-3xl font-bold text-white mb-2">Program Self-Evaluation</h1>
+       
+    </div>
     <div class="md:mx-8 mx-3 mt-8 bg-white p-3 px-5 rounded border border-gray-300">
         <div>
             <i class="fas fa-book mr-2 text-blue-500"></i>

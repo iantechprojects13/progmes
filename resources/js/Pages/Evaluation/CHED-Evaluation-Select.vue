@@ -1,7 +1,10 @@
 <template>
 
     <Head title="Program Evaluation" />
-    <page-title title="Program Evaluation" />
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-800 p-8">
+        <h1 class="text-3xl font-bold text-white mb-2">Program Evaluation</h1>
+       
+    </div>
     <content-container hasSearch="true" pageTitle="Evaluation" :hasNavigation="true" page="evaluation" :hasTopButton="true" :hasFilters="true" :data_list="complianceTools">
         <template v-slot:top-button>
             <select @change="submit" v-model="query.academicYear" id="academicYearSelect" class="h-10 border-gray-400 hover:border-gray-500 cursor-pointer rounded text-sm">
