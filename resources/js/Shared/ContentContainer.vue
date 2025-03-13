@@ -1,41 +1,35 @@
 <template>
-    <div v-show="hasAdminPanel" class="md:sticky md:-top-14 z-60">
+    <div v-show="hasAdminPanel" class="md:sticky md:-top-20 z-60">
         <admin-panel/>
     </div>
-        <div v-show="pageTitle" class="px-3 md:px-8 mt-5">
-            <div class="flex flex-row items-center">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between my-3 w-full bg-white p-5 py-3 rounded-lg border border-gray-300">
-                    <div class="tracking-tight whitespace-nowrap overflow-hidden overflow-ellipsis flex flex-row items-center h-10">
-                        <i class="fas mr-5 text-gray-600"
-                            :class="[{ 'fa-user': page == 'user' }, { 'fas fa-file': page == 'cmo' || page == 'tool' },
-                            {'fa-institution': page == 'hei'}, {'fa-book' : page == 'program' || page == 'discipline'},
-                            {'fa-edit' : page == 'evaluation'}, {'fa-check' : page == 'monitored'}
-                            ]">
-                        </i>
-                        <div class="font-bold text-lg text-gray-700">
-                            {{ pageTitle }}
-                        </div>
-                    </div>
-                    <div v-show="hasTopButton" class="mt-3 sm:mt-0">
-                        <slot name="top-button"></slot>
+    <div v-show="pageTitle" class="px-4 md:px-8 mt-8">
+        <div class="flex flex-row items-center shadow-sm shadow-gray-200 rounded-md">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between w-full bg-white rounded-xl border border-slate-100 p-6">
+                <div class="font-semibold text-base md:text-lg text-slate-700 tracking-tight">
+                    {{ pageTitle }}
+                </div>
+                <div v-show="hasTopButton" class="mt-4 sm:mt-0">
+                    <div class="flex justify-end">
+                        <slot name="top-button" class="w-full md:w-auto"></slot>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
         <div v-show="hasStickyDiv" class="sticky md:top-0 py-3 top-16 bg-white shadow-lg z-50 hidden" ref="stickyDiv">
             <div class="w-full">
                 <slot name="sticky-div"></slot>
             </div>
         </div>
-        <div v-show="hasTopMainContent" class="mx-3 md:mx-8 mt-8">
+        <div v-show="hasTopMainContent" class="mx-3 md:mx-8 mt-8 ">
             <slot name="top-main-content"></slot>
         </div>
-        <div class="h-auto mx-3 mt-3 md:mx-8 bg-white border border-gray-300 rounded-lg relative" :class="{'mt-8': !pageTitle}">
-            <div class="overflow-x-auto px-5 pt-1 justify-between border-b border-gray-300 whitespace-nowrap"
+        <div class="h-auto mx-3 mt-5 md:mx-8 bg-white border border-slate-200 rounded-lg relative" :class="{'mt-8': !pageTitle}">
+            <div class="overflow-x-auto overflow-y-hidden px-5 pt-1 justify-between border-b border-slate-200 whitespace-nowrap"
                 v-show="hasNavigation">
                 <slot name="navigation"></slot>
             </div>
-            <div v-show="!pageTitle" ref="actionButtons" class="w-full px-5 flex items-center h-auto" :class="{'border-b border-gray-300 py-4' : !hideTopBorder}">
+            <div v-show="!pageTitle" ref="actionButtons" class="w-full px-5 flex items-center h-auto" :class="{'border-b border-slate-200 py-4' : !hideTopBorder}">
                 <slot name="content-title"></slot>
             </div>
             <div class="w-full flex md:flex-row flex-col md:items-center px-5 pb-3 pt-5 relative"

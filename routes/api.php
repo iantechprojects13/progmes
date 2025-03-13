@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Models\InstitutionModel;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,4 +18,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+// Route::get('/dashboard/tool/{academicyear}/{status}/view', function ($academicyear, $status) {
+//     return response()->json([
+//         'statusCode' => '200',
+//         'message' => 'Success',
+//     ]);
+// });
+
+
+Route::get('/dashboard/tool/{academicyear}/{status}/view', [DashboardController::class, 'viewTools']);
+
+Route::get('/institution/{id}', function ($id) {
+    return response()->json(InstitutionModel::find($id));
 });

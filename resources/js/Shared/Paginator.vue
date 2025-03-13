@@ -1,18 +1,59 @@
 <template>
-    <div class="select-none flex flex-row whitespace-nowrap">
-        <div class="flex flex-row items-center h-10 mr-2 text-gray-500 text-sm">
-            {{ data_list.from }}-{{ data_list.to }} of {{ data_list.total }}
+    <div class="select-none flex items-center gap-4">
+        <!-- Counter -->
+        <div class="text-sm text-gray-600">
+          {{ data_list.from }}-{{ data_list.to }} of {{ data_list.total }}
         </div>
-        <div class="flex items-center justify-center w-fit rounded">
-            <button @click="submit(link.url)" v-show="hideBtn(link.label)" v-for="link in data_list.links" :key="link.id"
-            :class="[{'text-gray-600 border-gray-400 hover:bg-gray-200 active:bg-gray-300': link.url}, {'text-gray-300 border-gray-300': !link.url}]"
-                class="border rounded-xl p-1 text-center h-10 w-10 ml-1 tooltipForActions text-xl"
-                :data-tooltip="link.label.includes('Previous')? 'Previous': 'Next'">
-            <span v-if="link.label.includes('Previous')">&laquo;</span>
-            <span v-else-if="link.label.includes('Next')">&raquo;</span>
-            </button>
+    
+        <!-- Navigation Buttons -->
+        <div class="flex items-center gap-2">
+          <button
+            v-show="hideBtn(link.label)"
+            v-for="link in data_list.links"
+            :key="link.id"
+            @click="submit(link.url)"
+            :class="[
+              'inline-flex h-9 w-9 items-center justify-center rounded-lg border transition-colors duration-200',
+              link.url 
+                ? 'border-gray-200 text-gray-600 hover:bg-gray-50 active:bg-gray-100 tooltipForActions' 
+                : 'border-gray-100 text-gray-300 cursor-not-allowed'
+            ]"
+            :data-tooltip="link.label.includes('Previous') ? 'Previous' : 'Next'"
+          >
+            <!-- Previous Icon -->
+            <svg
+              v-if="link.label.includes('Previous')"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+    
+            <!-- Next Icon -->
+            <svg
+              v-else-if="link.label.includes('Next')"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
         </div>
-    </div>
+      </div>
 </template>
 
 <script setup>

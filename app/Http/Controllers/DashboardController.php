@@ -32,9 +32,7 @@ class DashboardController extends Controller
 
     public function DashboardForCHED(Request $request) {
 
-        if($request->query('hei') != null && $request->query('program') != null) {
-            return redirect()->back()->with('error', 'Invalid input');
-        }
+        
 
         $user = Auth::user();
         $role = $user->role;
@@ -42,11 +40,12 @@ class DashboardController extends Controller
         $currentYear = Carbon::now()->year;
 
         $acadYear = $request->query('academicyear') ? $request->query('academicyear') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
-        $institution = $request->query('hei') != null && $request->query('program') == null ? $request->query('hei') : null;
+        $institution = $request->query('hei') != null ? $request->query('hei') : null;
         $program = $request->query('program') != null ? $request->query('program') : null;
+        $supervisorq = $request->query('supervisor') != null ? (int) $request->query('supervisor') : null;
         $filter = $request->query('filter') != null ? $request->query('filter') : null;
         $year = $request->query('year') != null ? $request->query('year') : $currentYear;
-
+        $period = $request->query('period') != null ? $request->query('period') : 'Quarter';
 
 
         $justLastYear = $year - 1;
@@ -56,6 +55,15 @@ class DashboardController extends Controller
 
         $disciplines = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('discipline')->get();
         $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+
+        
+        
+        $svDisciplines = RoleModel::where('userId', $supervisorq)->where('isActive', 1)->with('discipline')->get();
+        $svDisciplineIds = $svDisciplines->pluck('discipline.id')->toArray();
+        
+
+        $supervisor_list = User::where('role', 'Education Supervisor')->get();
+        $supervisor = User::where('id', $request->query('supervisor'))->first();
         
         $complianceTools = EvaluationFormModel::query()
         ->where('effectivity', $acadYear)
@@ -91,9 +99,13 @@ class DashboardController extends Controller
                 $q->where('programId', $program);
             });
         })
+        ->when($supervisorq != null, function($query) use ($request, $svDisciplineIds) {
+            $query->whereIn('disciplineId', $svDisciplineIds);
+        })
         ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
             $query->whereIn('disciplineId', $disciplineIds);
         })->get();
+
         
         
 
@@ -113,18 +125,12 @@ class DashboardController extends Controller
         })
         ->whereNotNull('evaluationDate');
 
-        $jan = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 1);})->count();
-        $feb = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 2);})->count();
-        $mar = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 3);})->count();
-        $apr = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 4);})->count();
-        $may = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 5);})->count();
-        $jun = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 6);})->count();
-        $jul = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 7);})->count();
-        $aug = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 8);})->count();
-        $sep = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 9);})->count();
-        $oct = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 10);})->count();
-        $nov = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 11);})->count();
-        $dec = (clone $comTools)->where(function ($query) { $query->whereMonth('evaluationDate', 12);})->count();
+        $months = range(1, 12);
+        $monthlyCounts = array_map(function($month) use ($comTools) {
+            return (clone $comTools)->whereMonth('evaluationDate', $month)->count();
+        }, $months);
+
+        [$jan, $feb, $mar, $apr, $may, $jun, $jul, $aug, $sep, $oct, $nov, $dec] = $monthlyCounts;
 
         $quarter1Count = $jan + $feb + $mar;
         $quarter2Count = $apr + $may + $jun;
@@ -159,7 +165,7 @@ class DashboardController extends Controller
                     }
                 })->count();
             }, $quarters);
-
+            
             $yearsData[] = $yearData;
             $index++;
         }
@@ -181,6 +187,8 @@ class DashboardController extends Controller
         ->get()
         ->count();
 
+        // dd($request->query());
+
 
         if ($program) {
             $totalPrograms = InstitutionProgramModel::where('programId', $program)->count();
@@ -196,7 +204,6 @@ class DashboardController extends Controller
             ->get()
             ->count();
         }
-
 
         return Inertia::render('Dashboard/Dashboard-CHED', [
             'complianceTool' => $complianceTools->map(fn($item) => [
@@ -228,11 +235,8 @@ class DashboardController extends Controller
             'hei_list' => InstitutionModel::orderBy('name', 'asc')->get(),
             'hei' => $institution,
             'heiName' => InstitutionModel::where('id', $institution)->value('name'),
-            'filters' => $request->only(['']) + ['filter' => $filter ] + ['year' => $year],
-            'quarter1' => $quarter1Count,
-            'quarter2' => $quarter2Count,
-            'quarter3' => $quarter3Count,
-            'quarter4' => $quarter4Count,
+            'filters' => $request->only(['supervisor', 'program', 'hei']) + ['year' => $year, 'academicyear' => $acadYear],
+            'quarterData' => [$quarter1Count, $quarter2Count, $quarter3Count, $quarter4Count],
             'thisYear' => $thisYear,
             'lastYear' => $lastYear,
             'twoYearsAgo' => $twoYearsAgo,
@@ -244,6 +248,8 @@ class DashboardController extends Controller
             'displayAnalyticsData' => $year <= $currentYear ? true : false,
             'totalPrograms' => $totalPrograms,
             'currentQuarter' => Carbon::now()->quarter,
+            'supervisor_list' => $supervisor_list,
+            'supervisor' => $supervisorq,
         ]);
     }
 
@@ -424,6 +430,17 @@ class DashboardController extends Controller
             return redirect()->back()->with('failed', 'Failed to set default academic year.');
         }
 
+    }
+
+
+    public function viewTools($academicyear, $status) {
+
+        $tools = EvaluationFormModel::where('effectivity', $academicyear)
+            ->where('status', $status)
+            ->with('institution_program.institution', 'institution_program.program', 'item', 'complied', 'not_complied', 'not_applicable', 'no_status')
+            ->get();
+        
+        return response()->json($tools);
     }
 
 }

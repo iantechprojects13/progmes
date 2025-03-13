@@ -1,58 +1,58 @@
 <template>
-    <div class="px-3 md:px-8 pt-4 md:text-gray-200 md:bg-blue-900 z-60">
-        <h1 class="text-xl font-bold">Admin Panel</h1>
-        <div class="mt-3 w-full z-40 text-gray-700 font-bold text-base md:pb-0">
+    <div class="px-3 md:px-8 pt-4 md:text-gray-200 md:bg-gradient-to-r from-indigo-800 to-blue-600  z-60">
+        <div class="text-lg md:text-2xl font-bold py-3">Admin Panel</div>
+        <div class="mt-2 w-full z-40 text-gray-700 text-base md:pb-0 ">
             <div class="text-right">
                 <button @click="toggleMenu"
-                    class="flex flex-row  absolute top-20 right-3 justify-center items-center md:hidden w-14 h-10 rounded border border-gray-400 hover:border-gray-500 text-gray-600 hover:text-black hover:bg-gray-200">
+                    class="flex items-center justify-center absolute top-20 right-4 md:hidden w-12 h-12 rounded-lg bg-white shadow-sm hover:bg-slate-50 border border-slate-300">
                     <span v-if="!isMenuOpen">
-                        <i class="fas fa-bars"></i>
+                        <i class="fas fa-bars text-slate-600"></i>
                     </span>
                     <span v-else>
-                        <i class="fas fa-close text-base"></i>
+                        <i class="fas fa-close text-slate-600"></i>
                     </span>
                 </button>
             </div>
             <div ref="adminPanelContainer"
-                class="relative transition-all duration-200 md:visible md:whitespace-nowrap h-0 md:h-auto md:border-none bg-stone-700 md:bg-blue-900 rounded md:rounded-none overflow-hidden"
+                class="relative transition-all duration-200 md:visible md:whitespace-nowrap h-0 md:h-auto md:border-none rounded md:rounded-none overflow-hidden"
                 :class="[{ 'border-none invisible': !isMenuOpen }, { 'h-60': isMenuOpen }]">
-                <div class="w-full sm:flex-row md:block md:text-gray-300 text-gray-200">
+                <div class="w-full sm:flex-row md:block md:text-gray-300">
                     <Link :href="route('admin.users.list')" preserved-state>
                     <button
-                        class="select-none h-12 md:w-auto md:px-5 w-full text-gray-200 md:hover:bg-blue-700 hover:bg-stone-600  rounded"
-                        :class="{ 'md:text-white text-blue-500 md:border-b-blue-400 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-blue-700': highlight('user') }">
+                        class="select-none h-12 md:w-auto md:px-5 w-full md:hover:bg-blue-700 hover:bg-gray-200  rounded"
+                        :class="{ 'md:text-white text-blue-500 md:border-b-blue-400 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-blue-700 font-bold': highlight('user') }">
                         Users
                     </button>
                     </Link>
 
                     <Link :href="route('admin.cmo.list')" preserved-state>
                     <button
-                        class="select-none h-12 md:w-auto md:px-5 w-full text-gray-200 md:hover:bg-blue-700 hover:bg-stone-600  rounded"
-                        :class="{ 'md:text-white text-blue-500 md:border-b-blue-400 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-blue-700': highlight('cmo') }">
+                        class="select-none h-12 md:w-auto md:px-5 w-full md:hover:bg-blue-700 hover:bg-gray-200  rounded"
+                        :class="{ 'md:text-white text-blue-500 md:border-b-blue-400 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-blue-700 font-bold': highlight('cmo') }">
                         CMO
                     </button>
                     </Link>
 
                     <Link href="/admin/tool" preserved-state>
                     <button
-                        class="select-none h-12 md:w-auto md:px-5 w-full text-gray-200 md:hover:bg-blue-700 hover:bg-stone-600  rounded"
-                        :class="{ 'md:text-white text-blue-500 md:border-b-blue-400 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-blue-700': highlight('form') }">
+                        class="select-none h-12 md:w-auto md:px-5 w-full md:hover:bg-blue-700 hover:bg-gray-200  rounded"
+                        :class="{ 'md:text-white text-blue-500 md:border-b-blue-400 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-blue-700 font-bold': highlight('form') }">
                         Compliance Tool
                     </button>
                     </Link>
 
                     <Link :href="route('admin.hei.list')">
                     <button
-                        class="select-none h-12 md:w-auto md:px-5 w-full text-gray-200 md:hover:bg-blue-700 hover:bg-stone-600  rounded"
-                        :class="{ 'md:text-white text-blue-500 md:border-b-blue-400 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-blue-700': highlight('institution') }">
+                        class="select-none h-12 md:w-auto md:px-5 w-full md:hover:bg-blue-700 hover:bg-gray-200  rounded"
+                        :class="{ 'md:text-white text-blue-500 md:border-b-blue-400 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-blue-700 font-bold': highlight('institution') }">
                         HEI
                     </button>
                     </Link>
 
                     <Link :href="route('admin.program.list')">
                     <button
-                        class="select-none h-12 md:w-auto md:px-5 w-full text-gray-200 md:hover:bg-blue-700 hover:bg-stone-600  rounded"
-                        :class="{ 'md:text-white text-blue-500 md:border-b-blue-400 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-blue-700': highlight('program') }">
+                        class="select-none h-12 md:w-auto md:px-5 w-full md:hover:bg-blue-700 hover:bg-gray-200  rounded"
+                        :class="{ 'md:text-white text-blue-500 md:border-b-blue-400 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-blue-700 font-bold': highlight('program') }">
                         Program
                     </button>
                     </Link>

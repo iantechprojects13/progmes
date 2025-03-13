@@ -20,7 +20,7 @@ class InitialDataSeeder extends Seeder
     {   
 
         DB::table('users')->insert([
-            'name' => 'Ian Albano',
+            'name' => '1Super Admin',
             'email' => 'ianalbano@gmail.com',
             'role' => 'Super Admin',
             'isVerified' => 1,

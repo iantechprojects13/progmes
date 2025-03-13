@@ -95,7 +95,7 @@
             </div>
         </template>
     </content-container>
-    <modal :showModal="showOptionsModal" @close="toggleOptionsModal" width="md" height="long" title="Paper Options" :hasCancelButton="true">
+    <modal :showModal="showOptionsModal" @close="toggleOptionsModal" width="md" height="long" title="Paper Options" :hasNoCancelButton="true">
         <div class="w-full items-center md:mr-2 mt-3 md:mt-0">
             <div class="mt-2">
                 <label class="mr-2">

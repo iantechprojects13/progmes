@@ -139,8 +139,12 @@ class UserController extends Controller
 
     public function userLogin()
     {
+        $userlist = User::with(['userRole.discipline', 'userRole.program', 'userRole.institution'])
+            ->orderBy('name', 'asc')
+            ->get();
+
         return Inertia::render('Auth/TestLogin', [
-            'users' => User::orderBy('name', 'asc')->get()
+            'user_list' => $userlist,
         ]);
     }
 

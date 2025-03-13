@@ -128,7 +128,7 @@
                         </td>
                     </tr>
                     <tr v-else v-for="(item, index) in items.data" :key="item.id" class=" hover:bg-gray-200 align-top text-base"
-                        :class="[{ 'bg-slate-100': index % 2 == 1 }, {'bg-red-100' : filters.evaluationStatus != 'Not complied' && item.evaluationStatus == 'Not complied' && evaluation.evaluationDate != null}]">
+                        :class="[{ 'bg-slate-200': index % 2 == 1 }, {'bg-red-100' : filters.evaluationStatus != 'Not complied' && item.evaluationStatus == 'Not complied' && evaluation.evaluationDate != null}]">
                         <td class="p-2 whitespace-normal max-w-10">
                             <div class="flex flex-col">
                                 <div class="font-bold">
@@ -139,9 +139,10 @@
                         <td class="p-2 whitespace-normal max-w-xs">
                             <div class="flex flex-col text-justify" v-html="item.criteria.minimumRequirement">
                             </div>
+                            <input type="text" class="w-24 h-10">
                         </td>
                         <td class="h-32 min-w-[21rem] max-w-md p-2 relative group">
-                            <tip-tap-editor v-model="item.actualSituation" @input="hasInput()"></tip-tap-editor>
+                            <tip-tap-editor v-model="item.actualSituation" @input="updateData()"></tip-tap-editor>
                         </td>
                         <td class="h-auto p-3 w-16 flex flex-col justify-center">
                             <div class="flex flex-col"
@@ -195,12 +196,6 @@
             </content-table>
         </template>
     </content-container>
-
-    <!-- has changes warning -->
-    <div v-if="hasChanges" class="w-auto h-auto bg-yellow-400 fixed z-[100] bottom-2 left-2 p-2 rounded flex items-center">
-        <i class="fas fa-exclamation-triangle mr-2"></i>
-        <span>Changes unsaved. You can press Ctrl + S to save.</span>
-    </div>
 
     <!-- Filter Modal -->
     <modal :showModal="showFilterModal" @close="toggleFilterModal" width="sm" height="long" title="Filters">
@@ -294,24 +289,11 @@
         </template>
     </modal>
 
-    <!-- Delete confirmation modal -->
-    <confirmation-modal :showModal="deleteModal" @close="deleteModal = false" title="Delete file/link">
-        <template v-slot:message>
-            Are you sure you want to delete this evidence file/link? This action can't be undone.
-        </template>
-        <template v-slot:buttons>
-            <button @click="deleteLink" :disabled="deleting"
-                class="select-none text-white h-10 w-20 rounded bg-red-500">
-                <span v-if="deleting"><i class="fas fa-spinner animate-spin"></i></span>
-                <span v-else>Delete</span>
-            </button>
-        </template>
-    </confirmation-modal>
 
 
-    <confirmation @close="toggleDeleteModal" :showModal="resubmitModal" title="Delete link" width="md" height="short">
+    <confirmation @close="toggleDeleteModal" :showModal="deleteModal" title="Delete link" width="md" height="short">
         <template v-slot:message>
-            Are you sure you want to delete this evidence file/link? This action can't be undone.
+            Are you sure you want to delete this link?
         </template>
         
         <template v-slot:buttons>
@@ -324,12 +306,17 @@
 
 <script setup>
 // Imports
-import { ref, onMounted, onUnmounted, computed, reactive, watch, provide } from 'vue';
+import { ref, onMounted, onUnmounted, computed, reactive, watch, inject } from 'vue';
 import { useForm, router } from '@inertiajs/vue3';
 
 
+// Inject the reactive object
+const hasUnsavedChanges = inject("hasUnsavedChanges");
 
-provide('hasChanges', true);
+// Function to update value
+const updateData = () => {
+    hasUnsavedChanges.value = true;
+};
 
 // Props
 const props = defineProps([
@@ -499,8 +486,11 @@ const handleKeyDown = (event) => {
 function update() {
     router.post('/hei/evaluation/update', form, {
         replace: true,
-        preserveState: false,
+        preserveState: true,
         preserveScroll: true,
+        onSuccess: () => {
+            hasUnsavedChanges.value = false;
+        },
     });
 }
 
@@ -533,8 +523,9 @@ function deleteLink() {
         },
         onFinish: () => {
             deleting.value = false;
+            deleteModal.value = false;
         },
-        preserveState: false,
+        preserveState: true,
         preserveScroll: true,
     });
 }
@@ -568,7 +559,7 @@ watch(evidenceFile, value => {
         onFinish: () => {
             uploadingFile.value = false;
         },
-        preserveState: false,
+        preserveState: true,
         preserveScroll: true,
     })
 });
@@ -591,7 +582,7 @@ function submit() {
         onFinish: () => {
             processing.value = false;
         },
-        preserveState: false,
+        preserveState: true,
         preserveScroll: true,
     });
 }

@@ -5,111 +5,154 @@
         :hasFilters="true" :data_list="program_list">
         <template v-slot:top-button>
             <Link href="/admin/program/create">
-            <button
-                class="select-none bg-blue-500 hover:bg-blue-600 h-10 px-3 whitespace-nowrap rounded text-white"><i
-                    class="fas fa-plus mr-2"></i>Add program</button>
+                <button className="inline-flex items-center px-4 py-2.5 font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition-colors duration-200 ease-in-out shadow-sm">
+                    &plus; Add Program
+                </button>
             </Link>
         </template>
         <template v-slot:navigation>
-            <button class="select-none h-12 w-28 hover:bg-gray-100 text-blue-500 border-b-4 relative font-bold border-blue-500">
-                Program
-            </button>
-            <Link :href="route('admin.discipline.list')">
-            <button class="select-none h-12 w-28 hover:bg-gray-100 text-gray-700 hover:text-black">
-                Discipline
-            </button>
-            </Link>
+            <main-content-nav page="program" managementType="program"></main-content-nav>
         </template>
         <template v-slot:search>
-            <div class="w-full flex flex-row relative items-center">
-                <i class="fa fa-search text-gray-400 absolute left-5"></i>
-                <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
-                    placeholder="Search"
-                    class="w-full rounded-lg border border-gray-300 indent-10 h-10 text-base placeholder-gray-400" />
-            </div>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                  <svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                
+                <input
+                  @keydown.enter="submit"
+                  v-model="query.search"
+                  type="search"
+                  id="content-search"
+                  placeholder="Search"
+                  class="w-full py-2.5 pl-11 pr-4 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors duration-200"
+                />
+              </div>
         </template>
         <template v-slot:options>
-            <div class="mr-1">
-                
-                <button @click="toggleFilterModal"
-                    class="w-10 h-10 whitespace-nowrap hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
-                    data-tooltip="Filters">
-                    <i class="fas fa-filter"></i>
+            <div class="flex gap-2">
+                <button 
+                    @click="toggleFilterModal"
+                    class="p-2.5 inline-flex items-center justify-center rounded-lg text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all duration-200 tooltipForActions"
+                    data-tooltip="Filters"
+                >
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                    <span class="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 ">
+                        Filters
+                    </span>
                 </button>
-                <Link href="/admin/program">
-                <button
-                    class="w-10 h-10 whitespace-nowrap hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
-                    data-tooltip="Refresh page">
-                    <i class="fas fa-refresh"></i>
-                </button>
+
+                <Link href="/admin/program/">
+                    <button 
+                        class="p-2.5 inline-flex items-center justify-center rounded-lg text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all duration-200 tooltipForActions"
+                        data-tooltip="Refresh page"
+                    >
+                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                    </button>
                 </Link>
             </div>
         </template>
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th class="p-2 pl-5">Program</th>
-                    <th class="p-2">Major</th>
-                    <th class="p-2">Discipline</th>
-                    <th class="p-2 pr-5 text-right">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </th>
+                  <th class="px-6 py-4 text-left text-base font-bold text-gray-800">
+                    Program
+                  </th>
+                  <th class="px-6 py-4 text-left text-base font-bold text-gray-800">
+                    Major
+                  </th>
+                  <th class="px-6 py-4 text-left text-base font-bold text-gray-800">
+                    Discipline
+                  </th>
+                  <th class="px-6 py-4 text-right w-24">
+                    <span class="text-gray-800">
+                      <i class="fas fa-ellipsis-v text-lg"></i>
+                    </span>
+                  </th>
                 </template>
+            
                 <template v-slot:table-body>
-                    <tr v-if="program_list.data.length == 0">
-                        <no-search-result text="program" />
-                    </tr>
-                    <tr v-else v-for="(program, index) in program_list.data" :key="program.id"
-                        class="hover:bg-gray-200 border-b" :class="{'bg-gray-100': index % 2 == 1}">
-                        <td class="p-2 pl-5">
-                            {{ program.program }}
-                        </td>
-                        <td class="p-2">
-                            {{ program.major }}
-                        </td>
-                        <td class="p-2">
-                            {{ program.discipline?.discipline }}
-                        </td>
-                        <td class="p-2 pr-5 text-right whitespace-nowrap">
-                            <button v-show="canEdit" @click="edit(program.id)"
-                                class="select-none h-8 w-8 text-center text-xl hover:bg-gray-300 rounded-full text-blue-500 hover:text-blue-600 tooltipForActions"
-                                data-tooltip="Edit">
-                                <i class="fas fa-edit"></i>
+                  <tr v-if="program_list.data.length == 0">
+                      <no-search-result text="program" />
+                  </tr>
+            
+                  <tr v-else v-for="(program, index) in program_list.data" 
+                      :key="program.id"
+                      class="transition-colors hover:bg-blue-200 border-b border-gray-200"
+                      :class="{'bg-slate-200': index % 2 === 1}">
+                    <td class="px-6 py-2 text-base text-gray-900">
+                      {{ program.program }}
+                    </td>
+                    <td class="px-6 py-2 text-base text-gray-900">
+                        {{ program.major || 'N/A' }}
+                      </td>
+                      <td class="px-6 py-2 text-base text-gray-900">
+                        {{ program.discipline?.discipline || 'N/A' }}
+                      </td>
+                    <td class="px-6 py-2">
+                      <div class="flex justify-end gap-0">
+                        <button v-show="canEdit" @click="edit(program.id)"
+                        class="inline-flex items-center justify-center rounded-full h-10 w-10 text-blue-700 hover:bg-blue-100 transition-colors tooltipForActions"
+                        data-tooltip="Edit">
+                  <i class="fas fa-edit text-lg"></i>
                             </button>
                             <button v-show="canDelete"
                                 @click="toggleConfirmationModal(program, 'deleteProgram', 'Delete Program')"
-                                class="select-none h-8 w-8 text-center text-xl hover:bg-gray-300 rounded-full text-red-500 hover:text-red-600 tooltipForActions"
+                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 transition-colors tooltipForActions"
                                 data-tooltip="Delete">
-                                <i class="fas fa-trash"></i>
+                          <i class="fas fa-trash text-lg"></i>
                             </button>
-                        </td>
-                    </tr>
+                      </div>
+                    </td>
+                  </tr>
                 </template>
-            </content-table>
+              </content-table>
         </template>
     </content-container>
 
-    <modal :showModal="showFilterModal" @close="toggleFilterModal" width="sm" height="long" title="Filters">
-        <div>
-            <div class="flex flex-col">
-                <label for="show">Items per page</label>
-                <select v-model="query.show" id="show" class="rounded border-gray-400">
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="200">200</option>
-                </select>
-            </div>
-        </div>
-        <template v-slot:custom-button>
-            <button @click="filter" class="text-white bg-green-600 hover:bg-green-700 w-20 rounded h-10">
-                <span v-if="processing">
-                    <i class="fas fa-spinner animate-spin"></i>
-                </span>
-                <span v-else>Apply</span>
-            </button>
-        </template>
-    </modal>
+    <modal 
+    :showModal="showFilterModal" title="Filters" 
+    @close="toggleFilterModal" 
+    width="sm" 
+    class="antialiased"
+  >
+    <div class="space-y-6">
+      <div class="flex flex-col space-y-2">
+        <label 
+          for="show" 
+          class="text-sm font-medium text-gray-700"
+        >
+          Items per page
+        </label>
+        <select 
+          v-model="query.show" 
+          id="show" 
+          class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        >
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="150">150</option>
+          <option value="200">200</option>
+          <option value="300">300</option>
+        </select>
+      </div>
+    </div>
+
+    <template #custom-button>
+      <button 
+        @click="filter"
+        class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200"
+      >Apply
+      </button>
+    </template>
+  </modal>
 
     <Confirmation :showModal="confirmationModal" @close="closeModal" :title="title" :modaltype="modaltype" :selected="selectedProgram" width="md" height="short"/>
 
@@ -143,6 +186,7 @@ function submit() {
             processing.value = false;
         },
         preserveState: false,
+        preserveScroll: true,
     });
 }
 
@@ -156,6 +200,7 @@ function filter() {
             toggleFilterModal();
         },
         preserveState: true,
+        preserveScroll: true,
     });
 }
 

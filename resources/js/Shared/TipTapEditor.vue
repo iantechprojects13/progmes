@@ -108,67 +108,62 @@
     </div>
   </template>
   
-  <script>
+  <script setup>
+  import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+  import { usePage } from '@inertiajs/vue3'
+  import { Editor, EditorContent } from '@tiptap/vue-3'
+  import StarterKit from '@tiptap/starter-kit'
+  import TextStyle from '@tiptap/extension-text-style'
+  import Color from '@tiptap/extension-color'
+  import Link from '@tiptap/extension-link'
+  import HardBreak from '@tiptap/extension-hard-break'
+  import Table from '@tiptap/extension-table'
+  import TableRow from '@tiptap/extension-table-row'
+  import TableCell from '@tiptap/extension-table-cell'
+  import TableHeader from '@tiptap/extension-table-header'
   
-  </script>
-    
-    <script setup>
-    import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
-    import { Editor, EditorContent } from '@tiptap/vue-3'
-    import StarterKit from '@tiptap/starter-kit'
-    import TextStyle from '@tiptap/extension-text-style'
-    import Color from '@tiptap/extension-color'
-    import Link from '@tiptap/extension-link'
-    import HardBreak from '@tiptap/extension-hard-break'
-    import Table from '@tiptap/extension-table'
-    import TableRow from '@tiptap/extension-table-row'
-    import TableCell from '@tiptap/extension-table-cell'
-    import TableHeader from '@tiptap/extension-table-header'
-    
-    const props = defineProps({
-      modelValue: {
-        type: String,
-        default: ''
-      }
-    })
-    
-    const emit = defineEmits(['update:modelValue'])
-    const editor = ref(null)
-    const showColorPicker = ref(false)
-    
-    const colors = [
-      '#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00',
-    ]
-    
-    const addLink = () => {
-      const isActive = editor.value.isActive('link')
-      
-      if (isActive) {
-        editor.value.chain().focus().unsetLink().run()
-        return
-      }
-  
-      const url = window.prompt('URL')
-      if (url) {
-        const absoluteUrl = url.startsWith('http') ? url : `https://${url}`
-        editor.value.chain().focus().setLink({ href: absoluteUrl, target: '_blank' }).run()
-      }
+  const props = defineProps({
+    modelValue: {
+      type: String,
+      default: ''
     }
-    
-    
-    
-    const setTextColor = (color) => {
-      editor.value.chain().focus().setColor(color).run()
-      showColorPicker.value = false
-    }
-    
-    watch(() => props.modelValue, (newContent) => {
-      if (editor.value && newContent !== editor.value.getHTML()) {
-        editor.value.commands.setContent(newContent)
-      }
-    }, { immediate: true })
+  })
+
+  const emit = defineEmits(['update:modelValue'])
+  const editor = ref(null)
+  const showColorPicker = ref(false)
   
-    onMounted(() => {
+  const colors = [
+    '#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00',
+  ]
+  
+  const addLink = () => {
+    const isActive = editor.value.isActive('link')
+    
+    if (isActive) {
+      editor.value.chain().focus().unsetLink().run()
+      return
+    }
+
+    const url = window.prompt('URL')
+    if (url) {
+      const absoluteUrl = url.startsWith('http') ? url : `https://${url}`
+      editor.value.chain().focus().setLink({ href: absoluteUrl, target: '_blank' }).run()
+    }
+  }
+  
+  const setTextColor = (color) => {
+    editor.value.chain().focus().setColor(color).run()
+    showColorPicker.value = false
+  }
+  
+  watch(() => props.modelValue, (newContent) => {
+    if (editor.value && newContent !== editor.value.getHTML()) {
+      editor.value.commands.setContent(newContent)
+    }
+  }, { immediate: true })
+  
+  onMounted(() => {
     editor.value = new Editor({
       content: props.modelValue,
       extensions: [
@@ -209,72 +204,66 @@
       }
     })
   })
-    
-    onBeforeUnmount(() => {
-      editor.value?.destroy()
-    })
-    </script>
-    
-    <style>
   
-    .ProseMirror {
-      min-height: 2rem;
-      cursor: text;
-    }
+  onBeforeUnmount(() => {
+    editor.value?.destroy()
+  })
+  </script>
   
+  <style>
   
-    .ProseMirror:focus {
-      outline: none;
-    }
-    
-    
-    .ProseMirror a {
-      color: #2563eb;
-      text-decoration: underline;
-      cursor: pointer;
-    }
+  .ProseMirror {
+    min-height: 2rem;
+    cursor: text;
+  }
   
-    
-    
-    /* Optional: Add hover effect */
-    .ProseMirror a:hover {
-      color: #1d4ed8; /* Darker blue on hover */
-    }
+  .ProseMirror:focus {
+    outline: none;
+  }
   
+  .ProseMirror a {
+    color: #2563eb;
+    text-decoration: underline;
+    cursor: pointer;
+  }
   
+  /* Optional: Add hover effect */
+  .ProseMirror a:hover {
+    color: #1d4ed8; /* Darker blue on hover */
+  }
   
-    .ProseMirror p.is-editor-empty:first-child::before {
-      content: attr(data-placeholder);
-      float: left;
-      color: #adb5bd;
-      pointer-events: none;
-      height: 0;
-    }
-    
-    .ProseMirror ul {
-      list-style-type: disc;
-      padding-left: 1.5em;
-    }
-    
-    .ProseMirror ul li {
-      margin-bottom: 0.5em;
-    }
+  .ProseMirror p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: #adb5bd;
+    pointer-events: none;
+    height: 0;
+  }
   
-    .ProseMirror table {
-      border-collapse: collapse;
-      margin: 0;
-      width: 100%;
-      table-layout: fixed;
-    }
-    
-    .ProseMirror td,
-    .ProseMirror th {
-      border: 1px solid #000000;
-      padding: 0.3rem;
-      position: relative;
-    }
-    
-    .ProseMirror th {
-      font-weight: bold;
-    } 
-    </style>
+  .ProseMirror ul {
+    list-style-type: disc;
+    padding-left: 1.5em;
+  }
+  
+  .ProseMirror ul li {
+    margin-bottom: 0.5em;
+  }
+  
+  .ProseMirror table {
+    border-collapse: collapse;
+    margin: 0;
+    width: 100%;
+    table-layout: fixed;
+  }
+  
+  .ProseMirror td,
+  .ProseMirror th {
+    border: 1px solid #000000;
+    padding: 0.3rem;
+    position: relative;
+  }
+  
+  .ProseMirror th {
+    font-weight: bold;
+  } 
+  </style>
