@@ -18,13 +18,8 @@
                         :class="{ 'text-gray-500': form.role == null }">
                         <option value="null">Select role</option>
                         <option class="text-gray-800" value="Regional Director">Regional Director</option>
-                        <option class="text-gray-800" value="Chief Education Program Specialist">Chief Education
-                            Program
-                            Specialist</option>
-                        <option class="text-gray-800" value="Supervising Education Program Specialist">Supervising
-                            Education Program
-                            Specialist
-                        </option>
+                        <option class="text-gray-800" value="Chief Education Program Specialist">Chief Education Program Specialist</option>
+                        <option class="text-gray-800" value="Supervising Education Program Specialist">Supervising Education Program Specialist</option>
                         <option class="text-gray-800" value="Education Supervisor">Education Supervisor</option>
                     </select>
                     <form-error-message :message="$page.props.errors.role" theme="dark" />

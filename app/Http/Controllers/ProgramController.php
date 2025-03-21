@@ -119,7 +119,7 @@ class ProgramController extends Controller
 
         $programModel->save();
 
-        return redirect()->route('admin.program.list')->with('success', 'Program successfully edited.');
+        return redirect()->route('admin.program.list')->with('success', 'Program successfully updated.');
     }
 
     public function delete($program) {

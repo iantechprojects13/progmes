@@ -13,46 +13,114 @@
                 </div>
         </template>
         <template v-slot:main-content>
-            <div class="p-5 w-full md:max-w-md md:shadow md:shadow-gray-600 rounded mx-auto md:my-10">
-                <div>
+            <div
+                class="w-full max-w-lg p-2 md:p-8 my-3 md:m-5 md:shadow-lg md:border rounded-xl"
+            >
+                <!-- Form Header -->
+                <div class="mb-4 text-sm text-gray-600">
                     <span class="text-red-500">*</span>
-                    <span class="italic text-sm"> indicates required field</span>
-                </div>
-                <div class="mt-7">
-                    <label for="discipline" class="font-bold text-gray-600">Discipline</label>
-                    <span class="text-red-500">*</span>
-                    <select v-model="form.discipline" id="discipline"
-                        class="rounded text-sm border-gray-400 w-full my-0.5"
-                        :class="[{ 'text-gray-500': form.discipline == null }, { 'text-gray-700': form.discipline }]">
-                        <option :value="null">Select discipline</option>
-                        <option v-for="item in props.discipline_list" :key="item.id" :value="item.id"
-                            class="text-black">
-                            {{ item.discipline }}
-                        </option>
-                    </select>
-                    <FormErrorMessage :message="$page.props.errors.discipline" theme="dark" />
+                    <span class="italic">indicates required field</span>
                 </div>
 
-                <div class="mt-3">
-                    <label for="program" class="font-bold text-gray-600">Program</label>
-                    <span class="text-red-500">*</span>
-                    <input maxlength="255" v-model="form.program" type="text" id="program"
-                        class="rounded text-sm border-gray-400 w-full my-0.5 placeholder-gray-500"
-                        placeholder="Program">
-                    <FormErrorMessage :message="$page.props.errors.program" theme="dark" />
-                    <FormErrorMessage :message="$page.props.flash.failed" theme="dark" />
-                </div>
-                <div class="mt-3">
-                    <label for="major" class="font-bold text-gray-600">Major</label>
-                    <input maxlength="255" v-model="form.major" type="text" id="major"
-                        class="rounded text-sm border-gray-400 w-full my-0.5 placeholder-gray-500" placeholder="Major">
-                </div>
-                <div class="mt-5">
-                    <button :disabled="processing" @click="submit"
-                        class="rounded w-full text-white bg-blue-500 hover:bg-blue-600 py-2 px-4">
-                        <span v-if="processing"><i class="fas fa-spinner animate-spin"></i></span>
-                        <span v-else>Update</span>
-                    </button>
+                <!-- Form Content -->
+                <div class="space-y-6">
+                    
+                    <!-- Discipline -->
+                    <div>
+                        <label
+                            for="discipline"
+                            class="block font-medium text-gray-700"
+                        >
+                            Discipline
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <select
+                            v-model="form.discipline"
+                            id="discipline"
+                            class="mt-1 block w-full rounded-md h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                            :class="[
+                                { 'text-gray-500': form.discipline == null },
+                                { 'text-gray-800': form.discipline },
+                            ]"
+                        >
+                            <option :value="null">Select discipline</option>
+                            <option
+                                v-for="item in props.discipline_list"
+                                :key="item.id"
+                                :value="item.id"
+                                class="text-black"
+                            >
+                                {{ item.discipline }}
+                            </option>
+                         </select>
+                        <form-error-message
+                            :message="$page.props.errors.discipline"
+                            theme="dark"
+                        />
+                    </div>
+
+                    <!-- Program -->
+                    <div>
+                        <label
+                            for="program"
+                            class="block font-medium text-gray-700"
+                        >
+                            Program
+                            <span class="text-red-500">*</span>
+                        </label>
+                        
+
+                        <input
+                            required
+                            maxlength="255"
+                            v-model="form.program"
+                            type="text"
+                            id="program"
+                            placeholder="Enter program"
+                            class="mt-1 block w-full rounded-md h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                        />
+                        <form-error-message
+                            :message="$page.props.errors.program"
+                            theme="dark"
+                        />
+                    </div>
+
+
+                    <!-- Major -->
+                    <div>
+                        <label
+                            for="major"
+                            class="block font-medium text-gray-700"
+                        >
+                            Major
+                        </label>
+                        
+
+                        <input
+                            required
+                            maxlength="255"
+                            v-model="form.major"
+                            type="text"
+                            id="major"
+                            placeholder="Enter discipline"
+                            class=" mt-1 block w-full rounded-md h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                        />
+                        <form-error-message
+                            :message="$page.props.errors.major"
+                            theme="dark"
+                        />
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div>
+                        <button
+                            @click="submit"
+                            :disabled="processing"
+                            class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200"
+                        >
+                            Update
+                        </button>
+                    </div>
                 </div>
             </div>
         </template>
@@ -92,7 +160,7 @@
 </script>
 
 <script>
-    import FormErrorMessage from '@/Shared/FormErrorMessage.vue';
+    import FormErrorMessage from '@/Shared/Component/FormErrorMessage.vue';
     import Layout from '@/Shared/Layout.vue';
 
     export default {

@@ -88,13 +88,14 @@ class EvaluationController extends Controller
             'status' => $item->status,
             'institution' => $item->institution_program->institution->name,
             'program' => $item->institution_program->program->program,
+            'major' => $item->institution_program->program->major,
             'progress' => intval(round((($item->complied->count() + $item->not_complied->count() + $item->not_applicable->count())/$item->item->count())*100)),
             'isLocked' => $item->status == 'Locked' || $item->status == 'Submitted' ? true : false,
             'canBeArchived' =>$item->status == 'Submitted' ? true : false,
         ])
         ->withQueryString();
 
-        return Inertia::render('Evaluation/CHED-Evaluation-Select', [
+        return Inertia::render('Evaluation/CHED-Evaluation-List', [
             'complianceTools' => $complianceTools,
             'filters' => $request->only(['search', 'status']) + ['show' => $show, 'academicYear' => $acadYear ],
             'canEvaluate' => $canEvaluate,

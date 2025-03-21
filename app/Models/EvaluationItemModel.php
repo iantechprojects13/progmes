@@ -19,16 +19,13 @@ class EvaluationItemModel extends Model
         'recommendations',
         'selfEvaluationStatus',
         'evaluationStatus',
-        'evidenceId',
-        'evidenceLink',
-        'canUploadEvidence',
     ];
 
     protected $hidden = [
         'created_at',
         'updated_at',
     ];
-
+    
     public function evaluationForm()
     {
         return $this->belongsTo(EvaluationFormModel::class, 'evaluationFormId', 'id');

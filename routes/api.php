@@ -29,7 +29,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::get('/dashboard/tool/{academicyear}/{status}/view', [DashboardController::class, 'viewTools']);
+Route::get('/dashboard/tool/{year}/{month}/{quarter}/view', [DashboardController::class, 'viewMonitoredTools']);
 
-Route::get('/institution/{id}', function ($id) {
-    return response()->json(InstitutionModel::find($id));
-});

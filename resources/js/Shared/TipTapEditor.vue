@@ -1,269 +1,423 @@
 <template>
-    <div class="flex flex-col">
-      <div class="flex flex-wrap gap-1 p-1 bg-blue-300 rounded-t-lg border border-b-10 border-gray-200">
-        <button 
-          @click="editor?.chain().focus().toggleBold().run()" class="tooltipForActions" data-tooltip="Bold"
-          :class="['p-2 hover:bg-gray-100 rounded transition-colors', { 'bg-gray-100': editor?.isActive('bold') }]"
-        >
-          <i class="fas fa-bold"></i>
-        </button>
-  
-        <!-- Italic -->
-        <button 
-          @click="editor?.chain().focus().toggleItalic().run()" class="tooltipForActions" data-tooltip="Italic"
-          :class="['p-2 hover:bg-gray-100 rounded transition-colors', { 'bg-gray-100': editor?.isActive('italic') }]"
-        >
-          <i class="fas fa-italic"></i>
-        </button>
-  
-        <!-- Bullet List -->
-        <button 
-          @click="editor?.chain().focus().toggleBulletList().run()" class="tooltipForActions" data-tooltip="List"
-          :class="['p-2 hover:bg-gray-100 rounded transition-colors', { 'bg-gray-100': editor?.isActive('bulletList') }]"
-        >
-          <i class="fas fa-list-ul"></i>
-        </button>
-  
-        <!-- Link -->
-        <button 
-          @click="addLink" class="tooltipForActions" data-tooltip="Link"
-          :class="['p-2 hover:bg-gray-100 rounded transition-colors', { 'bg-gray-100': editor?.isActive('link') }]"
-        >
-          <i class="fas fa-link"></i>
-        </button>
-  
-  
-  
-        <!-- Color Picker -->
-        <div class="relative">
-          <button 
-            class="p-2 hover:bg-gray-100 rounded transition-colors tooltipForActions" data-tooltip="Color"
-            @click="showColorPicker = !showColorPicker"
-          >
-            <i class="fas fa-palette"></i>
-          </button>
-          
-          <div v-if="showColorPicker" class="absolute top-full left-0 mt-1 p-3 bg-white border rounded-lg shadow-lg z-50">
-            <div class="grid grid-cols-5 gap-2">
-              <button 
-                v-for="color in colors" 
-                :key="color"
-                @click="setTextColor(color)"
-                class="w-8 h-8 rounded hover:scale-110 transition-transform"
-                :style="{ backgroundColor: color }"
-              />
-            </div>
-          </div>
-          <div v-if="showColorPicker" class="absolute top-full w-52 left-0 mt-1 p-3 bg-white border rounded-lg shadow-lg z-50">
-            <div class="grid grid-cols-5 gap-2">
-              <button 
-                v-for="color in colors" 
-                :key="color"
-                @click="setTextColor(color)"
-                class="w-8 h-8 rounded-full hover:scale-110 transition-transform"
-                :style="{ backgroundColor: color }"
-              />
-            </div>
-          </div>
-        </div>
-  
-        <!-- Table -->
-        <button 
-          @click="editor?.chain().focus().insertTable({ rows: 2, cols: 2, withHeaderRow: true }).run()"
-          class="p-2 hover:bg-gray-100 rounded transition-colors tooltipForActions" data-tooltip="Table"
-        >
-          <i class="fas fa-table"></i>
-        </button>
-  
-        <button 
-          @click="editor?.chain().focus().addRowAfter().run()"
-          class="p-2 hover:bg-gray-100 rounded transition-colors tooltipForActions" data-tooltip="Add Row"
-        >
-          <i class="fas fa-arrow-down"></i>
-        </button>
-  
-        <button 
-          @click="editor?.chain().focus().addColumnAfter().run()"
-          class="p-2 hover:bg-gray-100 rounded transition-colors tooltipForActions" data-tooltip="Add Column"
-        >
-          <i class="fas fa-arrow-right"></i>
-        </button>
-  
-        <button 
-          @click="editor?.chain().focus().deleteTable().run()"
-          :disabled="!editor?.can().deleteTable()"
-          class="p-2 hover:bg-gray-100 rounded transition-colors tooltipForActions" data-tooltip="Delete table"
-        >
-          <i class="fas fa-trash-alt"></i>
-        </button>
-  
-      </div>
-  
-      <div 
-        class="prose max-w-none p-4 min-h-[20px] border border-gray-200 rounded-b-lg bg-white focus:outline-none"
-        contenteditable="false"
+  <div class="relative">
+    <!-- Regular Text View -->
+    <div class="relative" ref="editorContainer">
+      <!-- Display Content -->
+      <div @click="openEditor"
+        class="prose max-w-none p-4 min-h-[100px] border border-gray-400 rounded-lg bg-white relative overflow-auto cursor-pointer"
       >
-        <editor-content :editor="editor" />
+        <div  v-html="modelValue || ''"></div>
+        
+      </div>
+      </div>
+    <!-- Modal Editor -->
+    <div 
+      v-if="isEditorOpen"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center"
+      @click.self="closeEditor"
+    >
+      <div class="w-11/12 md:w-4/5 lg:w-3/4 max-h-[90vh] bg-white rounded-lg shadow-xl flex flex-col">
+        <!-- Modal Header -->
+        <div class="flex justify-between items-center p-4 border-b">
+          <h3 class="text-lg font-medium">Text Editor</h3>
+          <button 
+            @click="closeEditor" 
+            class="p-2 hover:bg-gray-100 rounded-full transition-colors tooltipForActions" data-tooltip="Close"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <!-- Modal Toolbar -->
+        <div class="flex flex-wrap gap-1 p-2 bg-gray-50 border-b">
+          <!-- Text Formatting -->
+          <div class="flex gap-1 mr-2 border-r pr-2">
+            <button 
+              @click.stop="editor?.chain().focus().toggleBold().run()"
+              @mousedown.prevent
+              class="p-2 hover:bg-gray-200 rounded transition-colors tooltipForActions" data-tooltip="Bold"
+              :class="{ 'bg-gray-200': editor?.isActive('bold') }"
+            >
+              <i class="fas fa-bold"></i>
+            </button>
+
+            <button 
+              @mousedown.prevent 
+              @click="editor?.chain().focus().toggleItalic().run()" 
+              class="p-2 hover:bg-gray-200 rounded transition-colors tooltipForActions" data-tooltip="Italic"
+              :class="{ 'bg-gray-200': editor?.isActive('italic') }"
+            >
+              <i class="fas fa-italic"></i>
+            </button>
+
+            <button 
+              @mousedown.prevent 
+              @click="editor?.chain().focus().toggleBulletList().run()" 
+              class="p-2 hover:bg-gray-200 rounded transition-colors tooltipForActions" data-tooltip="List"
+              :class="{ 'bg-gray-200': editor?.isActive('bulletList') }"
+            >
+              <i class="fas fa-list-ul"></i>
+            </button>
+
+            <button 
+              @mousedown.prevent 
+              @click="addLink" 
+              class="p-2 hover:bg-gray-200 rounded transition-colors tooltipForActions" data-tooltip="Link"
+              :class="{ 'bg-gray-200': editor?.isActive('link') }"
+            >
+              <i class="fas fa-link"></i>
+            </button>
+          </div>
+
+          <!-- Color Picker -->
+          <div class="relative mr-2 border-r pr-2">
+            <button 
+              class="p-2 hover:bg-gray-200 rounded transition-colors tooltipForActions"
+              data-tooltip="Text Color"
+              @mousedown.prevent
+              @click="toggleColorPicker"
+            >
+              <i class="fas fa-palette"></i>
+            </button>
+            
+            <div 
+              v-if="showColorPicker" 
+              class="absolute top-full w-[12rem] left-0 mt-1 p-2 bg-white border rounded-lg shadow-lg z-50"
+            >
+              <div class="grid grid-cols-4 gap-2 p-2 w-full">
+              <button 
+                v-for="color in colors" 
+                :key="color"
+                @click="setTextColor(color)"
+                class="w-8 h-8 rounded-full hover:scale-110 transition-transform tooltipForActions"
+                :data-tooltip="color"
+                :style="{ backgroundColor: color }"
+              />
+              </div>
+            </div>
+          </div>
+
+          <!-- Table Controls -->
+          <div class="flex gap-1">
+            <button 
+              @click="editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()"
+              class="p-2 hover:bg-gray-200 rounded transition-colors tooltipForActions" data-tooltip="Insert Table"
+            >
+              <i class="fas fa-table"></i>
+            </button>
+
+            <div class="relative flex space-x-2">
+              <button 
+                class="p-2 hover:bg-gray-200 rounded transition-colors tooltipForActions" 
+                data-tooltip="Add Row Before"
+                @click="editor?.chain().focus().addRowBefore().run()"
+              >
+                <i class="fas fa-arrow-up"></i>
+              </button>
+              
+              <button 
+                class="p-2 hover:bg-gray-200 rounded transition-colors tooltipForActions" 
+                data-tooltip="Add Row After"
+                @click="editor?.chain().focus().addRowAfter().run()"
+              >
+                <i class="fas fa-arrow-down"></i>
+              </button>
+              
+              
+            </div>
+
+            <div class="relative flex space-x-2">
+              <button 
+                class="p-2 hover:bg-gray-200 rounded transition-colors tooltipForActions" 
+                data-tooltip="Add Column Before"
+                @click="editor?.chain().focus().addColumnBefore().run()"
+              >
+                <i class="fas fa-arrow-left"></i>
+              </button>
+              
+              <button 
+                class="p-2 hover:bg-gray-200 rounded transition-colors tooltipForActions" 
+                data-tooltip="Add Column After"
+                @click="editor?.chain().focus().addColumnAfter().run()"
+              >
+                <i class="fas fa-arrow-right"></i>
+              </button>
+              <button 
+                class="p-2 hover:bg-gray-200 rounded transition-colors tooltipForActions" 
+                data-tooltip="Delete Row"
+                @click="editor?.chain().focus().deleteRow().run()"
+              >
+              <svg fill="#000000" width="20px" height="20px" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M225.936 1694.232v-338.88h194.04v-225.96h-194.04v-338.76h194.04v-225.96h-194.04v-338.76h1468.08v338.76h-199.8v225.96h199.8v338.76h-199.8v225.96h199.8v338.88H225.936Zm1694.04-.12v-1468.2c0-124.56-101.28-225.84-225.96-225.84H225.936c-124.68 0-225.96 101.28-225.96 225.84v1468.2c0 124.56 101.28 225.96 225.96 225.96h1468.08c124.68 0 225.96-101.4 225.96-225.96Zm-1201.46-258.94 241.32-241.32 241.2 241.32 233.88-233.76-241.32-241.32 241.32-241.32-233.88-233.76-241.2 241.32-241.32-241.32-233.64 233.76 241.2 241.32-241.2 241.32 233.64 233.76Z" fill-rule="evenodd"></path> </g></svg>
+              </button>
+              
+              <button 
+                class="p-2 hover:bg-gray-200 rounded transition-colors tooltipForActions" 
+                data-tooltip="Delete Column"
+                @click="editor?.chain().focus().deleteColumn().run()"
+              >
+              <svg fill="#000000" width="20px" height="20px" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M1694.232 1694.064h-338.88v-194.04h-225.96v194.04h-338.76v-194.04h-225.96v194.04h-338.76V225.984h338.76v199.8h225.96v-199.8h338.76v199.8h225.96v-199.8h338.88v1468.08Zm-.12-1694.04h-1468.2C101.352.024.072 101.304.072 225.984v1468.08c0 124.68 101.28 225.96 225.84 225.96h1468.2c124.56 0 225.96-101.28 225.96-225.96V225.984c0-124.68-101.4-225.96-225.96-225.96ZM1201.344 484.92l-241.32 241.32-241.2-241.32-233.88 233.76L726.264 960l-241.32 241.32 233.88 233.76 241.2-241.32 241.32 241.32 233.64-233.76-241.2-241.32 241.2-241.32-233.64-233.76Z" fill-rule="evenodd"></path> </g></svg>
+              
+              </button>
+            </div>
+
+            <button 
+              @click="editor?.chain().focus().deleteTable().run()"
+              :disabled="!editor?.can().deleteTable()"
+              class="p-2 hover:bg-gray-200 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed tooltipForActions" data-tooltip="Delete Table"
+            >
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+
+          <!-- Save & Close -->
+          <!-- <button 
+            @mousedown.prevent 
+            @click="closeEditor" 
+            class="p-2 hover:bg-gray-200 rounded transition-colors ml-auto"
+            title="Save & Close"
+          >
+            <i class="fas fa-save mr-1"></i> Save
+          </button> -->
+        </div>
+        
+        <!-- Modal Content -->
+        <div class="p-6 overflow-y-auto flex-grow">
+          <editor-content :editor="editor" class="min-h-[300px]" />
+        </div>
       </div>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
-  import { usePage } from '@inertiajs/vue3'
-  import { Editor, EditorContent } from '@tiptap/vue-3'
-  import StarterKit from '@tiptap/starter-kit'
-  import TextStyle from '@tiptap/extension-text-style'
-  import Color from '@tiptap/extension-color'
-  import Link from '@tiptap/extension-link'
-  import HardBreak from '@tiptap/extension-hard-break'
-  import Table from '@tiptap/extension-table'
-  import TableRow from '@tiptap/extension-table-row'
-  import TableCell from '@tiptap/extension-table-cell'
-  import TableHeader from '@tiptap/extension-table-header'
-  
-  const props = defineProps({
-    modelValue: {
-      type: String,
-      default: ''
-    }
-  })
+  </div>
+</template>
 
-  const emit = defineEmits(['update:modelValue'])
-  const editor = ref(null)
-  const showColorPicker = ref(false)
-  
-  const colors = [
-    '#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00',
-  ]
-  
-  const addLink = () => {
-    const isActive = editor.value.isActive('link')
-    
-    if (isActive) {
-      editor.value.chain().focus().unsetLink().run()
-      return
-    }
+<script setup>
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import { Editor, EditorContent } from '@tiptap/vue-3'
+import StarterKit from '@tiptap/starter-kit'
+import TextStyle from '@tiptap/extension-text-style'
+import Color from '@tiptap/extension-color'
+import Link from '@tiptap/extension-link'
+import Table from '@tiptap/extension-table'
+import TableRow from '@tiptap/extension-table-row'
+import TableCell from '@tiptap/extension-table-cell'
+import TableHeader from '@tiptap/extension-table-header'
 
-    const url = window.prompt('URL')
-    if (url) {
-      const absoluteUrl = url.startsWith('http') ? url : `https://${url}`
-      editor.value.chain().focus().setLink({ href: absoluteUrl, target: '_blank' }).run()
-    }
+const props = defineProps({
+  modelValue: {
+    type: String,
+    default: ''
   }
-  
-  const setTextColor = (color) => {
-    editor.value.chain().focus().setColor(color).run()
-    showColorPicker.value = false
+})
+
+const emit = defineEmits(['update:modelValue'])
+const editor = ref(null)
+const showColorPicker = ref(false)
+const editorContainer = ref(null)
+const showRowMenu = ref(false)
+const showColumnMenu = ref(false)
+const isEditorOpen = ref(false)
+
+function openEditor() {
+  isEditorOpen.value = true;
+  document.body.style.overflow = "hidden";
+  setTimeout(() => {
+    editor.value?.commands.focus()
+  }, 100)
+}
+
+function closeEditor() {
+  document.body.style.overflow = "auto";
+  isEditorOpen.value = false;
+}
+
+const toggleColorPicker = () => {
+  showColorPicker.value = !showColorPicker.value
+  showRowMenu.value = false
+  showColumnMenu.value = false
+}
+
+const toggleRowMenu = () => {
+  showRowMenu.value = !showRowMenu.value
+  showColorPicker.value = false
+  showColumnMenu.value = false
+
+  if (editor.value) {
+    setTimeout(() => {
+      editor.value.commands.focus()
+    }, 100)
   }
+}
+
+const toggleColumnMenu = () => {
+  showColumnMenu.value = !showColumnMenu.value
+  showColorPicker.value = false
+  showRowMenu.value = false
+}
+
+const colors = [ '#000000', "#4B5563", "#2563EB", "#DC2626"]
+
+
+const handleClickOutside = (event) => {
+  if (
+    (showColorPicker.value || showRowMenu.value || showColumnMenu.value) && 
+    !event.target.closest('button')
+  ) {
+    showColorPicker.value = false;
+    showRowMenu.value = false;
+    showColumnMenu.value = false;
+  }
+  if (showRowMenu.value && editorContainer.value && !editorContainer.value.contains(event.target)) {
+    showRowMenu.value = false;
+  }
+  if (showColumnMenu.value && editorContainer.value && !editorContainer.value.contains(event.target)) {
+    showColumnMenu.value = false;
+  }
+}
+
+const addLink = () => {
+  const isActive = editor.value.isActive('link')
   
-  watch(() => props.modelValue, (newContent) => {
-    if (editor.value && newContent !== editor.value.getHTML()) {
-      editor.value.commands.setContent(newContent)
+  if (isActive) {
+    editor.value.chain().focus().unsetLink().run()
+    return
+  }
+
+  const url = window.prompt('URL')
+  if (url) {
+    const absoluteUrl = url.startsWith('http') ? url : `https://${url}`
+    editor.value.chain().focus().setLink({ href: absoluteUrl, target: '_blank' }).run()
+  }
+}
+
+const setTextColor = (color) => {
+  editor.value.chain().focus().setColor(color).run()
+  showColorPicker.value = false
+}
+
+// Initialize editor when component is mounted
+onMounted(() => {
+  editor.value = new Editor({
+    content: props.modelValue,
+    extensions: [
+      StarterKit.configure({
+        bulletList: true,
+      }),
+      TextStyle,
+      Color,
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          target: '_blank',
+          rel: 'noopener noreferrer',
+          class: 'text-blue-600 underline',
+        },
+        linkOnPaste: true,
+      }),
+      Table.configure({
+        resizable: true,
+        allowTableNodeSelection: true,
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
+    ],
+    onUpdate: ({ editor }) => {
+      emit('update:modelValue', editor.getHTML())
     }
-  }, { immediate: true })
-  
-  onMounted(() => {
-    editor.value = new Editor({
-      content: props.modelValue,
-      extensions: [
-        StarterKit.configure({
-          bulletList: true,
-          placeholder: {
-            placeholder: 'Input text here...',
-          }
-        }),
-        TextStyle,
-        Color,
-        Link.configure({
-          openOnClick: false,
-          HTMLAttributes: {
-            target: '_blank',
-            rel: 'noopener noreferrer',
-            style: 'color: blue; text-decoration: underline;',
-          },
-          linkOnPaste: true,
-        }),
-        Table.configure({
-          resizable: true,
-          allowTableNodeSelection: true,
-          HTMLAttributes: {
-            class: 'extendable-table',
-          },
-        }),
-        TableRow,
-        TableHeader,
-        TableCell.configure({
-          cellAttributes: {
-            class: 'table-cell',
-          },
-        })
-      ],
-      onUpdate: ({ editor }) => {
-        emit('update:modelValue', editor.getHTML())
-      }
-    })
   })
   
-  onBeforeUnmount(() => {
-    editor.value?.destroy()
+  document.addEventListener('mousedown', handleClickOutside)
+  
+ // Handle escape key to exit editor modal
+ document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (isModalOpen.value) {
+        closeModalEditor()
+      } else {
+        showColorPicker.value = false
+        showRowMenu.value = false
+        showColumnMenu.value = false
+ }
+    }
   })
-  </script>
-  
-  <style>
-  
-  .ProseMirror {
-    min-height: 2rem;
-    cursor: text;
+})
+
+// Watch for external changes to modelValue
+watch(() => props.modelValue, (newContent) => {
+  if (editor.value && newContent !== editor.value.getHTML()) {
+    editor.value.commands.setContent(newContent)
   }
-  
-  .ProseMirror:focus {
-    outline: none;
-  }
-  
-  .ProseMirror a {
-    color: #2563eb;
-    text-decoration: underline;
-    cursor: pointer;
-  }
-  
-  /* Optional: Add hover effect */
-  .ProseMirror a:hover {
-    color: #1d4ed8; /* Darker blue on hover */
-  }
-  
-  .ProseMirror p.is-editor-empty:first-child::before {
-    content: attr(data-placeholder);
-    float: left;
-    color: #adb5bd;
-    pointer-events: none;
-    height: 0;
-  }
-  
-  .ProseMirror ul {
-    list-style-type: disc;
-    padding-left: 1.5em;
-  }
-  
-  .ProseMirror ul li {
-    margin-bottom: 0.5em;
-  }
-  
-  .ProseMirror table {
-    border-collapse: collapse;
-    margin: 0;
-    width: 100%;
-    table-layout: fixed;
-  }
-  
-  .ProseMirror td,
-  .ProseMirror th {
-    border: 1px solid #000000;
-    padding: 0.3rem;
-    position: relative;
-  }
-  
-  .ProseMirror th {
-    font-weight: bold;
-  } 
-  </style>
+}, { immediate: true })
+
+onBeforeUnmount(() => {
+  document.removeEventListener('mousedown', handleClickOutside)
+  editor.value?.destroy()
+})
+</script>
+
+<style>
+/* Minimal required styles that can't be done with Tailwind */
+.ProseMirror {
+  min-height: 10rem;
+  outline: none;
+}
+
+.ProseMirror table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  margin: 0;
+}
+
+.ProseMirror td,
+.ProseMirror th {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem;
+  position: relative;
+}
+
+.ProseMirror th {
+  font-weight: bold;
+  background-color: #f9fafb;
+}
+
+.ProseMirror ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}
+
+.ProseMirror ul li {
+  margin-bottom: 0.25rem;
+}
+
+/* Placeholder text */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: "Start typing...";
+  float: left;
+  color: #9ca3af;
+  pointer-events: none;
+  height: 0;
+}
+
+/* Style for the display view */
+.prose ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}
+
+.prose table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.prose td, 
+.prose th {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem;
+}
+
+.prose th {
+  font-weight: bold;
+  background-color: #f9fafb;
+}
+</style>

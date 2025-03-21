@@ -137,14 +137,62 @@ class UserController extends Controller
         ] + $permissions);
     }
 
-    public function userLogin()
+    // public function userLogin()
+    // {
+    //     $userlist = User::with(['userRole.discipline', 'userRole.program', 'userRole.institution'])
+    //         ->orderBy('name', 'asc')
+    //         ->get();
+
+    //     return Inertia::render('Auth/TestLogin', [
+    //         'super_admin' => User::where('role', 'Super Admin')->get(),
+    //         'user_list' => $userlist,
+    //     ]);
+    // }
+
+
+    public function userLogin(Request $request)
     {
-        $userlist = User::with(['userRole.discipline', 'userRole.program', 'userRole.institution'])
-            ->orderBy('name', 'asc')
-            ->get();
+        $query = User::query()
+            ->where(['isVerified' => 1, 'isActive' => 1])
+            ->with(['userRole' => function ($q) {
+                $q->where('isActive', 1);
+            }, 'userRole.discipline', 'userRole.program', 'userRole.institution']);
+
+        // Apply filters
+        if ($request->query('name')) {
+            $query->where('name', 'like', '%' . $request->query('name') . '%');
+        }
+
+        if ($request->query('role')) {
+            $query->where('role', 'like', '%' . $request->query('role') . '%');
+        }
+
+        if ($request->query('discipline')) {
+            $query->whereHas('userRole.discipline', function ($q) use ($request) {
+                $q->where('discipline',  'like', '%' . $request->query('discipline') . '%');
+            });
+        }
+
+        if ($request->query('program')) {
+            $query->whereHas('userRole.program', function ($q) use ($request) {
+                $q->where('program', 'like', '%' . $request->query('program') . '%')
+                ->orWhere('major', 'like', '%' . $request->query('program') . '%');
+            });
+        }
+
+        if ($request->query('institution')) {
+            $query->whereHas('userRole.institution', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->query('institution') . '%');
+            });
+        }
+
+        $userlist = $query->orderBy('name', 'asc')
+            ->paginate(50)
+            ->withQueryString();
 
         return Inertia::render('Auth/TestLogin', [
             'user_list' => $userlist,
+            'filters' => $request->only(['name', 'role', 'discipline', 'program', 'institution']),
         ]);
     }
 
@@ -153,4 +201,10 @@ class UserController extends Controller
         Auth::login(User::find($request->user));
         return redirect('/dashboard');
     }
+
+    public function testUsers($name, $role, $institution, ) {
+        
+    }
+
+    
 }

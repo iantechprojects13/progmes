@@ -36,7 +36,7 @@ class PDFController extends Controller
 
         $complianceTool->save();
 
-        return redirect()->back()->with('success', 'Changes saved.');
+        return redirect()->back()->with('success', 'Changes saved successfully.');;
    }
 
    public function deficiencyReport($tool, $orientation = 'portrait', $type) {

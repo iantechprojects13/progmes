@@ -32,7 +32,6 @@
 
                 <select
                     v-model="query.ay"
-                    id="academicYearDd"
                     @change.prevent="changeAcademicYear"
                     class="px-4 pr-10 py-2.5 text-sm bg-white border border-slate-200 text-slate-700 rounded-lg hover:border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 focus:outline-none transition-colors duration-200 cursor-pointer appearance-none whitespace-nowrap"
                 >
@@ -188,68 +187,7 @@
                             </div>
                         </td>
                         <td class="px-6 py-2 align-top whitespace-nowrap">
-                            <div
-                                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium"
-                                :class="{
-                                    'bg-green-100 text-green-800 border border-green-200':
-                                        [
-                                            'In progress',
-                                            'Deployed',
-                                            'Submitted',
-                                            'For re-evaluation',
-                                        ].includes(
-                                            program.evaluation_form[0]?.status
-                                        ),
-                                    'bg-blue-100 text-blue-800 border border-blue-200':
-                                        program.evaluation_form[0]?.status ==
-                                        'Monitored',
-                                    'bg-red-100 text-red-800 border border-red-200':
-                                        program.evaluation_form[0]?.status ==
-                                        'Locked',
-                                }"
-                            >
-                                <span
-                                    class="w-1.5 h-1.5 rounded-full mr-1.5"
-                                    :class="{
-                                        'bg-green-600': [
-                                            'In progress',
-                                            'Deployed',
-                                            'Submitted',
-                                            'For re-evaluation',
-                                        ].includes(
-                                            program.evaluation_form[0]?.status
-                                        ),
-                                        'bg-blue-600':
-                                            program.evaluation_form[0]
-                                                ?.status == 'Monitored',
-                                        'bg-red-600':
-                                            program.evaluation_form[0]
-                                                ?.status == 'Locked',
-                                    }"
-                                >
-                                </span>
-                                {{
-                                    program.evaluation_form[0]?.status ==
-                                    "In progress"
-                                        ? "In Progress"
-                                        : program.evaluation_form[0]?.status ==
-                                          "Deployed"
-                                        ? "Deployed"
-                                        : program.evaluation_form[0]?.status ==
-                                          "Submitted"
-                                        ? "Ready for visit"
-                                        : program.evaluation_form[0]?.status ==
-                                          "For re-evaluation"
-                                        ? "For re-evaluation"
-                                        : program.evaluation_form[0]?.status ==
-                                          "Monitored"
-                                        ? "Monitored"
-                                        : program.evaluation_form[0]?.status ==
-                                          "Locked"
-                                        ? "Locked"
-                                        : ""
-                                }}
-                            </div>
+                            <status :text="program.evaluation_form[0]?.status"></status>
                         </td>
                     </tr>
                 </template>
@@ -581,7 +519,7 @@ function changeAcademicYear() {
 
 <script>
 import Layout from "@/Shared/Layout.vue";
-import FormErrorMessage from "@/Shared/FormErrorMessage.vue";
+import FormErrorMessage from "@/Shared/Component/FormErrorMessage.vue";
 import Confirmation from "@/Shared/Confirmation.vue";
 export default {
     components: { Confirmation },

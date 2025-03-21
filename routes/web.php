@@ -20,6 +20,7 @@ use App\Http\Controllers\InstitutionProgramController;
 use App\Http\Controllers\AdminSettingsController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\EvidenceController;
+use App\Http\Controllers\GPRController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\PDFController;
 
@@ -84,7 +85,7 @@ Route::post('/set-academic-year', [DashboardController::class, 'setAcademicYear'
 //evaluation
 Route::get('/evaluation', [EvaluationController::class, 'index'])->middleware(['auth', 'user.verified'])->name('evaluation');
 Route::get('/ched/evaluation', [EvaluationController::class, 'evaluationForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('evaluation.ched');
-Route::get('/ched/evaluation/monitored', [EvaluationController::class, 'monitoredForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('ched.evaluation.monitored');
+Route::get('/ched/evaluation/monitored', [EvaluationController::class, 'monitoredForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('evaluation.ched.monitored');
 Route::get('/hei/ph/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware(['auth','type.hei', 'hei.ph'])->name('evaluation.ph');
 Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean'])->name('evaluation.hei');
 Route::get('/hei/evaluation/monitored', [EvaluationController::class, 'monitoredForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean'])->name('evaluation.hei.monitored');
@@ -107,8 +108,23 @@ Route::post('/ched/evaluation/lock', [CHEDFormController::class, 'lock'])->name(
 Route::post('/ched/evaluation/unlock', [CHEDFormController::class, 'unlock'])->name('form.ched.unlock');
 
 
+// PROGRAM APPLICATION
+// gpr
+Route::get('/ched/program-application/gpr', [GPRController::class, 'index'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.gpr.view');
+Route::get('/ched/program-application/gpr/edit', [GPRController::class, 'edit'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.gpr.edit');
+Route::post('/ched/program-application/gpr/update', [GPRController::class, 'update'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.gpr.update');
+
+
 //application
 Route::get('/application', [ApplicationController::class, 'index'])->middleware(['auth', 'user.verified'])->name('application');
+Route::get('/hei/program-application', [ApplicationController::class, 'programApplicationHEI'])->middleware(['auth', 'user.verified', 'type.hei'])->name('hei.application.list');
+Route::get('/ched/program-application', [ApplicationController::class, 'programApplicationCHED'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.application.list');
+Route::get('/hei/program-application/{id}/edit', [ApplicationController::class, 'applicationHEIEdit'])->middleware(['auth', 'user.verified', 'type.hei'])->name('hei.application.edit');
+Route::post('/application/create', [ApplicationController::class, 'create'])->middleware(['auth', 'user.verified', 'type.hei'])->name('hei.application.create');
+Route::post('/application/update', [ApplicationController::class, 'update'])->middleware(['auth', 'user.verified', 'type.hei'])->name('hei.application.update');
+Route::post('/application/submit', [ApplicationController::class, 'submit'])->middleware(['auth', 'user.verified', 'type.hei'])->name('hei.application.submit');
+Route::get('/application/{id}/delete', [ApplicationController::class, 'destroy'])->middleware(['auth', 'user.verified'])->name('hei.application.delete');
+
 
 //admin-panel
 //USERS
@@ -188,7 +204,7 @@ Route::get('/report/deficiency/{tool}/{orientation}/{type}', [PDFController::cla
 
 Route::get('/api/data', [DashboardController:: class, 'getData']);
 
-Route::get('/login-testuser', [UserController::class, 'userLogin']);
+Route::get('/login-testuser', [UserController::class, 'userLogin'])->name('test.login');
 Route::post('/testuserlogin', [UserController::class, 'testUserLogin']);
 
 require __DIR__.'/auth.php';

@@ -18,16 +18,7 @@
     </div>
     <content-container :hasNavigation="true" :hasSearch="true" :hasFilters="true" :data_list="complianceTools" :hideTopBorder="true">
         <template v-slot:navigation>
-            <div>
-                <Link href="/evaluation">
-                <button class="select-none h-12 w-28 hover:bg-gray-100 text-gray-700 hover:text-black">
-                    Evaluation
-                </button>
-                </Link>
-                <button class="select-none h-12 w-28 hover:bg-gray-100 text-blue-500 border-b-4 border-blue-500 relative font-bold">
-                    Monitored
-                </button>
-            </div>
+            <!-- <main-content-nav page="monitored" managementType="evaluation"></main-content-nav> -->
         </template>
         <template v-slot:search>
             <div class="w-full flex flex-row relative items-center">
@@ -47,7 +38,8 @@
                 </button>
                 </Link>
             </div>
-        </template>        <template v-slot:main-content>
+        </template>
+        <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
                     <th class="p-2 pl-5">Program</th>

@@ -33,6 +33,18 @@ class ExcelController extends Controller
         } else {
             return redirect()->back()->with('failed', 'Import failed!');
         }
+
+        // Check if the first row contains the expected headers
+        if (empty($excelContent[0]) || count($excelContent[0]) === 0) {
+            return redirect()->back()->with('failed', 'The uploaded file is empty!');
+        }
+        
+        $firstRow = $excelContent[0][0];
+        if (!isset($firstRow[0]) || !isset($firstRow[1]) || 
+            strtolower(trim($firstRow[0])) !== 'area' || 
+            strtolower(trim($firstRow[1])) !== 'minimum requirement') {
+            return redirect()->back()->with('failed', 'Invalid file format! The first row must contain "Area" and "Minimum Requirement" columns.');
+        }
     
         $newCMO = CMOModel::create([
             'createdBy' => $user->id,

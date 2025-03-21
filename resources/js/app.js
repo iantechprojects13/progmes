@@ -17,8 +17,10 @@ import Pagination from './Shared/Pagination.vue';
 import Paginator from './Shared/Paginator.vue';
 import ContentContainer from './Shared/ContentContainer.vue';
 import ContentTable from './Shared/ContentTable.vue';
-import FormErrorMessage from './Shared/FormErrorMessage.vue';
-import DropdownOption from './Shared/DropdownOption.vue';
+import FormErrorMessage from './Shared/Component/FormErrorMessage.vue';
+import DropdownOption from './Shared/Component/DropdownOption.vue';
+import NoSearchResult from './Shared/Component/NoSearchResult.vue';
+import Status from './Shared/Component/Status.vue';
 import PageTitle from './Shared/PageTitle.vue';
 import TextEditor from './Shared/TextEditor.vue';
 import DoughnutChart from './Shared/Charts/DoughnutChart.vue';
@@ -34,9 +36,9 @@ import PieChart from './Shared/Charts/PieChart.vue';
 import ChartsContainer from './Shared/Charts/ChartsContainer.vue';
 import MainContentNav from './Shared/MainContentNav.vue';
 import TipTapEditor from './Shared/TipTapEditor.vue';
-import NoSearchResult from './Shared/NoSearchResult.vue';
-
-
+import TipTapFullScreen from './Shared/TipTapFullScreen.vue';
+import EvaluationProgress from './Shared/Component/EvaluationProgress.vue';
+import LoadingScreen from './Shared/Component/LoadingScreen.vue';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -61,6 +63,8 @@ createInertiaApp({
             .component('ContentTable', ContentTable)
             .component('FormErrorMessage', FormErrorMessage)
             .component('DropdownOption', DropdownOption)
+            .component('NoSearchResult', NoSearchResult)
+            .component('Status', Status)
             .component('PageTitle', PageTitle)
             .component('TextEditor', TextEditor)
             .component('DoughnutChart', DoughnutChart)
@@ -76,7 +80,9 @@ createInertiaApp({
             .component('ChartsContainer', ChartsContainer)
             .component('MainContentNav', MainContentNav)
             .component('TipTapEditor', TipTapEditor)
-            .component('NoSearchResult', NoSearchResult)
+            .component('EvaluationProgress', EvaluationProgress)
+            .component('TipTapFullScreen', TipTapFullScreen)
+            .component('LoadingScreen', LoadingScreen)
             .mount(el);
     },
     progress: false,

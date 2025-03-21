@@ -82,7 +82,10 @@ export default {
                 '66': '16.5rem',
                 '68': '17rem',
                 '70': '17.5rem',
-            }
+            },
+            fontFamily: {
+                sans: ['sans-serif'], // Change 'Poppins' to your preferred font
+              },
         },
     },
 

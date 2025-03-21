@@ -2,7 +2,7 @@
     <Head title="Users List" />
     <content-container
         :hasAdminPanel="true"
-        :pageTitle="canEdit ? 'Active Users List' : 'Users List'"
+        :pageTitle="canEdit ? 'Users List' : 'Users List'"
         page="user"
         :hasNavigation="canEdit"
         :hasSearch="true"
@@ -167,7 +167,7 @@
                                     <div class="font-bold">
                                         {{ user.name }}
                                     </div>
-                                    <div>
+                                    <div class="text-sm text-gray-600">
                                         {{ user.email }}
                                     </div>
                                 </div>

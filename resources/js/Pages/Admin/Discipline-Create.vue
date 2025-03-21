@@ -13,32 +13,44 @@
                 </div>
         </template>
         <template v-slot:main-content>
-            <div>
-                <div class="p-5 w-full md:max-w-md md:shadow md:shadow-gray-600 rounded mx-auto md:my-10">
-                    <div>
-                        <span class="text-red-500">*</span>
-                        <span class="italic text-sm"> indicates required field</span>
-                    </div>
-                    <div class="mt-7">
-                        <label for="discipline" class="font-black">Discipline</label>
-                        <span class="text-red-500">*</span>
-                        <input required maxlength="255" v-model="form.discipline" type="text" id="discipline"
-                            class="rounded text-sm border-gray-500 w-full my-0.5 placeholder-gray-400"
-                            placeholder="Discipline" />
-                        <form-error-message :message="$page.props.errors.discipline" theme="dark" />
-                    </div>
-                    <div class="mt-5 w-full">
-                        <button @click="submit" :disabled="processing"
-                            class="w-full rounded text-white bg-blue-500 hover:bg-blue-600 py-2 px-4">
-                            <span v-if="!processing">Create</span>
-                            <span v-else>
-                                <i class="fas fa-spinner animate-spin"></i>
-                            </span>
-                        </button>
-                    </div>
+            <div class="w-full max-w-lg p-2 md:p-8 my-3 md:m-5 md:shadow-lg md:border rounded-xl">
+              <!-- Form Header -->
+              <div class="mb-4 text-sm text-gray-600">
+                <span class="text-red-500">*</span>
+                <span class="italic">indicates required field</span>
+              </div>
+          
+              <!-- Form Content -->
+              <div class="space-y-6">
+                <div>
+                  <label for="discipline" class="block font-medium text-gray-700">
+                    Discipline
+                    <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    required
+                    maxlength="255"
+                    v-model="form.discipline"
+                    type="text"
+                    id="discipline"
+                    placeholder="Enter discipline"
+                    class="mt-1 block w-full rounded-md h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                  />
+                  <form-error-message :message="$page.props.errors.discipline" theme="dark" />
                 </div>
+          
+                <!-- Submit Button -->
+                <div>
+                  <button
+                    @click="submit"
+                    :disabled="processing"
+                    class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200"
+                  >Add
+                  </button>
+                </div>
+              </div>
             </div>
-        </template>
+          </template>
     </content-container>
 </template>
 
@@ -67,7 +79,7 @@
 </script>
 
 <script>
-    import FormErrorMessage from "@/Shared/FormErrorMessage.vue";
+    import FormErrorMessage from "@/Shared/Component/FormErrorMessage.vue";
     import Layout from "@/Shared/Layout.vue";
 
     export default {

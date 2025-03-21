@@ -12,125 +12,223 @@
                         </Link>
                         <div class="ml-3 font-bold">Evaluate</div>
                     </div>
-                    <div class="w-full flex flex-row justify-between ml-2">
-                        <div class="text-gray-500 h-10 lg:ml-1 flex items-center mr-5">
-                            <div v-if="hasUpdate" class="text-red-500">
-                                *Changes unsaved.
-                            </div>
-                            <div v-else-if="$page.props.flash.updated">
-                                <i class="fas fa-check-circle text-green-500 mr-1"></i>
-                                {{ $page.props.flash.updated }}
-                            </div>
-                            <div v-else></div>
-                        </div>
-                    </div>
                 </div>
-                <div class="w-full md:w-fit md:mt-0 mt-3 flex flex-row justify-center">
-                    <div class="w-full mr-2">
+                <div class="w-full md:w-fit md:mt-0 mt-3 flex flex-col md:flex-row justify-center gap-2">
                         <Link :href="'/ched/evaluation/' + evaluation.id + '/report'">
-                            <button class="w-full select-none whitespace-nowrap rounded text-white bg-gray-700 hover:bg-gray-800 hover:text-white h-10 px-2">Generate Report</button>
+                            <button
+                                class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                <span class="flex items-center">
+                                Generate Report
+                                </span>
+                                </button>
                         </Link>
-                    </div>
-                    <div class="w-full">
-                        <button @click="update" ref="saveBtn" :disabled="saving"
-                            class="w-full select-none whitespace-nowrap cursor-pointer bg-blue-500 text-white h-10 rounded px-2">Save
-                            Changes
+                        <button
+                            @click="update" ref="saveBtn"
+                            class=" whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <span class="flex items-center">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="w-5 h-5 mr-2"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path
+                                        d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
+                                    />
+                                    <polyline points="17 21 17 13 7 13 7 21" />
+                                    <polyline points="7 3 7 8 15 8" />
+                                </svg>
+                                Save changes
+                            </span>
                         </button>
-                    </div>
-                </div>
-            </div>
-        </template>
-        <template v-slot:top-main-content>
-            <div class="flex flex-col xl:flex-row items-center justify-between w-auto rounded border border-gray-300 bg-white my-3">
-                <div class="w-full text-left p-3 md:p-5">
-                    <div class="w-auto flex flex-row items-center">
-                        <i class="fas fa-institution mr-3 text-blue-500"></i>
-                        <div>{{ evaluation.institution_program.institution.name }}</div>
-                    </div>
-                    <div class="w-auto flex flex-row items-center">
-                        <i class="fas fa-book mr-3 text-blue-500"></i>
-                        <div>
-                            {{ evaluation.institution_program.program.program }}
-                            <span v-if="evaluation.institution_program.program.major"> - {{ evaluation.institution_program.program.major }}</span>
-                        </div>
-                    </div>
-                    <div class="w-auto flex flex-row items-center">
-                        <i class="fas fa-calendar-check mr-3 text-blue-500"></i>
-                        <div>A.Y. {{ evaluation.effectivity }}</div>
-                    </div>
                 </div>
             </div>
         </template>
         <template v-slot:sticky-div>
             <div class="w-full flex items-end px-3 md:px-5 py-2">
                 <div class="w-full flex flex-row justify-between ml-2">
-                    <div class="text-gray-500 h-10 lg:ml-1 flex items-center mr-5">
-                        <div v-if="hasUpdate" class="text-red-500">
-                            <div>
-                                *Changes unsaved.
-                            </div>
-                        </div>
-                        <div v-else-if="$page.props.flash.updated">
-                            <i class="fas fa-check-circle text-green-500 mr-1"></i>
-                            {{ $page.props.flash.updated }}
-                        </div>
-                        <div v-else></div>
-                    </div>
+                    
                 </div>
                 <div class="flex flex-row">
-                    <button @click="update" ref="saveBtn" :disabled="saving"
-                        class="select-none whitespace-nowrap cursor-pointer bg-blue-500 text-white px-2 w-fit h-10 rounded">Save
-                        Changes
-                    </button>
+                <button
+                    @click="update"
+                    class=" whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <span class="flex items-center">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="w-5 h-5 mr-2"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path
+                                d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
+                            />
+                            <polyline points="17 21 17 13 7 13 7 21" />
+                            <polyline points="7 3 7 8 15 8" />
+                        </svg>
+                        Save changes
+                    </span>
+                </button>
                 </div>
             </div>
         </template>
         <template v-slot:search>
-            <div class="w-full flex flex-row relative items-center">
-                <i class="fa fa-search text-gray-400 absolute left-5"></i>
-                <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
+            <div class="relative">
+                <div
+                    class="absolute inset-y-0 left-3 flex items-center pointer-events-none"
+                >
+                    <svg
+                        class="w-5 h-5 text-gray-400"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                    </svg>
+                </div>
+
+                <input
+                    @keydown.enter="submit"
+                    v-model="query.search"
+                    type="search"
+                    id="content-search"
                     placeholder="Search"
-                    class="w-full rounded-lg border border-gray-300 indent-10 h-10 text-base placeholder-gray-400" />
+                    class="w-full py-2.5 pl-11 pr-4 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors duration-200"
+                />
             </div>
         </template>
         <template v-slot:options>
-            <div class="mr-1">
-                <button @click="toggleFilterModal"
-                    class="w-10 h-10 hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
-                    data-tooltip="Filters">
-                    <i class="fas fa-filter"></i>
-                </button>
-                <Link :href="'/ched/evaluation/'+props.evaluation.id+'/evaluate'">
+            <div class="flex gap-2">
                 <button
-                    class="w-10 h-10 hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
-                    data-tooltip="Refresh page">
-                    <i class="fas fa-refresh"></i>
+                    @click="toggleFilterModal"
+                    class="p-2.5 inline-flex items-center justify-center rounded-lg text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all duration-200 tooltipForActions"
+                    data-tooltip="Filters"
+                >
+                    <svg
+                        class="w-5 h-5"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                        />
+                    </svg>
+                    <span
+                        class="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    >
+                        Filters
+                    </span>
                 </button>
+
+                <Link :href="`/ched/evaluation/${evaluation.id}/evaluate`">
+                    <button
+                        class="p-2.5 inline-flex items-center justify-center rounded-lg text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all duration-200 tooltipForActions"
+                        data-tooltip="Refresh page"
+                    >
+                        <svg
+                            class="w-5 h-5"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                            />
+                        </svg>
+                    </button>
                 </Link>
             </div>
         </template>
         <template v-slot:main-content>
+            <div class="p-3">
+                <div
+                    class="w-full p-2 md:p-8 my-3 md:shadow-lg md:border rounded-xl"
+                >
+                <div class="flex flex-col gap-6">
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+
+                        <div class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all">
+                            <div class="w-full">
+                                <p class="text-sm text-gray-500">HEI Name</p>
+                                <div>
+                                    {{ evaluation.institution_program.institution.name }}
+                                </div>
+                            </div>
+                        </div>
+            
+                        
+                        <div class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all">
+                            <div class="w-full">
+                                <p class="text-sm text-gray-500">Program</p>
+                                {{ evaluation.institution_program.program.program }}
+                                <span v-if="evaluation.institution_program.program.major"> - {{ evaluation.institution_program.program.major }}</span>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <div class="grid md:grid-cols-2 gap-6">
+
+                        <div class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all">
+                            <div class="w-full">
+                                <p class="text-sm text-gray-500">Effectivity</p>
+                                <div>
+                                    AY: {{ evaluation.effectivity }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="p-3">
+                <div class="w-full p-2 md:p-5 my-3 md:shadow-lg md:border rounded-xl">
             <content-table>
                 <template v-slot:table-head>
-                    <th class="p-2">Area/<br>Minimum Requirement</th>
-                    <th class="p-2">Self-Evaluation Status/<br>Actual
+                    <th class="p-2 text-sm bg-gray-300">Area/<br>Minimum Requirement</th>
+                    <th class="p-2 text-sm bg-gray-300">Self-Evaluation Status/<br>Actual
                         Situation
                     </th>
-                    <th class="p-2">Evidence</th>
-                    <th class="p-2">Findings</th>
-                    <th class="p-2">Comments/<br>Recommendations</th>
-                    <th class="p-2">Evaluation Status</th>
+                    <th class="p-2 text-sm bg-gray-300">Evidence</th>
+                    <th class="p-2 text-sm bg-gray-300">Findings</th>
+                    <th class="p-2 text-sm bg-gray-300">Comments/<br>Recommendations</th>
+                    <th class="p-2 text-sm bg-gray-300">Evaluation Status</th>
                 </template>
 
                 <template v-slot:table-body>
                     <tr v-if="items.data.length == 0">
-                        <td colspan="6" class="p-2 py-10 items-center text-center">
-                            No data
-                        </td>
+                        <no-search-result text="items" />
                     </tr>
-                    <tr v-else v-for="(item, index) in items.data" :key="item.id" class="hover:bg-gray-200 align-top text-base"
+                    <tr v-else v-for="(item, index) in items.data" :key="item.id" class="hover:bg-gray-200 align-top"
                         :class="{ 'bg-gray-100': index % 2 == 1 }">
-                        <td class="p-2 text-justify">
+                        <td class="p-2 text-justify max-w-[24rem]">
                             <div class="flex flex-col">
                                 <div class="font-bold">
                                     {{ item.criteria.area }}
@@ -139,10 +237,7 @@
                             </div>
                         </td>
                         <td class="p-2 text-justify">
-                            <div class="bg-gray-600 text-white w-fit rounded px-2 mb-2"
-                                :class="[{ 'bg-green-600': item.selfEvaluationStatus == 'Complied' }]">
-                                {{ item.selfEvaluationStatus }}
-                            </div>
+                            <status :text="item.selfEvaluationStatus" />
                             <div>
                                 {{ item.actualSituation }}
                             </div>
@@ -152,7 +247,7 @@
                                 :class="{ 'hidden': item.selfEvaluationStatus == 'Not applicable' }"
                                 ref="evidenceFiles">
                                 <div v-for="file in item.evidence" :key="file.id" class="w-full">
-                                    <a class="px-1 text-gray-600 hover:text-blue-500 m-1 rounded" :href="file.url"
+                                    <a class="px-1 text-blue-600 hover:text-blue-700 m-1 rounded" :href="file.url"
                                         target="_blank">
                                         <span v-if="file.type == 'file'">
                                             File
@@ -164,17 +259,17 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="h-32 min-w-[21rem] p-2 relative group">
-                            <tip-tap-editor v-model="item.findings"></tip-tap-editor>
+                        <td class="h-32 min-w-[16rem] p-2 relative group max-w-[16rem]">
+                            <tip-tap-editor v-model="item.findings" @input="updateData"></tip-tap-editor>
                         </td>
-                        <td class="h-32 min-w-[21rem] p-2 relative group">
-                            <tip-tap-editor v-model="item.recommendations" />
+                        <td class="h-32 min-w-[16rem] p-2 relative group">
+                            <tip-tap-editor v-model="item.recommendations" @input="updateData"/>
                         </td>
-                        <td class="h-32 p-3 min-w-8">
+                        <td class="p-3 min-w-5">
                             <div class="w-full h-full">
                                 <select ref="evaluationStatus" v-model="item.evaluationStatus"
                                     :id="'evaluationStatus' + index" :name="'evaluationStatus' + index"
-                                    @change="handleChangeStatus(item.id)" class="p-1 rounded w-36 border-gray-400">
+                                    @change="updateData" class="p-1 rounded w-32 border-gray-400 text-sm">
                                     <option :value="null">Select status</option>
                                     <option value="Complied">Complied</option>
                                     <option value="Not complied">Not complied</option>
@@ -185,6 +280,8 @@
                     </tr>
                 </template>
             </content-table>
+        </div>
+        </div>
         </template>
     </content-container>
 
@@ -219,14 +316,11 @@
             </button>
         </template>
     </modal>
-    <pre>
-        {{ items.data.length }}
-    </pre>
 </template>
 
 <script setup>
 
-import { ref, onMounted, onUnmounted, reactive, computed } from 'vue';
+import { ref, onMounted, onUnmounted, reactive, computed, inject } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
 
 const props = defineProps([
@@ -255,10 +349,10 @@ const itemsArray = computed(() => {
 const form = reactive({
     id: ref(props.evaluation.id),
     items: ref(itemsArray),
-    });
+});
 
 const handleBeforeUnload = (event) => {
-    if (hasUpdate.value) {
+    if (hasUnsavedChanges.value) {
         event.returnValue = true;
     }
 };
@@ -275,79 +369,21 @@ onUnmounted(() => {
 });
 
 
-const isFindingsEditorOpen = ref(false);
-const isRecommendationsEditorOpen = ref(false);
-const findingstexteditor = ref([]);
-const recommendationstexteditor = ref([]);
-const textEditorIndex = ref('');
-const reportModal = ref(false);
-
-const findingsInput = ref([]);
-const recommendationsInput = ref([]);
 const evaluationStatus = ref([]);
 const actionButtons = ref([]);
 const evidenceFiles = ref([]);
-const hasUpdate = ref(false);
-
-
-const saving = ref(false);
 const saveBtn = ref(null);
-const updatedRows = ref([]);
 
+// Inject the reactive object
+const hasUnsavedChanges = inject("hasUnsavedChanges");
 
-const refs = { findingsInput, evaluationStatus, actionButtons, evidenceFiles, saveBtn, findingstexteditor, recommendationstexteditor };
-
-
-function handleFindingsInput(index, id) {
-    let textarea = findingsInput.value[index];
-    textarea.style.height = "128px";
-    let newHeight = textarea.scrollHeight + "px";
-    let maxHeight = 384;
-    textarea.style.height = Math.min(maxHeight, Math.max(128, parseInt(newHeight))) + "px";
-    hasUpdate.value = true;
-    getRowsWithUpdates(id);
-}
-
-function handleRecommendationsInput(index, id) {
-    let textarea = recommendationsInput.value[index];
-    textarea.style.height = "128px";
-    let newHeight = textarea.scrollHeight + "px";
-    let maxHeight = 384;
-    textarea.style.height = Math.min(maxHeight, Math.max(128, parseInt(newHeight))) + "px";
-    hasUpdate.value = true;
-    getRowsWithUpdates(id);
-}
-
-function handleFindingsEditorInput(index, id) {
-    let textEditor = refs.findingstexteditor.value[index];
-    textEditor.style.height = "128px";
-    let newHeight = textEditor.scrollHeight + "px";
-    let maxHeight = 384;
-    textEditor.style.height = Math.min(maxHeight, Math.max(128, parseInt(newHeight))) + "px";
-    hasUpdate.value = true;
-    getRowsWithUpdates(id);
-}
-
-function handleRecommendationEditorInput(index, id) {
-    let textEditor = refs.recommendationstexteditor.value[index];
-    textEditor.style.height = "128px";
-    let newHeight = textEditor.scrollHeight + "px";
-    let maxHeight = 384;
-    textEditor.style.height = Math.min(maxHeight, Math.max(128, parseInt(newHeight))) + "px";
-    hasUpdate.value = true;
-    getRowsWithUpdates(id);
-}
-
-function getRowsWithUpdates(id) {
-    if (!updatedRows.value.includes(id)) {
-        updatedRows.value.push(id);
-    }
-}
-
-function handleChangeStatus(id) {
-    hasUpdate.value = true;
-    getRowsWithUpdates(id);
+// Function to update value
+const updateData = () => {
+    hasUnsavedChanges.value = true;
 };
+
+
+const refs = { evaluationStatus, actionButtons, evidenceFiles, saveBtn };
 
 
 
@@ -364,11 +400,15 @@ const handleKeyDown = (event) => {
 
 function update() {
     router.post('/ched/evaluation/update', form, {
+        onSuccess: () => {
+            hasUnsavedChanges.value = false;
+        },
         replace: true,
         preserveState: false,
         preserveScroll: true,
     });
 }
+
 
 
 const processing = ref(false);

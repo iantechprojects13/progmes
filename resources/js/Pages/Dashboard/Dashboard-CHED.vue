@@ -2,12 +2,12 @@
     <Head title="Dashboard" />
     <page-title title="Dashboard" />
     <div
-        class="mx-3 md:mx-8 bg-white rounded-lg shadow-sm shadow-gray-200 p-6 mb-8"
+        class="mx-3 mt-8 md:mx-8 bg-white rounded-lg border shadow-sm shadow-gray-200 p-6 mb-8"
     >
         <div
             class="flex flex-col lg:flex-row items-center justify-between gap-6"
         >
-            <div class="w-full lg:w-1/2">
+            <div class="w-full lg:w-1/2 text-lg">
                 <div
                     v-if="!hei && !program"
                     class="flex items-center text-gray-700"
@@ -15,12 +15,6 @@
                     <i class="fas fa-book text-blue-600 mr-3"></i>
                     <span class="font-medium">Overall</span>
                 </div>
-
-                <div v-if="heiName" class="flex items-center text-gray-700">
-                    <i class="fas fa-institution text-blue-600 mr-3"></i>
-                    <span class="font-medium">{{ heiName }}</span>
-                </div>
-
                 <div v-if="programName" class="flex items-center text-gray-700">
                     <i class="fas fa-book text-blue-600 mr-3"></i>
                     <span class="font-medium">
@@ -29,6 +23,10 @@
                             >- {{ major }}</span
                         >
                     </span>
+                </div>
+                <div v-if="heiName" class="flex items-center text-gray-700">
+                    <i class="fas fa-institution text-blue-600 mr-3"></i>
+                    <span class="font-medium">{{ heiName }}</span>
                 </div>
             </div>
 
@@ -101,13 +99,12 @@
                     </p>
                     <p class="text-gray-600 mt-2">Ready for visit</p>
                 </div>
-                <div class="bg-blue-100 p-3 rounded-full">
-                    <i class="fas fa-clipboard-check text-blue-500 text-xl"></i>
+                <div class="p-2 bg-blue-100 rounded-lg text-blue-500">
+                    <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="3" width="16" height="18" rx="2" ry="2"/>
+                        <path d="M9 3h6M9 14l2 2 4-4"/>
+                    </svg>
                 </div>
-                <!-- <div class="mt-4 flex items-center text-sm text-green-500">
-                    <i class="fas fa-arrow-up mr-1"></i>
-                    <span>8% increase</span>
-                </div> -->
             </div>
         </div>
 
@@ -117,13 +114,16 @@
         >
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-2xl font-bold text-green-600">
+                    <p class="text-2xl font-bold text-green-500">
                         {{ inprogress || 0 }}
                     </p>
                     <p class="text-gray-600 mt-2">In Progress</p>
                 </div>
-                <div class="bg-green-100 p-3 rounded-full">
-                    <i class="fas fa-spinner text-green-500 text-xl"></i>
+                <div class="p-2 bg-green-100 rounded-lg text-green-500">
+                    <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" stroke-opacity="0.3"/>
+                        <path d="M12 2 A10 10 0 0 1 22 12" stroke="currentColor"/>
+                    </svg>
                 </div>
             </div>
         </div>
@@ -134,13 +134,16 @@
         >
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-2xl font-bold text-orange-600">
+                    <p class="text-2xl font-bold text-orange-500">
                         {{ forreevaluation || 0 }}
                     </p>
                     <p class="text-gray-600 mt-2">For Re-evaluation</p>
                 </div>
-                <div class="bg-orange-100 p-3 rounded-full">
-                    <i class="fas fa-redo text-orange-500 text-xl"></i>
+                <div class="p-2 bg-orange-100 rounded-lg text-orange-500">
+                    <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 4v6h-6M1 20v-6h6"/>
+                        <path d="M3.51 9a9 9 0 0114.53-3.36L23 10M20.49 15a9 9 0 01-14.53 3.36L1 14"/>
+                    </svg>
                 </div>
             </div>
         </div>
@@ -151,20 +154,23 @@
         >
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-2xl font-bold text-purple-600">
+                    <p class="text-2xl font-bold text-purple-500">
                         {{ monitored || 0 }}
                     </p>
                     <p class="text-gray-600 mt-2">Monitored</p>
                 </div>
-                <div class="bg-purple-100 p-3 rounded-full">
-                    <i class="fas fa-chart-line text-purple-500 text-xl"></i>
+                <div class="p-2 bg-purple-100 rounded-lg text-purple-500">
+                    <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3v18h18"/>
+                        <path d="M6 16l6-6 4 4 5-5"/>
+                    </svg>
                 </div>
             </div>
         </div>
     </div>
 
 
-    <div class="mx-3 md:mx-8 px-4 py-6 flex md:flex-row flex-col items-center justify-between bg-white shadow-sm shadow-gray-200 rounded-xl mt-12">
+    <div class="mx-3 md:mx-8 px-4 py-6 flex md:flex-row flex-col items-center justify-between bg-white border shadow-sm shadow-gray-200 rounded-xl mt-12">
         <div class="flex items-center gap-3">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
@@ -200,8 +206,8 @@
                 <!-- Stats Grid -->
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                     <!-- Q1 -->
-                    <div
-                        class="p-6 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md bg-white"
+                    <div @click="viewMonitoredTools(filters.year, null, 1)"
+                        class="p-6 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md bg-white cursor-pointer"
                     >
                         <div class="flex justify-between items-start">
                             <div>
@@ -214,7 +220,7 @@
                                     1st Quarter
                                 </p>
                             </div>
-                            <div class="p-2 bg-blue-100 rounded-lg">
+                            <div class="p-2 bg-blue-100 rounded-lg text-blue-500">
                                 <svg
                                     class="w-8 h-8"
                                     xmlns="http://www.w3.org/2000/svg"
@@ -234,8 +240,8 @@
                     </div>
 
                     <!-- Q2 -->
-                    <div
-                        class="p-6 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md bg-white"
+                    <div @click="viewMonitoredTools(filters.year, null, 2)"
+                        class="p-6 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md bg-white cursor-pointer"
                     >
                         <div class="flex justify-between items-start">
                             <div>
@@ -248,7 +254,7 @@
                                     2nd Quarter
                                 </p>
                             </div>
-                            <div class="p-2 bg-blue-100 rounded-lg">
+                            <div class="p-2 bg-green-100 rounded-lg text-green-500">
                                 <svg
                                     class="w-8 h-8"
                                     xmlns="http://www.w3.org/2000/svg"
@@ -268,8 +274,8 @@
                     </div>
 
                     <!-- Q3 -->
-                    <div
-                        class="p-6 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md bg-white"
+                    <div @click="viewMonitoredTools(filters.year, null, 3)"
+                        class="p-6 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md bg-white cursor-pointer"
                     >
                         <div class="flex justify-between items-start">
                             <div>
@@ -282,7 +288,7 @@
                                     3rd Quarter
                                 </p>
                             </div>
-                            <div class="p-2 bg-blue-100 rounded-lg">
+                            <div class="p-2 bg-orange-100 rounded-lg text-orange-500">
                                 <svg
                                     class="w-8 h-8"
                                     xmlns="http://www.w3.org/2000/svg"
@@ -302,8 +308,8 @@
                     </div>
 
                     <!-- Q4 -->
-                    <div
-                        class="p-6 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md bg-white"
+                    <div @click="viewMonitoredTools(filters.year, null, 4)"
+                        class="p-6 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md bg-white cursor-pointer"
                     >
                         <div class="flex justify-between items-start">
                             <div>
@@ -316,7 +322,7 @@
                                     4th Quarter
                                 </p>
                             </div>
-                            <div class="p-2 bg-blue-100 rounded-lg">
+                            <div class="p-2 bg-violet-100 rounded-lg text-violet-500">
                                 <svg
                                     class="w-8 h-8"
                                     xmlns="http://www.w3.org/2000/svg"
@@ -401,7 +407,8 @@
 
                                     </p>
                                 </div>
-                                <svg
+                                <div>
+                                    <svg
                                     class="w-8 h-8 text-green-500"
                                     fill="none"
                                     stroke="currentColor"
@@ -414,6 +421,7 @@
                                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                                     />
                                 </svg>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -437,7 +445,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                     <!-- Monthly Average -->
                     <div
-                        class="p-6 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md bg-white"
+                        class="p-6 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md bg-white cursor-pointer"
                     >
                         <div class="flex justify-between items-start">
                             <div>
@@ -477,8 +485,9 @@
                     </div>
 
                     <!-- Current Month -->
-                    <div
-                        class="p-6 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md bg-white"
+                    <div v-show="filters.year === currentYear"
+                        class="p-6 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md bg-white cursor-pointer"
+                        @click="viewMonitoredTools(filters.year, monthIndex, null)"
                     >
                         <div class="flex justify-between items-start">
                             <div>
@@ -758,7 +767,7 @@
 
     <modal
         :showModal="viewToolModal"
-        title="Filters"
+        :title="titleStatus"
         @close="viewToolModal = false"
         width="4xl"
         class="antialiased"
@@ -781,13 +790,7 @@
                 <template v-slot:table-head>
                     <th
                         class="px-6 py-4 text-left text-base font-bold text-gray-800"
-                    >HEI</th>
-                    <th
-                        class="px-6 py-4 text-left text-base font-bold text-gray-800"
-                    >Program</th>
-                    <!-- <th
-                        class="px-6 py-4 text-left text-base font-bold text-gray-800"
-                    >Progress</th> -->
+                    >Program/Institution</th>
                     <th class="px-6 py-4 text-right w-24">
                         <span class="text-gray-800">
                             <i class="fas fa-ellipsis-v text-lg"></i>
@@ -806,10 +809,12 @@
                         :class="{ 'bg-slate-200': index % 2 === 1 }"
                     >
                         <td class="px-6 py-2 text-gray-900 align-top">
-                            {{ tool.institution_program.institution.name }}
-                        </td>
-                        <td class="px-6 py-2 text-gray-900 align-top">
-                            {{ tool.institution_program.program.program }}
+                            <div>
+                                {{ tool.institution_program.program.program }}
+                            </div>
+                            <div class="font-bold">
+                                {{ tool.institution_program.institution.name }}
+                            </div>
                         </td>
                         <td class="px-6 py-2 align-top whitespace-nowrap">
                             <div class="flex items-center gap-0">
@@ -883,14 +888,35 @@ const showPeriodModal = ref(false);
 const viewToolModal = ref(false);
 const selectedTools = ref({});
 const fetchingData = ref(false);
+const titleStatus = ref("");
 
 
 const viewTools = async (academicyear, status) => {
   viewToolModal.value = true;
   fetchingData.value = true;
-
+  titleStatus.value = status == 'Submitted' ? 'Ready for visit' : status ;
+    
   try {
     const response = await axios.get(`/api/dashboard/tool/${academicyear}/${status}/view`);
+    if (!response.data) {
+      console.error("No data received from API");
+      return;
+    }
+      selectedTools.value = response.data;
+      fetchingData.value = false;
+  } catch (error) {
+    console.error("Error fetching institution:", error.response?.data || error.message);
+  } finally {
+    fetchingData.value = false;
+  }
+};
+
+const viewMonitoredTools = async (year, month, quarter) => {
+  viewToolModal.value = true;
+  fetchingData.value = true;
+  
+  try {
+    const response = await axios.get(`/api/dashboard/tool/${year}/${month}/${quarter}/view`);
     if (!response.data) {
       console.error("No data received from API");
       return;

@@ -32,8 +32,10 @@
             <div v-show="!pageTitle" ref="actionButtons" class="w-full px-5 flex items-center h-auto" :class="{'border-b border-slate-200 py-4' : !hideTopBorder}">
                 <slot name="content-title"></slot>
             </div>
-            <div class="w-full flex md:flex-row flex-col md:items-center px-5 pb-3 pt-5 relative"
-                v-show="hasSearch || hasTopButton || hasFilters">
+            <div class="w-full flex md:flex-row flex-col md:items-center relative"
+                v-show="hasSearch || hasTopButton || hasFilters"
+                :class="{'px-5 pb-3 pt-5': hasSearch || hasTopButton || hasFilter}"
+                >
                 <div v-show="hasSearch || hasFilters"
                     class="w-full flex md:flex-row flex-col-reverse">
                     <div v-show="hasSearch" class="w-full md:w-1/2 my-3 md:my-auto">

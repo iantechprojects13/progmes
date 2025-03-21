@@ -69,7 +69,7 @@
                             <div class="my-4 px-3" @click="mobileSideBar">
                                 <Link
                                     :href="route('dashboard')"
-                                    class="flex items-center w-full px-3 py-2 rounded-lg transition-colors"
+                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg transition-colors"
                                     :class="[
                                         highlight('dashboard')
                                             ? 'bg-blue-600 text-white'
@@ -103,7 +103,7 @@
                                 <Link
                                     :href="route('admin.users.list')"
                                     v-if="$page.props.auth.user.type == 'CHED'"
-                                    class="flex items-center w-full px-3 py-2 rounded-lg transition-colors"
+                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg transition-colors"
                                     :class="[
                                         highlight('adminpanel')
                                             ? 'bg-blue-600 text-white'
@@ -129,7 +129,7 @@
 
                                 <Link
                                     :href="route('evaluation')"
-                                    class="flex items-center w-full px-3 py-2 rounded-lg transition-colors"
+                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg transition-colors"
                                     :class="[
                                         highlight('evaluation')
                                             ? 'bg-blue-600 text-white'
@@ -155,7 +155,7 @@
 
                                 <Link
                                     :href="route('application')"
-                                    class="flex items-center w-full px-3 py-2 rounded-lg transition-colors"
+                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg transition-colors"
                                     :class="[
                                         highlight('application')
                                             ? 'bg-blue-600 text-white'
@@ -183,7 +183,7 @@
                                     :href="
                                         '/myaccount/' + $page.props.auth.user.id
                                     "
-                                    class="flex items-center w-full px-3 py-2 rounded-lg transition-colors"
+                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg transition-colors"
                                     :class="[
                                         highlight('myaccount')
                                             ? 'bg-blue-600 text-white'
@@ -210,7 +210,7 @@
                                 <button
                                     @click="toggleLogoutModal"
                                     :disabled="hasUnsavedChanges.value"
-                                    class="flex items-center w-full px-3 py-2 rounded-lg transition-colors text-gray-300 hover:bg-gray-800 hover:text-red-500"
+                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg transition-colors text-gray-300 hover:bg-gray-800 hover:text-red-500"
                                     :class="{ 'opacity-50': hasUnsavedChanges.value }"
                                 >
                                     <svg
@@ -335,7 +335,7 @@
             <template v-slot:buttons>
                 <button
                     @click="logout"
-                    class="select-none text-white bg-red-500 hover:bg-red-600 h-10 w-20 rounded border"
+                    class="select-none text-white bg-red-500 hover:bg-red-600 h-10 w-20 rounded-lg border"
                 >
                     <span v-if="loggingout">
                         <i class="fas fa-spinner animate-spin"></i>
@@ -347,39 +347,18 @@
     </div>
     
     <!-- Loading -->
-    <div
-        v-if="loading"
-        class="fixed inset-0 z-[999] flex items-center justify-center bg-black bg-opacity-70"
-    >
-        <div class="text-center">
-            <div class="mx-auto">
-                <svg class="h-24 w-24 text-blue-500 animate-spin" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M12 20v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M4.93 4.93l1.41 1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M17.66 17.66l1.41 1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M2 12h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M20 12h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M4.93 19.07l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                  </svg>
-            </div>
-            <div class="mt-4 text-white text-lg text-center">
-                Please wait...
-            </div>
-        </div>
-    </div>
+    <loading-screen v-if="loading" />
 
     <!-- Notifications -->
     <TransitionGroup
         name="notifications"
         tag="div"
-        class="fixed bottom-0 right-0 z-90 p-4 space-y-2"
+        class="fixed bottom-0 right-0 z-90 p-4 space-y-2 select-none"
     >
         <div
             v-for="notification in activeNotifications"
             :key="notification.id"
-            class="bg-stone-800 text-white p-5 w-full md:max-w-md flex justify-between items-center"
+            class="bg-stone-800 text-white p-5 w-full md:max-w-md flex justify-between items-center rounded-md"
         >
             <div
                 class="flex justify-center md:justify-between items-center text-sm"
@@ -548,13 +527,19 @@ export default {
                     "Evaluation/HEI-Evaluation-PH-Select",
                     "Evaluation/HEI-Evaluation-Select",
                     "Evaluation/HEI-Evaluation-Monitored",
-                    "Evaluation/CHED-Evaluation-Select",
+                    "Evaluation/CHED-Evaluation-List",
                     "Evaluation/CHED-Evaluation-Edit",
                     "Evaluation/CHED-Evaluation-View",
                     "Evaluation/CHED-Evaluation-Report-Create",
                     "Evaluation/CHED-Evaluation-Monitored",
                 ],
-                application: ["Application/Application-Edit"],
+                application: [
+                    "Application/CHED-Application-List",
+                    "Application/HEI-Application-List",
+                    "Application/HEI-Application-Edit",
+                    "Application/GPR-View",
+                    "Application/GPR-Edit",
+                ],
                 myaccount: ["Auth/Account"],
             },
             closeSideBar: false,

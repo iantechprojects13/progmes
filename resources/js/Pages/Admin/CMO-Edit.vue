@@ -1,7 +1,7 @@
 <template>
 
     <Head title="Edit CMO" />
-    <content-container :hasAdminPanel="true">
+    <content-container :hasAdminPanel="true" :hasTopMainContent="true">
         <template v-slot:content-title>
             <div class="w-full flex flex-row items-center justify-between">
                 <div class="w-full flex flex-row items-center">
@@ -14,7 +14,7 @@
             <div>
                 <dropdown-option position="right">
                     <template v-slot:button>
-                        <button class="w-24 h-10 bg-blue-500 hover:bg-blue-600 rounded text-white">
+                        <button class="flex items-center px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
                             Save
                             <i class="fas fa-caret-down ml-2"></i>
                         </button>
@@ -39,40 +39,49 @@
         </template>
 
         <template v-slot:main-content>
-            <div class="border-gray-400">
-                <div class="border border-gray-300 rounded my-5">
-                    <div class="w-full flex flex-col justify-between p-5">
-                        <div class="flex flex-col lg:flex-row">
-                        <div class="w-full flex flex-col mt-2 lg:mt-0">
-                                <label for="discipline" class="font-bold text-gray-600">Discipline</label>
-                                <select id="discipline" v-model="form.discipline"
-                                    class="py-1 px-3 h-10 text-sm border border-gray-400 rounded m-1"
-                                    @change="form.program = null">
-                                    <option :value="null">
-                                        Select discipline
-                                    </option>
-                                    <option v-for="discipline in discipline_list" :key="discipline.id"
-                                        :value="discipline.id">
+            <div class="bg-white rounded-xl shadow-lg p-2 md:p-8 md:m-4 mb-12">
+                <div class="flex flex-col gap-6">
+                    <!-- First Row: Discipline and Program -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Discipline Section -->
+                        <div class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
+                            <div class="w-full">
+                                <p class="text-sm text-gray-500">Discipline</p>
+                                <select 
+                                    v-model="form.discipline"
+                                    @change="form.program = null"
+                                    class="mt-1 w-full p-2 h-12 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 pr-10"
+                                >
+                                    <option :value="null">Select Discipline</option>
+                                    <option 
+                                        v-for="discipline in discipline_list" 
+                                        :key="discipline.id" 
+                                        :value="discipline.id"
+                                    >
                                         {{ discipline.discipline }}
                                     </option>
                                 </select>
-                                <FormErrorMessage :message="
-                                        $page.props.errors.discipline
-                                    " theme="dark" />
+                                <FormErrorMessage :message="$page.props.errors.discipline" theme="dark" />
                             </div>
-                            <div class="w-full flex flex-col mt-2 lg:mt-0">
-                                <label for="program" class="font-bold text-gray-600">Program</label>
-                                <select id="program" v-model="form.program"
-                                    class="py-1 px-3 h-10 text-sm border border-gray-400 rounded m-1"
-                                    :disabled="!form.discipline">
-                                    <option :value="null">
-                                        Select program
-                                    </option>
-                                    <option v-for="program in program_list" :key="program.id" :value="program.id"
-                                        v-show="
-                                            program.disciplineId ==
-                                            form.discipline
-                                        ">
+                        </div>
+            
+                        <!-- Program Section -->
+                        <div class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
+                            <div class="w-full">
+                                <p class="text-sm text-gray-500">Program</p>
+                                <select 
+                                    v-model="form.program" 
+                                    :disabled="!form.discipline"
+                                    class="mt-1 w-full p-2 h-12 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 pr-10"
+                                    :class="{' cursor-not-allowed':!form.discipline}"
+                                >
+                                    <option :value="null">Select Program</option>
+                                    <option 
+                                        v-for="program in program_list" 
+                                        :key="program.id" 
+                                        :value="program.id"
+                                        v-show="program.disciplineId == form.discipline"
+                                    >
                                         {{ program.program }}
                                         <span v-if="program.major != null"> - {{ program.major }}</span>
                                     </option>
@@ -80,39 +89,67 @@
                                 <FormErrorMessage :message="$page.props.errors.program" theme="dark" />
                             </div>
                         </div>
-                        <div class="flex flex-col lg:flex-row md:mt-3">
-                            <div class="w-full flex flex-col mt-2 lg:mt-0">
-                                <label for="number" class="font-bold text-gray-600">CMO No.</label>
-                                <input id="number" type="number" placeholder="CMO No." v-model="form.number"
-                                    class="h-10 m-1 rounded text-sm border border-gray-400" />
+                    </div>
+            
+                    <!-- Second Row: CMO No., Series, and Version -->
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <!-- CMO No. -->
+                        <div class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
+                            <div class="w-full">
+                                <p class="text-sm text-gray-500">CMO No.</p>
+                                <input 
+                                    id="number" 
+                                    type="number" 
+                                    placeholder="CMO No." 
+                                    v-model="form.number"
+                                    class="w-full h-12 m-1 rounded text-sm border border-gray-300" 
+                                />
                                 <FormErrorMessage :message="$page.props.errors.number" theme="dark" />
                             </div>
-                            <div class="w-full flex flex-col mt-2 lg:mt-0">
-                                <label for="series" class="font-bold text-gray-600">Series</label>
-                                <input id="series" type="number" placeholder="Series" v-model="form.series"
-                                    class="h-10 m-1 rounded text-sm border border-gray-400" />
+                        </div>
+            
+                        <!-- Series -->
+                        <div class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
+                            <div class="w-full">
+                                <p class="text-sm text-gray-500">Series</p>
+                                <input 
+                                    id="series" 
+                                    type="number" 
+                                    placeholder="Series" 
+                                    v-model="form.series"
+                                    class="w-full h-12 m-1 rounded text-sm border border-gray-300" 
+                                />
                                 <FormErrorMessage :message="$page.props.errors.series" theme="dark" />
                             </div>
-                            <div class="w-full flex flex-col mt-2 lg:mt-0">
-                                <label for="version" class="font-bold text-gray-600">Version</label>
-                                <input id="version" type="number" placeholder="Version" v-model="form.version"
-                                    class="h-10 m-1 rounded text-sm border border-gray-400" />
+                        </div>
+            
+                        <!-- Version -->
+                        <div class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
+                            <div class="w-full">
+                                <p class="text-sm text-gray-500">Version</p>
+                                <input 
+                                    id="version" 
+                                    type="number" 
+                                    placeholder="Version" 
+                                    v-model="form.version"
+                                    class="w-full h-12 m-1 rounded text-sm border border-gray-300" 
+                                />
                                 <FormErrorMessage :message="$page.props.errors.version" theme="dark" />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
             <content-table>
+                
                 <template v-slot:table-head>
-                    <th class="px-2 py-3 border-b border-gray-400">
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
                         Item No
                     </th>
-                    <th class="px-2 py-3 border-b border-gray-400">
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
                         Area
                     </th>
-                    <th class="px-2 py-3 border-b border-gray-400">
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
                         Minimum Requirement
                     </th>
                 </template>
