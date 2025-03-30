@@ -79,7 +79,7 @@
                     </tr>
                     <tr v-else v-for="cmo in cmo_list.data" :key="cmo.id">
                         <td>
-                            CMO No.{{ cmo.number }}, Series of {{ cmo.series }}
+                            CMO No.{{ cmo.number }}, S.{{ cmo.series }}
                             <!-- , Version {{ cmo.version }} -->
                         </td>
                         <td>

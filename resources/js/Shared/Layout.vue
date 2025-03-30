@@ -399,7 +399,7 @@
 
 <script setup>
 import { router, usePage } from "@inertiajs/vue3";
-import { ref, watch, reactive, provide } from "vue";
+import { ref, watch, reactive, provide, onMounted, onBeforeUnmount } from "vue";
 
 const page = usePage();
 const activeNotifications = ref([]);
@@ -407,10 +407,27 @@ const notificationDuration = 7000;
 const logoutModal = ref(false);
 const loggingout = ref(false);
 const loading = ref(false);
+const isNavigatingWithHistory = ref(false);
 
 const hasUnsavedChanges = reactive({
     value: null,
 });
+
+onMounted(() => {
+  window.addEventListener('popstate', handlePopState);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('popstate', handlePopState);
+});
+
+function handlePopState() {
+  isNavigatingWithHistory.value = true;
+  // Reset after a short delay to handle future non-popstate navigations
+  setTimeout(() => {
+    isNavigatingWithHistory.value = false;
+  }, 100);
+}
 
 // Provide it to children.value
 provide("hasUnsavedChanges", hasUnsavedChanges);
@@ -438,16 +455,19 @@ function showNotification(message, type) {
 }
 
 watch(
-    () => page.props.flash,
-    (newFlash) => {
-        if (newFlash.success) showNotification(newFlash.success, "success");
-        if (newFlash.updated) showNotification(newFlash.updated, "success");
-        if (newFlash.deleted) showNotification(newFlash.deleted, "success");
-        if (newFlash.uploaded) showNotification(newFlash.uploaded, "success");
-        if (newFlash.failed) showNotification(newFlash.failed, "failed");
-        if (newFlash.error) showNotification(newFlash.error, "failed");
-    },
-    { deep: true }
+  () => page.props.flash,
+  (newFlash) => {
+    // Skip showing notifications if we're navigating with browser history
+    if (isNavigatingWithHistory.value) return;
+    
+    if (newFlash.success) showNotification(newFlash.success, "success");
+    if (newFlash.updated) showNotification(newFlash.updated, "success");
+    if (newFlash.deleted) showNotification(newFlash.deleted, "success");
+    if (newFlash.uploaded) showNotification(newFlash.uploaded, "success");
+    if (newFlash.failed) showNotification(newFlash.failed, "failed");
+    if (newFlash.error) showNotification(newFlash.error, "failed");
+  },
+  { deep: true }
 );
 
 router.on("start", () => {

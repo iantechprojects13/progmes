@@ -26,7 +26,7 @@ class CMORequest extends FormRequest
             'program' => 'required',
             'number' => 'required|integer|between:1,100',
             'series' => 'required|integer|between:2000,2100',
-            'version' => 'required|integer|between:1,100',
+            'version' => 'nullable|integer|between:1,100',
         ];
     }
 
@@ -40,7 +40,6 @@ class CMORequest extends FormRequest
             'series.required' => 'The series field is required.',
             'series.integer' => 'The series field must be an integer.',
             'series.between' => 'The series field must be in the range of 2000 to 2100.',
-            'version.required' => 'The version field is required.',
             'version.integer' => 'The version field must be an integer.',
             'version.between' => 'The version field must be in the range of 1 to 100.',
         ];

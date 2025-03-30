@@ -95,8 +95,10 @@
                                     cmo.version != null
                                 "
                             >
-                                CMO No.{{ cmo.number }} Series of
-                                {{ cmo.series }}, Version {{ cmo.version }}
+                                CMO No.{{ cmo.number }}, S. {{ cmo.series }}
+                                <span v-if="cmo.version">
+                                     - Version {{ cmo.version }}
+                                </span>
                             </div>
                             <div v-else>-</div>
                         </td>
