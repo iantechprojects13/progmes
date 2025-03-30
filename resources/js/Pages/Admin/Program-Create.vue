@@ -1,20 +1,8 @@
 <template>
     <Head title="New Program" />
-    <content-container :hasAdminPanel="true">
+    <content-container :hasAdminPanel="true" :hasBackButton="true">
         <template v-slot:content-title>
-            <div class="flex flex-row items-center justify-between">
-                <div class="w-full flex flex-row items-center">
-                    <Link href="/admin/program/">
-                        <button
-                            class="w-8 h-8 rounded-full hover:bg-gray-200 tooltipForActions"
-                            data-tooltip="Back"
-                        >
-                            <i class="fas fa-arrow-left"></i>
-                        </button>
-                    </Link>
-                    <div class="ml-3 font-bold">Create Program</div>
-                </div>
-            </div>
+            <div class="font-bold">New Program</div>
         </template>
         <template v-slot:main-content>
             <div
@@ -28,7 +16,6 @@
 
                 <!-- Form Content -->
                 <div class="space-y-6">
-                    
                     <!-- Discipline -->
                     <div>
                         <label
@@ -56,7 +43,7 @@
                             >
                                 {{ item.discipline }}
                             </option>
-                         </select>
+                        </select>
                         <form-error-message
                             :message="$page.props.errors.discipline"
                             theme="dark"
@@ -72,7 +59,6 @@
                             Program
                             <span class="text-red-500">*</span>
                         </label>
-                        
 
                         <input
                             required
@@ -89,7 +75,6 @@
                         />
                     </div>
 
-
                     <!-- Major -->
                     <div>
                         <label
@@ -98,7 +83,6 @@
                         >
                             Major
                         </label>
-                        
 
                         <input
                             required
@@ -107,7 +91,7 @@
                             type="text"
                             id="major"
                             placeholder="Enter discipline"
-                            class=" mt-1 block w-full rounded-md h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                            class="mt-1 block w-full rounded-md h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                         />
                         <form-error-message
                             :message="$page.props.errors.major"
@@ -132,13 +116,18 @@
 </template>
 
 <script setup>
-import { useForm, router } from "@inertiajs/vue3";
+// -------------------------------------------------------------------------
 import { ref, reactive } from "vue";
+import { router } from "@inertiajs/vue3";
+import Layout from "@/Shared/Layout.vue";
+defineOptions({ layout: Layout });
 
+// -------------------------------------------------------------------------
 const props = defineProps({
     discipline_list: Array,
 });
 
+// -------------------------------------------------------------------------
 const processing = ref(false);
 
 const form = reactive({
@@ -147,6 +136,7 @@ const form = reactive({
     major: null,
 });
 
+// -------------------------------------------------------------------------
 function submit() {
     router.post("/admin/program/store", form, {
         onStart: () => {
@@ -155,18 +145,9 @@ function submit() {
         onFinish: () => {
             processing.value = false;
         },
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
     });
 }
-</script>
-
-<script>
-import FormErrorMessage from "@/Shared/Component/FormErrorMessage.vue";
-import Layout from "@/Shared/Layout.vue";
-
-export default {
-    layout: Layout,
-    components: {
-        FormErrorMessage,
-    },
-};
 </script>

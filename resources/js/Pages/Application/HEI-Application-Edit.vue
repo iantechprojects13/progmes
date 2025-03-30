@@ -81,6 +81,7 @@
                                     :value="application.institution?.name"
                                     disabled
                                 />
+                                <form-error-message :message="$page.props.errors.institution" theme="dark" />
                             </div>
 
                             <div
@@ -174,6 +175,9 @@
                 <div class="p-5 rounded-xl shadow-lg border">
                     <content-table>
                         <template v-slot:table-head>
+                            <th class="px-6 py-4 text-left text-base font-bold text-gray-800">
+                                Item No.
+                            </th>
                             <th
                                 class="px-6 py-4 text-left text-base font-bold text-gray-800"
                             >
@@ -196,20 +200,19 @@
                             </th>
                         </template>
                         <template v-slot:table-body>
-                            <!-- <tr v-if="application.length == 0">
-                            <no-search-result text="applications"/>
-                        </tr> -->
                             <tr
                                 v-for="(item, index) in application.item"
                                 :key="item.id"
                                 class="transition-colors hover:bg-blue-200 border-b border-gray-200"
                                 :class="{ 'bg-slate-200': index % 2 == 1 }"
                             >
+
+                            <td class="px-6 py-2 text-base text-gray-900">
+                                {{ item.gpr.no }}
+                            </td>
                                 <td class="px-6 py-2 text-base text-gray-900">
                                     <div
-                                        v-html="
-                                            item.gpr.no + '. ' + item.gpr.item
-                                        "
+                                        v-html="item.gpr.item"
                                     ></div>
                                 </td>
                                 <td class="px-6 py-2 text-base text-gray-900">
@@ -224,10 +227,20 @@
                                     </select>
                                 </td>
                                 <td class="px-6 py-2 text-base text-gray-900">
-                                    {{ item.supporting_document || "-" }}
+                                    <div v-for="link in item.support_document" :key="link.id" class="w-full">
+                                        <a class="px-1 text-blue-600 hover:text-blue-700 rounded whitespace-nowrap" :href="link.url"
+                                            target="_blank">
+                                            Link
+                                        </a>
+                                        <button @click="toggleDeleteModal(); toDelete = file.id"
+                                            class="text-red-600 hover:text-red-700 tooltipForActions rounded-full w-8 h-8 hover:bg-red-100"
+                                            data-tooltip="Delete link">
+                                            <i class="fas fa-trash text-lg"></i>
+                                        </button>
+                                    </div>
                                 </td>
                                 <td class="px-6 py-2 whitespace-nowrap">
-                                    <button
+                                    <button @click="link.id = item.id; toggleLinkModal();"
                                         class="w-full inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         <span class="flex items-center">
@@ -267,9 +280,21 @@
     </template>
     </confirmation>
 
-    <!-- <pre>
-        {{ application }}
-    </pre> -->
+    <modal :showModal="linkModal" title="Evidence Link" @close="toggleLinkModal" width="lg" height="long">
+        <div class="text-center">
+            <textarea maxlength="1000" class="w-full h-32 resize-none" placeholder="Input URL/Link here" id="link"
+                v-model="link.url">
+            </textarea>
+        </div>
+        <form-error-message :message="$page.props.errors.url" theme="dark" />
+        <template v-slot:custom-button>
+            <button @click="submitLink"
+                class="px-4 py-2 text-white bg-blue-600 rounded-lg text-sm font-medium hover:bg-blue-700">
+                Add Link
+            </button>
+        </template>
+    </modal>
+
 
 </template>
 
@@ -279,10 +304,20 @@ import { router } from "@inertiajs/vue3";
 
 const props = defineProps(["application", "programs"]);
 const confirmSubmitModal = ref(false);
+const linkModal = ref(false);
+
+function toggleLinkModal() {
+    linkModal.value = !linkModal.value;
+}
 
 function toggleConfirmSubmitModal() {
     confirmSubmitModal.value = !confirmSubmitModal.value;
 }
+
+const link = reactive({
+    id: 0,
+    url: "",
+})
 
 const form = reactive({
     id: props.application.id,
@@ -292,6 +327,7 @@ const form = reactive({
     academicYear: ref(props.application.academicYear),
     items: ref(props.application.item),
 });
+
 
 function update() {
     router.post("/application/update", form, {
@@ -306,6 +342,18 @@ function submit() {
         },
         onSuccess: () => {
             toggleConfirmSubmitModal();
+        },
+    });
+}
+
+function submitLink() {
+    router.post("/application/link", link, {
+        preserveState: (page) => !!page.props.errors,
+        preserveScroll: true,
+        onSuccess: () => {
+            link.id = 0;
+            link.url = "";
+            toggleLinkModal();
         },
     });
 }

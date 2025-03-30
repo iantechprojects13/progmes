@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Models\ApplicationGPRModel;
 use App\Models\ApplicationFormModel;
 use App\Models\ApplicationItemModel;
+use App\Models\SupportDocumentModel;
 use App\Models\RoleModel;
 use Auth;
 
@@ -94,10 +95,24 @@ class ApplicationController extends Controller
         ]);
     }
 
+
+    public function applicationCHEDEvaluate($id)
+    {
+        $id = (int) $id;
+        $application = ApplicationFormModel::where('id', $id)->with('institution', 'program', 'item', 'item.gpr', 'item.support_document')->first();
+        
+        return Inertia::render('Application/CHED-Application-Edit', [
+            'application' => $application,
+        ]);
+    }
+
+
     public function applicationHEIEdit($id)
     {
         $id = (int) $id;
-        $application = ApplicationFormModel::where('id', $id)->with('institution', 'item', 'item.gpr', 'item.support_document')->first();
+        $application = ApplicationFormModel::where('id', $id)
+        ->with('institution', 'item', 'item.gpr', 'item.support_document')
+        ->first();
         
         $programs = RoleModel::where('userId', Auth::user()->id)
             ->where('isActive', 1)
@@ -155,8 +170,27 @@ class ApplicationController extends Controller
         return redirect()->back()->with('success', 'Changes saved successfully.');
     }
 
+
+    public function remark(Request $request)
+    {
+        // dd($request);
+        $application = ApplicationFormModel::find($request->id);
+
+        if ($request->has('items')) {
+            foreach ($request->items as $item) {
+                $applicationItem = ApplicationItemModel::find($item['id']);
+                if ($applicationItem) {
+                    $applicationItem->update(['remarks' => $item['remarks']]);
+                }
+            }
+        }
+
+        return redirect()->back()->with('success', 'Changes saved successfully.');
+    }
+
     public function submit(Request $request)
     {
+        // dd($request);
         $validated = $request->validate([
             'institution' => 'required',
             'program' => 'required',
@@ -186,6 +220,22 @@ class ApplicationController extends Controller
         }
 
         return redirect(route('hei.application.list'))->with('success', 'Application submitted successfully.');
+    }
+
+    public function uploadLink(Request $request)
+    {
+        // dd($request->all());
+        $validated = $request->validate([
+            'id' => 'required',
+            'url' => 'required|url',
+        ]);
+
+        SupportDocumentModel::create([
+            'itemId' => $request->id,
+            'url' => $request->url,
+        ]);
+
+        return redirect()->back()->with('success', 'Link uploaded successfully.');
     }
 
 

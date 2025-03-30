@@ -16,19 +16,20 @@
             </select>
         </template>
         <template v-slot:navigation>
-            <main-content-nav page="monitored" managementType="institution-evaluation"/>
+            <main-content-nav page="evaluation" managementType="institution-evaluation"/>
         </template>
         <template v-slot:search>
             <search-box v-model="query.search" @submit="filter"></search-box>
         </template>
         <template v-slot:options>
-            <options @filter="toggleFilterModal" href="/hei/evaluation/monitored"/>
+            <options @filter="toggleFilterModal" href="/hei/evaluation"/>
         </template>
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
                     <th>Program</th>
-                    <th>Monitoring/Evaluation Date</th>
+                    <th>Status</th>
+                    <th>Progress</th>
                     <th>
                         <i class="fas fa-ellipsis-v text-lg"></i>
                     </th>
@@ -43,15 +44,24 @@
                             {{ item.program }}
                         </td>
                         <td>
-                            {{ item.evaluationDate }}
+                            <status :text="item.status" />
                         </td>
-                        <td class="p-2 pr-5 text-right whitespace-nowrap">
-                            <button 
-                                @click="view(item.id)"
-                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-emerald-700 hover:bg-emerald-100 tooltipForActions"
-                                data-tooltip="View">
-                                <i class="fas fa-eye text-lg"></i>
-                            </button>
+                        <td>
+                            <evaluation-progress :percentage="item.progress"></evaluation-progress>
+                        </td>
+                        <td>
+                            <div class="flex items-center gap-0">
+                                <button v-show="canEvaluate && item.status == 'Submitted'" @click="edit(item.id)"
+                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 tooltipForActions disabled:cursor-not-allowed"
+                                    data-tooltip="Evaluate">
+                                    <i class="fas fa-edit text-lg"></i>
+                                </button>
+                                <button @click="view(item.id)"
+                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-emerald-700 hover:bg-emerald-100 tooltipForActions"
+                                    data-tooltip="View">
+                                    <i class="fas fa-eye text-lg"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 </template>
@@ -62,11 +72,28 @@
     <modal
         :showModal="showFilterModal"
         @close="toggleFilterModal"
-        width="sm"
+        width="md"
         title="Filters"
         class="antialiased"
     >
         <div>
+            <!-- Active Status Filter -->
+            <div class="flex flex-col space-y-2 mb-6">
+                <label for="isActive" class="text-sm font-medium text-gray-700"
+                    >Active Status</label
+                >
+                <select
+                    v-model="query.status"
+                    id="isActive"
+                    class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                    <option :value="null">All</option>
+                    <option value="In progress">In Progress</option>
+                    <option value="Submitted">Ready for visit</option>
+                    <option value="For Re-evaluation">For Re-evaluation</option>
+                </select>
+            </div>
+
             <!-- Items per page Filter -->
             <div class="flex flex-col space-y-2">
                 <label for="show" class="text-sm font-medium text-gray-700">
@@ -104,11 +131,11 @@ import { router, useForm } from '@inertiajs/vue3';
 import Layout from '@/Shared/Layout.vue';
 defineOptions({ layout: Layout });
 
-const props = defineProps([
-    'complianceTools',
-    'filters',
-    'institution',
-]);
+    const props = defineProps([
+        'complianceTools',
+        'filters',
+        'institution',
+    ]);
 
 const showFilterModal = ref(false);
 
@@ -116,21 +143,23 @@ function toggleFilterModal() {
     showFilterModal.value = !showFilterModal.value;
 }
 
-const query = useForm({
-    academicYear: props.filters.academicYear,
-    show: props.filters.show,
-    search: props.filters.search,
-});
-
-function filter() {
-    query.get("/hei/evaluation/monitored", {
-        preserveState: false,
-        preserveScroll: true,
-        replace: true,
+    const query = useForm({
+        academicYear: props.filters.academicYear,
+        show: props.filters.show,
+        search: props.filters.search,
+        status: props.filters.status != null ? props.filters.status : null,
     });
-}
 
-function view(tool) {
-    router.get('/hei/evaluation/' + tool + '/view');
-}
+    function view(tool) {
+        router.get('/hei/evaluation/' + tool + '/view');
+    }
+
+    function filter() {
+        query.get("/hei/evaluation", {
+            preserveState: false,
+            preserveScroll: true,
+            replace: true,
+        });
+    }
+
 </script>

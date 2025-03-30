@@ -1,6 +1,6 @@
 <template>
-    <div class="w-full lg:h-96 h-52">
-        <Line id="my-chart-id" :options="chartOptions" :data="chartData" class="w-full h-auto"/>
+    <div class="w-full lg:h-72 h-52">
+        <Line id="my-chart-id" :options="chartOptions" :data="chartData" class="w-full h-full"/>
     </div>
 </template>
 
@@ -24,7 +24,7 @@
                             label: this.labels[0],
                             data: this.thisYear,
                             filter: this.filter,
-                            growthRate: this.growthRate.thisYear,
+                            // growthRate: this.growthRate.thisYear,
                             borderColor: "#85C1E9",
                             fill: false,
                             tension: 0.3,
@@ -33,7 +33,7 @@
                             label: this.labels[1],
                             data: this.lastYear,
                             filter: this.filter,
-                            growthRate: this.growthRate.lastYear,
+                            // growthRate: this.growthRate.lastYear,
                             borderColor: "#F7DC6F",
                             fill: false,
                             tension: 0.3,
@@ -42,7 +42,7 @@
                             label: this.labels[2],
                             data: this.twoYearsAgo,
                             filter: this.filter,
-                            growthRate: this.growthRate.twoYearsAgo,
+                            // growthRate: this.growthRate.twoYearsAgo,
                             borderColor: "#EC7063",
                             fill: false,
                             tension: 0.3,

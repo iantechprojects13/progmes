@@ -220,7 +220,7 @@ class RegistrationController extends Controller
     }
 
 
-    public function accept(User $user) {
+    public function acceptUser(User $user) {
 
         $acceptedUser = User::where('id', $user->id)->first();
         $roles = RoleModel::where('userId', $acceptedUser->id)->where('isActive', null)->get();
@@ -239,11 +239,11 @@ class RegistrationController extends Controller
             $role->save();
         }
         
-        // try {
-        //     Mail::to($acceptedUser->email)->send(new NotificationEmail($acceptedUser->name));
-        // } catch (Throwable $thr) {
-        //     return redirect()->back()->with('failed',  $thr->getMessage());
-        // }
+        try {
+            Mail::to($acceptedUser->email)->send(new NotificationEmail($acceptedUser->name));
+        } catch (Throwable $thr) {
+            return redirect()->back()->with('failed',  $thr->getMessage());
+        }
         
         return redirect()->back()->with('success', $acceptedUser->name .'\'s registration has been approved. Notification email has been sent.');
     }
@@ -284,7 +284,7 @@ class RegistrationController extends Controller
             'Education Supervisor' => ['discipline'],
             'Vice-President for Academic Affairs' => ['institution'],
             'Dean' => ['discipline', 'institution'],
-            'Program Head' => ['program', 'institution']
+            'Program Head' => ['program', 'institution'],
         ];
 
         $roles = isset($roleRelations[$user->role]) 

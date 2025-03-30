@@ -26,6 +26,9 @@ use Carbon\Carbon;
 class HEIFormController extends Controller
 {
     public function store(Request $request) {
+        // sleep(10);
+        // return redirect()->back()->with('success', 'Form created successfully.');
+
         $tool = EvaluationFormModel::find($request->id);
         $cmo = CMOModel::where('id', $tool->cmoId)->with('criteria')->first();
         
@@ -344,7 +347,7 @@ class HEIFormController extends Controller
 
         $evidenceModel->delete();
 
-        return redirect()->back()->with('deleted', 'File/Link deleted successfully.');
+        return redirect()->back()->with('deleted', 'Link deleted successfully.');
     }
 
 

@@ -2,10 +2,10 @@
   <div
     class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
     :class="{
-      'bg-blue-800 text-blue-100 border border-blue-600': text === 'Submitted' || text === 'Monitored' || text === 'Applied' || text === 'Complied' || text === 'Not complied',
-      'bg-green-800 text-green-100 border border-green-600': text === 1 || text === 'In progress',
+      'bg-blue-800 text-blue-100 border border-blue-600': text === 'Submitted' || text === 'Monitored' || text === 'Applied' || text === 'Complied' || text === 'Not complied' || text === 'For re-evaluation',
+      'bg-green-800 text-green-100 border border-green-600': text === 1 || text === 'In progress' || text === 'Deployed',
       'bg-red-800 text-red-100 border border-red-600': text === 0 || text === 'Locked' || text === 'Not complied',
-      'bg-gray-800 text-gray-100 border border-gray-600': text === 'For re-evaluation' || text === 'draft' || text === 'Not applicable',
+  'bg-gray-800 text-gray-100 border border-gray-600': text === 'draft' || text === 'Not applicable' || text === 'No status' || text === null || text === NULL || text === '',
     }"
   >
     {{ displayText }}
@@ -37,6 +37,10 @@ const displayText = computed(() => {
     'Complied': 'Complied',
     'Not complied': 'Not complied',
     'Not applicable': 'Not applicable',
+    'Deployed': 'Deployed',
+    '': 'No status',
+    null: 'No status',
+    NULL: 'No status',
 
   };
 

@@ -171,7 +171,7 @@ class EvaluationController extends Controller
             $evalFormQuery->orderBy('effectivity', 'asc');
         }, 'evaluationForm.item'])->first();
         
-        return Inertia::render('Evaluation/HEI-Evaluation-PH-Select', [
+        return Inertia::render('Evaluation/HEI-Evaluation-PH-List', [
             'program' => $institutionProgram,
         ]);
     }
@@ -209,6 +209,9 @@ class EvaluationController extends Controller
         ->where(function ($query) {
             $query->whereNot('status', 'Deployed')->whereNot('status', 'Monitored');
         })
+        ->when($request->query('status'), function ($statusQuery) use ($request) {
+            $statusQuery->where('status', $request->query('status'));
+        })
         ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable')
         ->paginate($show)
         ->through(fn($item) => [
@@ -221,9 +224,9 @@ class EvaluationController extends Controller
         ])
         ->withQueryString();
 
-        return Inertia::render('Evaluation/HEI-Evaluation-Select', [
+        return Inertia::render('Evaluation/HEI-Evaluation-List', [
             'complianceTools' => $complianceTools,
-            'filters' => $request->only(['search']) + ['show' => $show, 'academicYear' => $acadYear ],
+            'filters' => $request->only(['search', 'status']) + ['show' => $show, 'academicYear' => $acadYear ],
             'institution' => $institutionName,
         ]);
     }

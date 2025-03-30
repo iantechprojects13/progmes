@@ -1,21 +1,16 @@
 <template>
     <Head title="View Profile" />
     <AdminPanel />
-    <content-container>
+    <content-container :hasBackButton="true">
         <template v-slot:content-title>
             <div class="w-full flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
                 <div class="flex flex-row items-center w-full md:w-auto">
-                    <Link href="/admin/users/list/">
-                        <button class="text-gray-600 hover:text-gray-800 w-12 h-12 hover:bg-slate-200 border-b border-gray-300 rounded-full tooltipForActions" data-tooltip="Back to List">
-                            <i class="fas fa-arrow-left"></i>
-                        </button>
-                    </Link>
-                    <div class="font-bold text ml-3 text-gray-700">Profile Details</div>
+                    <div class="font-bold">Profile Details</div>
                 </div>
                 
                 <div v-show="$page.props.auth.user.role == 'Super Admin'" class="w-full md:w-auto">
                     <button @click="toggleChangeRoleModal" class="w-full md:w-auto h-10 px-4 bg-blue-500 text-white hover:bg-blue-600 rounded-lg shadow-md">
-                        <i class="fas fa-user-cog mr-2"></i> Change Role
+                        Change Role
                     </button>
                 </div>
             </div>
@@ -76,7 +71,7 @@
     <modal :showModal="showModal" @close="toggleChangeRoleModal" title="Change User Role" height="short" width="lg">
         <div class="text-gray-700">Are you sure you want to change the role for this user? This action will deactivate their current role.</div>
         <template v-slot:custom-button>
-            <button @click="changeRole" class="h-10 w-24 rounded bg-red-500 text-white hover:bg-red-600 shadow-md">
+            <button @click="changeRole" class="h-10 w-24 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
                 Confirm
             </button>
         </template>
@@ -86,6 +81,8 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { router } from '@inertiajs/vue3';
+import Layout from '@/Shared/Layout.vue';
+defineOptions({ layout: Layout });
 
 const props = defineProps([
     'profile',
@@ -131,11 +128,4 @@ function toggleChangeRoleModal() {
 function changeRole() {
     router.post('/register/change-role', { userId: props.profile.id });
 }
-</script>
-
-<script>
-import Layout from '@/Shared/Layout.vue';
-export default {
-    layout: Layout,
-};
 </script>

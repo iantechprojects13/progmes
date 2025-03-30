@@ -1,17 +1,10 @@
 <template>
     <Head title="GPR" />
     <page-title title="Program Application" />
-    <content-container>
+    <content-container :hasBackButton="true">
         <template v-slot:content-title>
-            <div class="w-full flex flex-row items-center justify-between text-gray-800">
-                <div class="flex flex-row items-center">
-                    <Link href="/application">
-                        <button class="text-gray-800 hover:text-gray-600 w-6 tooltipForActions" data-tooltip="Back">
-                            <i class="fas fa-arrow-left text-lg"></i>
-                        </button>
-                    </Link>
-                    <h1 class="text-lg font-semibold ml-3">GPR</h1>
-                </div>
+            <div class="w-full flex flex-row items-center justify-between">
+                <div class="font-bold">GPR</div>
             </div>
             <div>
                 <button
@@ -27,35 +20,21 @@
             <div class="p-3 border rounded-xl shadow-lg">
                 <content-table>
                     <template v-slot:table-head>
-                        <th
-                            class="px-6 py-4 text-left text-base font-bold text-gray-800"
-                        >
-                            Item No.
-                        </th>
-                        <th
-                            class="px-6 py-4 text-left text-base font-bold text-gray-800"
-                        >
-                            Documents
-                        </th>
+                        <th>Documents</th>
+                        <th></th>
                     </template>
                     <template v-slot:table-body>
                         <tr v-if="items.length == 0">
                             <no-search-result text="items" />
                         </tr>
-                        <tr v-else v-for="(item, index) in items" :key="item.id"
-                        class="transition-colors hover:bg-blue-200 border-b border-gray-200"
-                        :class="{
-                            'bg-slate-200': index % 2 == 1,
-                        }"
+                        <tr v-else v-for="item in items" :key="item.id"
                         >
-                        <td class="px-6 py-2 text-base text-gray-900">
-                            {{ item.no }}
-                        </td>
-                        <td class="px-6 py-2 text-base text-gray-900">
+                        <td>
                             <div v-html="item.item">
                                 
                             </div>
                         </td>
+                        <td></td>
                         </tr>
                     </template>
                 </content-table>
@@ -68,6 +47,8 @@
 
 <script setup>
 import { router } from '@inertiajs/vue3';
+import Layout from "@/Shared/Layout.vue";
+defineOptions({ layout: Layout });
 
 const props = defineProps([
     'items',
@@ -79,12 +60,4 @@ function edit() {
 }
 
 
-</script>
-
-<script>
-    import Layout from '@/Shared/Layout.vue';
-
-    export default {
-        layout: Layout,
-    }
 </script>

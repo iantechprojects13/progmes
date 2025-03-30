@@ -39,6 +39,8 @@ import TipTapEditor from './Shared/TipTapEditor.vue';
 import TipTapFullScreen from './Shared/TipTapFullScreen.vue';
 import EvaluationProgress from './Shared/Component/EvaluationProgress.vue';
 import LoadingScreen from './Shared/Component/LoadingScreen.vue';
+import SearchBox from './Shared/Component/SearchBox.vue';
+import Options from './Shared/Component/Options.vue';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -83,6 +85,8 @@ createInertiaApp({
             .component('EvaluationProgress', EvaluationProgress)
             .component('TipTapFullScreen', TipTapFullScreen)
             .component('LoadingScreen', LoadingScreen)
+            .component('SearchBox', SearchBox)
+            .component('Options', Options)
             .mount(el);
     },
     progress: false,

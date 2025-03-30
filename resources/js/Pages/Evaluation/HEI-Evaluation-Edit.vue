@@ -1,15 +1,12 @@
 <template>
     <Head title="Program Self-Evaluation Tool" />
     <page-title title="Program Self-Evaluation" />
-    <content-container :hasStickyDiv="true" :hasSearch="true" :hasFilters="true" :hasTopMainContent="true">
+    <content-container :hasStickyDiv="true" :hasSearch="true" :hasFilters="true" :hasTopMainContent="true" :hasBackButton="true">
         <template v-slot:content-title>
             <div class="w-full flex flex-col md:flex-row justify-between items-center">
                 <div class="w-full flex flex-row items-center">
                     <div class="w-full flex flex-row items-center">
-                        <Link href="/evaluation">
-                        <button class="w-8 h-8 rounded-full hover:bg-gray-200 tooltipForActions" data-tooltip="Back"><i class="fas fa-arrow-left"></i></button>
-                        </Link>
-                        <div class="ml-3 font-bold">Self-Evaluate</div>
+                        <div class="font-bold">Self-Evaluate</div>
                     </div>
                 </div>
                 <div class="w-full md:w-fit md:mt-0 mt-3 flex flex-row justify-center">
@@ -22,9 +19,30 @@
                             class="select-none whitespace-nowrap px-3 w-fit text-white bg-gray-700 hover:bg-gray-800 h-10 rounded mr-1">
                             Ready for visit
                         </button>
-                        <button @click="update" ref="saveBtn" :disabled="saving"
-                            class="w-full select-none whitespace-nowrap cursor-pointer bg-blue-500 text-white h-10 rounded px-2">Save
-                            Changes
+                        <button
+                            @click="update"
+                            ref="saveBtn"
+                            class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <span class="flex items-center">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="w-5 h-5 mr-2"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path
+                                        d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
+                                    />
+                                    <polyline points="17 21 17 13 7 13 7 21" />
+                                    <polyline points="7 3 7 8 15 8" />
+                                </svg>
+                                Save changes
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -36,14 +54,34 @@
                     <div></div>
                 </div>
                 <div class="flex flex-row">
-                    <button @click="update" ref="saveBtn" :disabled="saving"
-                        class="select-none whitespace-nowrap cursor-pointer bg-blue-500 text-white px-2 w-fit h-10 rounded">Save
-                        Changes
+                    <button
+                        @click="update"
+                        class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <span class="flex items-center">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-5 h-5 mr-2"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path
+                                    d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
+                                />
+                                <polyline points="17 21 17 13 7 13 7 21" />
+                                <polyline points="7 3 7 8 15 8" />
+                            </svg>
+                            Save changes
+                        </span>
                     </button>
                 </div>
             </div>
         </template>
-        <template v-slot:top-main-content>
+        <!-- <template v-slot:top-main-content>
             <div class="flex flex-col xl:flex-row items-center justify-between w-auto rounded border border-gray-300 bg-white my-3 p-5">
                 <div class="w-full text-left">
                     <div class="w-auto flex flex-row items-center">
@@ -83,86 +121,141 @@
                     </div>
                 </div>
             </div>
-        </template>
+        </template> -->
         <template v-slot:search>
-            <div class="w-full flex flex-row relative items-center">
-                <i class="fa fa-search text-gray-400 absolute left-5"></i>
-                <input @keydown.enter="submit" v-model="query.search" type="search" id="content-search"
-                    placeholder="Search"
-                    class="w-full rounded-lg border border-gray-300 indent-10 h-10 text-base placeholder-gray-400" />
-            </div>
+            <search-box v-model="query.search" @submit="filter" />
         </template>
         <template v-slot:options>
-            <div class="mr-1">
-                
-                <button @click="toggleFilterModal"
-                    class="w-10 h-10 hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
-                    data-tooltip="Filters">
-                    <i class="fas fa-filter"></i>
-                </button>
-                <Link :href="'/hei/evaluation/'+props.evaluation.id+'/edit'">
-                <button
-                    class="w-10 h-10 hover:bg-gray-200 rounded-full text-gray-700 hover:text-blue-500 active:text-white active:bg-blue-600 tooltipForActions"
-                    data-tooltip="Refresh page">
-                    <i class="fas fa-refresh"></i>
-                </button>
-                </Link>
-            </div>
+            <options @filter="toggleFilterModal" :href="'/hei/evaluation/'+props.evaluation.id+'/edit'"></options>
         </template>
         <template v-slot:main-content>
-            <content-table v-show="itemsLayout === 'list'">
+            <div class="md:p-3">
+                <div
+                    class="w-full p-2 md:p-5 my-3 md:shadow-lg md:border rounded-xl"
+                >
+                    <div class="flex flex-col gap-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div
+                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
+                            >
+                                <div class="w-full">
+                                    <p class="text-sm text-gray-500">
+                                        HEI Name
+                                    </p>
+                                    <div>
+                                        {{
+                                            evaluation.institution_program.institution?.name
+                                        }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
+                            >
+                                <div class="w-full">
+                                    <p class="text-sm text-gray-500">Program</p>
+                                    {{
+                                        evaluation.institution_program.program?.program
+                                    }}
+                                    <span
+                                        v-if="
+                                            evaluation.institution_program.program?.major
+                                        "
+                                    >
+                                        -
+                                        {{
+                                            evaluation.institution_program.program?.major
+                                        }}</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div
+                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
+                            >
+                                <div class="w-full">
+                                    <p class="text-sm text-gray-500">
+                                        Effectivity
+                                    </p>
+                                    <div>AY: {{ evaluation.effectivity }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 p-2 md:px-4">
+                <div class="p-4 rounded-lg shadow-md bg-green-100 text-center">
+                    <p class="text-3xl font-bold text-green-600">
+                        {{ progress[0] }}
+                    </p>
+                    <p class="text-green-700 font-semibold">Complied</p>
+                </div>
+                <div class="p-4 rounded-lg shadow-md bg-red-100 text-center">
+                    <p class="text-3xl font-bold text-red-600">
+                        {{ progress[1] }}
+                    </p>
+                    <p class="text-red-700 font-semibold">Not Complied</p>
+                </div>
+                <div class="p-4 rounded-lg shadow-md bg-gray-100 text-center">
+                    <p class="text-3xl font-bold text-gray-600">
+                        {{ progress[2] }}
+                    </p>
+                    <p class="text-gray-700 font-semibold">Not Applicable</p>
+                </div>
+                <div class="p-4 rounded-lg shadow-md bg-blue-100 text-center">
+                    <p class="text-3xl font-bold text-blue-600">
+                        {{ progress[3] }}%
+                    </p>
+                    <p class="text-blue-700 font-semibold">Progress</p>
+                </div>
+            </div>
+            <div class="p-3">
+                <div
+                    class="w-full p-2 md:p-8 my-3 md:shadow-lg md:border rounded-xl"
+                >
+            <content-table>
                 <template v-slot:table-head>
-                    <th class="p-2">Area</th>
-                    <th class="p-2">Minimum Requirement</th>
-                    <th class="p-2">Actual Situation</th>
-                    <th class="p-2">Evidence</th>
-                    <th class="p-2">Self-Evaluation Status</th>
-                    <th class="p-2 pr-5 text-right">
-                        <i class="fas fa-ellipsis-v"></i>
+                    <th>Area</th>
+                    <th>Minimum Requirement</th>
+                    <th>Actual Situation</th>
+                    <th>Evidence</th>
+                    <th>Self-Evaluation Status</th>
+                    <th>
+                        <i class="fas fa-ellipsis-v text-lg"></i>
                     </th>
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="items.data.length == 0">
-                        <td colspan="6" class="text-gray-500 text-center items-center py-10">
-                            No data
-                        </td>
+                        <no-search-result text="items"/>
                     </tr>
-                    <tr v-else v-for="(item, index) in items.data" :key="item.id" class=" hover:bg-gray-200 align-top text-base"
-                        :class="[{ 'bg-slate-200': index % 2 == 1 }, {'bg-red-100' : filters.evaluationStatus != 'Not complied' && item.evaluationStatus == 'Not complied' && evaluation.evaluationDate != null}]">
-                        <td class="p-2 whitespace-normal max-w-10">
-                            <div class="flex flex-col">
-                                <div class="font-bold">
-                                    {{ item.criteria.area }}
-                                </div>
-                            </div>
+                    <tr v-else v-for="(item, index) in items.data" :key="item.id">
+                        <td>
+                            {{ item.criteria.area }}
                         </td>
-                        <td class="p-2 whitespace-normal max-w-xs">
-                            <div class="flex flex-col text-justify" v-html="item.criteria.minimumRequirement">
-                            </div>
-                            <input type="text" class="w-24 h-10">
+                        <td>
+                            {{ item.criteria.minimumRequirement }}
                         </td>
-                        <td class="h-32 min-w-[21rem] max-w-md p-2 relative group">
+                        <td class="min-w-[16rem]">
                             <tip-tap-editor v-model="item.actualSituation" @input="updateData()"></tip-tap-editor>
                         </td>
-                        <td class="h-auto p-3 w-16 flex flex-col justify-center">
+                        <td>
                             <div class="flex flex-col"
                                 :class="{ 'hidden': item.selfEvaluationStatus == 'Not applicable' }"
                                 ref="evidenceFiles">
-                                <div v-for="file in item.evidence" :key="file.id" class="w-full">
-                                    <a class="px-1 text-gray-600 hover:text-blue-500 m-1 rounded whitespace-nowrap" :href="file.url"
+                                <div v-for="link in item.evidence" :key="link.id" class="w-full">
+                                    <a class="px-1 text-blue-600 hover:text-blue-700 hover:underline rounded whitespace-nowrap" :href="link.url"
                                         target="_blank">
-                                        <span v-if="file.type == 'file'">
-                                            File
-                                        </span>
-                                        <span v-else-if="file.type == 'link'">
-                                            Link
-                                        </span>
+                                        Link
                                     </a>
-                                    <button @click="toggleDeleteModal(); toDelete = file.id"
-                                        class="text-gray-500 hover:text-red-500 tooltipForActions"
+                                    <button @click="toggleDeleteModal(); toDelete = link.id"
+                                        class="text-gray-500 hover:text-red-500 ml-1 tooltipForActions"
                                         :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate"
                                         :class="{ 'grayscale text-gray-500': hasUpdate }"
-                                        :data-tooltip="file.type == 'file' ? 'Delete file' : 'Delete link'">
+                                        data-tooltip="Delete link">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -172,7 +265,7 @@
                             <div class="w-full h-full">
                                 <select ref="selfEvaluationStatus" v-model="item.selfEvaluationStatus"
                                     :id="'selfEvaluationStatus' + index" :name="'selfEvaluationStatus' + index"
-                                    @change="handleChangeStatus(index, item.id)"
+                                    @change="updateData"
                                     class="p-1 rounded w-36 border border-gray-500 select-none">
                                     <option :value="null">Select status</option>
                                     <option value="Complied">Complied</option>
@@ -194,6 +287,8 @@
                     </tr>
                 </template>
             </content-table>
+        </div>
+    </div>
         </template>
     </content-container>
 
@@ -574,30 +669,11 @@ function toggleFilterModal() {
     showFilterModal.value = !showFilterModal.value;
 }
 
-function submit() {
-    query.get("/hei/evaluation/"+props.evaluation.id+"/edit", {
-        onStart: () => {
-            processing.value = true;
-        },
-        onFinish: () => {
-            processing.value = false;
-        },
-        preserveState: true,
-        preserveScroll: true,
-    });
-}
-
 function filter() {
     query.get("/hei/evaluation/"+props.evaluation.id+"/edit", {
-        onStart: () => {
-            processing.value = true;
-        },
-        onFinish: () => {
-            processing.value = false;
-            toggleFilterModal();
-        },
-        preserveState: true,
+        preserveState: false,
         preserveScroll: true,
+        replace: true,
     });
 }
 

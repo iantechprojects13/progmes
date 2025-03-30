@@ -42,6 +42,11 @@ export default {
                 '72': '72rem',
                 '80': '80rem',
                 '96': '96rem',
+                '1/2': '50%',
+                '1/3': '33.333333%',
+                '2/3': '66.666667%',
+                '1/4': '25%',
+                '1/5': '20%',
             },
             minWidth: {
                 '6': '6rem',
@@ -75,6 +80,7 @@ export default {
                 '80': '80rem',
                 '96': '24rem',
             },
+            
             spacing: {
                 '58': '14.5rem',
                 '60': '15rem',
@@ -83,9 +89,12 @@ export default {
                 '68': '17rem',
                 '70': '17.5rem',
             },
+            inset: {
+                '18': '4.5rem',
+            },
             fontFamily: {
                 sans: ['sans-serif'], // Change 'Poppins' to your preferred font
-              },
+            },
         },
     },
 

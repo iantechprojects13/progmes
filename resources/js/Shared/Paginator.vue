@@ -15,7 +15,7 @@
             :class="[
               'inline-flex h-9 w-9 items-center justify-center rounded-lg border transition-colors duration-200',
               link.url 
-                ? 'border-gray-200 text-gray-600 hover:bg-gray-50 active:bg-gray-100 tooltipForActions' 
+                ? 'border-gray-400 text-gray-600 hover:bg-gray-50 active:bg-gray-100 tooltipForActions' 
                 : 'border-gray-100 text-gray-300 cursor-not-allowed'
             ]"
             :data-tooltip="link.label.includes('Previous') ? 'Previous' : 'Next'"

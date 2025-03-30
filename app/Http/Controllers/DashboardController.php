@@ -30,13 +30,11 @@ class DashboardController extends Controller
     }
 
     public function DashboardForCHED(Request $request) {
-
         
-
         $user = Auth::user();
         $role = $user->role;
 
-        $currentYear = Carbon::now()->year;
+        $currentYear = (Carbon::now()->year);
 
         $acadYear = $request->query('academicyear') ? $request->query('academicyear') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
         $institution = $request->query('hei') != null ? $request->query('hei') : null;
@@ -51,42 +49,31 @@ class DashboardController extends Controller
         $yearBeforeLast = $year -2;
         $currentMonth = Carbon::now()->month;
 
-
-        $disciplines = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('discipline')->get();
-        $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
-
+        $disciplineIds = [];
+    
+        // Get discipline IDs for the current user if they are an Education Supervisor
+        if($role == 'Education Supervisor') {
+            $disciplines = RoleModel::where('userId', $user->id)
+                ->where('isActive', 1)
+                ->with('discipline')
+                ->get();
+            $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+        }
+    
+        // Get discipline IDs for the specified supervisor if provided
+        if($request->query('supervisor') !== null && $request->query('supervisor') !== 'null' && $request->query('supervisor') !== '') {
+            $disciplines = RoleModel::where('userId', $request->query('supervisor'))
+                ->where('isActive', 1)
+                ->with('discipline')
+                ->get();
+            $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+        }
         
-        
-        $svDisciplines = RoleModel::where('userId', $supervisorq)->where('isActive', 1)->with('discipline')->get();
-        $svDisciplineIds = $svDisciplines->pluck('discipline.id')->toArray();
-        
 
-        $supervisor_list = User::where('role', 'Education Supervisor')->get();
+        $supervisor_list = User::where('role', 'Education Supervisor')->where('isActive', 1)->orderBy('name', 'asc')->get();
         $supervisor = User::where('id', $request->query('supervisor'))->first();
         
-        // $complianceTools = EvaluationFormModel::query()
-        // ->where('effectivity', $acadYear)
-        // ->where('status', 'In progress')
-        // ->when(!$request->query('hei') && !$request->query('program'), function($query) use ($request){
-        //     $query->inRandomOrder()->limit(10)->get();
-        // })
-        // ->when($request->query('hei'), function($query) use ($request, $institution) {
-        //     $query->whereHas('institution_program.institution', function($q) use ($request, $institution) {
-        //         $q->where('institutionId', $institution);
-        //     });
-        // })
-        // ->when($request->query('program'), function($query) use ($request, $program) {
-        //     $query->whereHas('institution_program.program', function($q) use ($request, $program) {
-        //         $q->where('programId', $program);
-        //     });
-        // })
-        // ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
-        //     $query->whereIn('disciplineId', $disciplineIds);
-        // })
-        // ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable', 'no_status')
-        // ->get();
         
-
         $tools = EvaluationFormModel::where('effectivity', $acadYear)
         ->when($request->query('hei'), function($query) use ($request, $institution) {
             $query->whereHas('institution_program.institution', function($q) use ($request, $institution) {
@@ -98,10 +85,7 @@ class DashboardController extends Controller
                 $q->where('programId', $program);
             });
         })
-        ->when($supervisorq != null, function($query) use ($request, $svDisciplineIds) {
-            $query->whereIn('disciplineId', $svDisciplineIds);
-        })
-        ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
+        ->when($role == 'Education Supervisor' || $request->query('supervisor'), function ($query) use ($disciplineIds) {
             $query->whereIn('disciplineId', $disciplineIds);
         })->get();
 
@@ -119,10 +103,11 @@ class DashboardController extends Controller
                 $q->where('programId', $program);
             });
         })
-        ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
+        ->when($role == 'Education Supervisor' || $request->query('supervisor'), function ($query) use ($disciplineIds) {
             $query->whereIn('disciplineId', $disciplineIds);
         })
         ->whereNotNull('evaluationDate');
+
         $months = range(1, 12);
         $monthlyCounts = array_map(function($month) use ($comTools) {
             return (clone $comTools)->whereMonth('evaluationDate', $month)->count();
@@ -203,18 +188,8 @@ class DashboardController extends Controller
             ->count();
         }
 
+
         return Inertia::render('Dashboard/Dashboard-CHED', [
-            // 'complianceTool' => $complianceTools->map(fn($item) => [
-            //     'id' => $item->id,
-            //     'status' => $item->status,
-            //     'institution' => $item->institution_program->institution->name,
-            //     'program' => $item->institution_program->program->program,
-            //     'complied' => $item->complied->count(),
-            //     'notcomplied' => $item->not_complied->count(),
-            //     'notapplicable' => $item->not_applicable->count(),
-            //     'nostatus' => $item->no_status->count(),
-            //     'progress' => $item->item->count() != 0 ? intval(round((($item->complied->count() + $item->not_complied->count() + $item->not_applicable->count())/$item->item->count())*100)) : 0,
-            // ]),
             'userCount' => User::where('isActive', 1)->count(),
             'institutionCount' => InstitutionModel::all()->count(),
             'programCount' => ProgramModel::all()->count(),
@@ -248,56 +223,7 @@ class DashboardController extends Controller
             'currentQuarter' => Carbon::now()->quarter,
             'supervisor_list' => $supervisor_list,
             'supervisor' => $supervisorq,
-        ]);
-    }
-
-    public function dashboardForCHEDOverview() {
-
-        $user = Auth::user();
-        $role = $user->role;
-
-        $acadYear = AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
-
-        $disciplines = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('discipline')->get();
-        $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
-
-
-
-        $acadYearArray = [
-            '2020-2021', '2021-2022', '2022-2023', '2023-2024', '2024-2025', 
-            '2025-2026', '2026-2027', '2027-2028', '2028-2029', 
-            '2029-2030',
-        ];
-
-        $index = array_search($acadYear, $acadYearArray);
-        $yearsData = [];
-
-        for ($i = 0; $i <= 2; $i++) {
-            $comTools = EvaluationFormModel::where('effectivity', $acadYearArray[$index])
-                ->where('status', 'Monitored')
-                ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
-                    $query->whereIn('disciplineId', $disciplineIds);
-                })
-                ->whereNotNull('evaluationDate');
-
-            $quarters = [ [1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12] ];
-            $yearData = array_map(function($months) use ($comTools) {
-                return (clone $comTools)->where(function ($query) use ($months) {
-                    foreach ($months as $month) {
-                        $query->orWhereMonth('evaluationDate', $month);
-                    }
-                })->count();
-            }, $quarters);
-
-            $yearsData[] = $yearData;
-            $index--;
-        }
-
-        [$thisYear, $lastYear, $twoYearsAgo] = $yearsData;
-
-
-        return Inertia::render('Dashboard/Dashboard-CHED-Overview', [
-            
+            'supervisor_name' =>  $supervisor->name ?? null,
         ]);
     }
 
@@ -431,50 +357,155 @@ class DashboardController extends Controller
     }
 
 
-    public function viewTools($academicyear, $status) {
+    public function viewTools($academicyear, $status, $supervisor, $program, $institution) {
+        $user = Auth::user();
+        $role = $user->role;
+        $disciplineIds = [];
+    
+        // Get discipline IDs for the current user if they are an Education Supervisor
+        if($role == 'Education Supervisor') {
+            $disciplines = RoleModel::where('userId', $user->id)
+                ->where('isActive', 1)
+                ->with('discipline')
+                ->get();
+            $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+        }
+    
+        // Get discipline IDs for the specified supervisor if provided
+        if($supervisor !== null && $supervisor !== 'null' && $supervisor !== '') {
+            $disciplines = RoleModel::where('userId', $supervisor)
+                ->where('isActive', 1)
+                ->with('discipline')
+                ->get();
+            $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+        }
+    
+        // Build the query
+        $query = EvaluationFormModel::query();
 
-        $tools = EvaluationFormModel::where('effectivity', $academicyear)
-            ->where('status', $status)
-            ->with('institution_program.institution', 'institution_program.program', 'item', 'complied', 'not_complied', 'not_applicable', 'no_status')
-            ->get();
+        // Apply academic year and status filters
+        $query->where('effectivity', $academicyear)
+              ->where(function($q) use ($status) {
+              $q->where('status', $status);
+              if ($status == 'In progress') {
+                  $q->orWhere('status', 'Deployed');
+              }
+              });
+
+        // Apply discipline filter if applicable
+        if($role == 'Education Supervisor' || ($supervisor !== null && $supervisor !== 'null' && $supervisor !== '')) {
+            $query->whereIn('disciplineId', $disciplineIds);
+        }
+        
+        // Apply program filter if provided
+        if($program !== null && $program !== 'null' && $program !== '') {
+            $query->whereHas('institution_program', function($q) use ($program) {
+                $q->where('programId', $program);
+            });
+        }
+        
+        // Apply institution filter if provided
+        if($institution !== null && $institution !== 'null' && $institution !== '') {
+            $query->whereHas('institution_program', function($q) use ($institution) {
+                $q->where('institutionId', $institution);
+            });
+        }
+        
+        // Get the results with relationships
+        $tools = $query->with('institution_program.institution', 'institution_program.program')->get();
         
         return response()->json($tools);
     }
 
-    public function viewMonitoredTools($year, $month, $quarter)
+
+
+    public function viewMonitoredTools($supervisor, $program, $institution, $year, $month, $quarter)
     {
-        $disciplines = RoleModel::where('userId', Auth::user()->id)
-            ->where('isActive', 1)
-            ->with('discipline')
-            ->get();
+        $user = Auth::user();
+        $role = $user->role;
+        $disciplineIds = [];
+    
+        // Get discipline IDs for the current user if they are an Education Supervisor
+        if($role == 'Education Supervisor') {
+            $disciplines = RoleModel::where('userId', $user->id)
+                ->where('isActive', 1)
+                ->with('discipline')
+                ->get();
+            $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+        }
         
-        $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+        // Get discipline IDs for the specified supervisor if provided
+        if($supervisor !== null && $supervisor !== 'null' && $supervisor !== '') {
+            $disciplines = RoleModel::where('userId', $supervisor)
+                ->where('isActive', 1)
+                ->with('discipline')
+                ->get();
+            $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+        }
+    
+        // Build the query
+        $query = EvaluationFormModel::query();
 
-        $role = Auth::user()->role;
+        
+        
+        // Apply discipline filter if applicable
+        if($role == 'Education Supervisor' || ($supervisor !== null && $supervisor !== 'null' && $supervisor !== '')) {
+            $query->whereIn('disciplineId', $disciplineIds);
+        }
+        
+        // Apply academic year and status filters
+        $query->where(function ($q) {
+            $q->where('status', 'Monitored')->orWhereNotNull('evaluationDate');
+        });
 
-        $tools = EvaluationFormModel::query()
-            ->when($year, function($query, $year) {
-                return $query->whereYear('evaluationDate', $year);
-            })
-            ->when($quarter, function($query, $quarter) {
-                return $query->whereRaw('QUARTER(evaluationDate) = ?', [$quarter]);
-            })
-            ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
-                return $query->whereIn('disciplineId', $disciplineIds);
-            })
-            ->whereNotNull('evaluationDate')
-            ->with([
-                'institution_program.institution',
-                'institution_program.program',
-                'item',
-                'complied',
-                'not_complied',
-                'not_applicable',
-                'no_status'
-            ])
-            ->get();
-                
-        return response()->json($tools);
+        if($year !== null && $year !== 'null' && $year !== '') {
+            $query->whereYear('evaluationDate', $year);
+        }
+
+        if($month !== null && $month !== 'null' && $month !== '') {
+            $query->whereMonth('evaluationDate', $month);
+        }
+
+        if($quarter !== null && $quarter !== 'null' && $quarter !== '') {
+            $query->where(function ($q) use ($quarter) {
+                if ($quarter == 1) {
+                    $q->whereMonth('evaluationDate', 1)
+                      ->orWhereMonth('evaluationDate', 2)
+                      ->orWhereMonth('evaluationDate', 3);
+                } elseif ($quarter == 2) {
+                    $q->whereMonth('evaluationDate', 4)
+                      ->orWhereMonth('evaluationDate', 5)
+                      ->orWhereMonth('evaluationDate', 6);
+                } elseif ($quarter == 3) {
+                    $q->whereMonth('evaluationDate', 7)
+                      ->orWhereMonth('evaluationDate', 8)
+                      ->orWhereMonth('evaluationDate', 9);
+                } elseif ($quarter == 4) {
+                    $q->whereMonth('evaluationDate', 10)
+                      ->orWhereMonth('evaluationDate', 11)
+                      ->orWhereMonth('evaluationDate', 12);
+                }
+            });
+        }
+        
+        // Apply program filter if provided
+        if($program !== null && $program !== 'null' && $program !== '') {
+            $query->whereHas('institution_program', function($q) use ($program) {
+                $q->where('programId', $program);
+            });
+        }
+        
+        // Apply institution filter if provided
+        if($institution !== null && $institution !== 'null' && $institution !== '') {
+            $query->whereHas('institution_program', function($q) use ($institution) {
+                $q->where('institutionId', $institution);
+            });
+        }
+        
+        // Get the results with relationships
+        $tools = $query->with('institution_program.institution', 'institution_program.program')->get();
+        
+        return response()->json($tools);   
     }
 
 }   

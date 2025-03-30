@@ -14,6 +14,7 @@ class ApplicationGPRModel extends Model
     protected $fillable = [
         'no',
         'item',
+        'isActive',
     ];
 
     protected $hidden = [

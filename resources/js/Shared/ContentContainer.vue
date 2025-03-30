@@ -1,14 +1,14 @@
 <template>
-    <div v-show="hasAdminPanel" class="md:sticky md:-top-20 z-60">
+    <div v-show="hasAdminPanel" class="md:sticky md:-top-18 z-60">
         <admin-panel/>
     </div>
-    <div v-show="pageTitle" class="px-4 md:px-8 mt-8">
-        <div class="flex flex-row items-center shadow-sm shadow-gray-200 rounded-md">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between w-full bg-white rounded-xl border border-slate-100 p-6">
-                <div class="font-semibold text-base md:text-lg text-slate-700 tracking-tight">
+    <div v-show="pageTitle" class="px-4 md:px-8 mt-5">
+        <div class="flex flex-row items-center rounded-md">
+            <div class="flex flex-col md:flex-row md:items-center justify-between w-full bg-white rounded-xl py-3 px-2">
+                <div class="font-semibold text-base md:text-lg text-gray-700 tracking-tight">
                     {{ pageTitle }}
                 </div>
-                <div v-show="hasTopButton" class="mt-4 sm:mt-0">
+                <div v-show="hasTopButton" class="mt-4 md:mt-0">
                     <div class="flex justify-end">
                         <slot name="top-button" class="w-full md:w-auto"></slot>
                     </div>
@@ -29,19 +29,21 @@
                 v-show="hasNavigation">
                 <slot name="navigation"></slot>
             </div>
-            <div v-show="!pageTitle" ref="actionButtons" class="w-full px-5 flex items-center h-auto" :class="{'border-b border-slate-200 py-4' : !hideTopBorder}">
+            <div v-show="!pageTitle" ref="actionButtons" class="w-full px-5 flex items-center text-gray-700 h-auto" :class="{'border-b border-slate-200 py-4' : !hideTopBorder}">
+                <button v-show="hasBackButton" @click="goBack"
+                class="w-8 h-8 mr-3 rounded-full hover:bg-gray-200 tooltipForActions" data-tooltip="Back"><i class="fas fa-arrow-left text-lg"></i></button>
                 <slot name="content-title"></slot>
             </div>
-            <div class="w-full flex md:flex-row flex-col md:items-center relative"
+            <div class="w-full flex lg:flex-row flex-col lg:items-center relative"
                 v-show="hasSearch || hasTopButton || hasFilters"
                 :class="{'px-5 pb-3 pt-5': hasSearch || hasTopButton || hasFilter}"
                 >
                 <div v-show="hasSearch || hasFilters"
-                    class="w-full flex md:flex-row flex-col-reverse">
-                    <div v-show="hasSearch" class="w-full md:w-1/2 my-3 md:my-auto">
+                    class="w-full flex lg:flex-row flex-col-reverse">
+                    <div v-show="hasSearch" class="w-full lg:w-1/2 my-3 lg:my-auto">
                         <slot name="search"></slot>
                     </div>
-                    <div class="w-full md:w-1/2 md:ml-5 flex flex-row items-center whitespace-nowrap justify-between">
+                    <div class="w-full lg:w-1/2 lg:ml-5 flex flex-row items-center whitespace-nowrap justify-between">
                         <div v-show="hasFilters" class="mr-2 flex flex-row">
                             <slot name="options"></slot>
                         </div>
@@ -87,6 +89,7 @@ const props = defineProps([
     "hasStickyDiv",
     "hideTopBorder",
     "hasTopMainContent",
+    "hasBackButton",
 ]);
 
 
@@ -99,14 +102,6 @@ const showStickyDiv = () => {
     }
 };
 
-function showDivAfterLoad() {
-    const rect = actionButtons.value.getBoundingClientRect();
-    if (`${ rect.top }` < -80) {
-        stickyDiv.value.classList.remove('hidden');
-    } else {
-        stickyDiv.value.classList.add('hidden');
-    }
-}
 
 onMounted(() => {
     window.addEventListener('scroll', showStickyDiv);
@@ -121,11 +116,14 @@ onUnmounted(() => {
 
 <script>
     export default {
-  components: { AdminPanel },
+    components: { AdminPanel },
         methods: {
             resultCount() {
                 this.$emit('resultCount');
+            },
+            goBack() {
+                window.history.back();
             }
-        }
+        },
     }
 </script>

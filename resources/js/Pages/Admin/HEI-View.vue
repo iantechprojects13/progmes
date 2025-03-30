@@ -1,75 +1,110 @@
 <template>
     <Head :title="institution.name" />
-    <content-container :hasAdminPanel="true">
+    <content-container :hasAdminPanel="true" :hasBackButton="true">
         <template v-slot:content-title>
-            <div class="w-full flex flex-row items-center justify-between text-gray-800">
-                <div class="flex flex-row items-center">
-                    <Link href="/admin/higher-education-institutions/">
-                        <button class="text-gray-800 hover:text-gray-600 w-6 tooltipForActions" data-tooltip="Back">
-                            <i class="fas fa-arrow-left text-lg"></i>
-                        </button>
-                    </Link>
-                    <h1 class="text-lg font-semibold ml-3">HEI Details</h1>
+            <div class="w-full flex flex-row items-center justify-between">
+                <div class="font-bold">HEI Details</div>
+                <div>
+                    <button
+                        @click="edit(institution.id)"
+                        class="w-full bg-blue-600 text-white py-2 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200"
+                    >
+                        Edit
+                    </button>
                 </div>
             </div>
         </template>
 
         <template v-slot:main-content>
-        <div class="bg-gray-200 p-0.5 rounded-lg mt-5 shadow-lg">
-            <table class="w-full border rounded-lg overflow-hidden shadow-md bg-white">
-                <tbody>
-                    <tr class="border-b">
-                        <th class="text-left align-top w-1/4 px-6 py-3 text-gray-700 font-bold">
-                            <i class="fas fa-university w-4 mr-2"></i> Institutional Code
-                        </th>
-                        <td class="px-6 py-3 text-gray-900">{{ institution.code }}</td>
-                    </tr>
-                    <tr class="border-b">
-                        <th class="text-left align-top w-1/4 px-6 py-3 text-gray-700 font-bold">
-                            <i class="fas fa-building w-4 mr-2"></i> Institution Name
-                        </th>
-                        <td class="px-6 py-3 text-gray-900">{{ institution.name }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-            <div class="mt-8 mb-4 text-lg font-bold text-gray-800 border-b pb-2">
-                Program List
+            <div class="md:p-5">
+                <div
+                    class="w-full p-2 md:p-8 my-3 md:shadow-lg md:border rounded-xl"
+                >
+                    <div class="flex flex-col gap-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div
+                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
+                            >
+                                <div class="w-full">
+                                    <p class="text-sm text-gray-500">
+                                        Institution
+                                    </p>
+                                    <div>
+                                        {{ institution.code }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
+                            >
+                                <div class="w-full">
+                                    <p class="text-sm text-gray-500">No.</p>
+                                    <div>
+                                        {{ institution.name }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <content-table>
-                <template v-slot:table-head>
-                    <th class="p-3 text-left bg-gray-300 text-gray-800">
-                        Program
-                    </th>
-                    <th class="p-3 text-left bg-gray-300 text-gray-800">
-                        Major
-                    </th>
-                </template>
-                <template v-slot:table-body>
-                    <tr v-if="institution.active_program.length === 0">
-                        <td colspan="2" class="py-10 text-center text-gray-500">No data found</td>
-                    </tr>
-                    <tr v-else v-for="(program, index) in institution.active_program" :key="program.id" 
-                        :class="{'bg-white': index % 2 === 0, 'bg-gray-200': index % 2 !== 0}" 
-                        class="hover:bg-gray-300 transition ease-in-out duration-200 border-b">
-                        <td class="p-3 text-gray-900">{{ program.program.program }}</td>
-                        <td class="p-3 text-gray-900">
-                            <span v-if="program.program?.major">{{ program.program.major }}</span>
-                        </td>
-                    </tr>
-                </template>
-            </content-table>
+            <div
+                class="text-gray-800 border-b border-gray-300 mx-8 mb-2"
+            >
+                <p class="relative top-3 bg-white pr-3 w-fit">Program List</p>
+            </div>
+            <div class="p-5">
+                <div class="p-5 border rounded-xl shadow-lg">
+                    <content-table>
+                        <template v-slot:table-head>
+                            <th>Program</th>
+                            <th>
+                                Major
+                            </th>
+                            <th></th>
+                        </template>
+                        <template v-slot:table-body>
+                            <tr v-if="institution.active_program.length === 0">
+                                <no-search-result text="program" />
+                            </tr>
+
+                            <tr
+                                v-else
+                                v-for="
+                                    program
+                                 in institution.active_program"
+                                :key="program.id">
+                                <td>
+                                    {{ program.program.program }}
+                                </td>
+                                <td>
+                                    <span v-if="program.program?.major">{{
+                                        program.program.major
+                                    }}</span>
+                                </td>
+                                <td></td>
+                            </tr>
+                        </template>
+                    </content-table>
+                </div>
+            </div>
         </template>
     </content-container>
 </template>
 
 <script setup>
-    const props = defineProps(['institution']);
+// ------------------------------------------------------------
+import { router } from "@inertiajs/vue3";
+import Layout from "@/Shared/Layout.vue";
+defineOptions({layout: Layout});
+
+// ------------------------------------------------------------
+const props = defineProps(["institution"]);
+
+// ------------------------------------------------------------
+function edit(id) {
+    router.get("/admin/higher-education-institutions/" + id + "/edit");
+}
 </script>
 
-<script>
-    import Layout from '@/Shared/Layout.vue';
-    export default {
-        layout: Layout,
-    };
-</script>

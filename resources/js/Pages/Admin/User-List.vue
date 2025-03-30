@@ -19,138 +19,31 @@
             </main-content-nav>
         </template>
         <template v-slot:search>
-            <div class="relative">
-                <div
-                    class="absolute inset-y-0 left-3 flex items-center pointer-events-none"
-                >
-                    <svg
-                        class="w-5 h-5 text-gray-400"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                        />
-                    </svg>
-                </div>
-
-                <input
-                    @keydown.enter="submit"
-                    v-model="query.search"
-                    type="search"
-                    id="content-search"
-                    placeholder="Search"
-                    class="w-full py-2.5 pl-11 pr-4 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors duration-200"
-                />
-            </div>
+            <search-box v-model="query.search" @submit="filter" />
         </template>
         <template v-slot:options>
-            <div class="flex gap-2">
-                <button
-                    @click="toggleFilterModal"
-                    class="p-2.5 inline-flex items-center justify-center rounded-lg text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all duration-200 tooltipForActions"
-                    data-tooltip="Filters"
-                >
-                    <svg
-                        class="w-5 h-5"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                        />
-                    </svg>
-                    <span
-                        class="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                    >
-                        Filters
-                    </span>
-                </button>
-
-                <Link href="/admin/users/list">
-                    <button
-                        class="p-2.5 inline-flex items-center justify-center rounded-lg text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all duration-200 tooltipForActions"
-                        data-tooltip="Refresh page"
-                    >
-                        <svg
-                            class="w-5 h-5"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                            />
-                        </svg>
-                    </button>
-                </Link>
-            </div>
+            <options @filter="toggleFilterModal" href="/admin/users/list" />
         </template>
+
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th
-                        class="px-6 py-4 text-left text-base font-bold text-gray-800"
-                    >
-                        Name/Email
-                    </th>
-                    <th
-                        class="px-6 py-4 text-left text-base font-bold text-gray-800"
-                    >
-                        Type
-                    </th>
-                    <th
-                        class="px-6 py-4 text-left text-base font-bold text-gray-800"
-                    >
-                        Role
-                    </th>
-                    <th
-                        class="px-6 py-4 text-left text-base font-bold text-gray-800"
-                    >
-                        Discipline
-                    </th>
-                    <th
-                        class="px-6 py-4 text-left text-base font-bold text-gray-800"
-                    >
-                        Program
-                    </th>
-                    <th
-                        class="px-6 py-4 text-left text-base font-bold text-gray-800"
-                    >
-                        HEI Name
-                    </th>
-                    <th v-show="canEdit" class="px-6 py-4 text-right w-24">
-                        <span class="text-gray-800">
-                            <i class="fas fa-ellipsis-v text-lg"></i>
-                        </span>
+                    <th>Name/Email</th>
+                    <th>Type</th>
+                    <th>Role</th>
+                    <th>Discipline</th>
+                    <th>Program</th>
+                    <th>HEI Name</th>
+                    <th v-show="canEdit">
+                        <i class="fas fa-ellipsis-v text-lg"></i>
                     </th>
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="user_list.data.length == 0">
                         <no-search-result text="users" />
                     </tr>
-                    <tr
-                        v-else
-                        v-for="(user, index) in user_list.data"
-                        :key="user.id"
-                        class="transition-colors hover:bg-blue-200 border-b border-gray-200"
-                        :class="{ 'bg-slate-200': index % 2 === 1 }"
-                    >
-                        <td class="px-6 py-2 text-gray-900 align-top">
+                    <tr v-else v-for="user in user_list.data" :key="user.id">
+                        <td>
                             <div class="flex flex-row">
                                 <div class="mr-3 w-10">
                                     <img
@@ -164,7 +57,7 @@
                                     />
                                 </div>
                                 <div class="flex flex-col">
-                                    <div class="font-bold">
+                                    <div>
                                         {{ user.name }}
                                     </div>
                                     <div class="text-sm text-gray-600">
@@ -173,48 +66,31 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-2 text-gray-900 align-top">
+                        <td>
                             {{ user.type }}
                         </td>
-                        <td class="px-6 py-2 text-gray-900 align-top">
+                        <td>
                             {{ user.role }}
                         </td>
-                        <td class="px-6 py-2 text-gray-900 align-top">
+                        <td>
                             <div v-for="role in user.user_role" :key="role.id">
-                                {{ role.discipline?.discipline || "N/A" }}
+                                {{ role.discipline?.discipline }}
                             </div>
                         </td>
-                        <td class="px-6 py-2 text-gray-900 align-top">
-                            <div
-                                v-for="(role, programIndex) in user.user_role"
-                                :key="role.id"
-                            >
-                                {{
-                                    role.program?.program || programIndex == 0
-                                        ? role.program?.program
-                                        : "N/A"
-                                }}
+                        <td>
+                            <div v-for="role in user.user_role" :key="role.id">
+                                {{ role.program?.program }}
                                 <span v-if="role.program?.major != null">
                                     - {{ role.program?.major }}
                                 </span>
                             </div>
                         </td>
-                        <td class="px-6 py-2 text-gray-900 align-top">
-                            <div
-                                v-for="(
-                                    role, institutionIndex
-                                ) in user.user_role"
-                                :key="role.id"
-                            >
-                                {{
-                                    role.institution?.name ||
-                                    institutionIndex == 0
-                                        ? role.institution?.name
-                                        : "N/A"
-                                }}
+                        <td>
+                            <div v-for="role in user.user_role" :key="role.id">
+                                {{ role.institution?.name }}
                             </div>
                         </td>
-                        <td class="px-6 py-2 align-top whitespace-nowrap">
+                        <td>
                             <div class="flex items-center gap-0">
                                 <Link
                                     :href="
@@ -224,7 +100,7 @@
                                     "
                                 >
                                     <button
-                                        class="inline-flex items-center justify-center rounded-full h-10 w-10 text-emerald-700 hover:bg-emerald-100 transition-colors tooltipForActions"
+                                        class="inline-flex items-center justify-center rounded-full h-10 w-10 text-emerald-700 hover:bg-emerald-100 tooltipForActions"
                                         data-tooltip="View"
                                     >
                                         <i class="fas fa-eye text-lg"></i>
@@ -234,13 +110,13 @@
                                 <button
                                     v-show="canEdit"
                                     @click="
-                                        toggleModal(
+                                        toggleConfirmationModal(
                                             user,
                                             'deactivateUser',
-                                            'Deactivate User'
+                                            'Deactivate'
                                         )
                                     "
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 transition-colors tooltipForActions"
+                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 tooltipForActions"
                                     data-tooltip="Deactivate"
                                 >
                                     <i class="fas fa-lock text-lg"></i>
@@ -256,8 +132,7 @@
     <modal
         :showModal="showFilterModal"
         @close="toggleFilterModal"
-        width="sm"
-        height="long"
+        width="md"
         title="Filters"
         class="antialiased"
     >
@@ -304,31 +179,31 @@
         <template #custom-button>
             <button
                 @click="filter"
-                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200 w-20 h-10"
+                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 duration-200 w-20 h-10"
             >
-                <span v-if="processing">
-                    <i class="fas fa-spinner animate-spin"></i>
-                </span>
-                <span v-else>Apply</span>
+                Apply
             </button>
         </template>
     </modal>
 
     <Confirmation
-        :showModal="modal"
+        :showModal="confirmationModal"
         @close="closeModal"
         :title="title"
         :modaltype="modaltype"
         :selected="selectedUser"
-        width="lg"
-        height="short"
+        width="md"
     />
 </template>
 
 <script setup>
-import { useForm, router } from "@inertiajs/vue3";
-import { ref, computed } from "vue";
+// -----------------------------------------------------------------------------------------------------
+import { ref } from "vue";
+import { useForm } from "@inertiajs/vue3";
+import Layout from "@/Shared/Layout.vue";
+defineOptions({ layout: Layout });
 
+// -----------------------------------------------------------------------------------------------------
 const props = defineProps([
     "user_list",
     "requestCount",
@@ -339,9 +214,12 @@ const props = defineProps([
     "filters",
 ]);
 
+// -----------------------------------------------------------------------------------------------------
+const confirmationModal = ref(false);
+const selectedUser = ref("");
+const modaltype = ref("");
+const title = ref("");
 const showFilterModal = ref(false);
-const processing = ref(false);
-const searchValue = ref(props.filters.search);
 
 const query = useForm({
     show: props.filters.show != null ? props.filters.show : null,
@@ -349,64 +227,28 @@ const query = useForm({
     type: props.filters.type != null ? props.filters.type : null,
 });
 
+// -----------------------------------------------------------------------------------------------------
+
+function toggleConfirmationModal(id, type, titleValue) {
+    confirmationModal.value = !confirmationModal.value;
+    selectedUser.value = id;
+    modaltype.value = type;
+    title.value = titleValue;
+}
+
+function closeModal() {
+    confirmationModal.value = false;
+}
+
 function toggleFilterModal() {
     showFilterModal.value = !showFilterModal.value;
 }
 
-function submit() {
-    query.get("/admin/users/list", {
-        onStart: () => {
-            processing.value = true;
-        },
-        onFinish: () => {
-            processing.value = false;
-        },
-        preserveState: false,
-        preserveScroll: true,
-    });
-}
-
 function filter() {
     query.get("/admin/users/list", {
-        onStart: () => {
-            processing.value = true;
-        },
-        onFinish: () => {
-            processing.value = false;
-            toggleFilterModal();
-        },
-        preserveState: true,
+        preserveState: false,
         preserveScroll: true,
+        replace: true,
     });
 }
-</script>
-
-<script>
-import Layout from "@/Shared/Layout.vue";
-export default {
-    components: { Layout },
-    data() {
-        return {
-            modal: false,
-            selectedUser: "",
-            modaltype: "",
-            title: "",
-            openSelectPageDropdown: false,
-        };
-    },
-    layout: Layout,
-
-    methods: {
-        toggleModal(id, type, title) {
-            this.modal = !this.modal;
-            this.selectedUser = id;
-            this.modaltype = type;
-            this.title = title;
-        },
-
-        closeModal() {
-            this.modal = false;
-        },
-    },
-};
 </script>

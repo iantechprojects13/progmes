@@ -76,7 +76,7 @@
   </template>
   
   <script setup>
-  import { computed, watch } from 'vue'
+  import { computed, watch, onMounted, onBeforeUnmount } from 'vue'
   
   const props = defineProps({
     title: {
@@ -141,5 +141,22 @@
   
   watch(() => props.showModal, (newVal) => {
     document.body.style.overflow = newVal ? 'hidden' : 'auto'
+  })
+
+
+
+  const handleKeydown = (event) => {
+    // Only handle Escape key when modal is open
+    if (event.key === 'Escape' && props.showModal) {
+      closeModal()
+    }
+  }
+
+  onMounted(() => {
+    window.addEventListener('keydown', handleKeydown)
+  })
+
+  onBeforeUnmount(() => {
+    window.removeEventListener('keydown', handleKeydown)
   })
   </script>

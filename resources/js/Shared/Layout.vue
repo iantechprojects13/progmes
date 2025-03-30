@@ -69,7 +69,7 @@
                             <div class="my-4 px-3" @click="mobileSideBar">
                                 <Link
                                     :href="route('dashboard')"
-                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg transition-colors"
+                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg "
                                     :class="[
                                         highlight('dashboard')
                                             ? 'bg-blue-600 text-white'
@@ -103,7 +103,7 @@
                                 <Link
                                     :href="route('admin.users.list')"
                                     v-if="$page.props.auth.user.type == 'CHED'"
-                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg transition-colors"
+                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg "
                                     :class="[
                                         highlight('adminpanel')
                                             ? 'bg-blue-600 text-white'
@@ -129,7 +129,7 @@
 
                                 <Link
                                     :href="route('evaluation')"
-                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg transition-colors"
+                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg "
                                     :class="[
                                         highlight('evaluation')
                                             ? 'bg-blue-600 text-white'
@@ -153,9 +153,9 @@
                                     Program Evaluation
                                 </Link>
 
-                                <Link
+                                <Link v-show="false"
                                     :href="route('application')"
-                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg transition-colors"
+                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg "
                                     :class="[
                                         highlight('application')
                                             ? 'bg-blue-600 text-white'
@@ -183,7 +183,7 @@
                                     :href="
                                         '/myaccount/' + $page.props.auth.user.id
                                     "
-                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg transition-colors"
+                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg "
                                     :class="[
                                         highlight('myaccount')
                                             ? 'bg-blue-600 text-white'
@@ -210,7 +210,7 @@
                                 <button
                                     @click="toggleLogoutModal"
                                     :disabled="hasUnsavedChanges.value"
-                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg transition-colors text-gray-300 hover:bg-gray-800 hover:text-red-500"
+                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg  text-gray-300 hover:bg-gray-800 hover:text-red-500"
                                     :class="{ 'opacity-50': hasUnsavedChanges.value }"
                                 >
                                     <svg
@@ -309,7 +309,7 @@
                                     :disable="loggingout"
                                     class="block py-2 indent-3 hover:bg-gray-200 w-full text-left"
                                 >
-                                    <i class="fas fa-sign-out mr-3"></i>Log out
+                                    <i class="fas fa-sign-out mr-3"></i>Sign out
                                 </button>
                             </div>
                         </template>
@@ -335,12 +335,8 @@
             <template v-slot:buttons>
                 <button
                     @click="logout"
-                    class="select-none text-white bg-red-500 hover:bg-red-600 h-10 w-20 rounded-lg border"
-                >
-                    <span v-if="loggingout">
-                        <i class="fas fa-spinner animate-spin"></i>
-                    </span>
-                    <span v-else>Sign out</span>
+                    class="select-none text-white bg-red-500 hover:bg-red-600 px-3 py-2.5 rounded-lg text-sm font-medium border"
+                >Sign out
                 </button>
             </template>
         </confirmation>
@@ -520,12 +516,10 @@ export default {
                     "Admin/Profile-View",
                 ],
                 evaluation: [
-                    "Evaluation/Evaluation-CHED",
-                    "Evaluation/Evaluation-HEI",
                     "Evaluation/HEI-Evaluation-Edit",
                     "Evaluation/HEI-Evaluation-View",
-                    "Evaluation/HEI-Evaluation-PH-Select",
-                    "Evaluation/HEI-Evaluation-Select",
+                    "Evaluation/HEI-Evaluation-PH-List",
+                    "Evaluation/HEI-Evaluation-List",
                     "Evaluation/HEI-Evaluation-Monitored",
                     "Evaluation/CHED-Evaluation-List",
                     "Evaluation/CHED-Evaluation-Edit",
@@ -537,6 +531,7 @@ export default {
                     "Application/CHED-Application-List",
                     "Application/HEI-Application-List",
                     "Application/HEI-Application-Edit",
+                    "Application/CHED-Application-Edit",
                     "Application/GPR-View",
                     "Application/GPR-Edit",
                 ],
@@ -572,7 +567,7 @@ export default {
         toggleSideBarUser() {
             this.sideBarUser = !this.sideBarUser;
         },
-
+        
         hoverSideBarUser() {
             if (!this.sideBarUser) {
                 this.sideBarUser = false;

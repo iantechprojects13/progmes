@@ -5,7 +5,7 @@
             { 'opacity-100': showModal },
             { 'opacity-0 pointer-events-none': !showModal },
         ]"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[997] transition-opacity duration-300 flex items-center justify-center"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[997] transition-opacity duration-300 flex items-center justify-center px-3"
     >
         <div
             class="min-h-[200px] w-full mx-auto bg-white rounded-lg shadow-xl transition-all duration-300"
@@ -130,7 +130,7 @@
                 >
                     Cancel
                 </button>
-
+                
                 <!-- Accept Button -->
                 <button
                     :disabled="processing"
@@ -138,10 +138,7 @@
                     @click="submit('/register/' + selected.id + '/accept')"
                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 h-10 w-20"
                 >
-                    <span v-if="processing">
-                        <i class="fas fa-spinner animate-spin"></i>
-                    </span>
-                    <span v-else>Accept</span>
+                    Accept
                 </button>
 
                 <!-- Reject Button -->
@@ -151,10 +148,7 @@
                     @click="submit('/register/' + selected.id + '/reject')"
                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200 h-10 w-20"
                 >
-                    <span v-if="processing">
-                        <i class="fas fa-spinner animate-spin"></i>
-                    </span>
-                    <span v-else>Reject</span>
+                    Reject
                 </button>
 
                 <!-- Delete User Button -->
@@ -164,10 +158,7 @@
                     @click="submit('/register/' + selected.id + '/delete')"
                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200 h-10 w-20"
                 >
-                    <span v-if="processing">
-                        <i class="fas fa-spinner animate-spin"></i>
-                    </span>
-                    <span v-else>Delete</span>
+                    Delete
                 </button>
 
                 <!-- Activate User Button -->
@@ -177,10 +168,7 @@
                     @click="submit('/register/' + selected.id + '/activate')"
                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 h-10 w-20"
                 >
-                    <span v-if="processing">
-                        <i class="fas fa-spinner animate-spin"></i>
-                    </span>
-                    <span v-else>Activate</span>
+                    Activate
                 </button>
 
                 <!-- Deactivate User Button -->
@@ -190,10 +178,7 @@
                     @click="submit('/register/' + selected.id + '/deactivate')"
                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200 h-10 w-24"
                 >
-                    <span v-if="processing">
-                        <i class="fas fa-spinner animate-spin"></i>
-                    </span>
-                    <span v-else>Deactivate</span>
+                    Deactivate
                 </button>
 
                 <!-- Delete Program Button -->
@@ -203,10 +188,7 @@
                     @click="submit('/admin/program/' + selected.id + '/delete')"
                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200 h-10 w-24"
                 >
-                    <span v-if="processing">
-                        <i class="fas fa-spinner animate-spin"></i>
-                    </span>
-                    <span v-else>Delete</span>
+                    Delete
                 </button>
 
                 <!-- Delete Discipline Button -->
@@ -218,10 +200,7 @@
                     "
                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200 h-10 w-24"
                 >
-                    <span v-if="processing">
-                        <i class="fas fa-spinner animate-spin"></i>
-                    </span>
-                    <span v-else>Delete</span>
+                    Delete
                 </button>
 
                 <!-- Delete HEI Button -->
@@ -237,10 +216,7 @@
                     "
                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200 h-10 w-24"
                 >
-                    <span v-if="processing">
-                        <i class="fas fa-spinner animate-spin"></i>
-                    </span>
-                    <span v-else>Delete</span>
+                    Delete
                 </button>
 
                 <!-- Delete CMO Button -->
@@ -250,10 +226,7 @@
                     @click="submit('/admin/CMOs/delete/' + selected.id)"
                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200 h-10 w-24"
                 >
-                    <span v-if="processing">
-                        <i class="fas fa-spinner animate-spin"></i>
-                    </span>
-                    <span v-else>Delete</span>
+                    Delete
                 </button>
 
                 <!-- Publish Button -->
@@ -263,10 +236,7 @@
                     @click="submit('/admin/CMOs/publish/' + selected.id)"
                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 h-10 w-20"
                 >
-                    <span v-if="processing">
-                        <i class="fas fa-spinner animate-spin"></i>
-                    </span>
-                    <span v-else>Publish</span>
+                    Publish
                 </button>
 
                 <!-- Activate Button -->
@@ -276,10 +246,7 @@
                     @click="submit('/admin/CMOs/activate/' + selected.id)"
                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 h-10 w-20"
                 >
-                    <span v-if="processing">
-                        <i class="fas fa-spinner animate-spin"></i>
-                    </span>
-                    <span v-else>Confirm</span>
+                    Confirm
                 </button>
 
                 <!-- Deactivate Button -->
@@ -289,10 +256,7 @@
                     @click="submit('/admin/CMOs/deactivate/' + selected.id)"
                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 h-10 w-20"
                 >
-                    <span v-if="processing">
-                        <i class="fas fa-spinner animate-spin"></i>
-                    </span>
-                    <span v-else>Confirm</span>
+                    Confirm
                 </button>
 
                 <button
@@ -301,10 +265,7 @@
                     @click="submit(`/application/${selected.id}/delete`)"
                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 h-10 w-20"
                 >
-                    <span v-if="processing">
-                        <i class="fas fa-spinner animate-spin"></i>
-                    </span>
-                    <span v-else>Delete</span>
+                    Delete
                 </button>
                 <slot name="buttons"></slot>
             </div>
@@ -314,12 +275,11 @@
 
 <script setup>
 import { router } from "@inertiajs/vue3";
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, onMounted, onBeforeUnmount } from "vue";
 
 const props = defineProps([
     "showModal",
     "width",
-    "height",
     "title",
     "modaltype",
     "selected",
@@ -359,6 +319,7 @@ function submit(link) {
             processing.value = false;
         },
         preserveState: false,
+        preserveScroll: true,
         replace: true,
     });
 }
@@ -376,4 +337,19 @@ const handleSubmit = () => {
 const closeModal = () => {
     emit("close");
 };
+
+const handleKeydown = (event) => {
+    // Only handle Escape key when modal is open
+    if (event.key === 'Escape' && props.showModal) {
+      closeModal()
+    }
+  }
+
+  onMounted(() => {
+    window.addEventListener('keydown', handleKeydown)
+  })
+
+  onBeforeUnmount(() => {
+    window.removeEventListener('keydown', handleKeydown)
+  })
 </script>

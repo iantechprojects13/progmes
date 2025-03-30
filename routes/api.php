@@ -28,6 +28,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // });
 
 
-Route::get('/dashboard/tool/{academicyear}/{status}/view', [DashboardController::class, 'viewTools']);
-Route::get('/dashboard/tool/{year}/{month}/{quarter}/view', [DashboardController::class, 'viewMonitoredTools']);
+Route::get('/dashboard/tool/{academicyear}/{status}/{supervisor}/{program}/{institution}/view', [DashboardController::class, 'viewTools']);
+Route::get('/dashboard/tool/{supervisor}/{program}/{institution}/{year}/{month}/{quarter}/view', [DashboardController::class, 'viewMonitoredTools']);
 

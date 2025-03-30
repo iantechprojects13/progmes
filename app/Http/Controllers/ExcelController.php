@@ -42,10 +42,11 @@ class ExcelController extends Controller
         $firstRow = $excelContent[0][0];
         if (!isset($firstRow[0]) || !isset($firstRow[1]) || 
             strtolower(trim($firstRow[0])) !== 'area' || 
-            strtolower(trim($firstRow[1])) !== 'minimum requirement') {
+            !in_array(strtolower(trim($firstRow[1])), ['minimum requirement', 'minimum requirements'])
+            ) {
             return redirect()->back()->with('failed', 'Invalid file format! The first row must contain "Area" and "Minimum Requirement" columns.');
         }
-    
+        
         $newCMO = CMOModel::create([
             'createdBy' => $user->id,
             'status' => 'Draft',

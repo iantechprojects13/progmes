@@ -1,7 +1,7 @@
 <template>
     <div class="px-3 md:px-8 pt-4 md:text-gray-200 md:bg-gradient-to-r from-indigo-800 to-blue-600  z-60">
         <div class="text-lg md:text-2xl font-bold py-3">Admin Panel</div>
-        <div class="mt-2 w-full z-40 text-gray-700 text-base md:pb-0 ">
+        <div class="w-full z-40 text-gray-700 text-base md:pb-0 ">
             <div class="text-right">
                 <button @click="toggleMenu"
                     class="flex items-center justify-center absolute top-20 right-4 md:hidden w-12 h-12 rounded-lg bg-white shadow-sm hover:bg-slate-50 border border-slate-300">

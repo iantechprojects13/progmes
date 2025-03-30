@@ -140,6 +140,34 @@
           Monitored
         </button>
       </Link>
+
+      <Link v-show="managementType == 'institution-evaluation'" :href="route('evaluation.hei')"
+        class="inline-flex items-center px-3 py-2 ">
+        <button
+          class="px-3 py-2 font-medium transition-colors duration-200 rounded-lg relative"
+          :class="[
+            page === 'evaluation'
+              ? 'bg-blue-100 text-blue-600'
+              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+          ]"
+        >
+          Evaluation
+        </button>
+      </Link>
+
+      <Link v-show="managementType == 'institution-evaluation'" :href="route('evaluation.hei.monitored')"
+        class="inline-flex items-center px-3 py-2 ">
+        <button
+          class="px-3 py-2 font-medium transition-colors duration-200 rounded-lg relative"
+          :class="[
+            page === 'monitored'
+              ? 'bg-blue-100 text-blue-600'
+              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+          ]"
+        >
+          Monitored
+        </button>
+      </Link>
     </nav>
   </template>
 

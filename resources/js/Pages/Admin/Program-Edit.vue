@@ -1,16 +1,8 @@
 <template>
-
     <Head title="Edit Program" />
-    <content-container :hasAdminPanel="true">
+    <content-container :hasAdminPanel="true" :hasBackButton="true">
         <template v-slot:content-title>
-                <div class="flex flex-row items-center justify-between">
-                    <div class="w-full flex flex-row items-center">
-                        <Link href="/admin/program/">
-                        <button class="w-8 h-8 rounded-full hover:bg-gray-200 tooltipForActions" data-tooltip="Back"><i class="fas fa-arrow-left"></i></button>
-                        </Link>
-                        <div class="ml-3 font-bold">Edit Program</div>
-                    </div>
-                </div>
+            <div class="font-bold">Edit Program</div>
         </template>
         <template v-slot:main-content>
             <div
@@ -24,7 +16,6 @@
 
                 <!-- Form Content -->
                 <div class="space-y-6">
-                    
                     <!-- Discipline -->
                     <div>
                         <label
@@ -52,7 +43,7 @@
                             >
                                 {{ item.discipline }}
                             </option>
-                         </select>
+                        </select>
                         <form-error-message
                             :message="$page.props.errors.discipline"
                             theme="dark"
@@ -68,7 +59,6 @@
                             Program
                             <span class="text-red-500">*</span>
                         </label>
-                        
 
                         <input
                             required
@@ -85,7 +75,6 @@
                         />
                     </div>
 
-
                     <!-- Major -->
                     <div>
                         <label
@@ -94,7 +83,6 @@
                         >
                             Major
                         </label>
-                        
 
                         <input
                             required
@@ -103,7 +91,7 @@
                             type="text"
                             id="major"
                             placeholder="Enter discipline"
-                            class=" mt-1 block w-full rounded-md h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                            class="mt-1 block w-full rounded-md h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                         />
                         <form-error-message
                             :message="$page.props.errors.major"
@@ -128,50 +116,37 @@
 </template>
 
 <script setup>
-    import { useForm, router } from '@inertiajs/vue3';
-    import { ref, reactive } from 'vue';
+// ----------------------------------------------------------------------
+import { ref, reactive } from "vue";
+import { router } from "@inertiajs/vue3";
+import Layout from "@/Shared/Layout.vue";
+defineOptions({ layout: Layout });
 
-    const props = defineProps([
-        'program',
-        'discipline_list',
-    ]);
+// ----------------------------------------------------------------------
+const props = defineProps(["program", "discipline_list"]);
 
-    const processing = ref(false);
+// ----------------------------------------------------------------------
+const processing = ref(false);
 
+const form = reactive({
+    id: ref(props.program.id),
+    discipline: ref(props.program.disciplineId)
+        ? ref(props.program.disciplineId)
+        : null,
+    program: ref(props.program.program) ? ref(props.program.program) : null,
+    major: ref(props.program.major) ? ref(props.program.major) : null,
+});
 
-    const form = reactive({
-        id: ref(props.program.id),
-        discipline: ref(props.program.disciplineId) ? ref(props.program.disciplineId) : null,
-        program: ref(props.program.program) ? ref(props.program.program) : null,
-        major: ref(props.program.major) ? ref(props.program.major) : null,
-    })
-
-    function submit() {
-        router.post('/admin/program/update', form, {
-            onStart: () => {
-                processing.value = true;
-            },
-            onFinish: () => {
-                processing.value = false;
-            }
-        });
-    }
-
-</script>
-
-<script>
-    import FormErrorMessage from '@/Shared/Component/FormErrorMessage.vue';
-    import Layout from '@/Shared/Layout.vue';
-
-    export default {
-        layout: Layout,
-        data() {
-            return {
-                openCreateDropdown: false,
-            };
+// ----------------------------------------------------------------------
+function submit() {
+    router.post("/admin/program/update", form, {
+        onStart: () => {
+            processing.value = true;
         },
-        components: {
-            FormErrorMessage,
+        onFinish: () => {
+            processing.value = false;
         },
-    }
+        replace: true,
+    });
+}
 </script>

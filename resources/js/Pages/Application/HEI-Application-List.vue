@@ -122,7 +122,7 @@
                         <no-search-result text="applications"/>
                     </tr>
                     <tr v-else v-for="(application, index) in application_list.data" :key="application.id"
-                    class="transition-colors hover:bg-blue-200 border-b border-gray-200"
+                    class="hover:bg-blue-200 border-b border-gray-200"
                         :class="{ 'bg-slate-200': index % 2 === 1 }"
                     >
                         <td class="px-6 py-2 text-base text-gray-900">

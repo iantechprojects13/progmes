@@ -1,20 +1,8 @@
 <template>
     <Head :title="institution.name" />
-    <content-container :hasAdminPanel="true">
+    <content-container :hasAdminPanel="true" :hasBackButton="true">
         <template v-slot:content-title>
-            <div class="w-full flex flex-row items-center justify-between">
-                <div class="w-full flex flex-row items-center">
-                    <Link href="/admin/higher-education-institutions/">
-                        <button
-                            class="w-8 h-8 rounded-full hover:bg-gray-200 tooltipForActions"
-                            data-tooltip="Back"
-                        >
-                            <i class="fas fa-arrow-left"></i>
-                        </button>
-                    </Link>
-                    <div class="ml-3 font-bold">Edit HEI</div>
-                </div>
-            </div>
+            <div class="font-bold">Edit HEI</div>
         </template>
         <template v-slot:main-content>
             <div
@@ -153,24 +141,27 @@
 </template>
 
 <script setup>
-import { useForm, router } from "@inertiajs/vue3";
+// ------------------------------------------------------------------------------------------------------------------
 import { ref, reactive, computed } from "vue";
+import { router } from "@inertiajs/vue3";
+import Layout from "@/Shared/Layout.vue";
+defineOptions({ layout: Layout });
 
+// ------------------------------------------------------------------------------------------------------------------
 const props = defineProps({
     institution: Object,
     program_list: Array,
     programsOffered: Array,
 });
 
+// ------------------------------------------------------------------------------------------------------------------
 const processing = ref(false);
 const programCheckbox = ref([]);
+const search = ref("");
 
 const refs = {
     programCheckbox,
-    // selectAllCheckbox: ref(null)
 };
-
-const search = ref("");
 
 const program_list = computed(() => {
     if (search.value === "") {
@@ -184,23 +175,6 @@ const program_list = computed(() => {
     });
 });
 
-// const selectAll = () => {
-//         const isChecked = refs.selectAllCheckbox.checked;
-//         programCheckbox.value.forEach((checkbox, index) => {
-//             checkbox.checked = isChecked;
-//             if (isChecked) {
-//                 if (!props.programsOffered.includes(props.program_list[index].id)) {
-//                     props.programsOffered.push(props.program_list[index].id);
-//                 }
-//             } else {
-//                 const programIndex = props.programsOffered.indexOf(props.program_list[index].id);
-//                 if (programIndex !== -1) {
-//                     props.programsOffered.splice(programIndex, 1);
-//                 }
-//             }
-//         });
-//     };
-
 const form = reactive({
     id: ref(props.institution.id),
     code: ref(props.institution.code),
@@ -208,6 +182,7 @@ const form = reactive({
     programs: ref(props.programsOffered),
 });
 
+// ------------------------------------------------------------------------------------------------------------------
 function submit() {
     router.post("/admin/higher-education-institutions/update", form, {
         onStart: () => {
@@ -230,11 +205,4 @@ function addProgram(id, indx) {
         props.programsOffered.splice(index, 1);
     }
 }
-</script>
-
-<script>
-import Layout from "@/Shared/Layout.vue";
-export default {
-    layout: Layout,
-};
 </script>

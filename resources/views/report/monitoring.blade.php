@@ -9,7 +9,7 @@
     <title>Program Monitoring Report</title>
     <style>
         @page {
-            margin: 20px 38px;
+            margin: 20px 38px 20px 38px;
         }
 
         body {
@@ -156,44 +156,59 @@
             </table>
 
             <!-- Signatories -->
-            <div style="margin-top: 75px; width: 100%; flex-wrap: wrap; display: flex; justify-content: center;">
-                <div style="margin-left: 10px; page-break-inside: avoid; width: 50%; background-color: aqua;">
-                    <div>Conforme:</div>
-                    <div style="margin: 8px 20px;">
-                        <div>{{ $tool->conforme1 }}</div>
-                        <div>{{ $tool->conforme1Title }}</div>
+            <div style="margin-top: 40px; width: 100%; overflow: hidden;">
+                <!-- Row 1 -->
+                <div style="width: 100%; overflow: hidden; margin-bottom: 30px;">
+                    <div style="float: left; width: 45%; page-break-inside: avoid; margin-left: 3%;">
+                        <div>Conforme:</div>
+                        <div style="margin: 8px 20px;">
+                            <div>{{ $tool->conforme1 }}</div>
+                            <div>{{ $tool->conforme1Title }}</div>
+                        </div>
                     </div>
+                    <div style="float: left; width: 45%; page-break-inside: avoid; margin-left: 4%;">
+                        <div>Conforme:</div>
+                        <div style="margin: 8px 20px;">
+                            <div>{{ $tool->conforme2 }}</div>
+                            <div>{{ $tool->conforme2Title }}</div>
+                        </div>
+                    </div>
+                    <div style="clear: both;"></div>
                 </div>
-                <div
-                    style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid; width: 50%; background-color: blueviolet;">
-                    <div>Conforme:</div>
-                    <div style="margin: 8px 20px;">
-                        <div>{{ $tool->conforme2 }}</div>
-                        <div>{{ $tool->conforme2Title }}</div>
+                
+                <!-- Row 2 -->
+                <div style="width: 100%; overflow: hidden; margin-bottom: 30px;">
+                    <div style="float: left; width: 45%; page-break-inside: avoid; margin-left: 3%;">
+                        <div>Evaluated by:</div>
+                        <div style="margin: 8px 20px;">
+                            <div>{{ $tool->evaluatedBy }}</div>
+                            <div>{{ $tool->evaluatedByTitle }}</div>
+                        </div>
                     </div>
+                    <div style="float: left; width: 45%; page-break-inside: avoid; margin-left: 4%;">
+                        <div>Reviewed by:</div>
+                        <div style="margin: 8px 20px;">
+                            <div>{{ $tool->reviewedBy }}</div>
+                            <div>{{ $tool->reviewedByTitle }}</div>
+                        </div>
+                    </div>
+                    <div style="clear: both;"></div>
                 </div>
-                <div style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid; width: 40%;">
-                    <div>Evaluated by:</div>
-                    <div style="margin: 8px 20px;">
-                        <div>{{ $tool->evaluatedBy }}</div>
-                        <div>{{ $tool->evaluatedByTitle }}</div>
+                
+                <!-- Row 3 (only one item) -->
+                <div style="width: 100%; overflow: hidden;">
+                    <div style="float: left; width: 45%; page-break-inside: avoid; margin-left: 3%;">
+                        <div>Noted by:</div>
+                        <div style="margin: 8px 20px;">
+                            <div>{{ $tool->notedBy }}</div>
+                            <div>{{ $tool->notedByTitle }}</div>
+                        </div>
                     </div>
-                </div>
-                <div style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid; width: 40%;">
-                    <div>Reviewed by:</div>
-                    <div style="margin: 8px 20px;">
-                        <div>{{ $tool->reviewedBy }}</div>
-                        <div>{{ $tool->reviewedByTitle }}</div>
-                    </div>
-                </div>
-                <div style="margin-left: 10px; margin-top: 30px; page-break-inside: avoid; width: 40%;">
-                    <div>Noted by:</div>
-                    <div style="margin: 8px 20px;">
-                        <div>{{ $tool->notedBy }}</div>
-                        <div>{{ $tool->notedByTitle }}</div>
-                    </div>
+                    <div style="clear: both;"></div>
                 </div>
             </div>
+
+            
         </div>
     </main>
 </body>

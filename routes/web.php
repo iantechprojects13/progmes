@@ -61,7 +61,7 @@ Route::get('/register/commission-on-higher-education', [RegistrationController::
 Route::match(['get', 'post'], '/register/higher-education-institution', [RegistrationController::class, 'accountHEI'])->middleware('unregistered')->name('register.hei');
 Route::get('/register/for-verification', [RegistrationController::class, 'pending'])->middleware(['auth', 'toverify'])->name('register.pending');
 
-Route::get('/register/{user}/accept', [RegistrationController::class, 'accept'])->name('register.accept');
+Route::get('/register/{user}/accept', [RegistrationController::class, 'acceptUser'])->name('register.accept');
 Route::get('/register/{user}/reject', [RegistrationController::class, 'reject'])->name('register.reject');
 Route::get('/register/{user}/activate', [RegistrationController::class, 'activate'])->name('user.activate');
 Route::get('/register/{user}/deactivate', [RegistrationController::class, 'deactivate'])->name('user.deactivate');
@@ -113,17 +113,21 @@ Route::post('/ched/evaluation/unlock', [CHEDFormController::class, 'unlock'])->n
 Route::get('/ched/program-application/gpr', [GPRController::class, 'index'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.gpr.view');
 Route::get('/ched/program-application/gpr/edit', [GPRController::class, 'edit'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.gpr.edit');
 Route::post('/ched/program-application/gpr/update', [GPRController::class, 'update'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.gpr.update');
+Route::get('/ched/program-application/gpr/{id}/delete', [GPRController::class, 'delete'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.gpr.delete');
 
 
 //application
 Route::get('/application', [ApplicationController::class, 'index'])->middleware(['auth', 'user.verified'])->name('application');
 Route::get('/hei/program-application', [ApplicationController::class, 'programApplicationHEI'])->middleware(['auth', 'user.verified', 'type.hei'])->name('hei.application.list');
 Route::get('/ched/program-application', [ApplicationController::class, 'programApplicationCHED'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.application.list');
+Route::get('/ched/program-application/{id}/evaluate', [ApplicationController::class, 'applicationCHEDEvaluate'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.application.evaluate');
 Route::get('/hei/program-application/{id}/edit', [ApplicationController::class, 'applicationHEIEdit'])->middleware(['auth', 'user.verified', 'type.hei'])->name('hei.application.edit');
 Route::post('/application/create', [ApplicationController::class, 'create'])->middleware(['auth', 'user.verified', 'type.hei'])->name('hei.application.create');
 Route::post('/application/update', [ApplicationController::class, 'update'])->middleware(['auth', 'user.verified', 'type.hei'])->name('hei.application.update');
 Route::post('/application/submit', [ApplicationController::class, 'submit'])->middleware(['auth', 'user.verified', 'type.hei'])->name('hei.application.submit');
+Route::post('/application/link', [ApplicationController::class, 'uploadLink'])->middleware(['auth', 'user.verified', 'type.hei'])->name('hei.application.link');
 Route::get('/application/{id}/delete', [ApplicationController::class, 'destroy'])->middleware(['auth', 'user.verified'])->name('hei.application.delete');
+Route::post('/application/remark', [ApplicationController::class, 'remark'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.application.remark');
 
 
 //admin-panel

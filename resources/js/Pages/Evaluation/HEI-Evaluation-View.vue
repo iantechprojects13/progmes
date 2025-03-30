@@ -1,142 +1,185 @@
 <template>
-
     <Head title="Program Self-Evaluation" />
     <page-title title="Program Self-Evaluation" />
-    <content-container :hasTopMainContent="true">
+    <content-container :hasBackButton="true">
         <template v-slot:content-title>
-            <div class="w-full flex flex-col md:flex-row justify-between items-center">
-                <div class="w-full flex flex-row items-center">
-                    <div class="w-full flex flex-row items-center">
-                        <Link :href="evaluation_tool.status != 'Monitored' ? '/evaluation' : $page.props.auth.user.role == 'Program Head' ? '/evaluation' : '/hei/evaluation/monitored'">
-                        <button class="w-8 h-8 rounded-full hover:bg-gray-200 tooltipForActions" data-tooltip="Back"><i class="fas fa-arrow-left"></i></button>
-                        </Link>
-                        <div class="ml-3 font-bold">Self-Evaluate</div>
-                    </div>
-                </div>
-            </div>
-        </template>
-        <template v-slot:top-main-content>
-            <div class="flex flex-col xl:flex-row items-center justify-between w-auto rounded border border-gray-300 bg-white my-3 p-5">
-                <div class="w-full text-left">
-                    <div class="w-auto flex flex-row items-center">
-                        <i class="fas fa-institution mr-3 text-blue-500"></i>
-                        <div>{{ evaluation_tool.institution_program.institution?.name }}</div>
-                    </div>
-                    <div class="w-auto flex flex-row items-center">
-                        <i class="fas fa-book mr-3 text-blue-500"></i>
-                        <div>
-                            {{ evaluation_tool.institution_program.program?.program }}
-                            <span></span>
-                        </div>
-                    </div>
-                    <div class="w-auto flex flex-row items-center">
-                        <i class="fas fa-calendar-check mr-3 text-blue-500"></i>
-                        <div>A.Y. {{ evaluation_tool.effectivity }}</div>
-                    </div>
-                </div>
-                <div class="xl:w-auto w-full text-right mt-5 xl:mt-0">
-                    <div class="flex flex-col md:flex-row lg:mt-0 md:w-auto w-full">
-                        <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-300 bg-white">
-                            <div class="w-full font-bold ">{{ progress[0] }}</div>
-                            <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Complied</div>
-                        </div>
-                        <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-300 bg-white">
-                            <div class="w-full font-bold">{{ progress[1] }}</div>
-                            <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Not Complied</div>
-                        </div>
-                        <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-300 bg-white">
-                            <div class="w-full font-bold">{{ progress[2] }}</div>
-                            <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Not Applicable</div>
-                        </div>
-                        <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-300 bg-white">
-                            <div class="w-full font-bold">{{ progress[3] }}%</div>
-                            <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Progress</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="font-bold">Self-Evaluation Tool</div>
         </template>
         <template v-slot:main-content>
-            <content-table>
-                <template v-slot:table-head>
-                    <th class="p-2">Area/<br>Minimum Requirement</th>
-                    <th class="p-2">Actual Situation</th>
-                    <th class="p-2">Self-Evaluation Status</th>
-                    <th class="p-2">Evidence</th>
-                    <th class="p-2" v-show="showEvaluation">Findings</th>
-                    <th class="p-2" v-show="showEvaluation">Comments/Recommendations</th>
-                    <th class="p-2" v-show="showEvaluation">Evaluation Status</th>
-                </template>
-                <template v-slot:table-body>
-                    <tr v-if="evaluation_tool.item.length == 0">
-                        <td colspan="5">No Data</td>
-                    </tr>
-                    <tr v-else v-for="(item, index) in evaluation_tool.item" :key="item.id"
-                        class="hover:bg-gray-200 align-top" :class="{'bg-gray-100': index % 2 == 1 }">
-                        <td class="p-2 whitespace-normal text-justify max-w-xl">
-                            <div class="font-bold" v-html="item.criteria.area"></div>
-                            <div v-html="item.criteria.minimumRequirement"></div>
-                        </td>
-                        <td class="p-2 whitespace-normal text-justify max-w-xl">
-                            <div v-html="item.actualSituation"></div>
-                        </td>
-                        <td class="p-2">
-                            <div class="px-1 py-0.5 w-fit rounded text-white text-sm"
-                                :class="[{ 'bg-blue-500': item.selfEvaluationStatus == 'Complied' },
-                                {'bg-red-500' : item.selfEvaluationStatus == 'Not complied'},
-                                {'bg-gray-600' :item.selfEvaluationStatus == 'Not applicable'},
-                                {'bg-green-600' :item.selfEvaluationStatus == NULL},
-                                ]"
-                                >{{ item.selfEvaluationStatus || 'No status'}}
+            <div class="md:p-3">
+                <div
+                    class="w-full p-2 md:p-5 my-3 md:shadow-lg md:border rounded-xl"
+                >
+                    <div class="flex flex-col gap-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div
+                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
+                            >
+                                <div class="w-full">
+                                    <p class="text-sm text-gray-500">
+                                        HEI Name
+                                    </p>
+                                    <div>
+                                        {{
+                                            evaluation_tool.institution_program
+                                                .institution?.name
+                                        }}
+                                    </div>
+                                </div>
                             </div>
-                        </td>
-                        <td class="p-2">
-                            <div v-for="file in item.evidence" :key="file.id" class="w-full">
-                                <a class="px-1 text-gray-600 hover:text-blue-500 m-1 rounded" :href="file.url"
-                                    target="_blank">
-                                    <span v-if="file.type == 'file'">
-                                        File
-                                    </span>
-                                    <span v-else-if="file.type == 'link'">
-                                        Link
-                                    </span>
-                                </a>
+
+                            <div
+                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
+                            >
+                                <div class="w-full">
+                                    <p class="text-sm text-gray-500">Program</p>
+                                    {{
+                                        evaluation_tool.institution_program
+                                            .program?.program
+                                    }}
+                                    <span
+                                        v-if="
+                                            evaluation_tool.institution_program
+                                                .program?.major
+                                        "
+                                    >
+                                        -
+                                        {{
+                                            evaluation_tool.institution_program
+                                                .program?.major
+                                        }}</span
+                                    >
+                                </div>
                             </div>
-                        </td>
-                        <td v-show="showEvaluation" class="p-2 whitespace-normal">
-                            {{ item.findings }}
-                        </td>
-                        <td v-show="showEvaluation" class="p-2 whitespace-normal">
-                            {{ item.recommendations }}
-                        </td>
-                        <td v-show="showEvaluation" class="p-2 pr-5 text-right">
-                            <div class="px-1 py-0.5 w-fit rounded text-white text-sm"
-                                :class="[{ 'bg-blue-500': item.evaluationStatus == 'Complied' },
-                                {'bg-red-500' : item.evaluationStatus == 'Not complied'},
-                                {'bg-gray-600' :item.evaluationStatus == 'Not applicable'},
-                                {'bg-gray-600' :item.evaluationStatus == NULL},
-                                ]"
-                                >{{ item.evaluationStatus }}
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div
+                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
+                            >
+                                <div class="w-full">
+                                    <p class="text-sm text-gray-500">
+                                        Effectivity
+                                    </p>
+                                    <div>
+                                        AY: {{ evaluation_tool.effectivity }}
+                                    </div>
+                                </div>
                             </div>
-                        </td>
-                    </tr>
-                </template>
-            </content-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 p-2 md:px-4">
+                <div class="p-4 rounded-lg shadow-md bg-green-100 text-center">
+                    <p class="text-3xl font-bold text-green-600">
+                        {{ progress[0] }}
+                    </p>
+                    <p class="text-green-700 font-semibold">Complied</p>
+                </div>
+                <div class="p-4 rounded-lg shadow-md bg-red-100 text-center">
+                    <p class="text-3xl font-bold text-red-600">
+                        {{ progress[1] }}
+                    </p>
+                    <p class="text-red-700 font-semibold">Not Complied</p>
+                </div>
+                <div class="p-4 rounded-lg shadow-md bg-gray-100 text-center">
+                    <p class="text-3xl font-bold text-gray-600">
+                        {{ progress[2] }}
+                    </p>
+                    <p class="text-gray-700 font-semibold">Not Applicable</p>
+                </div>
+                <div class="p-4 rounded-lg shadow-md bg-blue-100 text-center">
+                    <p class="text-3xl font-bold text-blue-600">
+                        {{ progress[3] }}%
+                    </p>
+                    <p class="text-blue-700 font-semibold">Progress</p>
+                </div>
+            </div>
+            <div class="p-3">
+                <div
+                    class="w-full p-2 md:p-5 md:shadow-lg md:border rounded-xl"
+                >
+                    <content-table>
+                        <template v-slot:table-head>
+                            <th>Area/<br />Minimum Requirement</th>
+                            <th>Self-Evaluation Status/<br>Actual Situation</th>
+                            <th>Evidence</th>
+                            <th v-show="showEvaluation">
+                                Findings
+                            </th>
+                            <th v-show="showEvaluation">
+                                Comments/Recommendations
+                            </th>
+                            <th v-show="showEvaluation">
+                                Evaluation Status
+                            </th>
+                        </template>
+                        <template v-slot:table-body>
+                            <tr v-if="evaluation_tool.item.length == 0">
+                                <no-search-result text="items"/>
+                            </tr>
+                            <tr
+                                v-else
+                                v-for="item in evaluation_tool.item"
+                                :key="item.id"
+                            >
+                                <td>
+                                    <div
+                                        class="font-bold"
+                                        v-html="item.criteria.area"
+                                    ></div>
+                                    <div
+                                        v-html="
+                                            item.criteria.minimumRequirement
+                                        "
+                                    ></div>
+                                </td>
+                                <td>
+                                    <status :text="item.selfEvaluationStatus" />
+                                    <div v-html="item.actualSituation"></div>
+                                </td>
+                                <td>
+                                    <div
+                                        v-for="link in item.evidence"
+                                        :key="link.id"
+                                        class="w-full"
+                                    >
+                                        <a
+                                            class="px-1 text-blue-600 hover:underline m-1 rounded"
+                                            :href="link.url"
+                                            target="_blank"
+                                        >
+                                            Link
+                                        </a>
+                                    </div>
+                                </td>
+                                <td
+                                    v-show="showEvaluation"
+                                >
+                                    {{ item.findings }}
+                                </td>
+                                <td
+                                    v-show="showEvaluation"
+                                >
+                                    {{ item.recommendations }}
+                                </td>
+                                <td
+                                    v-show="showEvaluation"
+                                >
+                                    <status :text="item.evaluationStatus" />
+                                </td>
+                            </tr>
+                        </template>
+                    </content-table>
+                </div>
+            </div>
         </template>
     </content-container>
 </template>
 
 <script setup>
-    defineProps([
-        'evaluation_tool',
-        'progress',
-        'showEvaluation',
-    ])
-</script>
-
-<script>
-    import Layout from '@/Shared/Layout.vue';
-    export default {
-        layout: Layout,
-    }
+import Layout from '@/Shared/Layout.vue';
+defineOptions({ layout: Layout });
+defineProps(["evaluation_tool", "progress", "showEvaluation"]);
 </script>

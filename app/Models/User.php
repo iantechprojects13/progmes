@@ -58,6 +58,16 @@ class User extends Authenticatable
         return $this->hasMany(RoleModel::class, 'userId', 'id');
     }
 
+    public function activeRole()
+    {
+        return $this->hasMany(RoleModel::class, 'userId', 'id')->where('isActive', 1);
+    }
+    
+    public function roleRequest()
+    {
+        return $this->hasMany(RoleModel::class, 'userId', 'id')->where('isActive', null);
+    }
+
     public function discipline()
     {
         return $this->hasManyThrough(DisciplineModel::class, RoleModel::class, 'disciplineId', 'id', 'disciplineId', 'id');

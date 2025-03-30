@@ -1,21 +1,14 @@
 <template>
     <Head title="Generate Report" />
     <page-title title="Create Report" />
-    <content-container>
+    <content-container :hasBackButton="true">
         <template v-slot:content-title>
             <div
                 class="w-full flex flex-col xl:flex-row items-center justify-between"
             >
                 <div class="w-full flex flex-row items-center">
-                    <Link :href="'/ched/evaluation/' + tool.id + '/evaluate'">
-                        <button
-                            class="w-8 h-8 rounded-full hover:bg-gray-200 tooltipForActions"
-                            data-tooltip="Back"
-                        >
-                            <i class="fas fa-arrow-left"></i>
-                        </button>
-                    </Link>
-                    <div class="ml-3 font-bold">Generate Report</div>
+                    
+                    <div class="font-bold">Generate Report</div>
                 </div>
                 <div
                     class="w-full xl:w-auto flex flex-col md:flex-row items-center xl:mt-0 mt-3"
@@ -135,6 +128,7 @@
                                             class="w-full rounded-lg border-gray-300 text-gray-700"
                                             placeholder="Monitoring/Evaluation Date"
                                             v-model="report.evaluationDate"
+                                            @input="updateData"
                                         />
                                     </div>
                                 </div>
@@ -158,6 +152,7 @@
                                         class="w-full h-12 border border-gray-300 rounded-lg my-1 bg-white text-gray-700"
                                         placeholder="Name"
                                         v-model="report.conforme1"
+                                        @input="updateData"
                                     />
                                     <input
                                         maxlength="255"
@@ -165,6 +160,7 @@
                                         class="w-full h-12 border border-gray-300 rounded-lg my-1 bg-white text-gray-700"
                                         placeholder="Title"
                                         v-model="report.conforme1Title"
+                                        @input="updateData"
                                     />
                                 </div>
                             </div>
@@ -183,6 +179,7 @@
                                         class="w-full h-12 border border-gray-300 rounded-lg my-1 bg-white text-gray-700"
                                         placeholder="Name"
                                         v-model="report.conforme2"
+                                        @input="updateData"
                                     />
                                     <input
                                         maxlength="255"
@@ -190,6 +187,7 @@
                                         class="w-full h-12 border border-gray-300 rounded-lg my-1 bg-white text-gray-700"
                                         placeholder="Title"
                                         v-model="report.conforme2Title"
+                                        @input="updateData"
                                     />
                                 </div>
                             </div>
@@ -211,6 +209,7 @@
                                         class="w-full h-12 border border-gray-300 rounded-lg my-1 bg-white text-gray-700"
                                         placeholder="Name"
                                         v-model="report.evaluatedBy"
+                                        @input="updateData"
                                     />
                                     <input
                                         maxlength="255"
@@ -218,6 +217,7 @@
                                         class="w-full h-12 border border-gray-300 rounded-lg my-1 bg-white text-gray-700"
                                         placeholder="Title"
                                         v-model="report.evaluatedByTitle"
+                                        @input="updateData"
                                     />
                                 </div>
                             </div>
@@ -236,6 +236,7 @@
                                         class="w-full h-12 border border-gray-300 rounded-lg my-1 bg-white text-gray-700"
                                         placeholder="Name"
                                         v-model="report.reviewedBy"
+                                        @input="updateData"
                                     />
                                     <input
                                         maxlength="255"
@@ -243,6 +244,7 @@
                                         class="w-full h-12 border border-gray-300 rounded-lg my-1 bg-white text-gray-700"
                                         placeholder="Title"
                                         v-model="report.reviewedByTitle"
+                                        @input="updateData"
                                     />
                                 </div>
                             </div>
@@ -264,6 +266,7 @@
                                         class="w-full h-12 border border-gray-300 rounded-lg my-1 bg-white text-gray-700"
                                         placeholder="Name"
                                         v-model="report.notedBy"
+                                        @input="updateData"
                                     />
                                     <input
                                         maxlength="255"
@@ -271,6 +274,7 @@
                                         class="w-full h-12 border border-gray-300 rounded-lg my-1 bg-white text-gray-700"
                                         placeholder="Title"
                                         v-model="report.notedByTitle"
+                                        @input="updateData"
                                     />
                                 </div>
                             </div>
@@ -381,8 +385,10 @@
 </template>
 
 <script setup>
+import { ref, reactive, onMounted, onUnmounted, inject } from "vue";
 import { router } from "@inertiajs/vue3";
-import { ref, reactive, onMounted, onUnmounted } from "vue";
+import Layout from "@/Shared/Layout.vue";
+defineOptions({ layout: Layout });
 
 const props = defineProps(["tool"]);
 
@@ -403,13 +409,19 @@ function previewFile() {
 function downloadFile() {
     const url =
         submitReport.type === "monitoring"
-            ? `/report/monitoring/${tool.id}/${submitReport.orientation}/download`
-            : `/report/deficiency/${tool.id}/${submitReport.orientation}/download`;
+            ? `/report/monitoring/${props.tool.id}/${submitReport.orientation}/download`
+            : `/report/deficiency/${props.tool.id}/${submitReport.orientation}/download`;
     window.open(url, "_blank");
 }
 
 const saveBtn = ref(null);
 const refs = { saveBtn };
+
+const hasUnsavedChanges = inject("hasUnsavedChanges");
+
+const updateData = () => {
+    hasUnsavedChanges.value = true;
+};
 
 const handleKeyDown = (event) => {
     if (event.ctrlKey || event.metaKey) {
@@ -420,12 +432,21 @@ const handleKeyDown = (event) => {
     }
 };
 
+const handleBeforeUnload = (event) => {
+    if (hasUnsavedChanges.value) {
+        event.returnValue = true;
+    }
+};
+
 onMounted(() => {
     window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("beforeunload", handleBeforeUnload);
 });
 
 onUnmounted(() => {
     window.removeEventListener("keydown", handleKeyDown);
+    window.removeEventListener("beforeunload", handleBeforeUnload);
+    hasUnsavedChanges.value = false;
 });
 
 const report = reactive({
@@ -461,14 +482,7 @@ function generate() {
         },
         preserveScroll: true,
         preserveState: false,
+        replace: true,
     });
 }
-</script>
-
-<script>
-import Layout from "@/Shared/Layout.vue";
-import { router } from "@inertiajs/vue3";
-export default {
-    layout: Layout,
-};
 </script>

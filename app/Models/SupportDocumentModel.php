@@ -15,4 +15,9 @@ class SupportDocumentModel extends Model
         'itemId',
         'url',
     ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
 }
