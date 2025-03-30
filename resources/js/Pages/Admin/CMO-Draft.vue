@@ -70,7 +70,8 @@
                     <th
                         v-show="
                             $page.props.auth.user.role == 'Super Admin' ||
-                            $page.props.auth.user.role == 'Admin'
+                            $page.props.auth.user.role == 'Admin' ||
+                            $page.props.auth.user.role == 'Education Supervisor'
                         "
                     >
                         Imported by
@@ -110,7 +111,8 @@
                         <td
                             v-show="
                                 $page.props.auth.user.role == 'Super Admin' ||
-                                $page.props.auth.user.role == 'Admin'
+                                $page.props.auth.user.role == 'Admin' ||
+                                $page.props.auth.user.role == 'Education Supervisor'
                             "
                         >
                             <div v-if="cmo.created_by?.name == null">-</div>

@@ -78,56 +78,66 @@ class CMOController extends Controller
         ]);
     }
 
-    public function draft(Request $request) {
-
+    public function draft(Request $request)
+    {
         $role = Auth::user()->role;
         $canEdit = false;
         $disciplineList = [];
         $show = $request->query('show') ? $request->query('show') : 25;
-
+        
         if ($role == 'Super Admin' || $role == 'Education Supervisor') {
             $canEdit = true;
         }
-
+        
         if ($role == 'Education Supervisor') {
             $discipline = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->get();
             foreach($discipline as $item) {
                 array_push($disciplineList, $item->disciplineId);
             }
         }
-
+        
         $draftlist = CMOModel::query()
-        ->when($request->query('search'), function ($query) use ($request, $role) {
-            $query->where(function ($query) use ($request, $role) {
-                 $query->where('number', 'like', '%' . $request->query('search') . '%')
-                ->orWhere('series', 'like', '%' . $request->query('search') . '%')
-                ->orWhere('version', 'like', '%' . $request->query('search') . '%')
-                ->orWhereHas('program', function ($programQuery) use ($request) {
-                    $programQuery->where('program', 'like', '%' . $request->query('search') . '%')
-                    ->orWhere('major', 'like', '%' . $request->query('search') . '%');
+            ->when($request->query('search'), function ($query) use ($request, $role, $disciplineList) {
+                $query->where(function ($query) use ($request) {
+                    $query->where('number', 'like', '%' . $request->query('search') . '%')
+                        ->orWhere('series', 'like', '%' . $request->query('search') . '%')
+                        ->orWhere('version', 'like', '%' . $request->query('search') . '%')
+                        ->orWhereHas('program', function ($programQuery) use ($request) {
+                            $programQuery->where('program', 'like', '%' . $request->query('search') . '%')
+                            ->orWhere('major', 'like', '%' . $request->query('search') . '%');
+                        });
                 });
             })
-            ->when($role == 'Education Supervisor', function ($query) {
-                $query->where('createdBy', Auth::user()->id);
-            });
-        })
-        ->when($role == 'Education Supervisor', function ($query) {
-            $query->where('createdBy', Auth::user()->id);
-        })
-        ->where([
-            'status' => 'Draft',
-        ])
-        ->orderBy('number', 'asc')
-        ->with('program', 'created_by')
-        ->paginate($show)
-        ->withQueryString();
+            ->when($role == 'Education Supervisor', function ($query) use ($disciplineList) {
+                $query->where(function ($query) use ($disciplineList) {
+                    // CMOs created by the current Education Supervisor
+                    $query->where('createdBy', Auth::user()->id)
+                        // OR CMOs created by Super Admins within the supervisor's disciplines
+                        ->orWhere(function ($query) use ($disciplineList) {
+                            $query->whereHas('created_by', function ($userQuery) {
+                                $userQuery->where('role', 'Super Admin');
+                            })
+                            ->whereHas('program', function ($programQuery) use ($disciplineList) {
+                                $programQuery->whereIn('disciplineId', $disciplineList);
+                            });
+                        });
+                });
+            })
+            ->where([
+                'status' => 'Draft',
+            ])
+            ->orderBy('number', 'asc')
+            ->with('program', 'created_by')
+            ->paginate($show)
+            ->withQueryString();
         
         return Inertia::render('Admin/CMO-Draft', [
             'cmo_list' => $draftlist,
             'canEdit' => $canEdit,
-            'filters' => $request->only(['search']) + ['show' => $show ],
+            'filters' => $request->only(['search']) + ['show' => $show],
         ]);
     }
+
 
     public function create() {
         return Inertia::render('Admin/CMO-Create');
