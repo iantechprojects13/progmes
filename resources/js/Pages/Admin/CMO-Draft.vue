@@ -91,8 +91,7 @@
                             <div
                                 v-if="
                                     cmo.number != null &&
-                                    cmo.series != null &&
-                                    cmo.version != null
+                                    cmo.series != null
                                 "
                             >
                                 CMO No.{{ cmo.number }}, S. {{ cmo.series }}
