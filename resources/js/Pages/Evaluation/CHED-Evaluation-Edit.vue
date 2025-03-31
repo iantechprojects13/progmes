@@ -206,8 +206,7 @@
                                 </td>
                                 <td>
                                     <status :text="item.selfEvaluationStatus" />
-                                    <div>
-                                        {{ item.actualSituation }}
+                                    <div v-html="item.actualSituation">
                                     </div>
                                 </td>
                                 <td>

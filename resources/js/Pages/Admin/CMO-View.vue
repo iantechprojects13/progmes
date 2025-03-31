@@ -140,6 +140,6 @@ function edit() {
 
 <style scoped>
 a {
-    color: blue;
+    color: rgb(65, 138, 255);
 }
 </style>

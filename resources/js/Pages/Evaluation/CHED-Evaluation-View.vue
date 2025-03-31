@@ -176,3 +176,9 @@ defineOptions({ layout: Layout });
 
 const props = defineProps(["evaluation", "progress", "showEvaluation"]);
 </script>
+
+<style scoped>
+a {
+ color: rgb(47, 139, 251)   
+}
+</style>

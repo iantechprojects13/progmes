@@ -157,12 +157,16 @@
                                 <td
                                     v-show="showEvaluation"
                                 >
-                                    {{ item.findings }}
+                                    <div v-html="item.findings">
+
+                                    </div>
                                 </td>
                                 <td
                                     v-show="showEvaluation"
                                 >
-                                    {{ item.recommendations }}
+                                    <div v-html="item.recommendations">
+
+                                    </div>
                                 </td>
                                 <td
                                     v-show="showEvaluation"

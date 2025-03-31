@@ -234,10 +234,14 @@
                     </tr>
                     <tr v-else v-for="(item, index) in items.data" :key="item.id">
                         <td>
-                            {{ item.criteria.area }}
+                            <div v-html="item.criteria.area">
+
+                            </div>
                         </td>
                         <td>
-                            {{ item.criteria.minimumRequirement }}
+                            <div v-html="item.criteria.minimumRequirement">
+
+                            </div>
                         </td>
                         <td class="min-w-[16rem]">
                             <tip-tap-editor v-model="item.actualSituation" @input="updateData()"></tip-tap-editor>
