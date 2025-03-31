@@ -146,10 +146,10 @@
                 <tbody>
                     @foreach ($tool->item as $item)
                     <tr>
-                        <td>{{ $item->criteria->area }}</td>
-                        <td>{{ $item->criteria->minimumRequirement }}</td>
-                        <td>{{ $item->findings }}</td>
-                        <td>{{ $item->recommendations }}</td>
+                        <td>{{ strip_tags($item->criteria->area) }}</td>
+                        <td>{{ strip_tags($item->criteria->minimumRequirement) }}</td>
+                        <td>{{ strip_tags($item->findings) }}</td>
+                        <td>{{ strip_tags($item->recommendations) }}</td>
                     </tr>
                     @endforeach
                 </tbody>
