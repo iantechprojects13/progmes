@@ -36,4 +36,9 @@ class InstitutionModel extends Model
     {
         return $this->hasMany(RoleModel::class, 'institutionId', 'id');
     }
+
+    public function evaluationForm()
+    {
+        return $this->hasMany(LibEvaluationFormModel::class, 'institutionId', 'id');
+    }
 }

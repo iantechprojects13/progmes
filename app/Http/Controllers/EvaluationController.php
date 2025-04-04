@@ -31,12 +31,16 @@ class EvaluationController extends Controller
             return redirect()->route('evaluation.ph');
         }
 
+        if ($user->role == 'Librarian') {
+            return redirect()->route('hei.library.evaluation.list');
+        }
+
         if ($user->type == 'HEI') {
             return redirect()->route('evaluation.hei');
         }
     }
 
-
+    
     public function EvaluationForCHED(Request $request) {
         $user = Auth::user();
         $show = $request->query('show') ? $request->query('show') : 25;

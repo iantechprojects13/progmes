@@ -13,9 +13,16 @@
 
 
 <script>
-    import { Chart as ChartJS, ArcElement, Tooltip, Legend, Chart } from 'chart.js'
+    import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+    import ChartDataLabels from 'chartjs-plugin-datalabels'
     import { Doughnut } from 'vue-chartjs'
-    ChartJS.register(ArcElement, Tooltip, Legend)
+
+    ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels)
+
+    ChartJS.defaults.set('plugins.datalabels', {
+        display: false
+    });
+    
     export default {
         name: 'DoughnutChart',
         components: { Doughnut },

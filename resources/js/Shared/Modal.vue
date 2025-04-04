@@ -2,7 +2,7 @@
     <div
       @click.self="handleBackdropClick"
       :class="[{ 'opacity-100': showModal }, { 'opacity-0 pointer-events-none': !showModal }]"
-      class="px-3 fixed inset-0 bg-black/50 backdrop-blur-sm z-[997] transition-opacity duration-300 flex items-center justify-center"
+      class="px-3 fixed inset-0 bg-black/50 backdrop-blur-sm z-[994] transition-opacity duration-300 flex items-center justify-center"
     >
       <div
         class="min-h-[200px] w-full mx-auto bg-white rounded-lg shadow-xl transition-all duration-300"

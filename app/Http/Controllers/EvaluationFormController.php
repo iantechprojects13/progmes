@@ -88,7 +88,7 @@ class EvaluationFormController extends Controller
         ->paginate($show)
         ->withQueryString();
         
-        return Inertia::render('Admin/EvaluationForm', [
+        return Inertia::render('Admin/tool/ComplianceTool-List', [
             'program_list' => $program_list,
             'effectivity' => $defaultAcademicYear,
             'academicYear' => $defaultAcademicYear,

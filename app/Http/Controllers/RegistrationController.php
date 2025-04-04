@@ -239,11 +239,11 @@ class RegistrationController extends Controller
             $role->save();
         }
         
-        try {
-            Mail::to($acceptedUser->email)->send(new NotificationEmail($acceptedUser->name));
-        } catch (Throwable $thr) {
-            return redirect()->back()->with('failed',  $thr->getMessage());
-        }
+        // try {
+        //     Mail::to($acceptedUser->email)->send(new NotificationEmail($acceptedUser->name));
+        // } catch (Throwable $thr) {
+        //     return redirect()->back()->with('failed',  $thr->getMessage());
+        // }
         
         return redirect()->back()->with('success', $acceptedUser->name .'\'s registration has been approved. Notification email has been sent.');
     }
@@ -285,6 +285,7 @@ class RegistrationController extends Controller
             'Vice-President for Academic Affairs' => ['institution'],
             'Dean' => ['discipline', 'institution'],
             'Program Head' => ['program', 'institution'],
+            'Librarian' => ['institution'],
         ];
 
         $roles = isset($roleRelations[$user->role]) 

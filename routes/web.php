@@ -22,7 +22,10 @@ use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\EvidenceController;
 use App\Http\Controllers\GPRController;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\LibCriteriaController;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\HEILibraryEvaluationController;
+use App\Http\Controllers\CHEDLibraryEvaluationController;
 
 
 /*
@@ -89,7 +92,7 @@ Route::get('/ched/evaluation/monitored', [EvaluationController::class, 'monitore
 Route::get('/hei/ph/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware(['auth','type.hei', 'hei.ph'])->name('evaluation.ph');
 Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean'])->name('evaluation.hei');
 Route::get('/hei/evaluation/monitored', [EvaluationController::class, 'monitoredForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean'])->name('evaluation.hei.monitored');
-Route::get('hei/evaluation/{tool}/edit', [HEIFormController::class, 'edit'])->middleware(['auth', 'type.hei', 'hei.ph'])->name('form.hei.key');
+Route::get('hei/evaluation/{tool}/edit', [HEIFormController::class, 'edit'])->middleware(['auth', 'type.hei', 'hei.ph'])->name('evaluation.hei.edit');
 Route::get('ched/evaluation/{tool}/view', [CHEDFormController::class, 'view'])->middleware(['auth', 'type.ched'])->name('evaluation.ched.view');
 Route::get('ched/evaluation/{tool}/evaluate/', [CHEDFormController::class, 'evaluate'])->middleware(['auth', 'type.ched', 'evaluate'])->name('form.ched.evaluate');
 Route::get('ched/evaluation/{tool}/report', [CHEDFormController::class, 'report'])->middleware(['auth', 'type.ched'])->name('form.ched.report');
@@ -107,6 +110,15 @@ Route::post('/ched/evaluation/monitored', [CHEDFormController::class, 'monitored
 Route::post('/ched/evaluation/lock', [CHEDFormController::class, 'lock'])->name('form.ched.lock');
 Route::post('/ched/evaluation/unlock', [CHEDFormController::class, 'unlock'])->name('form.ched.unlock');
 
+//Evaluation for librarian
+Route::get('/hei/library/evaluation', [HEILibraryEvaluationController::class, 'index'])->middleware(['auth', 'user.verified', 'librarian'])->name('hei.library.evaluation.list');
+Route::get('hei/library/{tool}/edit', [HEILibraryEvaluationController::class, 'edit'])->middleware(['auth', 'type.hei', 'librarian'])->name('hei.library.evaluation.edit');
+Route::get('hei/library/{tool}/view', [HEILibraryEvaluationController::class, 'view'])->middleware(['auth', 'type.hei', 'librarian'])->name('hei.library.tool.view');
+Route::post('hei/library/evaluation/update', [HEILibraryEvaluationController::class, 'update'])->middleware(['auth', 'type.hei', 'librarian'])->name('hei.library.evaluation.update');
+Route::post('/hei/library/evaluation/link', [HEILibraryEvaluationController::class, 'submitLink'])->name('hei.library.evaluation.link');
+Route::post('/hei/library/evaluation/submit', [HEILibraryEvaluationController::class, 'completed'])->name('hei.library.evaluation.submit');
+Route::post('/hei/library/evaluation/link/delete', [HEILibraryEvaluationController::class, 'deleteLink'])->name('hei.library.evaluation.link.delete');
+Route::post('hei/library/tool/create', [HEILibraryEvaluationController::class, 'store'])->middleware('auth')->name('hei.library.tool.store');
 
 // PROGRAM APPLICATION
 // gpr
@@ -160,8 +172,15 @@ Route::get('/admin/CMOs/delete/{id?}', [CMOController::class, 'destroy'])->middl
 Route::get('/admin/CMOs/activate/{id?}', [CMOController::class, 'activate'])->middleware('auth')->name('admin.cmo.activate');
 Route::get('/admin/CMOs/deactivate/{id?}', [CMOController::class, 'deactivate'])->middleware('auth')->name('admin.cmo.deactivate');
 
-//Importing CMO
 Route::post('/admin/CMOs/create/import', [ExcelController::class, 'importExcel'])->name('admin.cmo.import');
+
+//Librarian CMO
+Route::get('/admin/library', [CHEDLibraryEvaluationController::class, 'index'])->middleware('auth', 'type.ched', 'admin')->name('admin.library.list');
+Route::get('/admin/library/CMO/view', [LibCriteriaController::class, 'index'])->middleware('auth', 'type.ched', 'admin')->name('library.cmo.view');
+Route::get('/admin/library/CMO/edit', [LibCriteriaController::class, 'edit'])->middleware('auth', 'type.ched', 'admin')->name('library.cmo.edit');
+Route::post('/admin/library/CMO/update', [LibCriteriaController::class, 'update'])->middleware('auth', 'type.ched', 'admin')->name('library.cmo.update');
+Route::post('/admin/library/CMO/deploy', [LibCriteriaController::class, 'deploy'])->middleware('auth', 'type.ched', 'admin')->name('library.cmo.deploy');
+
 
 //Evaluation Tool
 Route::get('/admin/tool', [EvaluationFormController::class, 'index'])->middleware('auth', 'type.ched')->name('admin.form.list');
@@ -198,13 +217,8 @@ Route::post('/report/generate', [PDFController::class, 'generateReport'])->middl
 Route::get('/report/monitoring/{tool}/{orientation}/{type}', [PDFController::class, 'monitoringReport'])->middleware(['auth'])->name('report.monitoring');
 Route::get('/report/deficiency/{tool}/{orientation}/{type}', [PDFController::class, 'deficiencyReport'])->middleware(['auth'])->name('report.deficiency');
 
-// Route::get('/chart', function () {
-//     return Inertia::render('Shared/Charts/DoughnutChart');
-// });
 
-// Route::get('/test', function () {
-//     return Inertia::render('Shared/Test');
-// });
+
 
 Route::get('/api/data', [DashboardController:: class, 'getData']);
 

@@ -127,7 +127,7 @@
                                     Admin Panel
                                 </Link>
 
-                                <Link
+                                <Link v-show="$page.props.auth.user.role != 'Librarian'"
                                     :href="route('evaluation')"
                                     class="flex items-center select-none w-full px-3 py-2 rounded-lg "
                                     :class="[
@@ -151,6 +151,32 @@
                                         />
                                     </svg>
                                     Program Evaluation
+                                </Link>
+
+                                <Link v-if="$page.props.auth.user.role == 'Librarian' || $page.props.auth.user.type == 'CHED'"
+                                    :href="route('evaluation')"
+                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg "
+                                    :class="[
+                                        highlight('library')
+                                            ? 'bg-blue-600 text-white'
+                                            : 'text-gray-300 hover:bg-gray-800', { 'pointer-events-none opacity-50': hasUnsavedChanges.value }
+                                    ]"
+                                >
+                                    <svg
+                                        class="w-5 h-5 mr-3"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                                        />
+                                    </svg>
+                                    Library Evaluation
                                 </Link>
 
                                 <Link v-show="false"
@@ -271,7 +297,7 @@
         </div>
 
         <!-- Page Content -->
-        <div class="w-full h-auto relative bg-white md:pt-0 pb-5">
+        <div class="w-full h-auto relative bg-white md:pt-0 pb-5 overflow-x-hidden">
             <div
                 class="md:hidden sticky top-0 w-full bg-gradient-to-r from-indigo-800 to-blue-600 text-white flex justify-between text-center h-16 items-center shadow-md z-80 px-4"
             >
@@ -316,7 +342,7 @@
                     </dropdown-option>
                 </div>
             </div>
-            <div>
+            <div class="max-w-full overflow-x-auto">
                 <slot />
             </div>
         </div>
@@ -349,7 +375,7 @@
     <TransitionGroup
         name="notifications"
         tag="div"
-        class="fixed bottom-0 right-0 z-90 p-4 space-y-2 select-none"
+        class="fixed bottom-0 right-0 z-[995] p-4 space-y-2 select-none"
     >
         <div
             v-for="notification in activeNotifications"
@@ -395,6 +421,17 @@
         <i class="fas fa-exclamation-triangle mr-2"></i>
         <span>Changes unsaved. You can press Ctrl + S to save.</span>
     </div>
+
+    <!-- Saving changes -->
+    <div
+        v-if="isUpdating.value"
+        class="w-auto h-auto bg-yellow-400 fixed z-[100] bottom-2 left-2 p-2 rounded flex items-center"
+    >
+        <i class="fas fa-exclamation-triangle mr-2"></i>
+        <span>Saving</span>
+    </div>
+
+    
 </template>
 
 <script setup>
@@ -410,6 +447,10 @@ const loading = ref(false);
 const isNavigatingWithHistory = ref(false);
 
 const hasUnsavedChanges = reactive({
+    value: null,
+});
+
+const isUpdating = reactive({
     value: null,
 });
 
@@ -431,6 +472,7 @@ function handlePopState() {
 
 // Provide it to children.value
 provide("hasUnsavedChanges", hasUnsavedChanges);
+provide("isUpdating", isUpdating);
 
 function closeNotification(id) {
     activeNotifications.value = activeNotifications.value.filter(
@@ -515,24 +557,27 @@ export default {
                     "Dashboard/CHED-ES-Dashboard",
                 ],
                 adminpanel: [
-                    "Admin/User-List",
-                    "Admin/User-Request",
-                    "Admin/User-Inactive",
-                    "Admin/CMO",
-                    "Admin/CMO-Edit",
-                    "Admin/CMO-Draft",
-                    "Admin/CMO-View",
-                    "Admin/EvaluationForm",
-                    "Admin/HEI",
-                    "Admin/HEI-Create",
-                    "Admin/HEI-Edit",
-                    "Admin/HEI-View",
-                    "Admin/Program",
-                    "Admin/Program-Create",
-                    "Admin/Program-Edit",
-                    "Admin/Discipline",
-                    "Admin/Discipline-Create",
-                    "Admin/Discipline-Edit",
+                    "Admin/user/User-List",
+                    "Admin/user/User-Request",
+                    "Admin/user/User-Inactive",
+                    "Admin/cmo/CMO-List",
+                    "Admin/cmo/CMO-Edit",
+                    "Admin/cmo/CMO-Draft",
+                    "Admin/cmo/CMO-View",
+                    "Admin/tool/ComplianceTool-List",
+                    "Admin/library/Library-Evaluation-List",
+                    "Admin/library/Library-CMO-View",
+                    "Admin/library/Library-CMO-Edit",
+                    "Admin/hei/HEI-List",
+                    "Admin/hei/HEI-Create",
+                    "Admin/hei/HEI-Edit",
+                    "Admin/hei/HEI-View",
+                    "Admin/program/Program-List",
+                    "Admin/program/Program-Create",
+                    "Admin/program/Program-Edit",
+                    "Admin/discipline/Discipline-List",
+                    "Admin/discipline/Discipline-Create",
+                    "Admin/discipline/Discipline-Edit",
                     "Admin/Profile-View",
                 ],
                 evaluation: [
@@ -546,6 +591,11 @@ export default {
                     "Evaluation/CHED-Evaluation-View",
                     "Evaluation/CHED-Evaluation-Report-Create",
                     "Evaluation/CHED-Evaluation-Monitored",
+                ],
+                library: [
+                    "Evaluation/HEI-Evaluation-Library-List",
+                    "Evaluation/HEI-Evaluation-Library-Edit",
+                    "Evaluation/HEI-Evaluation-Library-View",
                 ],
                 application: [
                     "Application/CHED-Application-List",
@@ -571,10 +621,10 @@ export default {
                 return this.component.adminpanel.includes(this.$page.component);
             } else if (btn == "evaluation") {
                 return this.component.evaluation.includes(this.$page.component);
+            } else if (btn == "library") {
+                return this.component.library.includes(this.$page.component);
             } else if (btn == "application") {
-                return this.component.application.includes(
-                    this.$page.component
-                );
+                return this.component.application.includes(this.$page.component);
             } else if (btn == "myaccount") {
                 return this.component.myaccount.includes(this.$page.component);
             }

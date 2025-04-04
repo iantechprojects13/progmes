@@ -6,16 +6,12 @@
         <div class="mb-8 lg:mb-0 w-full">
             <div class="flex flex-row items-center">
                 <i class="fas fa-book mr-3 text-blue-500"></i>
-                <div v-if="!discipline & !program">
-                    All
-                </div>
-                <div v-else>{{ disciplineName }}{{ programName }}
-                    <span v-if="major != null">
-                        - {{ major }}
-                    </span>
-                </div>
+                Library
             </div>
-            <div><i class="fas fa-institution mr-3 text-blue-500"></i>{{ heiName }}</div>
+            <div>
+                <i class="fas fa-institution mr-3 text-blue-500"></i>
+                {{ heiName }}
+            </div>
         </div>
         <div class="flex flex-col lg:flex-row w-full lg:w-auto">
             <div v-show="role != 'Program Head'" class="flex flex-col lg:flex-row items-center lg:whitespace-nowrap w-full lg:w-auto">
@@ -163,7 +159,64 @@
             </div>
         </div>
     </div>
-    
+    <div class="mx-3 md:mx-8 mt-5 flex flex-col lg:flex-row mb-5" v-show="!program">
+        <div class="w-full border border-gray-300 rounded bg-white">
+            <div class="p-3 border-b border-gray-300"><b>Compliance Progress</b></div>
+            <div class="px-3 max-h-screen overflow-y-auto">
+                <table class="w-full text-left overflow-x-auto">
+                    <thead>
+                        <tr class="border-b sticky top-0 bg-white z-10">
+                            <th class="py-2">Program</th>
+                            <th class="py-2">Status</th>
+                            <th class="py-2">Progress</th>
+                            <th class="py-2 text-right">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-if="complianceTool.length == 0">
+                            <td colspan="4" class="py-10 text-center">
+                                No compliance tool found
+                            </td>
+                        </tr>
+                        <tr v-for="item in complianceTool" :key="item.id"
+                        class="border-b"
+                        >
+                            <td>
+                                <div class="flex flex-col whitespace-normal">
+                                    <div v-show="discipline || props.filters.filter == null">{{ item.program }}</div>
+                                    <div v-show="program || props.filters.filter == null">{{ item.discipline }}</div>
+                                </div>
+                            </td>
+                            <td class="text-sm">
+                                <div v-if="item.status == 'Deployed'" class="bg-gray-600 px-1 text-white w-fit rounded text-xs">
+                                    Pending
+                                </div>
+                                <div v-else class="bg-green-500 px-1 w-fit rounded text-white text-xs">
+                                    {{ item.status }}
+                                </div>
+                            </td>
+                            <td class="text-sm py-2">
+                                <div class="w-16">
+                                    <compliance-progress :percentage="item.progress" :dataItem="[item.complied, item.notcomplied, item.notapplicable, item.nostatus]">
+
+                                    </compliance-progress>
+                                </div>
+                            </td>
+                            <td class="text-right">
+                                <a :href="'/hei/evaluation/' + item.id + '/view'" target="_blank">
+                                    <button class="hover:bg-gray-200 w-10 h-10 rounded-full text-blue-500">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup>

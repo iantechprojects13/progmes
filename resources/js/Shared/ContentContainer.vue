@@ -55,7 +55,7 @@
             </div>
 
             <div>
-                <div class="pt-0 md:pt-2 px-5 pb-5 overflow-auto">
+                <div class="pt-0 md:pt-2 px-5 pb-5 overflow-auto min-h-[16rem]">
                     <slot name="main-content"></slot>
                 </div>
             </div>

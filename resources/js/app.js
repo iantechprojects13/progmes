@@ -25,7 +25,7 @@ import PageTitle from './Shared/PageTitle.vue';
 import TextEditor from './Shared/TextEditor.vue';
 import DoughnutChart from './Shared/Charts/DoughnutChart.vue';
 import ComplianceProgress from './Shared/Charts/ComplianceProgress.vue';
-import ComplianceStatus from './Shared/Charts/ComplianceStatus.vue';
+import HalfDoughnutChart from './Shared/Charts/HalfDoughnutChart.vue';
 import BarChart from './Shared/Charts/BarChart.vue';
 import GroupBarChart from './Shared/Charts/GroupBarChart.vue';
 import AnalyticsLineChart from './Shared/Charts/AnalyticsLineChart.vue';
@@ -71,7 +71,7 @@ createInertiaApp({
             .component('TextEditor', TextEditor)
             .component('DoughnutChart', DoughnutChart)
             .component('ComplianceProgress', ComplianceProgress)
-            .component('ComplianceStatus', ComplianceStatus)
+            .component('HalfDoughnutChart', HalfDoughnutChart)
             .component('BarChart', BarChart)
             .component('PieChart', PieChart)
             .component('GroupBarChart', GroupBarChart)

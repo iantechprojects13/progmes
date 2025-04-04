@@ -14,9 +14,11 @@
                 <option value="">Select role</option>
                 <option value="Super Admin">Super Admin</option>
                 <option value="Regional Director">Regional Director</option>
+                <option value="Chief Education Program Specialist">Chief Education Program Specialist</option>
                 <option value="Supervising Education Program Specialist">Supervising Education Program Specialist</option>
                 <option value="Education Supervisor">Education Supervisor</option>
                 <option value="Vice-President for Academic Affairs">Vice-President for Academic Affairs</option>
+                <option value="Librarian">Librarian</option>
                 <option value="Dean">Dean</option>
                 <option value="Program Head">Program Head</option>
             </select>

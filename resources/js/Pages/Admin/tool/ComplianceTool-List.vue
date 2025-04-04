@@ -58,9 +58,7 @@
         <template v-slot:main-content>
             <content-table>
                 <template v-slot:table-head>
-                    <th>Institution</th>
-                    <th>Program</th>
-                    <th>Major</th>
+                    <th>Program/Institution</th>
                     <th>CMO</th>
                     <th>Status</th>
                 </template>
@@ -74,21 +72,23 @@
                         :key="program.id"
                         >
                         <td>
-                            {{ program.institution?.name }}
-                        </td>
-                        <td>
-                            {{ program.program?.program }}
-                        </td>
-                        <td>
-                            {{ program.program?.major }}
+                            <div>
+                                {{ program.program?.program }}
+                                 
+                                <span v-if="program.program?.major != null">
+                                    - {{ program.program?.major }}
+                                </span>
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                {{ program.institution?.name }}
+                            </div>
                         </td>
                         <td>
                             <div>
                                 CMO No.{{
                                     program.evaluation_form[0]?.cmo?.number
-                                }}
-                                Series of
-                                {{ program.evaluation_form[0]?.cmo?.series }}
+                                }},
+                                S.{{ program.evaluation_form[0]?.cmo?.series }}
                                 <!-- Version {{ program.evaluation_form[0]?.cmo?.version }} -->
                             </div>
                         </td>

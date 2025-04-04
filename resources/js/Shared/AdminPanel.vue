@@ -15,7 +15,7 @@
             </div>
             <div ref="adminPanelContainer"
                 class="relative transition-all duration-200 md:visible md:whitespace-nowrap h-0 md:h-auto md:border-none rounded md:rounded-none overflow-hidden"
-                :class="[{ 'border-none invisible': !isMenuOpen }, { 'h-60': isMenuOpen }]">
+                :class="[{ 'border-none invisible': !isMenuOpen }, { 'h-72': isMenuOpen }]">
                 <div class="w-full sm:flex-row md:block md:text-gray-300">
                     <Link :href="route('admin.users.list')" preserved-state>
                     <button
@@ -39,6 +39,14 @@
                         :class="{ 'md:text-white text-blue-500 md:border-b-blue-400 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-blue-700 font-bold': highlight('form') }">
                         Compliance Tool
                     </button>
+                    </Link>
+
+                    <Link :href="route('admin.library.list')">
+                        <button
+                            class="select-none h-12 md:w-auto md:px-5 w-full md:hover:bg-blue-700 hover:bg-gray-200  rounded"
+                            :class="{ 'md:text-white text-blue-500 md:border-b-blue-400 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-blue-700 font-bold': highlight('library') }">
+                            Library Compliance
+                        </button>
                     </Link>
 
                     <Link :href="route('admin.hei.list')">
@@ -73,7 +81,7 @@
                     form: ['/admin/tool'],
                     institution: ['/admin/higher-education-institutions'],
                     program: ['/admin/program'],
-                    settings: ['/admin/settings'],
+                    library: ['/admin/library'],
                 },
                 isMenuOpen: false,
             }
@@ -93,8 +101,8 @@
                     return this.admin_urls.program.includes(this.$page.url.slice(0, 14));
                 } else if (admin_btn == 'form') {
                     return this.admin_urls.form.includes(this.$page.url.slice(0, 11));
-                } else if (admin_btn == 'settings') {
-                    return this.admin_urls.settings.includes(this.$page.url.slice(0, 15));
+                } else if (admin_btn == 'library') {
+                    return this.admin_urls.library.includes(this.$page.url.slice(0, 14));
                 }
 
             },

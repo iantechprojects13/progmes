@@ -88,7 +88,7 @@ class UserController extends Controller
             ->paginate($show)
             ->withQueryString();
 
-        return Inertia::render('Admin/User-List', [
+        return Inertia::render('Admin/user/User-List', [
             'user_list' => $userlist,
             'requestCount' => User::requestCount($role),
             'filters' => $request->only(['search', 'type']) + ['show' => $show],
@@ -108,7 +108,7 @@ class UserController extends Controller
             ->paginate($show)
             ->withQueryString();
 
-        return Inertia::render('Admin/User-Request', [
+        return Inertia::render('Admin/user/User-Request', [
             'user_list' => $userlist,
             'requestCount' => User::requestCount($role),
             'filters' => $request->only(['search', 'type']) + ['show' => $show],
@@ -130,7 +130,7 @@ class UserController extends Controller
             ->paginate($show)
             ->withQueryString();
 
-        return Inertia::render('Admin/User-Inactive', [
+        return Inertia::render('Admin/user/User-Inactive', [
             'user_list' => $userlist,
             'requestCount' => User::requestCount($role),
             'filters' => $request->only(['search', 'type']) + ['show' => $show],

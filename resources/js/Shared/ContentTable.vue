@@ -62,6 +62,7 @@
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
   text-align: right; /* Align content to the right */
   white-space: nowrap; /* Prevent text from wrapping */
+  border-bottom: 1px solid #d6d8e1; /* Add bottom border to the last column */
 }
 
 /* Ensure proper background for striped rows */

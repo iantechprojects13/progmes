@@ -2,7 +2,6 @@
     <Head title="Evaluation Compliance Tool" />
     <page-title title="Program Evaluation" />
     <content-container
-        :hasStickyDiv="true"
         :hasTopMainContent="true"
         :hasSearch="true"
         :hasFilters="true"
@@ -18,17 +17,6 @@
                 <div
                     class="w-full md:w-fit md:mt-0 mt-3 flex flex-col md:flex-row justify-center gap-2"
                 >
-                    <Link
-                        :href="'/ched/evaluation/' + evaluation.id + '/report'"
-                    >
-                        <button
-                            class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <span class="flex items-center">
-                                Generate Report
-                            </span>
-                        </button>
-                    </Link>
                     <button
                         @click="update"
                         ref="saveBtn"
@@ -94,11 +82,11 @@
         <template v-slot:options>
             <options
                 @filter="toggleFilterModal"
-                :href="`/ched/evaluation/${evaluation.id}/evaluate`"
+                :href="`/admin/library/${evaluation.id}/evaluate`"
             />
         </template>
         <template v-slot:main-content>
-            <div class="p-3">
+            <!-- <div class="p-3">
                 <div
                     class="w-full p-2 md:p-8 my-3 md:shadow-lg md:border rounded-xl"
                 >
@@ -159,9 +147,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
-            <div class="p-3">
+            <!-- <div class="p-3">
                 <div
                     class="w-full p-2 md:p-5 my-3 md:shadow-lg md:border rounded-xl"
                 >
@@ -267,7 +255,7 @@
                         </template>
                     </content-table>
                 </div>
-            </div>
+            </div> -->
         </template>
     </content-container>
 

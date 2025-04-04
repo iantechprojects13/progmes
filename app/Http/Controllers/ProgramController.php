@@ -45,7 +45,7 @@ class ProgramController extends Controller
         ->paginate($show)
         ->withQueryString();
 
-        return Inertia::render('Admin/Program', [
+        return Inertia::render('Admin/program/Program-List', [
             'program_list' => $programlist,
             'canEdit' => $canEdit,
             'canAdd' => $canAdd,
@@ -55,7 +55,7 @@ class ProgramController extends Controller
     }
 
     public function create() {
-        return Inertia::render('Admin/Program-Create', [
+        return Inertia::render('Admin/program/Program-Create', [
             'discipline_list' => DisciplineModel::orderBy('discipline', 'asc')->get(),
         ]);
     }
@@ -87,7 +87,7 @@ class ProgramController extends Controller
         $programModel = ProgramModel::find($program);
 
         if($programModel) {
-            return Inertia::render('Admin/Program-Edit', [
+            return Inertia::render('Admin/program/Program-Edit', [
                 'discipline_list' => DisciplineModel::all(),
                 'program' => $programModel,
             ]);

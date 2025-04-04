@@ -69,7 +69,7 @@ class CMOController extends Controller
         ->paginate($show)
         ->withQueryString();
 
-        return Inertia::render('Admin/CMO', [
+        return Inertia::render('Admin/cmo/CMO-List', [
             'cmo_list' => $activelist,
             'canImport' => $canImport,
             'canDraft' => $canDraft,
@@ -131,31 +131,26 @@ class CMOController extends Controller
             ->paginate($show)
             ->withQueryString();
         
-        return Inertia::render('Admin/CMO-Draft', [
+        return Inertia::render('Admin/cmo/CMO-Draft', [
             'cmo_list' => $draftlist,
             'canEdit' => $canEdit,
             'filters' => $request->only(['search']) + ['show' => $show],
         ]);
     }
 
-
-    public function create() {
-        return Inertia::render('Admin/CMO-Create');
-    }
-
     public function view(CMOModel $cmo) {
         $cmoModel = CMOModel::where('id', $cmo->id)->with('discipline', 'program', 'criteria')->first();
-        return Inertia::render('Admin/CMO-View',[
+        return Inertia::render('Admin/cmo/CMO-View',[
             'cmo' => $cmoModel,
         ]);
     }
-
+    
     public function edit(Request $request) {
 
         $cmo = CMOModel::where('id', $request->id)->with('criteria')->first();
         
         if ($cmo->status == 'Published') {
-            return redirect('/admin/CMOs')->with('failed', 'This CMO can\'t be edited.');
+            return redirect('/admin/cmo/CMOs')->with('failed', 'This CMO can\'t be edited.');
         }
 
         $user = Auth::user();
@@ -176,7 +171,7 @@ class CMOController extends Controller
         }
 
 
-        return Inertia::render('Admin/CMO-Edit', [
+        return Inertia::render('Admin/cmo/CMO-Edit', [
             'cmo' => $cmo,
             'discipline_list' => $disciplineList,
             'program_list' => $programList,

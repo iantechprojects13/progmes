@@ -64,6 +64,10 @@
             </div>
         </template>
     </content-container>
+    <pre>
+        {{ profile }}
+        {{ roles }}
+    </pre>
 </template>
 
 <script setup>

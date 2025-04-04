@@ -1,0 +1,43 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('lib_evaluation_form', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('institutionId')->nullable();
+            $table->string('effectivity')->nullable();
+            $table->date('evaluationDate')->nullable();
+            $table->date('submissionDate')->nullable();
+            $table->date('archivedDate')->nullable();
+            $table->string('conforme1', 255)->nullable();
+            $table->string('conforme1Title', 255)->nullable();
+            $table->string('conforme2', 255)->nullable();
+            $table->string('conforme2Title', 255)->nullable();
+            $table->string('evaluatedBy', 255)->nullable();
+            $table->string('evaluatedByTitle', 255)->nullable();
+            $table->string('reviewedBy', 255)->nullable();
+            $table->string('reviewedByTitle', 255)->nullable();
+            $table->string('notedBy', 255)->nullable();
+            $table->string('notedByTitle', 255)->nullable();
+            $table->string('status')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('lib_evaluation_form');
+    }
+};

@@ -125,5 +125,20 @@ class UserSeeder extends Seeder
             $user->save();
         }
 
+        for ($i = 0; $i < 105; $i++) {
+            $name = $faker->name;
+            $email = $faker->unique()->safeEmail;
+
+            $user = new User();
+            $user->name = $name;
+            $user->email = $email;
+            $user->role = 'Librarian';
+            $user->isActive = 1;
+            $user->isVerified = 1;
+            $user->type = 'HEI';
+            $user->avatar = '/assets/user.png';
+            $user->save();
+        }
+
     }
 }

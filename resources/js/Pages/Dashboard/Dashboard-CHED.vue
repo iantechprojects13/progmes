@@ -402,10 +402,10 @@
                         <h3 class="text-lg font-semibold text-gray-700 mb-2">
                             Quarterly Distribution
                         </h3>
-                        <compliance-status v-if="quarterData && quarterData.some(data => data !== 0)" :dataItem="quarterData" :color="['#60A5FA', '#4ADE80', '#FB923C', '#A78BFA']"
+                        <half-doughnut-chart v-if="quarterData && quarterData.some(data => data !== 0)" :dataItem="quarterData" :color="['#60A5FA', '#4ADE80', '#FB923C', '#A78BFA']"
                         :labels="['1st Quarter', '2nd Quarter', '3rd Quarter', '4th Quarter']"
                         >
-                        </compliance-status>
+                        </half-doughnut-chart>
                         <div v-else class="py-32 w-full text-center text-gray-500">
                             No data to display
                         </div>

@@ -37,7 +37,7 @@ class DisciplineController extends Controller
         ->withQueryString();
 
         
-        return Inertia::render('Admin/Discipline', [
+        return Inertia::render('Admin/discipline/Discipline-List', [
             'discipline_list' => $disciplinelist,
             'canEdit' => $canEdit,
             'canAdd' => $canAdd,
@@ -48,14 +48,14 @@ class DisciplineController extends Controller
     }
     
     public function create() {
-        return Inertia::render('Admin/Discipline-Create');
+        return Inertia::render('Admin/discipline/Discipline-Create');
     }
 
     public function edit($id) {
         $disciplineModel = DisciplineModel::find($id);
 
         if($disciplineModel) {
-            return Inertia::render('Admin/Discipline-Edit', [
+            return Inertia::render('Admin/discipline/Discipline-Edit', [
                 'discipline' => $disciplineModel,
             ]);
         }

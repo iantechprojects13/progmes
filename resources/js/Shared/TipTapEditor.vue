@@ -5,7 +5,7 @@
             <!-- Display Content -->
             <div
                 @click="openEditor"
-                class="prose max-w-none p-4 min-h-[100px] border border-gray-400 rounded-lg bg-white relative overflow-auto cursor-pointer"
+                class="prose max-w-none p-4 min-h-[5rem] border border-gray-400 rounded-lg bg-white relative overflow-auto cursor-pointer"
             >
                 <div v-html="modelValue || ''"></div>
             </div>
@@ -430,13 +430,7 @@ onMounted(() => {
     // Handle escape key to exit editor modal
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
-            if (isModalOpen.value) {
-                closeModalEditor();
-            } else {
-                showColorPicker.value = false;
-                showRowMenu.value = false;
-                showColumnMenu.value = false;
-            }
+            handleClickOutside();
         }
     });
 });
