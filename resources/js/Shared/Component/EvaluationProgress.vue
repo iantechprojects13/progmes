@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center">
+  <div class="flex flex-col">
     <div class="h-5 w-32 bg-gray-400 rounded-lg relative overflow-hidden">
       <div 
         class="absolute left-0 h-full bg-blue-500 transition-all duration-1000 ease-out"

@@ -13,6 +13,7 @@ use App\Models\ProgramModel;
 use App\Models\DisciplineModel;
 use App\Models\EvaluationFormModel;
 use App\Models\EvaluationItemModel;
+use App\Models\LibEvaluationFormModel;
 use App\Models\RoleModel;
 use Carbon\Carbon;
 use Inertia\Inertia;
@@ -277,6 +278,15 @@ class DashboardController extends Controller
         ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable', 'no_status')
         ->get();
 
+        $libComplianceTools = LibEvaluationFormModel::query()
+        ->where('effectivity', $acadYear)
+        ->whereNot('status', 'Deployed')
+        ->whereHas('institution', function ($query) use ($institution) {
+            $query->where('institutionId', $institution);
+        })
+        ->with('institution', 'item', 'complied', 'not_complied', 'not_applicable', 'no_status')
+        ->get();
+
         $tools = EvaluationFormModel::where('effectivity', $acadYear)
         ->when($request->query('discipline'), function($query) use ($request, $discipline) {
             $query->where('disciplineId', $discipline);
@@ -316,6 +326,16 @@ class DashboardController extends Controller
                 'nostatus' => $item->no_status->count(),
                 'progress' => $item->item->count() != 0 ? intval(round((($item->complied->count() + $item->not_complied->count() + $item->not_applicable->count())/$item->item->count())*100)) : 0,
                 'updates' => $item->item()->whereDay('updated_at', '=', now()->day)->count(),
+            ]),
+            'libComplianceTool' => $libComplianceTools->map(fn($item) => [
+                'id' => $item->id,
+                'status' => $item->status,
+                'institution' => $item->institution->name,
+                'complied' => $item->complied->count(),
+                'notcomplied' => $item->not_complied->count(),
+                'notapplicable' => $item->not_applicable->count(),
+                'nostatus' => $item->no_status->count(),
+                'progress' => $item->item->count() != 0 ? intval(round((($item->complied->count() + $item->not_complied->count() + $item->not_applicable->count())/$item->item->count())*100)) : 0,
             ]),
             'role' => $user->role,
             'academicyear' => $acadYear,

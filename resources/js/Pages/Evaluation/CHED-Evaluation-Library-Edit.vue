@@ -1,6 +1,6 @@
 <template>
-    <Head title="Evaluation Compliance Tool" />
-    <page-title title="Program Evaluation" />
+    <Head title="Library Compliance Evaluation Tool" />
+    <page-title title="Library Compliance Evaluation" />
     <content-container
         :hasStickyDiv="true"
         :hasTopMainContent="true"
@@ -19,7 +19,7 @@
                     class="w-full md:w-fit md:mt-0 mt-3 flex flex-col md:flex-row justify-center gap-2"
                 >
                     <Link
-                        :href="'/ched/evaluation/' + evaluation.id + '/report'"
+                        :href="'/ched/library/evaluation/' + evaluation.id + '/report'"
                     >
                         <button
                             class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
@@ -94,7 +94,7 @@
         <template v-slot:options>
             <options
                 @filter="toggleFilterModal"
-                :href="`/ched/evaluation/${evaluation.id}/evaluate`"
+                :href="`/ched/library/evaluation/${evaluation.id}/evaluate`"
             />
         </template>
         <template v-slot:main-content>
@@ -113,39 +113,12 @@
                                     </p>
                                     <div>
                                         {{
-                                            evaluation.institution_program
-                                                .institution.name
+                                            evaluation.institution?.name
                                         }}
                                     </div>
                                 </div>
                             </div>
 
-                            <div
-                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                <div class="w-full">
-                                    <p class="text-sm text-gray-500">Program</p>
-                                    {{
-                                        evaluation.institution_program.program
-                                            .program
-                                    }}
-                                    <span
-                                        v-if="
-                                            evaluation.institution_program
-                                                .program.major
-                                        "
-                                    >
-                                        -
-                                        {{
-                                            evaluation.institution_program
-                                                .program.major
-                                        }}</span
-                                    >
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="grid md:grid-cols-2 gap-6">
                             <div
                                 class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
                             >
@@ -275,8 +248,7 @@
     <modal
         :showModal="showFilterModal"
         @close="toggleFilterModal"
-        width="sm"
-        height="long"
+        width="md"
         title="Filters"
     >
         <div>
@@ -334,12 +306,6 @@ defineOptions({ layout: Layout });
 const props = defineProps([
     "evaluation",
     "items",
-    "deficiencyReport",
-    "evaluationDate",
-    "evaluatedBy",
-    "reviewedBy",
-    "notedBy",
-    "auth",
     "filters",
 ]);
 
@@ -416,7 +382,7 @@ function toggleFilterModal() {
 }
 
 function update() {
-    router.post("/ched/evaluation/update", form, {
+    router.post("/ched/library/evaluation/update", form, {
         onSuccess: () => {
             hasUnsavedChanges.value = false;
          },
@@ -428,7 +394,7 @@ function update() {
 
 
 function filter() {
-    query.get("/ched/evaluation/" + props.evaluation.id + "/evaluate", {
+    query.get("/ched/library/evaluation/" + props.evaluation.id + "/evaluate", {
         preserveState: false,
         preserveScroll: true,
         replace: true,

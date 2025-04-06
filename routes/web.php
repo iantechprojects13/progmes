@@ -110,15 +110,21 @@ Route::post('/ched/evaluation/monitored', [CHEDFormController::class, 'monitored
 Route::post('/ched/evaluation/lock', [CHEDFormController::class, 'lock'])->name('form.ched.lock');
 Route::post('/ched/evaluation/unlock', [CHEDFormController::class, 'unlock'])->name('form.ched.unlock');
 
-//Evaluation for librarian
-Route::get('/hei/library/evaluation', [HEILibraryEvaluationController::class, 'index'])->middleware(['auth', 'user.verified', 'librarian'])->name('hei.library.evaluation.list');
+//Library Evaluation
+Route::get('/library', [EvaluationController::class, 'library'])->middleware(['auth', 'user.verified'])->name('library.evaluation');
+Route::get('/hei/library/evaluation', [HEILibraryEvaluationController::class, 'index'])->middleware(['auth', 'user.verified', 'hei.vp.librarian'])->name('hei.library.evaluation.list');
 Route::get('hei/library/{tool}/edit', [HEILibraryEvaluationController::class, 'edit'])->middleware(['auth', 'type.hei', 'librarian'])->name('hei.library.evaluation.edit');
-Route::get('hei/library/{tool}/view', [HEILibraryEvaluationController::class, 'view'])->middleware(['auth', 'type.hei', 'librarian'])->name('hei.library.tool.view');
+Route::get('hei/library/{tool}/view', [HEILibraryEvaluationController::class, 'view'])->middleware(['auth', 'type.hei', 'hei.vp.librarian'])->name('hei.library.tool.view');
 Route::post('hei/library/evaluation/update', [HEILibraryEvaluationController::class, 'update'])->middleware(['auth', 'type.hei', 'librarian'])->name('hei.library.evaluation.update');
 Route::post('/hei/library/evaluation/link', [HEILibraryEvaluationController::class, 'submitLink'])->name('hei.library.evaluation.link');
 Route::post('/hei/library/evaluation/submit', [HEILibraryEvaluationController::class, 'completed'])->name('hei.library.evaluation.submit');
 Route::post('/hei/library/evaluation/link/delete', [HEILibraryEvaluationController::class, 'deleteLink'])->name('hei.library.evaluation.link.delete');
 Route::post('hei/library/tool/create', [HEILibraryEvaluationController::class, 'store'])->middleware('auth')->name('hei.library.tool.store');
+Route::get('/ched/library/evaluation', [CHEDLibraryEvaluationController::class, 'libraryEvaluationList'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.library.evaluation.list');
+Route::get('ched/library/evaluation/{tool}/view', [CHEDLibraryEvaluationController::class, 'view'])->middleware(['auth', 'type.ched'])->name('ched.library.tool.view');
+Route::get('ched/library/evaluation/{tool}/evaluate/', [CHEDLibraryEvaluationController::class, 'evaluate'])->middleware(['auth', 'type.ched', 'evaluate'])->name('ched.library.tool.evaluate');
+Route::post('ched/library/evaluation/update', [CHEDLibraryEvaluationController::class, 'update'])->middleware(['auth', 'type.ched'])->name('ched.library.tool.update');
+Route::get('ched/library/evaluation/{tool}/report', [CHEDLibraryEvaluationController::class, 'report'])->middleware(['auth', 'type.ched'])->name('ched.library.tool.report');
 
 // PROGRAM APPLICATION
 // gpr
@@ -214,8 +220,11 @@ Route::post('/evaluation/notify', [EvaluationController::class, 'sendEmail'])->m
 //Generate Report
 Route::post('/report', [PDFController::class, 'report'])->middleware(['auth'])->name('report.create');
 Route::post('/report/generate', [PDFController::class, 'generateReport'])->middleware(['auth'])->name('report.generate');
+Route::post('/report/library/generate', [PDFController::class, 'generateReportForLibrary'])->middleware(['auth'])->name('report.library.generate');
 Route::get('/report/monitoring/{tool}/{orientation}/{type}', [PDFController::class, 'monitoringReport'])->middleware(['auth'])->name('report.monitoring');
 Route::get('/report/deficiency/{tool}/{orientation}/{type}', [PDFController::class, 'deficiencyReport'])->middleware(['auth'])->name('report.deficiency');
+Route::get('/report/library/monitoring/{tool}/{orientation}/{type}', [PDFController::class, 'monitoringReportForLibrary'])->middleware(['auth'])->name('report.library.monitoring');
+Route::get('/report/library/deficiency/{tool}/{orientation}/{type}', [PDFController::class, 'deficiencyReportForLibrary'])->middleware(['auth'])->name('report.library.deficiency');
 
 
 

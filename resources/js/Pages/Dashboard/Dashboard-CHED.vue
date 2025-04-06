@@ -36,7 +36,7 @@
                     <p class="text-2xl font-bold text-blue-600">
                         {{ readyforvisit || 0 }}
                     </p>
-                    <p class="text-gray-600 mt-2 text-sm">Ready for visit</p>
+                    <p class="text-gray-600 mt-2 text-sm">Completed</p>
                 </div>
                 <div class="p-2 bg-blue-100 rounded-lg text-blue-500">
                     <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -786,7 +786,7 @@ const titleStatus = ref("");
 const viewTools = async (academicyear, status) => {
   viewToolModal.value = true;
   fetchingData.value = true;
-  titleStatus.value = status == 'Submitted' ? 'Ready for visit' : status ;
+  titleStatus.value = status == 'Submitted' ? 'Completed' : status ;
     
   try {
     const response = await axios.get(`/api/dashboard/tool/${academicyear}/${status}/${props.supervisor}/${props.program}/${props.hei}/view`);

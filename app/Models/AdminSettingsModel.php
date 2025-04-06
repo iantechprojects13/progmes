@@ -13,6 +13,9 @@ class AdminSettingsModel extends Model
 
     protected $fillable = [
         'currentAcademicYear',
+        'setting_category',
+        'setting_key',
+        'setting_value',
     ];
 
     protected $hidden = [

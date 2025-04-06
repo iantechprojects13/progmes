@@ -66,57 +66,57 @@
                         </td>
                         <td>
                             <button 
-                                    @click="view(item.id)"
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-emerald-700 hover:bg-emerald-100 tooltipForActions"
-                                    data-tooltip="View">
-                                    <i class="fas fa-eye text-lg"></i>
-                                </button>
+                                @click="view(item.id)"
+                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-emerald-700 hover:bg-emerald-100 tooltipForActions"
+                                data-tooltip="View">
+                                <i class="fas fa-eye text-lg"></i>
+                            </button>
 
-                                <button 
-                                    v-show="canEvaluate"
-                                    @click="evaluate(item.id)"
-                                    :disabled="item.status === 'In progress'"
-                                    :class="{'text-gray-400 hover:bg-gray-100': item.status === 'In progress', 'text-blue-700 hover:bg-blue-100': item.status !== 'In progress'}"
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 tooltipForActions disabled:cursor-not-allowed"
-                                    data-tooltip="Evaluate">
-                                    <i class="fas fa-edit text-lg"></i>
-                                </button>
+                            <button 
+                                v-show="canEvaluate"
+                                @click="evaluate(item.id)"
+                                :disabled="item.status === 'In progress'"
+                                :class="{'text-gray-400 hover:bg-gray-100': item.status === 'In progress', 'text-blue-700 hover:bg-blue-100': item.status !== 'In progress'}"
+                                class="inline-flex items-center justify-center rounded-full h-10 w-10 tooltipForActions disabled:cursor-not-allowed"
+                                data-tooltip="Evaluate">
+                                <i class="fas fa-edit text-lg"></i>
+                            </button>
 
-                                <button 
-                                    v-show="canEvaluate" 
-                                    v-if="item.isLocked"
-                                    @click="setId(item.id); unlockModal = true;"
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-gray-700 hover:bg-gray-100 tooltipForActions"
-                                    data-tooltip="Unlock">
-                                    <i class="fas fa-unlock text-lg"></i>
-                                </button>
+                            <button 
+                                v-show="canEvaluate" 
+                                v-if="item.isLocked"
+                                @click="setId(item.id); unlockModal = true;"
+                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-gray-700 hover:bg-gray-100 tooltipForActions"
+                                data-tooltip="Unlock">
+                                <i class="fas fa-unlock text-lg"></i>
+                            </button>
 
-                                <button 
-                                    v-show="canEvaluate" 
-                                    v-else
-                                    @click="setId(item.id); lockModal = true;"
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 tooltipForActions"
-                                    data-tooltip="Lock">
-                                    <i class="fas fa-lock text-lg"></i>
-                                </button>
+                            <button 
+                                v-show="canEvaluate" 
+                                v-else
+                                @click="setId(item.id); lockModal = true;"
+                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 tooltipForActions"
+                                data-tooltip="Lock">
+                                <i class="fas fa-lock text-lg"></i>
+                            </button>
 
-                                <button 
-                                    v-show="canEmail"
-                                    @click="setProgress(item.progress); toggleEmailModal(); email.toolId = item.id;"
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-orange-700 hover:bg-orange-100 tooltipForActions"
-                                    data-tooltip="Send Email">
-                                    <i class="fas fa-envelope text-lg"></i>
-                                </button>
+                            <!-- <button 
+                                v-show="canEmail"
+                                @click="setProgress(item.progress); toggleEmailModal(); email.toolId = item.id;"
+                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-orange-700 hover:bg-orange-100 tooltipForActions"
+                                data-tooltip="Send Email">
+                                <i class="fas fa-envelope text-lg"></i>
+                            </button> -->
 
-                                <button 
-                                    v-show="canEvaluate"
-                                    @click="setId(item.id); monitoredModal = true;"
-                                    :disabled="item.status === 'In progress'"
-                                    :class="{'text-gray-400 hover:bg-gray-100': item.status === 'In progress', 'text-blue-700 hover:bg-blue-100': item.status !== 'In progress'}"
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 tooltipForActions disabled:cursor-not-allowed"
-                                    data-tooltip="Mark as monitored">
-                                    <i class="fas fa-check text-lg"></i>
-                                </button>
+                            <button 
+                                v-show="canEvaluate"
+                                @click="setId(item.id); monitoredModal = true;"
+                                :disabled="item.status === 'In progress'"
+                                :class="{'text-gray-400 hover:bg-gray-100': item.status === 'In progress', 'text-blue-700 hover:bg-blue-100': item.status !== 'In progress'}"
+                                class="inline-flex items-center justify-center rounded-full h-10 w-10 tooltipForActions disabled:cursor-not-allowed"
+                                data-tooltip="Mark as monitored">
+                                <i class="fas fa-check text-lg"></i>
+                            </button>
                         </td>
                     </tr>
                 </template>
@@ -144,7 +144,7 @@
                 >
                     <option :value="null">All</option>
                     <option value="In progress">In Progress</option>
-                    <option value="Submitted">Ready for visit</option>
+                    <option value="Submitted">Completed</option>
                     <option value="For Re-evaluation">For Re-evaluation</option>
                 </select>
             </div>
@@ -207,9 +207,8 @@
         </template>
         <template v-slot:buttons>
             <button @click="lock" :disabled="locking"
-                class="select-none text-white h-10 w-20 rounded bg-red-500">
-                <span v-if="locking"><i class="fas fa-spinner animate-spin"></i></span>
-                <span v-else>Lock</span>
+                class="select-none text-white h-10 w-20 rounded-lg text-sm bg-red-600 hover:bg-red-700">
+                Lock
             </button>
         </template>
     </confirmation>

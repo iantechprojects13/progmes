@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{{ asset('assets/cropped-ched_logo.png') }}" type="image/x-icon">
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-    <title>Program Monitoring Report</title>
+    <title>Library Monitoring Report</title>
     <style>
         @page {
             margin: 20px 38px 20px 38px;
@@ -47,7 +47,9 @@
             text-align: center;
         }
 
-
+        .footer:after {
+            content: "Page " counter(page) " of " counter(pages);
+        }
 
         #ched {
             font-size: 11pt;
@@ -82,6 +84,10 @@
         .pagenum:before {
             content: counter(page);
         }
+
+        .totalpages:before {
+            content: counter(pages);
+        }
     </style>
 </head>
 
@@ -107,24 +113,28 @@
             </div>
             <div>www.ro11.ched.ph | chedro11@ched.gov.ph | (082) 295-3418</div>
         </div>
-        <div class="pagenum"></div>
+        <!-- <div>Page <span class="pagenum"></span> of <span class="totalpages"></span></div> -->
+         
+        <div class="footer">
+            Page <span class="pageNumber"></span> of <span class="totalPages"></span>
+        </div>
     </footer>
     <main>
         <div>
             <div style="width: 100%; text-align: center; margin-top: 20px;">
-                <b>PROGRAM MONITORING REPORT</b>
+                <b>LIBRARY MONITORING REPORT</b>
             </div>
             <div style="margin-top: 30px;">
                 <div style="display: inline-block"><b>HEI Name:</b></div>
-                <div style="display: inline-block;">{{ $tool->institution_program->institution->name }}</div>
+                <div style="display: inline-block;">{{ $tool->institution->name }}</div>
                 <br>
 
-                <div style="display: inline-block; margin-top: 5px"><b>Program:</b></div>
-                <div style="display: inline-block;">{{ $tool->institution_program->program->program }}</div>
+                <div style="display: inline-block; margin-top: 5px"><b>Department:</b></div>
+                <div style="display: inline-block;">Library</div>
                 <br>
 
                 <div style="display: inline-block; margin-top: 5px"><b>Monitoring/Evaluation Reference:</b></div>
-                <div style="display: inline-block;">CMO {{ $tool->cmo->number }}, S. {{ $tool->cmo->series }}</div>
+                <div style="display: inline-block;">CMO No.22, S.2021</div>
                 <br>
 
                 <div style="display: inline-block; margin-top: 5px"><b>Monitoring/Evaluation Date:</b></div>
@@ -156,24 +166,23 @@
             </table>
 
             <!-- Signatories -->
-            <div style="margin-top: 40px; width: 100%; overflow: hidden;">
-                <!-- Row 1 -->
-                <div style="width: 100%; overflow: hidden; margin-bottom: 40px; margin-top: 30px;">
-                    <div style="float: left; width: 33%; page-break-inside: avoid; margin-left: 3%;">
+            <div style="margin-top: 50px; width: 100%; overflow: hidden;">
+                <div style="width: 100%; overflow: hidden; margin-top: 40px;">
+                    <div style="float: left; width: 31%; page-break-inside: avoid; margin-left: 3%;">
                         <div>Conforme:</div>
                         <div style="margin: 8px 20px;">
                             <div>{{ $tool->conforme1 }}</div>
                             <div>{{ $tool->conforme1Title }}</div>
                         </div>
                     </div>
-                    <div style="float: left; width: 33%; page-break-inside: avoid; margin-left: 4%;">
+                    <div style="float: left; width: 31%; page-break-inside: avoid; margin-left: 4%;">
                         <div>Conforme:</div>
                         <div style="margin: 8px 20px;">
                             <div>{{ $tool->conforme2 }}</div>
                             <div>{{ $tool->conforme2Title }}</div>
                         </div>
                     </div>
-                    <div style="float: left; width: 33%; page-break-inside: avoid; margin-left: 4%;">
+                    <div style="float: left; width: 31%; page-break-inside: avoid; margin-left: 4%;">
                         <div>Evaluated by:</div>
                         <div style="margin: 8px 20px;">
                             <div>{{ $tool->evaluatedBy }}</div>
@@ -182,42 +191,23 @@
                     </div>
                     <div style="clear: both;"></div>
                 </div>
-                
-                <!-- Row 2 -->
-                <!-- <div style="width: 100%; overflow: hidden; margin-bottom: 40px; margin-top: 30px;">
-                    <div style="float: left; width: 45%; page-break-inside: avoid; margin-left: 3%;">
-                        <div>Evaluated by:</div>
-                        <div style="margin: 8px 20px;">
-                            <div>{{ $tool->evaluatedBy }}</div>
-                            <div>{{ $tool->evaluatedByTitle }}</div>
-                        </div>
-                    </div>
-                    <div style="float: left; width: 45%; page-break-inside: avoid; margin-left: 4%;">
-                        <div>Reviewed by:</div>
-                        <div style="margin: 8px 20px;">
-                            <div>{{ $tool->reviewedBy }}</div>
-                            <div>{{ $tool->reviewedByTitle }}</div>
-                        </div>
-                    </div>
-                    <div style="clear: both;"></div>
-                </div> -->
-                
-                <!-- Row 3 (only one item) -->
-                <!-- <div style="width: 100%; overflow: hidden;">
-                    <div style="float: left; width: 45%; page-break-inside: avoid; margin-left: 3%;">
-                        <div>Noted by:</div>
-                        <div style="margin: 8px 20px;">
-                            <div>{{ $tool->notedBy }}</div>
-                            <div>{{ $tool->notedByTitle }}</div>
-                        </div>
-                    </div>
-                    <div style="clear: both;"></div>
-                </div> -->
             </div>
-
-            
         </div>
     </main>
+    <script type="text/php">
+        if (isset($pdf)) {
+            $pdf->page_script('
+                if ($PAGE_COUNT > 1) {
+                    $font = $fontMetrics->get_font("Helvetica", "normal");
+                    $size = 10;
+                    $pageText = "Page $PAGE_NUM of $PAGE_COUNT";
+                    $y = 15;
+                    $x = 520;
+                    $pdf->text($x, $y, $pageText, $font, $size);
+                }
+            ');
+        }
+        </script>
 </body>
 
 </html>

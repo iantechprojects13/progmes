@@ -5,7 +5,7 @@
             <!-- Display Content -->
             <div
                 @click="openEditor"
-                class="prose max-w-none p-4 min-h-[5rem] border border-gray-400 rounded-lg bg-white relative overflow-auto cursor-pointer"
+                class="prose max-w-none min-w-[10rem] p-4 min-h-[5rem] border border-gray-400 rounded-lg bg-white relative overflow-auto cursor-pointer"
             >
                 <div v-html="modelValue || ''"></div>
             </div>
@@ -20,7 +20,7 @@
             >
                 <!-- Modal Header -->
                 <div class="flex justify-between items-center p-4 border-b">
-                    <h3 class="text-lg font-medium">Text Editor</h3>
+                    <h3 class="text-lg font-medium">{{ title }}</h3>
                     <button
                         @click="closeEditor"
                         class="p-2 hover:bg-gray-100 rounded-full transition-colors tooltipForActions"
@@ -295,6 +295,10 @@ const props = defineProps({
         type: String,
         default: "",
     },
+    title: {
+        type: String,
+        default: "Text Editor",
+    }
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -454,7 +458,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style>
+<style scoped>
 /* Minimal required styles that can't be done with Tailwind */
 .ProseMirror {
     min-height: 10rem;

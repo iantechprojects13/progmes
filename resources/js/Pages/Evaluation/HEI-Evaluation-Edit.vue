@@ -10,14 +10,26 @@
                     </div>
                 </div>
                 <div class="w-full md:w-fit md:mt-0 mt-3 flex flex-row justify-center">
-                    <div class="w-full flex flex-row">
+                    <div class="w-full flex flex-row gap-2">
                         <button @click="toggleResubmitModal" v-if="progress[3] == 100 && evaluation.evaluationDate != null"
-                            class="select-none whitespace-nowrap px-3 w-fit text-white bg-blue-500 hover:bg-blue-600 h-10 rounded mr-1">
-                            Resubmit
+                            class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span class="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                Resubmit
+                            </span>
                         </button>
-                        <button @click="toggleReadyForVisitModal" v-else-if="progress[3] == 100 && evaluation.evaluationDate == null"
-                            class="select-none whitespace-nowrap px-3 w-fit text-white bg-gray-700 hover:bg-gray-800 h-10 rounded mr-1">
-                            Ready for visit
+                        <button @click="toggleCompletedModal" v-else-if="progress[3] == 100 && evaluation.evaluationDate == null"
+                            class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span class="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                Completed
+                            </span>
                         </button>
                         <button
                             @click="update"
@@ -81,47 +93,6 @@
                 </div>
             </div>
         </template>
-        <!-- <template v-slot:top-main-content>
-            <div class="flex flex-col xl:flex-row items-center justify-between w-auto rounded border border-gray-300 bg-white my-3 p-5">
-                <div class="w-full text-left">
-                    <div class="w-auto flex flex-row items-center">
-                        <i class="fas fa-institution mr-3 text-blue-500"></i>
-                        <div>{{ evaluation.institution_program.institution?.name }}</div>
-                    </div>
-                    <div class="w-auto flex flex-row items-center">
-                        <i class="fas fa-book mr-3 text-blue-500"></i>
-                        <div>
-                            {{ evaluation.institution_program.program?.program }}
-                            <span></span>
-                        </div>
-                    </div>
-                    <div class="w-auto flex flex-row items-center">
-                        <i class="fas fa-calendar-check mr-3 text-blue-500"></i>
-                        <div>A.Y. {{ evaluation.effectivity }}</div>
-                    </div>
-                </div>
-                <div class="xl:w-auto w-full text-right mt-5 xl:mt-0">
-                    <div class="flex flex-col md:flex-row lg:mt-0 md:w-auto w-full">
-                        <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-300 bg-white">
-                            <div class="w-full font-bold ">{{ progress[0] }}</div>
-                            <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Complied</div>
-                        </div>
-                        <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-300 bg-white">
-                            <div class="w-full font-bold">{{ progress[1] }}</div>
-                            <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Not Complied</div>
-                        </div>
-                        <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-300 bg-white">
-                            <div class="w-full font-bold">{{ progress[2] }}</div>
-                            <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Not Applicable</div>
-                        </div>
-                        <div class=" flex-col xl:mt-0 mt-2 text-center mx-1 p-2 px-3 md:w-fit w-full rounded border border-gray-300 bg-white">
-                            <div class="w-full font-bold">{{ progress[3] }}%</div>
-                            <div class="font-bold text-blue-500 whitespace-nowrap text-sm">Progress</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </template> -->
         <template v-slot:search>
             <search-box v-model="query.search" @submit="filter" />
         </template>
@@ -247,6 +218,9 @@
                             <tip-tap-editor v-model="item.actualSituation" @input="updateData()"></tip-tap-editor>
                         </td>
                         <td>
+                            <div class="text-red-500" v-if="item.selfEvaluationStatus == 'Complied' && item.evidence.length == 0">
+                                *required
+                            </div>
                             <div class="flex flex-col"
                                 :class="{ 'hidden': item.selfEvaluationStatus == 'Not applicable' }"
                                 ref="evidenceFiles">
@@ -281,7 +255,7 @@
                         <td class="p-3 pr-5 text-right whitespace-nowrap">
                             <div class="w-full text-right text-sm visible" ref="actionButtons"
                                 :class="{ 'invisible': item.selfEvaluationStatus == 'Not applicable' }">
-                                <button @click="linkModal = true; evidenceLink = null; linkItem = item.id"
+                                <button @click="toggleLinkModal(); evidenceLink = null; linkItem = item.id"
                                     class="rounded bg-blue-500  text-gray-100 h-8 px-2 tooltipForActions" data-tooltip="Drop link"
                                     :disabled="item.selfEvaluationStatus == 'Not applicable'">
                                     <i class="fas fa-upload mr-2"></i>Link
@@ -329,19 +303,17 @@
         </template>
     </modal>
 
-    <!-- Ready for visit confirmation -->
-    <confirmation @close="toggleReadyForVisitModal" :showModal="readyForVisitModal" title="Ready For Visit" width="md" height="short">
+    <!-- Completed confirmation -->
+    <confirmation @close="toggleCompletedModal" :showModal="completedModal" title="Completed" width="md" height="short">
 
         <template v-slot:message>
-            Are you sure you want to submit this compliance evaluation tool? You won't be able to make changes after
-            submitting.
+            Are you sure you want to mark this compliance evaluation tool as completed? You won't be able to make changes after marking it as completed.
         </template>
 
         <template v-slot:buttons>
             <button class=" text-gray-100 bg-blue-500 hover:text-white hover:bg-blue-600 w-20 h-10 rounded mr-1"
                 @click="submitTool">
-                <span v-if="submitting"><i class="fas fa-spinner animate-spin"></i></span>
-                <span v-else>Submit</span>
+                Submit
             </button>
         </template>
     </confirmation>
@@ -370,20 +342,24 @@
     </div>
     
     <!-- Upload link modal -->
-    <modal :showModal="linkModal" title="Evidence Link" @close="linkModal = false" width="lg" height="long">
-        <div class="text-center">
-            <textarea maxlength="1000" class="w-full h-32 resize-none" placeholder="Input URL/Link here" id="link"
-                v-model="evidenceLink">
-            </textarea>
+    <modal :showModal="linkModal" title="Evidence Link" @close="toggleLinkModal" width="lg">
+        <div v-if="saving" class="py-10">
+            Saving the latest changes, please wait...
         </div>
-        <div v-if="$page.props.errors.link" class="text-red-500">
-            {{$page.props.errors.link}}
+        <div v-else>
+            <div class="text-center">
+                <textarea maxlength="1000" class="w-full rounded-lg border border-gray-400 h-32 resize-none" placeholder="Input URL/Link here" id="link"
+                    v-model="evidenceLink">
+                </textarea>
+            </div>
+            <div v-if="$page.props.errors.link" class="text-red-500">
+                {{$page.props.errors.link}}
+            </div>
         </div>
         <template v-slot:custom-button>
             <button @click="submitLink" :disabled="uploadingLink"
-                class="text-white bg-blue-600 hover:bg-blue-700 w-24 py-2 px-3 rounded border">
-                <span v-if="uploadingLink"><i class="fas fa-spinner animate-spin"></i></span>
-                <span v-else>Upload</span>
+                class="text-white bg-blue-600 hover:bg-blue-700 w-24 py-2 px-3 rounded-lg border">
+                Upload
             </button>
         </template>
     </modal>
@@ -474,10 +450,8 @@ const fileItem = ref(null);
 const evidenceFile = ref(null);
 const inputEvidenceFile = ref([]);
 
-const isEditorOpen = ref(false);
-const textEditorIndex = ref('');
 const texteditor = ref([]);
-const readyForVisitModal = ref(false);
+const completedModal = ref(false);
 const resubmitModal = ref(false);
 
 const actualSituationInput = ref([]);
@@ -507,68 +481,31 @@ function toggleDeleteModal() {
 }
 
 
-// Functions
-function handleTextInput(index, id) {
-    let textarea = actualSituationInput.value[index];
-    textarea.style.height = "128px";
-    let newHeight = textarea.scrollHeight + "px";
-    let maxHeight = 384;
-    textarea.style.height = Math.min(maxHeight, Math.max(128, parseInt(newHeight))) + "px";
-    hasUpdate.value = true;
-    getRowsWithUpdates(id);
-}
-
-function handleTextEditorInput(index, id) {
-    let textEditor = refs.texteditor.value[index];
-    textEditor.style.height = "250px";
-    let newHeight = textEditor.scrollHeight + "px";
-    let maxHeight = 400;
-    textEditor.style.height = Math.min(maxHeight, Math.max(128, parseInt(newHeight))) + "px";
-    hasUpdate.value = true;
-    getRowsWithUpdates(id);
-}
-
-function handleChangeStatus(index, id) {
-    let selfEvaluationStatus = refs.selfEvaluationStatus.value[index];
-    let actualSituationInput = refs.actualSituationInput.value[index];
-    let actionButtons = refs.actionButtons.value[index];
-    let evidenceFiles = refs.evidenceFiles.value[index];
-    hasUpdate.value = true;
-    getRowsWithUpdates(id);
-
-    if (selfEvaluationStatus.value == 'Not applicable') {
-        actualSituationInput.disabled = true;
-        if (!actionButtons.classList.contains('hidden')) {
-            actionButtons.classList.add('hidden');
-        }
-        if (!evidenceFiles.classList.contains('hidden')) {
-            evidenceFiles.classList.add('hidden');
-        }
-
-    } else {
-        actualSituationInput.disabled = false;
-        if (actionButtons.classList.contains('hidden')) {
-            actionButtons.classList.remove('hidden');
-        }
-        if (evidenceFiles.classList.contains('hidden')) {
-            evidenceFiles.classList.remove('hidden');
-        }
-    }
-};
-
-function getRowsWithUpdates(id) {
-    if (!updatedRows.value.includes(id)) {
-        updatedRows.value.push(id);
-    }
-}
-
-
-function toggleReadyForVisitModal() {
-readyForVisitModal.value = !readyForVisitModal.value;
+function toggleCompletedModal() {
+completedModal.value = !completedModal.value;
 }
 
 function toggleResubmitModal() {
 resubmitModal.value = !resubmitModal.value;
+}
+
+function toggleLinkModal() {
+    if (hasUnsavedChanges.value) {
+        saving.value = true;
+        linkModal.value = true;
+        
+        axios.post('/hei/evaluation/update', form)
+            .then(response => {
+                hasUnsavedChanges.value = false;
+                saving.value = false;
+            })
+            .catch(error => {
+                console.error('Error updating evaluation:', error);
+                saving.value = false;
+            });
+    } else {
+        linkModal.value = !linkModal.value;
+    }
 }
 
 // CTRL + S function
@@ -580,6 +517,21 @@ const handleKeyDown = (event) => {
         }
     }
 };
+
+function validateEvidence() {
+  let isValid = true;
+  let errorMessage = '';
+  
+  // Check each item
+  props.items.data.forEach(item => {
+    if (item.selfEvaluationStatus === 'Complied' && (!item.evidence || item.evidence.length === 0)) {
+      isValid = false;
+      errorMessage = 'Evidence is required for items marked as Complied';
+    }
+  });
+  
+  return { isValid, errorMessage };
+}
 
 
 function update() {
@@ -629,19 +581,41 @@ function deleteLink() {
     });
 }
 
-function submitTool() {
-    router.post('/hei/evaluation/submit', props.evaluation, {
-        onStart: () => {
-            submitting.value = true;
-        },
-        onFinish: () => {
-            submitting.value = false;
-        },
-        preserveState: false,
-        preserveScroll: true,
-    });
-}
+// function submitTool() {
+//     router.post('/hei/evaluation/submit', props.evaluation, {
+//         onStart: () => {
+//             submitting.value = true;
+//         },
+//         onFinish: () => {
+//             submitting.value = false;
+//         },
+//         preserveState: false,
+//         preserveScroll: true,
+//     });
+// }
 
+function submitTool() {
+  const { isValid, errorMessage } = validateEvidence();
+
+  if (!isValid) {
+    // Show error message
+    alert(errorMessage);
+    readyForVisitModal.value = false;
+    resubmitModal.value = false;
+    return;
+  }
+  
+  router.post('/hei/evaluation/submit', props.evaluation, {
+    onStart: () => {
+      submitting.value = true;
+    },
+    onFinish: () => {
+      submitting.value = false;
+    },
+    preserveState: false,
+    preserveScroll: true,
+  });
+}
 
 
 watch(evidenceFile, value => {

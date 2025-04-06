@@ -293,7 +293,7 @@
         :hasNoCancelButton="true"
     >
         <div class="w-full items-center md:mr-2 mt-3 md:mt-0">
-            <div>
+            <!-- <div>
                 <p class="text-sm text-gray-600">Paper</p>
                 <div class="mt-2">
                     <label class="mr-2">
@@ -315,8 +315,8 @@
                         Landscape
                     </label>
                 </div>
-            </div>
-            <div class="flex flex-col space-y-2 mt-8">
+            </div> -->
+            <div class="flex flex-col space-y-2">
                 <label for="show" class="text-sm font-medium text-gray-700">
                     Report Type
                 </label>
@@ -390,7 +390,7 @@ import { router } from "@inertiajs/vue3";
 import Layout from "@/Shared/Layout.vue";
 defineOptions({ layout: Layout });
 
-const props = defineProps(["tool"]);
+const props = defineProps(["tool", "signatories"]);
 
 const showOptionsModal = ref(false);
 
@@ -458,17 +458,17 @@ const report = reactive({
     conforme2Title: ref(props.tool.conforme2Title),
     evaluatedBy: ref(props.tool.evaluatedBy),
     evaluatedByTitle: ref(props.tool.evaluatedByTitle),
-    reviewedBy: ref(props.tool.reviewedBy),
-    reviewedByTitle: ref(props.tool.reviewedByTitle),
-    notedBy: ref(props.tool.notedBy),
-    notedByTitle: ref(props.tool.notedByTitle),
+    reviewedBy: props.tool.reviewedBy ? props.tool.reviewedBy : props.signatories.reviewedBy,
+    reviewedByTitle: props.tool.reviewedByTitle ? props.tool.reviewedByTitle : props.signatories.reviewedByTitle,
+    notedBy: props.tool.notedBy ? props.tool.notedBy : props.signatories.notedBy,
+    notedByTitle: props.tool.notedByTitle ? props.tool.notedByTitle : props.signatories.notedByTitle,
 });
 
 const generatingReport = ref(false);
 
 const submitReport = reactive({
     type: "monitoring",
-    orientation: "portrait",
+    orientation: "landscape",
     id: ref(props.tool),
 });
 

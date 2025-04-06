@@ -5,8 +5,8 @@
     <content-container :hasNavigation="true" :pageTitle="institution" :hasSearch="true" :hasTopButton="true" :hasFilters="true" :data_list="complianceTools" :hideTopBorder="true">
         <template v-slot:top-button>
             <select @change.prevent="filter" v-model="query.academicYear" id="academicYearSelect" class="px-4 pr-10 py-2.5 text-sm bg-white border border-slate-200 text-slate-700 rounded-lg hover:border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 focus:outline-none duration-200 cursor-pointer appearance-none whitespace-nowrap">
-                <option value="2022-2023">A.Y. 2024-25</option>
-                <option value="2023-2024">A.Y. 2025-26</option>
+                <option value="2022-2023">A.Y. 2022-23</option>
+                <option value="2023-2024">A.Y. 2023-24</option>
                 <option value="2024-2025">A.Y. 2024-25</option>
                 <option value="2025-2026">A.Y. 2025-26</option>
                 <option value="2026-2027">A.Y. 2026-27</option>
@@ -89,7 +89,7 @@
                 >
                     <option :value="null">All</option>
                     <option value="In progress">In Progress</option>
-                    <option value="Submitted">Ready for visit</option>
+                    <option value="Submitted">Completed</option>
                     <option value="For Re-evaluation">For Re-evaluation</option>
                 </select>
             </div>

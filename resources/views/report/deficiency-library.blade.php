@@ -5,11 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{{ asset('assets/cropped-ched_logo.png') }}" type="image/x-icon">
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-    <title>Program Monitoring Report</title>
+    <title>Deficiency Report</title>
     <style>
         @page {
-            margin: 20px 38px 20px 38px;
+            margin: 20px 38px 20 38px;
         }
 
         body {
@@ -112,19 +111,22 @@
     <main>
         <div>
             <div style="width: 100%; text-align: center; margin-top: 20px;">
-                <b>PROGRAM MONITORING REPORT</b>
+                <b>LIBRARY MONITORING</b>
+            </div>
+            <div style="width: 100%; text-align: center; margin-top: 8px;">
+                <b>DEFICIENCY REPORT</b>
             </div>
             <div style="margin-top: 30px;">
                 <div style="display: inline-block"><b>HEI Name:</b></div>
-                <div style="display: inline-block;">{{ $tool->institution_program->institution->name }}</div>
+                <div style="display: inline-block;">{{ $tool->institution->name }}</div>
                 <br>
 
-                <div style="display: inline-block; margin-top: 5px"><b>Program:</b></div>
-                <div style="display: inline-block;">{{ $tool->institution_program->program->program }}</div>
+                <div style="display: inline-block; margin-top: 5px"><b>Department:</b></div>
+                <div style="display: inline-block;">Library</div>
                 <br>
 
                 <div style="display: inline-block; margin-top: 5px"><b>Monitoring/Evaluation Reference:</b></div>
-                <div style="display: inline-block;">CMO {{ $tool->cmo->number }}, S. {{ $tool->cmo->series }}</div>
+                <div style="display: inline-block;">CMO No.22, S.2021</div>
                 <br>
 
                 <div style="display: inline-block; margin-top: 5px"><b>Monitoring/Evaluation Date:</b></div>
@@ -137,9 +139,8 @@
                     <tr>
                         <th>AREA</th>
                         <th>MINIMUM REQUIREMENT</th>
-                        <th>FINDINGS</th>
+                        <th>DEFICIENCY</th>
                         <th>RECOMMENDATION</th>
-                        <th>EVALUATION STATUS</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -149,42 +150,41 @@
                         <td>{{ strip_tags($item->criteria->minimumRequirement) }}</td>
                         <td>{{ strip_tags($item->findings) }}</td>
                         <td>{{ strip_tags($item->recommendations) }}</td>
-                        <td>{{ strip_tags($item->evaluationStatus) }}</td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
-
+            
             <!-- Signatories -->
             <div style="margin-top: 40px; width: 100%; overflow: hidden;">
                 <!-- Row 1 -->
-                <div style="width: 100%; overflow: hidden; margin-bottom: 40px; margin-top: 30px;">
-                    <div style="float: left; width: 33%; page-break-inside: avoid; margin-left: 3%;">
-                        <div>Conforme:</div>
-                        <div style="margin: 8px 20px;">
-                            <div>{{ $tool->conforme1 }}</div>
-                            <div>{{ $tool->conforme1Title }}</div>
-                        </div>
-                    </div>
-                    <div style="float: left; width: 33%; page-break-inside: avoid; margin-left: 4%;">
-                        <div>Conforme:</div>
-                        <div style="margin: 8px 20px;">
-                            <div>{{ $tool->conforme2 }}</div>
-                            <div>{{ $tool->conforme2Title }}</div>
-                        </div>
-                    </div>
-                    <div style="float: left; width: 33%; page-break-inside: avoid; margin-left: 4%;">
+                <div style="width: 100%; overflow: hidden; margin-top: 40px;">
+                    <div style="float: left; width: 31%; page-break-inside: avoid; margin-left: 3%;">
                         <div>Evaluated by:</div>
                         <div style="margin: 8px 20px;">
                             <div>{{ $tool->evaluatedBy }}</div>
                             <div>{{ $tool->evaluatedByTitle }}</div>
                         </div>
                     </div>
+                    <div style="float: left; width: 31%; page-break-inside: avoid; margin-left: 4%;">
+                        <div>Reviewed by:</div>
+                        <div style="margin: 8px 20px;">
+                            <div>{{ $tool->reviewedBy }}</div>
+                            <div>{{ $tool->reviewedByTitle }}</div>
+                        </div>
+                    </div>
+                    <div style="float: left; width: 31%; page-break-inside: avoid; margin-left: 4%;">
+                        <div>Noted by:</div>
+                        <div style="margin: 8px 20px;">
+                            <div>{{ $tool->notedBy }}</div>
+                            <div>{{ $tool->notedByTitle }}</div>
+                        </div>
+                    </div>
                     <div style="clear: both;"></div>
                 </div>
                 
                 <!-- Row 2 -->
-                <!-- <div style="width: 100%; overflow: hidden; margin-bottom: 40px; margin-top: 30px;">
+                <!-- <div style="width: 100%; overflow: hidden; margin-bottom: 30px;">
                     <div style="float: left; width: 45%; page-break-inside: avoid; margin-left: 3%;">
                         <div>Evaluated by:</div>
                         <div style="margin: 8px 20px;">
@@ -214,7 +214,6 @@
                     <div style="clear: both;"></div>
                 </div> -->
             </div>
-
             
         </div>
     </main>

@@ -23,6 +23,7 @@
   padding: 0.75rem 1rem; /* py-3 px-4 */
   border-bottom: 1px solid #d6d8e1;
   vertical-align: top; /* Added vertical alignment top */
+  
 }
 
 /* Styling for all th elements */
@@ -59,7 +60,6 @@
   right: 0;
   z-index: 10;
   background-color: white;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
   text-align: right; /* Align content to the right */
   white-space: nowrap; /* Prevent text from wrapping */
   border-bottom: 1px solid #d6d8e1; /* Add bottom border to the last column */

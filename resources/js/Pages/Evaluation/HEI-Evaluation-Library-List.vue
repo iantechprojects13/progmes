@@ -53,8 +53,7 @@
                             >
                                 Start now
                             </button>
-                            <button
-                                v-show="item.status === 'In progress'"
+                            <button v-show="canEdit && item.status === 'In progress'"
                                 @click="edit(item.id)"
                                 class="inline-flex items-center justify-center rounded-full h-10 w-10 text-blue-700 hover:bg-blue-100 tooltipForActions"
                                 data-tooltip="Edit"
@@ -83,7 +82,7 @@ import { router } from "@inertiajs/vue3";
 import Layout from "@/Shared/Layout.vue";
 defineOptions({ layout: Layout });
 
-const props = defineProps(["institution"]);
+const props = defineProps(["institution", "canEdit"]);
 
 const starting = ref(false);
 

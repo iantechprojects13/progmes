@@ -219,7 +219,7 @@
                 >
                     <option :value="null">All</option>
                     <option value="In progress">In Progress</option>
-                    <option value="Submitted">Ready for visit</option>
+                    <option value="Submitted">Completed</option>
                     <option value="Monitored">Monitored</option>
                 </select>
             </div>

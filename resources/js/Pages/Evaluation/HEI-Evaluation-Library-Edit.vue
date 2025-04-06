@@ -21,7 +21,7 @@
                                 Resubmit
                             </span>
                         </button>
-                        <button @click="toggleReadyForVisitModal" v-else-if="progress[3] == 100 && evaluation.evaluationDate == null"
+                        <button @click="toggleCompletedModal" v-else-if="progress[3] == 100 && evaluation.evaluationDate == null"
                             class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
                             <span class="flex items-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -180,20 +180,23 @@
                         <no-search-result text="items"/>
                     </tr>
                     <tr v-else v-for="(item, index) in items.data" :key="item.id">
-                        <td>
+                        <td class="max-w-[32rem]">
                             <div v-html="item.criteria.area">
 
                             </div>
                         </td>
-                        <td>
+                        <td class="max-w-[32rem]">
                             <div v-html="item.criteria.minimumRequirement">
 
                             </div>
                         </td>
-                        <td class="min-w-[16rem]">
+                        <td class="min-w-[16rem] max-w-[24rem] whitespace-normal">
                             <tip-tap-editor v-model="item.actualSituation" @input="updateData()"></tip-tap-editor>
                         </td>
                         <td>
+                            <div class="text-red-500" v-if="item.selfEvaluationStatus == 'Complied' && item.evidence.length == 0">
+                                *required
+                            </div>
                             <div class="flex flex-col"
                                 :class="{ 'hidden': item.selfEvaluationStatus == 'Not applicable' }"
                                 ref="evidenceFiles">
@@ -277,7 +280,7 @@
     </modal>
 
     <!-- Completed confirmation -->
-    <confirmation @close="toggleReadyForVisitModal" :showModal="readyForVisitModal" title="Completed" width="md" height="short">
+    <confirmation @close="toggleCompletedModal" :showModal="readyForVisitModal" title="Completed" width="md" height="short">
 
         <template v-slot:message>
             Are you sure you want to mark this compliance evaluation tool as completed? You won't be able to make changes after marking it as completed.
@@ -317,13 +320,18 @@
     
     <!-- Upload link modal -->
     <modal :showModal="linkModal" title="Evidence Link" @close="toggleLinkModal" width="lg" height="long">
-        <div class="text-center">
-            <textarea maxlength="1000" class="w-full rounded-lg border border-gray-400 h-32 resize-none" placeholder="Input URL/Link here" id="link"
-                v-model="evidenceLink">
-            </textarea>
+        <div v-if="saving" class="py-10">
+            Saving the latest changes, please wait...
         </div>
-        <div v-if="$page.props.errors.link" class="text-red-500">
-            {{$page.props.errors.link}}
+        <div v-else>
+            <div class="text-center">
+                <textarea maxlength="1000" class="w-full rounded-lg border border-gray-400 h-32 resize-none" placeholder="Input URL/Link here" id="link"
+                    v-model="evidenceLink">
+                </textarea>
+            </div>
+            <div v-if="$page.props.errors.link" class="text-red-500">
+                {{$page.props.errors.link}}
+            </div>
         </div>
         <template v-slot:custom-button>
             <button @click="submitLink" :disabled="uploadingLink"
@@ -350,8 +358,9 @@
 
 <script setup>
 // Imports
-import { ref, onMounted, onUnmounted, computed, reactive, watch, inject } from 'vue';
+import { ref, onMounted, onUnmounted, onBeforeUnmount, computed, reactive, watch, inject } from 'vue';
 import { useForm, router } from '@inertiajs/vue3';
+import axios from 'axios';
 import Layout from '@/Shared/Layout.vue';
 defineOptions({ layout: Layout });
 
@@ -384,11 +393,8 @@ const form = reactive({
     items: ref(itemsArray),
 });
 
-
-
-
 const handleBeforeUnload = (event) => {
-    if (hasChanges.value) {
+    if (hasUnsavedChanges.value) {
         event.returnValue = true;
     }
 };
@@ -420,8 +426,7 @@ const fileItem = ref(null);
 const evidenceFile = ref(null);
 const inputEvidenceFile = ref([]);
 
-const isEditorOpen = ref(false);
-const textEditorIndex = ref('');
+
 const texteditor = ref([]);
 const readyForVisitModal = ref(false);
 const resubmitModal = ref(false);
@@ -443,34 +448,70 @@ const hasChanges = ref(false);
 
 const refs = { actualSituationInput, selfEvaluationStatus, actionButtons, evidenceFiles, saveBtn, texteditor, inputEvidenceFile };
 
-
 function toggleDeleteModal() {
     deleteModal.value = !deleteModal.value;
 }
 
-function toggleReadyForVisitModal() {
+function toggleCompletedModal() {
 readyForVisitModal.value = !readyForVisitModal.value;
 }
 
 function toggleResubmitModal() {
-resubmitModal.value = !resubmitModal.value;
+    if (hasUnsavedChanges.value) {
+        saving.value = true;
+        resubmitModal.value = true;
+        
+        axios.post('/hei/library/evaluation/update', form)
+            .then(response => {
+                hasUnsavedChanges.value = false;
+                saving.value = false;
+            })
+            .catch(error => {
+                console.error('Error updating evaluation:', error);
+                saving.value = false;
+            });
+    } else {
+        resubmitModal.value = !resubmitModal.value;
+    }
+    
 }
+
+// function toggleLinkModal() {
+//     if (hasUnsavedChanges.value) {
+
+//         router.post('/hei/library/evaluation/update', form, {
+//         preserveState: true,
+//         preserveScroll: true,
+//         replace: true,
+//         onSuccess: () => {
+//             hasUnsavedChanges.value = false;
+//             linkModal.value = true;
+//         },
+//     });
+//     } else {
+//         linkModal.value = !linkModal.value;
+//     }
+// }
 
 function toggleLinkModal() {
     if (hasUnsavedChanges.value) {
-        router.post('/hei/library/evaluation/update', form, {
-        preserveState: true,
-        preserveScroll: true,
-        replace: true,
-        onSuccess: () => {
-            hasUnsavedChanges.value = false;
-            linkModal.value = true;
-        },
-    });
+        saving.value = true;
+        linkModal.value = true;
+        
+        axios.post('/hei/library/evaluation/update', form)
+            .then(response => {
+                hasUnsavedChanges.value = false;
+                saving.value = false;
+            })
+            .catch(error => {
+                console.error('Error updating evaluation:', error);
+                saving.value = false;
+            });
     } else {
         linkModal.value = !linkModal.value;
     }
 }
+
 
 // CTRL + S function
 const handleKeyDown = (event) => {
@@ -508,6 +549,7 @@ function update() {
         },
     });
 }
+
 
 function submitLink() {
     router.post('/hei/library/evaluation/link', {
@@ -547,7 +589,7 @@ function deleteLink() {
 
 function submitTool() {
   const { isValid, errorMessage } = validateEvidence();
-  
+
   if (!isValid) {
     // Show error message
     alert(errorMessage);
@@ -567,6 +609,7 @@ function submitTool() {
     preserveScroll: true,
   });
 }
+
 
 
 watch(evidenceFile, value => {

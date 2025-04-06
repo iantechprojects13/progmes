@@ -89,6 +89,8 @@ class Kernel extends HttpKernel
         'hei.vp.dean' => \App\Http\Middleware\ProgmesMiddleware\HEIVPandDean::class,
         'evaluate' => \App\Http\Middleware\ProgmesMiddleware\CanEvaluate::class,
         'librarian' => \App\Http\Middleware\ProgmesMiddleware\Librarian::class,
+        'hei.vp' => \App\Http\Middleware\ProgmesMiddleware\VPAcad::class,
+        'hei.vp.librarian' => \App\Http\Middleware\ProgmesMiddleware\HEIVPandLibrarian::class,
     ];
 
 }

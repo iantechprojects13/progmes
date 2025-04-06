@@ -18,9 +18,6 @@
                     class="hidden"
                     @change="cmo_file = $event.target.files[0]"
                 />
-                <Link href="/admin/CMOs/library" v-if="$page.props.auth.user.role == 'Super Admin'" class=" whitespace-nowrap inline-flex w-full items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
-                    CMO for Library
-                </Link>
 
                 <button
                     @click.prevent="$refs.uploadfile.click()"

@@ -16,11 +16,19 @@ class HEILibraryEvaluationController extends Controller
 {
     public function index()
     {
-        $role = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('institution')->first();
+        $user = Auth::user();
+        $role = RoleModel::where('userId', $user->id)->where('isActive', 1)->with('institution')->first();
+        $canEdit = false;
+
+        if ($user->role == 'Librarian') {
+            $canEdit = true;
+        }
+
         $institution = InstitutionModel::where('id', $role->institution->id)->with('evaluationForm',)->first();
         
         return Inertia::render('Evaluation/HEI-Evaluation-Library-List', [
             'institution' => $institution,
+            'canEdit' => $canEdit,
         ]);
     }
 

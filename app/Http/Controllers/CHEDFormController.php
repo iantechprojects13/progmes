@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\EvaluationItemModel;
 use App\Models\CMOModel;
 use App\Models\RoleModel;
+use App\Models\AdminSettingsModel;
 use Inertia\Inertia;
 use Auth;
 
@@ -126,7 +127,6 @@ class CHEDFormController extends Controller
 
     public function update(Request $request) {
 
-        // dd($request);
         foreach ($request->items as $item) {
 
             $evaluationItem = EvaluationItemModel::find($item['id']);
@@ -204,9 +204,16 @@ class CHEDFormController extends Controller
     
     public function report($tool) {
         $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.institution', 'institution_program.program')->first();
-        
-        return Inertia::render('Evaluation/CHED-Evaluation-Report-Create', [
+        $signatories = AdminSettingsModel::where('setting_category', 'signatories')->get();
+
+        return Inertia::render('Evaluation/CHED-Evaluation-Report', [
             'tool' => $evaluationTool,
+            'signatories' => [
+                'reviewedBy' => $signatories->where('setting_key', 'signatory_default_reviewedby')->value('setting_value'),
+                'reviewedByTitle' => $signatories->where('setting_key', 'signatory_default_reviewedby_title')->value('setting_value'),
+                'notedBy' => $signatories->where('setting_key', 'signatory_default_notedby')->value('setting_value'),
+                'notedByTitle' => $signatories->where('setting_key', 'signatory_default_notedby_title')->value('setting_value'),
+            ],
         ]);
     }
 }

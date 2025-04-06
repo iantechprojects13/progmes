@@ -1,9 +1,9 @@
 <template>
-    <Head title="Evaluation Forms" />
+    <Head title="Library Compliance Evaluation" />
+    <PageTitle title="Library Evaluation" />
     <content-container
-        :hasAdminPanel="true"
         :hasModal="true"
-        pageTitle="Library Compliance Evaluation Tool"
+        pageTitle="Library Compliance Evaluation"
         page="library"
         :hasTopButton="true"
         :hasSearch="true"
@@ -14,38 +14,6 @@
             <div
                 class="flex flex-col md:flex-row gap-3 w-full whitespace-nowrap"
             >
-            <Link
-                :href="route('library.cmo.view')"
-                class="inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-                <span class="flex items-center">
-                    <svg
-                        class="w-5 h-5 mr-2"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <!-- Document Shape -->
-                        <path
-                            d="M7 3H14L19 8V21C19 21.5523 18.5523 22 18 22H6C5.44772 22 5 21.5523 5 21V5C5 3.89543 5.89543 3 7 3Z"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        />
-                        <!-- Folded Corner -->
-                        <path
-                            d="M14 3V8H19"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        />
-                    </svg>
-
-                    View CMO
-                </span>
-            </Link>
 
                 <select
                     v-model="query.ay"
@@ -67,7 +35,7 @@
             <search-box v-model="query.search" @submit="filter" />
         </template>
         <template v-slot:options>
-            <options @filter="toggleFilterModal" href="/admin/library" />
+            <options @filter="toggleFilterModal" href="/library" />
         </template>
 
         <template v-slot:main-content>
@@ -75,7 +43,9 @@
                 <template v-slot:table-head>
                     <th>HEI</th>
                     <th>Status</th>
-                    <th></th>
+                    <th>
+                        <i class="fas fa-ellipsis-v text-lg"></i>
+                    </th>
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="evaluation_list.data.length == 0">
@@ -93,8 +63,59 @@
                             <status :text="item.status" />
                         </td>
                         <td>
+                            <button 
+                                @click="view(item.id)"
+                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-emerald-700 hover:bg-emerald-100 tooltipForActions"
+                                data-tooltip="View">
+                                <i class="fas fa-eye text-lg"></i>
+                            </button>
+
+                            <button 
+                                v-show="canEvaluate"
+                                @click="evaluate(item.id)"
+                                :disabled="item.status === 'In progress'"
+                                :class="{'text-gray-400 hover:bg-gray-100': item.status === 'In progress', 'text-blue-700 hover:bg-blue-100': item.status !== 'In progress'}"
+                                class="inline-flex items-center justify-center rounded-full h-10 w-10 tooltipForActions disabled:cursor-not-allowed"
+                                data-tooltip="Evaluate">
+                                <i class="fas fa-edit text-lg"></i>
+                            </button>
+
+                            <button 
+                                v-show="canEvaluate" 
+                                v-if="item.isLocked"
+                                @click="setId(item.id); unlockModal = true;"
+                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-gray-700 hover:bg-gray-100 tooltipForActions"
+                                data-tooltip="Unlock">
+                                <i class="fas fa-unlock text-lg"></i>
+                            </button>
+
+                            <button 
+                                v-show="canEvaluate" 
+                                v-else
+                                @click="setId(item.id); lockModal = true;"
+                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 tooltipForActions"
+                                data-tooltip="Lock">
+                                <i class="fas fa-lock text-lg"></i>
+                            </button>
+
+                            <!-- <button 
+                                v-show="canEmail"
+                                @click="setProgress(item.progress); toggleEmailModal(); email.toolId = item.id;"
+                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-orange-700 hover:bg-orange-100 tooltipForActions"
+                                data-tooltip="Send Email">
+                                <i class="fas fa-envelope text-lg"></i>
+                            </button> -->
+
+                            <button 
+                                v-show="canEvaluate"
+                                @click="setId(item.id); monitoredModal = true;"
+                                :disabled="item.status === 'In progress'"
+                                :class="{'text-gray-400 hover:bg-gray-100': item.status === 'In progress', 'text-blue-700 hover:bg-blue-100': item.status !== 'In progress'}"
+                                class="inline-flex items-center justify-center rounded-full h-10 w-10 tooltipForActions disabled:cursor-not-allowed"
+                                data-tooltip="Mark as monitored">
+                                <i class="fas fa-check text-lg"></i>
+                            </button>
                         </td>
-                        <td></td>
                     </tr>
                 </template>
             </content-table>
@@ -166,12 +187,14 @@
 import { useForm, router } from "@inertiajs/vue3";
 import { ref, watch } from "vue";
 import Layout from "@/Shared/Layout.vue";
+import PageTitle from "@/Shared/PageTitle.vue";
 defineOptions({ layout: Layout });
 
 // -------------------------------------------------------------------------
 const props = defineProps([
     "evaluation_list",
     "filters",
+    'canEvaluate',
 ]);
 
 // -------------------------------------------------------------------------
@@ -203,7 +226,7 @@ function toggleFilterModal() {
 }
 
 function filter() {
-    query.get("/admin/library", {
+    query.get("/ched/library/evaluation", {
         preserveState: false,
         preserveScroll: true,
         replace: true,
@@ -212,11 +235,22 @@ function filter() {
 
 function changeAcademicYear() {
     query.search = "";
-    query.get("/admin/library", {
+    query.get("/ched/library/evaluation", {
         preserveState: false,
         preserveScroll: true,
         replace: true,
     });
+}
+
+function evaluate(tool) {
+    router.get('/ched/library/evaluation/' + tool + '/evaluate', {
+        preserveScroll: true,
+        preserveState: true,
+    });
+}
+
+function view(tool) {
+    router.get('/ched/library/evaluation/' + tool + '/view');
 }
 
 </script>
