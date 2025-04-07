@@ -40,7 +40,7 @@ class EvaluationController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role == 'Librarian' || $user->role == 'Vice-President for Academic Affairs') {
+        if ($user->role == 'Librarian' || $user->role == 'Program Head' || $user->role == 'Vice-President for Academic Affairs') {
             return redirect()->route('hei.library.evaluation.list');
         }
 

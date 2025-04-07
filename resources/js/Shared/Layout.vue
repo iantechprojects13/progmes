@@ -162,7 +162,7 @@
                                     Program Compliance
                                 </Link>
 
-                                <Link v-if="$page.props.auth.user.role == 'Librarian' || $page.props.auth.user.role == 'Vice-President for Academic Affairs' || $page.props.auth.user.type == 'CHED'"
+                                <Link v-if="$page.props.auth.user.role == 'Librarian' || $page.props.auth.user.role == 'Program Head' || $page.props.auth.user.role == 'Vice-President for Academic Affairs' || $page.props.auth.user.type == 'CHED'"
                                     :href="route('library.evaluation')"
                                     class="flex items-center select-none w-full px-3 py-2 rounded-lg "
                                     :class="[

@@ -112,9 +112,9 @@ Route::post('/ched/evaluation/unlock', [CHEDFormController::class, 'unlock'])->n
 
 //Library Evaluation
 Route::get('/library', [EvaluationController::class, 'library'])->middleware(['auth', 'user.verified'])->name('library.evaluation');
-Route::get('/hei/library/evaluation', [HEILibraryEvaluationController::class, 'index'])->middleware(['auth', 'user.verified', 'hei.vp.librarian'])->name('hei.library.evaluation.list');
+Route::get('/hei/library/evaluation', [HEILibraryEvaluationController::class, 'index'])->middleware(['auth', 'user.verified'])->name('hei.library.evaluation.list');
 Route::get('hei/library/{tool}/edit', [HEILibraryEvaluationController::class, 'edit'])->middleware(['auth', 'type.hei', 'librarian'])->name('hei.library.evaluation.edit');
-Route::get('hei/library/{tool}/view', [HEILibraryEvaluationController::class, 'view'])->middleware(['auth', 'type.hei', 'hei.vp.librarian'])->name('hei.library.tool.view');
+Route::get('hei/library/{tool}/view', [HEILibraryEvaluationController::class, 'view'])->middleware(['auth', 'type.hei'])->name('hei.library.tool.view');
 Route::post('hei/library/evaluation/update', [HEILibraryEvaluationController::class, 'update'])->middleware(['auth', 'type.hei', 'librarian'])->name('hei.library.evaluation.update');
 Route::post('/hei/library/evaluation/link', [HEILibraryEvaluationController::class, 'submitLink'])->name('hei.library.evaluation.link');
 Route::post('/hei/library/evaluation/submit', [HEILibraryEvaluationController::class, 'completed'])->name('hei.library.evaluation.submit');
