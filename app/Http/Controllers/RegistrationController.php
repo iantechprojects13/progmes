@@ -242,7 +242,7 @@ class RegistrationController extends Controller
         try {
             Mail::to($acceptedUser->email)->send(new NotificationEmail($acceptedUser->name));
         } catch (Throwable $thr) {
-            return redirect()->back()->with('failed',  $thr->getMessage());
+            return redirect()->back()->with('success', $acceptedUser->name . '\'s registration has been approved, but the notification email could not be sent. Daily sending limit exceeded.');
         }
         
         return redirect()->back()->with('success', $acceptedUser->name .'\'s registration has been approved. Notification email has been sent.');
