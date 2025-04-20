@@ -50,18 +50,16 @@
                             <evaluation-progress :percentage="item.progress"></evaluation-progress>
                         </td>
                         <td>
-                            <div class="flex items-center gap-0">
-                                <button v-show="canEvaluate && item.status == 'Submitted'" @click="edit(item.id)"
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 tooltipForActions disabled:cursor-not-allowed"
-                                    data-tooltip="Evaluate">
-                                    <i class="fas fa-edit text-lg"></i>
-                                </button>
-                                <button @click="view(item.id)"
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-emerald-700 hover:bg-emerald-100 tooltipForActions"
-                                    data-tooltip="View">
-                                    <i class="fas fa-eye text-lg"></i>
-                                </button>
-                            </div>
+                            <button v-show="canEvaluate && item.status == 'Submitted'" @click="edit(item.id)"
+                                class="inline-flex items-center justify-center rounded-full h-10 w-10 tooltipForActions disabled:cursor-not-allowed"
+                                data-tooltip="Evaluate">
+                                <i class="fas fa-edit text-lg"></i>
+                            </button>
+                            <button @click="view(item.id)"
+                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-emerald-700 hover:bg-emerald-100 tooltipForActions"
+                                data-tooltip="View">
+                                <i class="fas fa-eye text-lg"></i>
+                            </button>
                         </td>
                     </tr>
                 </template>
@@ -80,7 +78,7 @@
             <!-- Active Status Filter -->
             <div class="flex flex-col space-y-2 mb-6">
                 <label for="isActive" class="text-sm font-medium text-gray-700"
-                    >Active Status</label
+                    >Status</label
                 >
                 <select
                     v-model="query.status"

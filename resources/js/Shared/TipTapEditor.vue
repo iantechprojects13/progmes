@@ -289,6 +289,7 @@ import Table from "@tiptap/extension-table";
 import TableRow from "@tiptap/extension-table-row";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
+// import { DOMParser } from 'prosemirror-model';
 
 const props = defineProps({
     modelValue: {
@@ -427,6 +428,34 @@ onMounted(() => {
         onUpdate: ({ editor }) => {
             emit("update:modelValue", editor.getHTML());
         },
+        editorProps: {
+        handlePaste: (view, event, slice) => {
+            // Get the clipboard content as HTML
+            const html = event.clipboardData.getData('text/html');
+            
+            // If HTML content is available, use it (with sanitization)
+            if (html) {
+                // Prevent default paste behavior
+                event.preventDefault();
+                
+                // Create a temporary div to parse and sanitize the HTML
+                const div = document.createElement('div');
+                div.innerHTML = html;
+                
+                // Remove any script tags or other potentially harmful elements
+                const scripts = div.querySelectorAll('script');
+                scripts.forEach(script => script.remove());
+                
+                // Use the editor's insertContent method to insert HTML
+                editor.value.commands.insertContent(div.innerHTML);
+                
+                return true;
+            }
+            
+            // If no HTML, let TipTap handle the default paste behavior
+            return false;
+        }
+    }
     });
 
     document.addEventListener("mousedown", handleClickOutside);

@@ -44,5 +44,10 @@ class RoleModel extends Model
     {
         return $this->hasMany(EvaluationFormModel::class, 'disciplineId', 'disciplineId');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userId', 'id')->select(['id', 'name']);
+    }
     
 }

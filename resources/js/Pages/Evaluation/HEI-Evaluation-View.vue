@@ -124,7 +124,7 @@
                                 v-for="item in evaluation_tool.item"
                                 :key="item.id"
                             >
-                                <td>
+                                <td class="max-w-[24rem]">
                                     <div
                                         class="font-bold"
                                         v-html="item.criteria.area"

@@ -69,7 +69,7 @@
                     <th>CHED Memorandum Order</th>
                     <th>Program</th>
                     <th>Active Status</th>
-                    <th v-show="canEdit">
+                    <th>
                         <i class="fas fa-ellipsis-v text-lg"></i>
                     </th>
                 </template>
@@ -99,6 +99,15 @@
                                     data-tooltip="View"
                                 >
                                     <i class="fas fa-eye text-lg"></i>
+                                </button>
+
+                                <button
+                                    v-show="canEdit && $page.props.auth.user.role == 'Super Admin'"
+                                    @click="edit(cmo.id)"
+                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-blue-700 hover:bg-blue-100 tooltipForActions"
+                                    data-tooltip="Edit"
+                                >
+                                    <i class="fas fa-edit text-lg"></i>
                                 </button>
 
                                 <button
@@ -282,6 +291,10 @@ function filter() {
 
 function view(id) {
     router.get("/admin/CMOs/" + id + "/view");
+}
+
+function edit(id) {
+    router.get("/admin/CMOs/draft/" + id + "/edit");
 }
 
 watch(cmo_file, (value) => {

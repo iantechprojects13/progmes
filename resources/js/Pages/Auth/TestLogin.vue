@@ -49,8 +49,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(user, index) in user_list.data" :key="user.id" class="border-b border-gray-300 hover:bg-gray-400"
-                :class="{'bg-gray-200' : index % 2 == 1}">
+                <tr v-for="(user, index) in user_list.data" :key="user.id" class="border-b border-gray-300 hover:bg-gray-200"
+                :class="{'bg-gray-100' : index % 2 == 1}">
                     <td class="py-4 px-2">{{ user.name }}</td>
                     <td class="py-4 px-2">{{ user.role }}</td>
                     <td class="py-4 px-2">
@@ -58,9 +58,12 @@
                             {{ role.discipline?.discipline || "N/A" }}
                         </div>
                     </td>
-                    <td class="py-4 px-2">
+                    <td class="py-4 px-2 max-w-[16rem]">
                         <div v-for="role in user.user_role" :key="role.id">
-                            {{ role.program?.program || "N/A" }}
+                            {{ role.program?.program }}
+                            <span v-if="role.program?.major">
+                                - {{ role.program?.major }}
+                            </span>
                         </div>
                     </td>
                     <td class="py-4 px-2">
@@ -79,7 +82,7 @@
                         </div>
                     </td>
                     <td class="text-right py-4 px-2">
-                        <button @click="userLogin(user.id)" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded" :disabled="processing">
+                        <button @click="userLogin(user.id)" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded" :disabled="processing">
                             Login
                         </button>
                     </td>

@@ -20,7 +20,7 @@ class CHEDFormController extends Controller
     public function view($tool) {
         $user = Auth::user();
 
-        $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.program', 'institution_program.institution','complied', 'not_complied', 'not_applicable', 'item', 'item.criteria', 'item.evidence')->first();
+        $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.program', 'institution_program.institution','complied', 'not_complied', 'not_applicable', 'item', 'item.criteria', 'item.evidence', 'cmo')->first();
         $showEvaluation = false;
         
         if (!$evaluationTool) {
@@ -55,8 +55,8 @@ class CHEDFormController extends Controller
     
     public function evaluate($evaluation, Request $request) {
         $user = Auth::user();
-
-        $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program')->first();
+        
+        $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program', 'cmo')->first();
 
         if (!$tool) {
             return redirect('/ched/evaluation')->with('failed', 'Evaluation tool not found.');
@@ -118,7 +118,7 @@ class CHEDFormController extends Controller
                 'filters' => $request->only(['search', 'selfEvaluationStatus', 'evaluationStatus']),
             ]);
         } else if ($tool->status == 'In progress') {
-            return redirect()->back()->with('failed', 'This compliance evaluation tool can\'t be evaluated yet.');
+            return redirect('/ched/evaluation')->with('failed', 'This compliance evaluation tool can\'t be evaluated yet.');
         } else {
             return redirect()->back()->with('failed', 'This compliance evaluation tool can\'t be accessed.');
         }
@@ -203,17 +203,37 @@ class CHEDFormController extends Controller
     }
     
     public function report($tool) {
+        $user = Auth::user();
+        $supervisor = '';
+        $supervisorTitle = '';
+
         $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.institution', 'institution_program.program')->first();
         $signatories = AdminSettingsModel::where('setting_category', 'signatories')->get();
 
+        if($evaluationTool->notedBy == null || $evaluationTool->notedBy == '') {
+            $evaluationTool->notedBy = $signatories->where('setting_key', 'notedby')->value('setting_value');
+            $evaluationTool->notedByTitle = $signatories->where('setting_key', 'notedby_title')->value('setting_value');
+            $evaluationTool->save();
+        }
+
+        if($evaluationTool->reviewedBy == null || $evaluationTool->reviewedBy == '') {
+            $evaluationTool->reviewedBy = $signatories->where('setting_key', 'reviewedby')->value('setting_value');
+            $evaluationTool->reviewedByTitle = $signatories->where('setting_key', 'reviewedby_title')->value('setting_value');
+            $evaluationTool->save();
+        }
+     
+        if ($evaluationTool->evaluatedBy == null || $evaluationTool->evaluatedBy == '') {
+            if ($user->role == 'Education Supervisor') {
+                $supervisor = $user->name;
+                $supervisorTitle = 'Education Supervisor II';
+            } else {
+                $supervisor = '';
+                $supervisorTitle = '';
+            }
+        }
+
         return Inertia::render('Evaluation/CHED-Evaluation-Report', [
             'tool' => $evaluationTool,
-            'signatories' => [
-                'reviewedBy' => $signatories->where('setting_key', 'signatory_default_reviewedby')->value('setting_value'),
-                'reviewedByTitle' => $signatories->where('setting_key', 'signatory_default_reviewedby_title')->value('setting_value'),
-                'notedBy' => $signatories->where('setting_key', 'signatory_default_notedby')->value('setting_value'),
-                'notedByTitle' => $signatories->where('setting_key', 'signatory_default_notedby_title')->value('setting_value'),
-            ],
         ]);
     }
 }

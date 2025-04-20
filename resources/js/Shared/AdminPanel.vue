@@ -15,8 +15,8 @@
             </div>
             <div ref="adminPanelContainer"
                 class="relative transition-all duration-200 md:visible md:whitespace-nowrap h-0 md:h-auto md:border-none rounded md:rounded-none overflow-hidden"
-                :class="[{ 'border-none invisible': !isMenuOpen }, { 'h-72': isMenuOpen }]">
-                <div class="w-full sm:flex-row md:block md:text-gray-300">
+                :class="[{ 'border-none invisible': !isMenuOpen }, { 'h-84': isMenuOpen }]">
+                <div class="w-full sm:flex-row md:block md:text-gray-300 overflow-auto scrollbar-hide">
                     <Link :href="route('admin.users.list')" preserved-state>
                     <button
                         class="select-none h-12 md:w-auto md:px-5 w-full md:hover:bg-blue-700 hover:bg-gray-200  rounded"
@@ -64,6 +64,14 @@
                         Program
                     </button>
                     </Link>
+
+                    <Link :href="route('admin.settings')" v-show="$page.props.auth.user.role == 'Super Admin'">
+                        <button
+                            class="select-none h-12 md:w-auto md:px-5 w-full md:hover:bg-blue-700 hover:bg-gray-200  rounded"
+                            :class="{ 'md:text-white text-blue-500 md:border-b-blue-400 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-blue-700 font-bold': highlight('settings') }">
+                            Settings
+                        </button>
+                    </Link>
                 </div>
             </div>
         </div>
@@ -82,6 +90,7 @@
                     institution: ['/admin/higher-education-institutions'],
                     program: ['/admin/program'],
                     library: ['/admin/library'],
+                    settings: ['/admin/settings']
                 },
                 isMenuOpen: false,
             }
@@ -103,6 +112,8 @@
                     return this.admin_urls.form.includes(this.$page.url.slice(0, 11));
                 } else if (admin_btn == 'library') {
                     return this.admin_urls.library.includes(this.$page.url.slice(0, 14));
+                } else if (admin_btn == 'settings') {
+                    return this.admin_urls.settings.includes(this.$page.url.slice(0, 15));
                 }
 
             },
@@ -121,3 +132,15 @@
         },
     }
 </script>
+
+<style scoped>
+/* styles.css or inside a <style> block */
+.scrollbar-hide {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Opera */
+  }
+</style>

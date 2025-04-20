@@ -27,7 +27,7 @@ class ApplicationController extends Controller
     
     public function programApplicationCHED(Request $request)
     {
-        $show = $request->query('show') ? $request->query('show') : 25;
+        $show = sanitizePerPage($request->query('show'), Auth::user()->id);
         $applications = ApplicationFormModel::query()
             ->when($request->query('search'), function ($query) use ($request) {
                 $query->where(function ($query) use ($request) {
@@ -60,7 +60,7 @@ class ApplicationController extends Controller
 
     public function programApplicationHEI(Request $request)
     {
-        $show = $request->query('show') ? $request->query('show') : 25;
+        $show = sanitizePerPage($request->query('show'), Auth::user()->id);
         $user = Auth::user();
         $institution = $user->userRole()
                 ->where('isActive', 1)

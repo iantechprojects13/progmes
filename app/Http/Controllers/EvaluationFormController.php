@@ -20,81 +20,64 @@ use Auth;
 class EvaluationFormController extends Controller
 {
     public function index(Request $request) {
-
+        
         $program_list = ProgramModel::with('active_cmo')->orderBy('program', 'asc')->get();
         $role = Auth::user()->role;
         $canEdit = false;
-        $defaultAcademicYear = '';
-        $disciplineList = [];
+        $acadYear = '';
+        $assignedProgramIds = [];
 
-        $show = $request->query('show') ? $request->query('show') : 25;
+        $show = sanitizePerPage($request->query('show'), Auth::user()->id);
 
-        if ($request->query('ay')) {
-            $defaultAcademicYear = $request->query('ay');
-        } else {
-            $defaultAcademicYear = AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
-        }
+        $acadYear = getAcademicYear($request->query('ay'), Auth::user()->id);
         
         if ($role == 'Super Admin' || $role == 'Admin') {
             $canEdit = true;
         }
-
+        
         if ($role == 'Education Supervisor') {
             $canEdit = true;
-            $discipline = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->get();
-            foreach($discipline as $item) {
-                array_push($disciplineList, $item->disciplineId);
-            }
+            $assignedProgramIds = getUserAssignedProgramIds(Auth::user()->id);
             $program_list = ProgramModel::query()
-            ->whereIn('disciplineId', $disciplineList)
+            ->whereIn('id', $assignedProgramIds)
             ->orderBy('program', 'asc')
             ->with('active_cmo')->get();
         }
 
         $allinstitutionprograms = InstitutionProgramModel::query()
-        ->when($request->query('search'), function ($query) use ($request, $defaultAcademicYear) {
-            $query->where(function ($query) use ($request) {
-                $query->where('id', 'like', '%' . $request->query('search') . '%')
-                ->orWhereHas('program', function ($programQuery) use ($request) {
-                    $programQuery->where('program', 'like', '%' . $request->query('search') . '%');
-                })
-                ->orWhereHas('institution', function ($programQuery) use ($request) {
-                    $programQuery->where('name', 'like', '%' . $request->query('search') . '%');
-                });
-            })
-            ->whereHas('evaluationForm', function ($query) use ($defaultAcademicYear, $request) {
-                $query->where('effectivity', $defaultAcademicYear)
-                ->when($request->query('status'), function ($query) use ($request) {
-                    $query->where('status', $request->query('status'));
-                });
-            });
-            
+        ->when($request->query('search'), function ($query) use ($request) {
+            // $query->where(function ($query) use ($request) {
+            //     $query->where('id', 'like', '%' . $request->query('search') . '%')
+            //     ->orWhereHas('program', function ($programQuery) use ($request) {
+            //         $programQuery->where('program', 'like', '%' . $request->query('search') . '%');
+            //     })
+            //     ->orWhereHas('institution', function ($programQuery) use ($request) {
+            //         $programQuery->where('name', 'like', '%' . $request->query('search') . '%');
+            //     });
+            // });
+            applyProgramAndInstitutionSearch($query, $request->query('search'), 'program', 'institution');
         })
-        ->with(['program', 'institution', 'evaluationForm' => function ($evalFormQuery) use ($defaultAcademicYear) {
-            $evalFormQuery->where('effectivity', $defaultAcademicYear);
+        ->with(['program', 'institution', 'evaluationForm' => function ($evalFormQuery) use ($acadYear) {
+            $evalFormQuery->where('effectivity', $acadYear);
         }, 'evaluationForm.cmo'])
         ->where('isActive', 1)
-        ->whereHas('evaluationForm', function ($query) use ($defaultAcademicYear, $request) {
-            $query->where('effectivity', $defaultAcademicYear)
+        ->whereHas('evaluationForm', function ($query) use ($acadYear, $request) {
+            $query->where('effectivity', $acadYear)
                 ->when($request->query('status'), function ($query) use ($request) {
                     $query->where('status', $request->query('status'));
                 });
         })
-        ->when($role == 'Education Supervisor', function ($query) use ($disciplineList) {
-            $query->whereHas('evaluationForm', function ($q) use ($disciplineList) {
-                $q->whereIn('disciplineId', $disciplineList);
-            });
-        })
+        ->when($role == 'Education Supervisor', supervisorAssignedPrograms('program', $assignedProgramIds))
         ->paginate($show)
         ->withQueryString();
         
         return Inertia::render('Admin/tool/ComplianceTool-List', [
             'program_list' => $program_list,
-            'effectivity' => $defaultAcademicYear,
-            'academicYear' => $defaultAcademicYear,
+            'effectivity' => $acadYear,
+            'academicYear' => $acadYear,
             'institutionProgramList' => $allinstitutionprograms,
             'canEdit' => $canEdit,
-            'filters' => $request->only(['search', 'status']) + ['academicYear' => $defaultAcademicYear ]
+            'filters' => $request->only(['search', 'status']) + ['academicYear' => $acadYear ]
             + ['show' => $show ],
         ]);
     }
@@ -168,4 +151,15 @@ class EvaluationFormController extends Controller
         return redirect()->back()->with('success', 'Compliance evaluation tool for ' . $validatedData['program']['program'] . ' program has been deployed.');
     }
 
+    public function destroy($evaluation)
+    {
+        $tool = EvaluationFormModel::find($evaluation);
+        
+        if ($tool) {
+            $tool->delete();
+            return redirect()->back()->with('success', 'Evaluation tool has been deleted successfully.');
+        }
+
+        return redirect()->back()->with('failed', 'Evaluation tool not found.');
+    }
 }

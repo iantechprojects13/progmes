@@ -37,10 +37,10 @@ class DashboardController extends Controller
 
         $currentYear = (Carbon::now()->year);
 
-        $acadYear = $request->query('academicyear') ? $request->query('academicyear') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
+        $acadYear = getAcademicYear($request->query('academicyear'), Auth::user()->id);
         $institution = $request->query('hei') != null ? $request->query('hei') : null;
         $program = $request->query('program') != null ? $request->query('program') : null;
-        $supervisorq = $request->query('supervisor') != null ? (int) $request->query('supervisor') : null;
+        $supervisorQuery = $request->query('supervisor') != null ? (int) $request->query('supervisor') : null;
         $filter = $request->query('filter') != null ? $request->query('filter') : null;
         $year = $request->query('year') != null ? $request->query('year') : $currentYear;
         $period = $request->query('period') != null ? $request->query('period') : 'Quarter';
@@ -51,23 +51,14 @@ class DashboardController extends Controller
         $currentMonth = Carbon::now()->month;
 
         $disciplineIds = [];
+        $assignedProgramIds = [];
     
-        // Get discipline IDs for the current user if they are an Education Supervisor
         if($role == 'Education Supervisor') {
-            $disciplines = RoleModel::where('userId', $user->id)
-                ->where('isActive', 1)
-                ->with('discipline')
-                ->get();
-            $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+            $assignedProgramIds = getUserAssignedProgramIds($user->id);
         }
-    
-        // Get discipline IDs for the specified supervisor if provided
+
         if($request->query('supervisor') !== null && $request->query('supervisor') !== 'null' && $request->query('supervisor') !== '') {
-            $disciplines = RoleModel::where('userId', $request->query('supervisor'))
-                ->where('isActive', 1)
-                ->with('discipline')
-                ->get();
-            $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+            $assignedProgramIds = getUserAssignedProgramIds($supervisorQuery);
         }
         
 
@@ -82,13 +73,17 @@ class DashboardController extends Controller
             });
         })
         ->when($request->query('program'), function($query) use ($request, $program) {
-            $query->whereHas('institution_program.program', function($q) use ($request, $program) {
+            $query->whereHas('institution_program', function($q) use ($request, $program) {
                 $q->where('programId', $program);
             });
         })
-        ->when($role == 'Education Supervisor' || $request->query('supervisor'), function ($query) use ($disciplineIds) {
-            $query->whereIn('disciplineId', $disciplineIds);
-        })->get();
+        ->when($role == 'Education Supervisor' || $request->query('supervisor'), function ($query) use ($assignedProgramIds) {
+            $query->whereHas('institution_program.program', function ($query) use ($assignedProgramIds) {
+               $query->whereIn('id', $assignedProgramIds); 
+            });
+        })
+        ->with('institution_program.program', 'institution_program.institution')
+        ->get();
 
         
         
@@ -96,19 +91,22 @@ class DashboardController extends Controller
         $comTools = EvaluationFormModel::whereYear('evaluationDate', $year)
         ->when($request->query('hei'), function($query) use ($request, $institution) {
             $query->whereHas('institution_program.institution', function($q) use ($institution) {
-                $q->where('institutionId', $institution);
+                $q->where('id', $institution);
             });
         })
         ->when($request->query('program'), function($query) use ($request, $program) {
             $query->whereHas('institution_program.program', function($q) use ($program) {
-                $q->where('programId', $program);
+                $q->where('id', $program);
             });
         })
-        ->when($role == 'Education Supervisor' || $request->query('supervisor'), function ($query) use ($disciplineIds) {
-            $query->whereIn('disciplineId', $disciplineIds);
+        ->when($role == 'Education Supervisor' || $request->query('supervisor'), function ($query) use ($assignedProgramIds) {
+            $query->whereHas('institution_program.program', function ($query) use ($assignedProgramIds) {
+               $query->whereIn('programId', $assignedProgramIds); 
+            });
         })
-        ->whereNotNull('evaluationDate');
-
+        ->whereNotNull('evaluationDate')
+        ->with('institution_program.institution', 'institution_program.program');
+        
         $months = range(1, 12);
         $monthlyCounts = array_map(function($month) use ($comTools) {
             return (clone $comTools)->whereMonth('evaluationDate', $month)->count();
@@ -128,18 +126,21 @@ class DashboardController extends Controller
             $comTools = EvaluationFormModel::whereYear('evaluationDate', $yearArray[$index])
                 ->when($request->query('hei'), function($query) use ($request, $institution) {
                     $query->whereHas('institution_program.institution', function($q) use ($institution) {
-                        $q->where('institutionId', $institution);
+                        $q->where('id', $institution);
                     });
                 })
                 ->when($request->query('program'), function($query) use ($request, $program) {
                     $query->whereHas('institution_program.program', function($q) use ($program) {
-                        $q->where('programId', $program);
+                        $q->where('id', $program);
                     });
                 })
-                ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
-                    $query->whereIn('disciplineId', $disciplineIds);
+                ->when($role == 'Education Supervisor', function ($query) use ($assignedProgramIds) {
+                    $query->whereHas('institution_program.program', function ($query) use ($assignedProgramIds) {
+                       $query->whereIn('id', $assignedProgramIds); 
+                    });
                 })
-                ->whereNotNull('evaluationDate');
+                ->whereNotNull('evaluationDate')
+                ->with('institution_program.program', 'institution_program.institution');
 
             $quarters = [ [1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12] ];
             $yearData = array_map(function($months) use ($comTools) {
@@ -157,45 +158,14 @@ class DashboardController extends Controller
         [$thisYear, $lastYear, $twoYearsAgo] = $yearsData;
         
         
-        $program_list = ProgramModel::query()->when($user->role == 'Education Supervisor', function ($query) use ($disciplineIds) {
-            $query->whereIn('disciplineId', $disciplineIds);
-        })->orderBy('program', 'asc')->orderBy('major', 'asc')->get();
-        
-
-        $totalPrograms = EvaluationFormModel::where('effectivity', 'like', '%' . $year . '%')
-        ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
-            $query->whereIn('disciplineId', $disciplineIds);
-        })
-        ->select('institutionProgramId')
-        ->distinct()
-        ->get()
-        ->count();
-
-        // dd($request->query());
-
-
-        if ($program) {
-            $totalPrograms = InstitutionProgramModel::where('programId', $program)->count();
-        } else if ($institution) {
-            $totalPrograms = InstitutionProgramModel::where('institutionId', $institution)->count();
-        } else {
-            $totalPrograms = EvaluationFormModel::where('effectivity', 'like', '%' . $year . '%')
-            ->when($role == 'Education Supervisor', function ($query) use ($disciplineIds) {
-                $query->whereIn('disciplineId', $disciplineIds);
-            })
-            ->select('institutionProgramId')
-            ->distinct()
-            ->get()
-            ->count();
-        }
-
+        $program_list = ProgramModel::query()
+            ->when($user->role == 'Education Supervisor', supervisorAssignedPrograms('supervisorPrograms', $assignedProgramIds))
+            ->orderBy('program', 'asc')
+            ->orderBy('major', 'asc')
+            ->with('supervisorPrograms')
+            ->get();
 
         return Inertia::render('Dashboard/Dashboard-CHED', [
-            'userCount' => User::where('isActive', 1)->count(),
-            'institutionCount' => InstitutionModel::all()->count(),
-            'programCount' => ProgramModel::all()->count(),
-            'disciplineCount' => DisciplineModel::all()->count(),
-            'usertype' => [User::where('type', 'CHED')->count(), User::where('type', 'HEI')->count()],
             'currentYear' => $currentYear,
             'academicyear' => $acadYear,
             'readyforvisit' => $tools->where('status', 'Submitted')->count(),
@@ -220,10 +190,9 @@ class DashboardController extends Controller
             'isCurrentYear' => $year == $currentYear ? true : false,
             'analyticsLabel' => [$year, $year-1, $year-2],
             'displayAnalyticsData' => $year <= $currentYear ? true : false,
-            'totalPrograms' => $totalPrograms,
             'currentQuarter' => Carbon::now()->quarter,
             'supervisor_list' => $supervisor_list,
-            'supervisor' => $supervisorq,
+            'supervisor' => $supervisorQuery,
             'supervisor_name' =>  $supervisor->name ?? null,
         ]);
     }
@@ -231,7 +200,7 @@ class DashboardController extends Controller
     public function dashboardForHEI(Request $request) {
         
         $user = Auth::user();
-        $acadYear = $request->query('academicyear') ? $request->query('academicyear') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
+        $acadYear = getAcademicYear($request->query('academicyear'),Auth::user()->id);
         $discipline = $request->query('discipline') != null && $request->query('program') == null ? $request->query('discipline') : null;
         $program = $request->query('program') != null ? $request->query('program') : null;
         $filter = $request->query('filter') != null ? $request->query('filter') : null;
@@ -354,50 +323,18 @@ class DashboardController extends Controller
             'filters' => $request->only(['']) + ['filter' => $filter ],
         ]);
     }
-    
-    public function setAcademicYear(Request $request) {
-        if ($request[0]) {
-            $setting = AdminSettingsModel::where('id', 1)->first();
-
-            if ($setting) {
-                $setting->update([
-                    'currentAcademicYear' => $request[0],
-                ]);
-
-                $setting->save();
-
-                return redirect()->back()->with('success', $request[0] . ' is set as default academic year.');
-            } else {
-                return redirect()->back()->with('failed', 'Failed to set default academic year.');
-            }
-        } else {
-            return redirect()->back()->with('failed', 'Failed to set default academic year.');
-        }
-
-    }
-
 
     public function viewTools($academicyear, $status, $supervisor, $program, $institution) {
         $user = Auth::user();
         $role = $user->role;
-        $disciplineIds = [];
-    
-        // Get discipline IDs for the current user if they are an Education Supervisor
+        $assignedProgramIds = [];
+        
         if($role == 'Education Supervisor') {
-            $disciplines = RoleModel::where('userId', $user->id)
-                ->where('isActive', 1)
-                ->with('discipline')
-                ->get();
-            $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+            $assignedProgramIds = getUserAssignedProgramIds($user->id);
         }
-    
-        // Get discipline IDs for the specified supervisor if provided
+        
         if($supervisor !== null && $supervisor !== 'null' && $supervisor !== '') {
-            $disciplines = RoleModel::where('userId', $supervisor)
-                ->where('isActive', 1)
-                ->with('discipline')
-                ->get();
-            $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+            $assignedProgramIds = getUserAssignedProgramIds($supervisor);
         }
     
         // Build the query
@@ -413,9 +350,11 @@ class DashboardController extends Controller
               });
 
         // Apply discipline filter if applicable
-        if($role == 'Education Supervisor' || ($supervisor !== null && $supervisor !== 'null' && $supervisor !== '')) {
-            $query->whereIn('disciplineId', $disciplineIds);
-        }
+        $query->when($role == 'Education Supervisor' || ($supervisor !== null && $supervisor !== 'null' && $supervisor !== ''), function ($query) use ($assignedProgramIds) {
+            $query->whereHas('institution_program.program', function ($query) use ($assignedProgramIds) {
+               $query->whereIn('id', $assignedProgramIds); 
+            });
+        });
         
         // Apply program filter if provided
         if($program !== null && $program !== 'null' && $program !== '') {
@@ -437,41 +376,28 @@ class DashboardController extends Controller
         return response()->json($tools);
     }
 
-
-
     public function viewMonitoredTools($supervisor, $program, $institution, $year, $month, $quarter)
     {
         $user = Auth::user();
         $role = $user->role;
-        $disciplineIds = [];
+        $assignedProgramIds = [];
     
-        // Get discipline IDs for the current user if they are an Education Supervisor
         if($role == 'Education Supervisor') {
-            $disciplines = RoleModel::where('userId', $user->id)
-                ->where('isActive', 1)
-                ->with('discipline')
-                ->get();
-            $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+            $assignedProgramIds = getUserAssignedProgramIds($user->id);
+        }
+        if($supervisor !== null && $supervisor !== 'null' && $supervisor !== '') {
+            $assignedProgramIds = getUserAssignedProgramIds($supervisor);
         }
         
-        // Get discipline IDs for the specified supervisor if provided
-        if($supervisor !== null && $supervisor !== 'null' && $supervisor !== '') {
-            $disciplines = RoleModel::where('userId', $supervisor)
-                ->where('isActive', 1)
-                ->with('discipline')
-                ->get();
-            $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
-        }
-    
         // Build the query
         $query = EvaluationFormModel::query();
 
-        
-        
-        // Apply discipline filter if applicable
-        if($role == 'Education Supervisor' || ($supervisor !== null && $supervisor !== 'null' && $supervisor !== '')) {
-            $query->whereIn('disciplineId', $disciplineIds);
-        }
+        // Apply assigned programs filter if applicable
+        $query->when($role == 'Education Supervisor' || ($supervisor !== null && $supervisor !== 'null' && $supervisor !== ''), function ($query) use ($assignedProgramIds) {
+            $query->whereHas('institution_program.program', function ($query) use ($assignedProgramIds) {
+               $query->whereIn('id', $assignedProgramIds); 
+            });
+        });
         
         // Apply academic year and status filters
         $query->where(function ($q) {
@@ -527,5 +453,4 @@ class DashboardController extends Controller
         
         return response()->json($tools);   
     }
-
-}   
+}

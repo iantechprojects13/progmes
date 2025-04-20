@@ -1,5 +1,4 @@
 <template>
-
     <Head title="Choose Account Type | Register" />
     <div class="w-full flex justify-center mt-20 select-none">
         <div
@@ -10,8 +9,10 @@
                 </div>
                 <h1 class="font-bold text-xl md:text-3xl text-gray-700 text-center mb-5">ProgMES <span
                         class="text-red-600">|</span> CHED RO XI</h1>
-                <p class="text-gray-700 text-center text-base">Before you continue, please take a moment
-                    to complete your account setup.</p>
+                <p class="text-gray-700 text-center text-base">
+                    Hello, <span class="font-semibold">{{ $page.props.auth.user.name || $page.props.auth.user.email }}</span>!
+                    Before you continue, please take a moment to complete your account setup.
+                </p>
             </div>
             <div class="w-full text-center pt-5 border-t border-gray-400">
                 <h1 class="text-lg font-bold text-blue-600">Choose Account Type</h1>
@@ -29,6 +30,7 @@
         </div>
     </div>
 </template>
+
 
 <script setup>
     import { router } from "@inertiajs/vue3";

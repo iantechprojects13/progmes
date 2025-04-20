@@ -156,6 +156,16 @@
                                     <div>AY: {{ evaluation.effectivity }}</div>
                                 </div>
                             </div>
+                            <div
+                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
+                            >
+                                <div class="w-full">
+                                    <p class="text-sm text-gray-500">
+                                        CMO
+                                    </p>
+                                    <div>No.{{ evaluation.cmo?.number }}, S.{{ evaluation.cmo?.series }}</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

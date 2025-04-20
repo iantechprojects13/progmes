@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\InstitutionModel;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdminSettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,4 +31,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/dashboard/tool/{academicyear}/{status}/{supervisor}/{program}/{institution}/view', [DashboardController::class, 'viewTools']);
 Route::get('/dashboard/tool/{supervisor}/{program}/{institution}/{year}/{month}/{quarter}/view', [DashboardController::class, 'viewMonitoredTools']);
+Route::get('/admin/settings/{id}/assignedprograms', [AdminSettingsController::class, 'getAssignedPrograms']);
 

@@ -14,8 +14,8 @@ class CHEDLibraryEvaluationController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $show = $request->query('show') ? $request->query('show') : 25;
-        $acadYear = $request->query('ay') ? $request->query('ay') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
+        $show = sanitizePerPage($request->query('show'), Auth::user()->id);
+        $acadYear = getAcademicYear($request->query('ay'),Auth::user()->id);
         
         $complianceTools = LibEvaluationFormModel::query()
             ->when($request->query('search'), function ($searchQuery) use ($request) {
@@ -46,8 +46,8 @@ class CHEDLibraryEvaluationController extends Controller
     public function libraryEvaluationList(Request $request)
     {
         $user = Auth::user();
-        $show = $request->query('show') ? $request->query('show') : 25;
-        $acadYear = $request->query('ay') ? $request->query('ay') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
+        $show = sanitizePerPage($request->query('show'), Auth::user()->id);
+        $acadYear = getAcademicYear($request->query('ay'),Auth::user()->id);
         $canEvaluate = $user->role == 'Super Admin' || $user->role == 'Education Supervisor' ? true: false;
         
 

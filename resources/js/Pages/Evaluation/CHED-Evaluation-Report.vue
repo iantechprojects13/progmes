@@ -390,7 +390,9 @@ import { router } from "@inertiajs/vue3";
 import Layout from "@/Shared/Layout.vue";
 defineOptions({ layout: Layout });
 
-const props = defineProps(["tool", "signatories"]);
+const props = defineProps([
+    "tool"
+]);
 
 const showOptionsModal = ref(false);
 
@@ -458,10 +460,10 @@ const report = reactive({
     conforme2Title: ref(props.tool.conforme2Title),
     evaluatedBy: ref(props.tool.evaluatedBy),
     evaluatedByTitle: ref(props.tool.evaluatedByTitle),
-    reviewedBy: props.tool.reviewedBy ? props.tool.reviewedBy : props.signatories.reviewedBy,
-    reviewedByTitle: props.tool.reviewedByTitle ? props.tool.reviewedByTitle : props.signatories.reviewedByTitle,
-    notedBy: props.tool.notedBy ? props.tool.notedBy : props.signatories.notedBy,
-    notedByTitle: props.tool.notedByTitle ? props.tool.notedByTitle : props.signatories.notedByTitle,
+    reviewedBy: ref(props.tool.reviewedBy),
+    reviewedByTitle: ref(props.tool.reviewedByTitle),
+    notedBy: ref(props.tool.notedBy),
+    notedByTitle: ref(props.tool.notedByTitle),
 });
 
 const generatingReport = ref(false);

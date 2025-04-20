@@ -8,7 +8,7 @@
     <title>Deficiency Report</title>
     <style>
         @page {
-            margin: 20px 38px 20 38px;
+            margin: 20px 96px 20px 96px;
         }
 
         body {
@@ -41,12 +41,10 @@
             bottom: 0cm;
             left: 0cm;
             right: 0cm;
-            height: 75px;
+            height: 55px;
             color: black;
             text-align: center;
         }
-
-
 
         #ched {
             font-size: 11pt;
@@ -77,10 +75,6 @@
             padding: 10px 5px 10px 5px;
             vertical-align: text-top;
         }
-
-        .pagenum:before {
-            content: counter(page);
-        }
     </style>
 </head>
 
@@ -100,13 +94,19 @@
         </div>
     </header>
     <footer>
-        <div style="padding-top: 10px; border-top: 2px solid black; margin-bottom: 10px;">
-            <div style="font-weight: bold; font-size: 12pt; margin-bottom: 3px;">
-                University of Southeastern Philippines Compound, Loyola St., Bo. Obrero, Davao City
+        <div style="
+                    padding-top: 5px;
+                    border-top: 2px solid black;
+                    margin-bottom: 5px;
+                ">
+            <div style="font-weight: bold; font-size: 11pt">
+                University of Southeastern Philippines Compound, Loyola St.,
+                Bo. Obrero, Davao City
             </div>
-            <div>www.ro11.ched.ph | chedro11@ched.gov.ph | (082) 295-3418</div>
+            <div>
+                www.ro11.ched.ph | chedro11@ched.gov.ph | (082) 295-3418
+            </div>
         </div>
-        <div class="pagenum"></div>
     </footer>
     <main>
         <div>
@@ -122,11 +122,17 @@
                 <br>
 
                 <div style="display: inline-block; margin-top: 5px"><b>Program:</b></div>
-                <div style="display: inline-block;">{{ $tool->institution_program->program->program }}</div>
+                <div style="display: inline-block;">
+                    {{ $tool->institution_program->program->program }}
+                    @if ($tool->institution_program->program?->major)
+                    <span> - {{ $tool->institution_program->program?->major }}
+                    </span>
+                    @endif
+                </div>
                 <br>
 
                 <div style="display: inline-block; margin-top: 5px"><b>Monitoring/Evaluation Reference:</b></div>
-                <div style="display: inline-block;">CMO {{ $tool->cmo->number }}, S. {{ $tool->cmo->series }}</div>
+                <div style="display: inline-block;">CMO No.{{ $tool->cmo->number }}, S. {{ $tool->cmo->series }}</div>
                 <br>
 
                 <div style="display: inline-block; margin-top: 5px"><b>Monitoring/Evaluation Date:</b></div>
@@ -154,69 +160,72 @@
                     @endforeach
                 </tbody>
             </table>
-            
+
             <!-- Signatories -->
             <div style="margin-top: 40px; width: 100%; overflow: hidden;">
                 <!-- Row 1 -->
-                <!-- <div style="width: 100%; overflow: hidden; margin-bottom: 30px;">
-                    <div style="float: left; width: 45%; page-break-inside: avoid; margin-left: 3%;">
-                        <div>Conforme:</div>
-                        <div style="margin: 8px 20px;">
-                            <div>{{ $tool->conforme1 }}</div>
-                            <div>{{ $tool->conforme1Title }}</div>
-                        </div>
-                    </div>
-                    <div style="float: left; width: 45%; page-break-inside: avoid; margin-left: 4%;">
-                        <div>Conforme:</div>
-                        <div style="margin: 8px 20px;">
-                            <div>{{ $tool->conforme2 }}</div>
-                            <div>{{ $tool->conforme2Title }}</div>
-                        </div>
-                    </div>
-                    <div style="clear: both;"></div>
-                </div> -->
-                
-                <!-- Row 2 -->
-                <div style="width: 100%; overflow: hidden; margin-top: 40px;">
-                    <div style="float: left; width: 31%; page-break-inside: avoid; margin-left: 3%;">
+                <div style="width: 100%; overflow: hidden; margin-bottom: 40px; margin-top: 30px;">
+                    <div style="float: left; width: 33%; page-break-inside: avoid;">
                         <div>Evaluated by:</div>
-                        <div style="margin: 8px 20px;">
+                        <div style="margin: 8px 15px;">
                             <div>{{ $tool->evaluatedBy }}</div>
                             <div>{{ $tool->evaluatedByTitle }}</div>
                         </div>
                     </div>
-                    <div style="float: left; width: 31%; page-break-inside: avoid; margin-left: 4%;">
+                    <div style="float: left; width: 33%; page-break-inside: avoid;">
                         <div>Reviewed by:</div>
-                        <div style="margin: 8px 20px;">
+                        <div style="margin: 8px 15px;">
                             <div>{{ $tool->reviewedBy }}</div>
                             <div>{{ $tool->reviewedByTitle }}</div>
                         </div>
                     </div>
-                    <div style="float: left; width: 31%; page-break-inside: avoid; margin-left: 3%;">
+                    <div style="float: left; width: 33%; page-break-inside: avoid;">
                         <div>Noted by:</div>
-                        <div style="margin: 8px 20px;">
+                        <div style="margin: 8px 15px;">
                             <div>{{ $tool->notedBy }}</div>
                             <div>{{ $tool->notedByTitle }}</div>
                         </div>
                     </div>
                     <div style="clear: both;"></div>
                 </div>
-                
-                <!-- Row 3 (only one item) -->
-                <!-- <div style="width: 100%; overflow: hidden;">
-                    <div style="float: left; width: 45%; page-break-inside: avoid; margin-left: 3%;">
-                        <div>Noted by:</div>
-                        <div style="margin: 8px 20px;">
-                            <div>{{ $tool->notedBy }}</div>
-                            <div>{{ $tool->notedByTitle }}</div>
-                        </div>
-                    </div>
-                    <div style="clear: both;"></div>
-                </div> -->
             </div>
-            
         </div>
     </main>
+    <!-- Footer on all pages except first page -->
+    <footer>
+        <div style="
+                    position: relative;
+                    bottom: 15px;
+                    font-size: 10pt;
+                    width: 100%;
+                    text-align: left;
+                ">
+            {{ $tool->institution_program->institution->name }} |
+            {{ $tool->institution_program->program->program }}
+            @if ($tool->institution_program->program?->major)
+            <span>
+                - {{ $tool->institution_program->program?->major }}
+            </span>
+            @endif | CMO No.{{ $tool->cmo->number }}, S.
+            {{ $tool->cmo->series }} |
+            {{ date('F j, Y', strtotime($tool->evaluationDate)) }}
+        </div>
+    </footer>
+    <!-- Page x of y -->
+    <script type="text/php">
+        if (isset($pdf)) {
+            $text = "Page {PAGE_NUM} of {PAGE_COUNT}";
+            $size = 10;
+            $font = $fontMetrics->getFont("Arial");
+            $width = $fontMetrics->get_text_width($text, $font, $size) / 6.5;
+
+            // Calculate center position
+            $x = ($pdf->get_width() / 2) - $width;
+            $y = $pdf->get_height() - 23;
+
+            $pdf->page_text($x, $y, $text, $font, $size);
+        }
+    </script>
 </body>
 
 </html>

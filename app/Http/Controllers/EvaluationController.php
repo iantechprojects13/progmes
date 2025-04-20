@@ -10,6 +10,7 @@ use App\Models\InstitutionModel;
 use App\Models\EvaluationFormModel;
 use App\Models\ProgramModel;
 use App\Models\AdminSettingsModel;
+use App\Models\ProgramAssignmentModel;
 use Inertia\Inertia;
 use Carbon\Carbon;
 use Throwable;
@@ -26,9 +27,13 @@ class EvaluationController extends Controller
         if ($user->type == 'CHED') {
             return redirect()->route('evaluation.ched');
         }
-
+        
         if ($user->role == 'Program Head') {
             return redirect()->route('evaluation.ph');
+        }
+
+        if ($user->role == 'Program Coordinator') {
+            return redirect()->route('evaluation.pc');
         }
 
         if ($user->type == 'HEI') {
@@ -52,65 +57,105 @@ class EvaluationController extends Controller
     
     public function EvaluationForCHED(Request $request) {
         $user = Auth::user();
-        $show = $request->query('show') ? $request->query('show') : 25;
-        $acadYear = $request->query('academicYear') ? $request->query('academicYear') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
-        $disciplines = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('discipline')->get();
-        $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
+        $show = sanitizePerPage($request->query('show'), $user->id);
+        $acadYear = getAcademicYear($request->query('academicYear'), $user->id);
         $canEvaluate = false;
         $canEmail = false;
-
+        
         if ($user->role == 'Super Admin' || $user->role == 'Education Supervisor') {
             $canEvaluate = true;
             $canEmail = true;
         }
-
+        
         if ($user->role == 'Admin') {
             $canEmail = true;
         }
         
-
-        $complianceTools = EvaluationFormModel::query()
-        ->when($request->query('search'), function ($query) use ($request, $disciplineIds) {
-            $query->where(function ($q) use ($request, $disciplineIds){
-                $q->whereHas('institution_program.program', function ($searchQuery) use ($request, $disciplineIds) {
-                    $searchQuery->where('program', 'like', '%' . $request->query('search') . '%');
-                })
-                ->orWhereHas('institution_program.institution', function ($searchQuery) use ($request, $disciplineIds) {
-                    $searchQuery->where('name', 'like', '%' . $request->query('search') . '%');
+        $assignedProgramIds = getUserAssignedProgramIds($user->id);
+        
+        $query = EvaluationFormModel::query()
+            ->when($request->query('search'), function ($query) use ($request) {
+                applyProgramAndInstitutionSearch(
+                    $query, 
+                    $request->query('search'), 
+                    'institution_program.program', 
+                    'institution_program.institution'
+                );
+            })
+            ->when($user->role == 'Education Supervisor', function ($query) use ($assignedProgramIds) {
+                $query->whereHas('institution_program', function ($q) use ($assignedProgramIds) {
+                    $q->whereIn('programId', $assignedProgramIds);
                 });
             })
+            ->where('effectivity', $acadYear)
             ->where(function ($query) {
                 $query->whereNot('status', 'Deployed')->whereNot('status', 'Monitored');
-            });
-        })
-        ->when($user->role == 'Education Supervisor', function ($query) use ($disciplineIds) {
-            $query->whereIn('disciplineId', $disciplineIds);
-        })
-        ->where('effectivity', $acadYear)
-        ->where(function ($query) {
-            $query->whereNot('status', 'Deployed')->whereNot('status', 'Monitored');
-        })
-        ->when($request->query('status'), function ($statusQuery) use ($request) {
-            $statusQuery->where('status', $request->query('status'));
-        })
-        ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable')
-        ->paginate($show)
-        ->through(fn($item) => [
-            'id' => $item->id,
-            'submissionDate' => $item->submissionDate,
-            'status' => $item->status,
-            'institution' => $item->institution_program->institution->name,
-            'program' => $item->institution_program->program->program,
-            'major' => $item->institution_program->program->major,
-            'progress' => intval(round((($item->complied->count() + $item->not_complied->count() + $item->not_applicable->count())/$item->item->count())*100)),
-            'isLocked' => $item->status == 'Locked' || $item->status == 'Submitted' ? true : false,
-            'canBeArchived' =>$item->status == 'Submitted' ? true : false,
-        ])
-        ->withQueryString();
-
+            })
+            ->when($request->query('status'), function ($statusQuery) use ($request) {
+                $statusQuery->where('status', $request->query('status'));
+            })
+            ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable');
+        
+        // Get all results without pagination first
+        $allResults = $query->get();
+        
+        // Transform and calculate complianceRate for each item
+        $transformedResults = $allResults->map(function($item) {
+            return [
+                'id' => $item->id,
+                'submissionDate' => $item->submissionDate,
+                'status' => $item->status,
+                'institution' => $item->institution_program->institution->name,
+                'program' => $item->institution_program->program->program,
+                'major' => $item->institution_program->program->major,
+                'progress' => $item->item->count() > 0 
+                    ? intval(round((($item->complied->count() + $item->not_complied->count() + $item->not_applicable->count()) / $item->item->count()) * 100))
+                    : 0,
+                'complianceRate' => $item->complied->count() + $item->not_complied->count() > 0
+                    ? intval(round(($item->complied->count() / ($item->complied->count() + $item->not_complied->count())) * 100))
+                    : 0,
+                'isLocked' => $item->status == 'Locked' || $item->status == 'For re-evaluation' || $item->status == 'Submitted' ? true : false,
+                'canBeArchived' => $item->status == 'Submitted' ? true : false,
+            ];
+        });
+        
+        // Sort by complianceRate if requested
+        $sortField = $request->query('sort', 'id');
+        $sortDirection = $request->query('direction', 'asc');
+        
+        if ($sortField === 'complianceRate') {
+            $transformedResults = $sortDirection === 'asc' 
+                ? $transformedResults->sortBy('complianceRate')
+                : $transformedResults->sortByDesc('complianceRate');
+        } elseif ($sortField === 'progress') {
+            $transformedResults = $sortDirection === 'asc' 
+                ? $transformedResults->sortBy('progress')
+                : $transformedResults->sortByDesc('progress');
+        } else {
+            $transformedResults = $sortDirection === 'desc' 
+                ? $transformedResults->sortBy('progress')
+                : $transformedResults->sortByDesc('progress');
+        }
+        
+        // Manually paginate the results
+        $page = $request->query('page', 1);
+        $perPage = $show;
+        $total = $transformedResults->count();
+        
+        $paginatedResults = $transformedResults->slice(($page - 1) * $perPage, $perPage)->values();
+        
+        // Create a custom paginator
+        $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
+            $paginatedResults,
+            $total,
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+        
         return Inertia::render('Evaluation/CHED-Evaluation-List', [
-            'complianceTools' => $complianceTools,
-            'filters' => $request->only(['search', 'status']) + ['show' => $show, 'academicYear' => $acadYear ],
+            'complianceTools' => $paginator,
+            'filters' => $request->only(['search', 'status', 'sort', 'direction']) + ['show' => $show, 'academicYear' => $acadYear],
             'canEvaluate' => $canEvaluate,
             'canEmail' => $canEmail,
             'programHeadEmail' => "ian.epidemia13@gmail.com",
@@ -119,39 +164,17 @@ class EvaluationController extends Controller
 
     public function monitoredForCHED(Request $request) {
         $user = Auth::user();
-        $show = $request->query('show') ? $request->query('show') : 25;
-        $acadYear = $request->query('academicYear') ? $request->query('academicYear') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
-
-        $disciplines = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('discipline')->get();
-        $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
-
-        $canEvaluate = false;
-
-        if ($user->role == 'Super Admin' || $user->role == 'Education Supervisor') {
-            $canEvaluate = true;
-        }
+        $show = sanitizePerPage($request->query('show'), Auth::user()->id);
+        $acadYear = getAcademicYear($request->query('academicYear'),Auth::user()->id);
+        $programIds = getUserAssignedProgramIds($user->id);
 
         $complianceTools = EvaluationFormModel::query()
-        ->when($request->query('search'), function ($query) use ($request, $disciplineIds) {
-            $query->where(function ($q) use ($request, $disciplineIds){
-                $q->whereHas('institution_program.program', function ($searchQuery) use ($request, $disciplineIds) {
-                    $searchQuery->where('program', 'like', '%' . $request->query('search') . '%');
-                })
-                ->orWhereHas('institution_program.institution', function ($searchQuery) use ($request, $disciplineIds) {
-                    $searchQuery->where('name', 'like', '%' . $request->query('search') . '%');
-                });
-            })
-            ->where(function ($query) {
-                $query->where('status', 'Monitored');
-            });
+        ->when($request->query('search'), function ($query) use ($request) {
+            applyProgramAndInstitutionSearch($query, $request->query('search'), 'institution_program.program', 'institution_program.institution');
         })
-        ->when($user->role == 'Education Supervisor', function ($query) use ($disciplineIds) {
-            $query->whereIn('disciplineId', $disciplineIds);
-        })
+        ->when($user->role == 'Education Supervisor', supervisorAssignedPrograms('institution_program.program', $programIds))
         ->where('effectivity', $acadYear)
-        ->where(function ($query) {
-            $query->where('status', 'Monitored');
-        })
+        ->where('status', 'Monitored')
         ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable')
         ->paginate($show)
         ->through(fn($item) => [
@@ -168,12 +191,60 @@ class EvaluationController extends Controller
         return Inertia::render('Evaluation/CHED-Evaluation-Monitored', [
             'complianceTools' => $complianceTools,
             'filters' => $request->only(['search']) + ['show' => $show, 'academicYear' => $acadYear ],
-            'canEvaluate' => $canEvaluate,
         ]);
     }
 
 
-    public function evaluationForProgramHead() {
+    public function evaluationForProgramHead(Request $request) {
+        $show = sanitizePerPage($request->query('show'), Auth::user()->id);
+        $acadYear = $request->query('academicYear') != null ? $request->query('academicYear') : null;
+
+        $role = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->first();
+        
+        $institutionProgram = InstitutionProgramModel::where([
+            'institutionId' => $role->institutionId,
+            'programId' => $role->programId,
+        ])->with('program')->first();
+
+        $program = $institutionProgram->program->program;
+        
+        $institution = $institutionProgram->institution->id;
+        $allProg = ProgramModel::where('program', $program)->pluck('id');
+
+        $programs = InstitutionProgramModel::whereIn('programId', $allProg)->where('institutionId', $institution)->pluck('id');
+        
+        $evaluationTools = EvaluationFormModel::query()
+        ->when($request->query('search'), function ($query) use ($request) {
+            applyProgramSearch($query, $request->query('search'), 'institution_program.program');
+        })
+        ->when($request->query('academicYear'), function ($query) use ($request) {
+            $query->where('effectivity', $request->query('academicYear'));
+        })
+        ->when($request->query('status'), function ($query) use ($request) {
+            $query->where('status', $request->query('status'));
+        })
+        ->whereIn('institutionProgramId', $programs)
+        ->orderBy('effectivity', 'desc')
+        ->with('institution_program.program')
+        ->paginate($show)
+        ->withQueryString();
+        
+        return Inertia::render('Evaluation/HEI-Evaluation-PH-List', [
+            'program' => $institutionProgram,
+            'evaluationTools' => $evaluationTools->through(function ($tool) {
+            return [
+                'id' => $tool->id,
+                'effectivity' => $tool->effectivity,
+                'status' => $tool->status,
+                'program' => $tool->institution_program->program->program,
+                'major' => $tool->institution_program->program?->major,
+            ];
+            }),
+            'filters' => $request->only(['search', 'status']) + ['show' => $show, 'academicYear' => $acadYear ],
+        ]);
+    }
+
+    public function evaluationForProgramCoordinator() {
 
         $role = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->first();
         
@@ -181,10 +252,10 @@ class EvaluationController extends Controller
             'institutionId' => $role->institutionId,
             'programId' => $role->programId,
         ])->with(['institution', 'program', 'evaluationForm' => function ($evalFormQuery) {
-            $evalFormQuery->orderBy('effectivity', 'asc');
+            $evalFormQuery->orderBy('effectivity', 'desc');
         }, 'evaluationForm.item'])->first();
         
-        return Inertia::render('Evaluation/HEI-Evaluation-PH-List', [
+        return Inertia::render('Evaluation/HEI-Evaluation-PC-List', [
             'program' => $institutionProgram,
         ]);
     }
@@ -194,8 +265,8 @@ class EvaluationController extends Controller
     public function evaluationForHEI(Request $request) {
         
         $user = Auth::user();
-        $show = $request->query('show') ? $request->query('show') : 25;
-        $acadYear = $request->query('academicYear') ? $request->query('academicYear') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
+        $show = sanitizePerPage($request->query('show'), Auth::user()->id);
+        $acadYear = getAcademicYear($request->query('academicYear'),Auth::user()->id);
         $disciplines = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('discipline')->get();
         $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
         $institution = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->value('institutionId');
@@ -247,8 +318,8 @@ class EvaluationController extends Controller
 
     public function monitoredForHEI(Request $request) {
         $user = Auth::user();
-        $show = $request->query('show') ? $request->query('show') : 25;
-        $acadYear = $request->query('academicYear') ? $request->query('academicYear') : AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
+        $show = sanitizePerPage($request->query('show'), Auth::user()->id);
+        $acadYear = getAcademicYear($request->query('academicYear'), Auth::user()->id);
         $disciplines = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->with('discipline')->get();
         $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
         $institution = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->value('institutionId');

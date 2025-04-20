@@ -48,17 +48,24 @@
                                         </div>
                                         <div
                                             class="inline-block overflow-hidden"
-                                            :title="$page.props.auth.user.name"
                                         >
                                             <div
                                                 class="text-sm whitespace-nowrap overflow-hidden overflow-ellipsis"
-                                            >
+                                            
+                                                :title="$page.props.auth.user.name">
                                                 {{ $page.props.auth.user.name }}
                                             </div>
                                             <p
                                                 class="text-xs whitespace-nowrap overflow-hidden overflow-ellipsis"
-                                            >
-                                                {{ $page.props.auth.user.role }}
+                                            
+                                                :title="$page.props.auth.user.role == 'Vice-President for Academic Affairs' ? 'VPAA/Deans of Multiple Discipline/Program' : $page.props.auth.user.role"
+                                                >
+                                                <span v-if="$page.props.auth.user.role == 'Vice-President for Academic Affairs'">
+                                                    VPAA/Dean of Multiple Discipline/Program
+                                                </span>
+                                                <span v-else>
+                                                    {{ $page.props.auth.user.role }}
+                                                </span>
                                             </p>
                                         </div>
                                     </div>
@@ -159,10 +166,10 @@
                                         d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"
                                     />
                                 </svg>
-                                    Program Compliance
+                                    Program Monitoring
                                 </Link>
 
-                                <Link v-if="$page.props.auth.user.role == 'Librarian' || $page.props.auth.user.role == 'Program Head' || $page.props.auth.user.role == 'Vice-President for Academic Affairs' || $page.props.auth.user.type == 'CHED'"
+                                <Link v-if="showLibraryNavBtn"
                                     :href="route('library.evaluation')"
                                     class="flex items-center select-none w-full px-3 py-2 rounded-lg "
                                     :class="[
@@ -267,6 +274,12 @@
                                     Sign out
                                 </button>
                             </div>
+                            <!-- <button
+                                @click="clearDarkMode()"
+                                class="flex items-center select-none w-full px-3 py-2 rounded-lg text-gray-300 hover:text-blue-500 hover:bg-gray-800"
+                            >
+                                {{ isDarkMode ? 'Light Mode' : 'Dark Mode' }}
+                            </button> -->
                         </div>
 
                         <!-- Sidebar Toggle -->
@@ -451,6 +464,7 @@ const logoutModal = ref(false);
 const loggingout = ref(false);
 const loading = ref(false);
 const isNavigatingWithHistory = ref(false);
+const isDarkMode = ref('');
 
 const hasUnsavedChanges = reactive({
     value: null,
@@ -460,8 +474,23 @@ const isUpdating = reactive({
     value: null,
 });
 
+const toggleDarkMode = () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    isDarkMode.value = isDark;
+    localStorage.setItem('pms_theme', isDark ? 'dark' : 'light');
+};
+
+const clearDarkMode = () => {
+  document.documentElement.classList.remove('dark');
+  localStorage.removeItem('pms_theme');
+};
+
 onMounted(() => {
-  window.addEventListener('popstate', handlePopState);
+    window.addEventListener('popstate', handlePopState);
+
+    if (localStorage.getItem('theme') === 'dark') {
+    document.documentElement.classList.add('dark');
+  }
 });
 
 onBeforeUnmount(() => {
@@ -547,6 +576,16 @@ function logout() {
 defineExpose({
     closeNotification,
 });
+
+
+const showLibraryNavBtn = () => {
+    return page.props.auth.user.role === 'Librarian' || 
+           page.props.auth.user.role === 'Program Head' || 
+           page.props.auth.user.role === 'Program Coordinator' || 
+           page.props.auth.user.role === 'Vice-President for Academic Affairs' || 
+           page.props.auth.user.type === 'CHED';
+};
+
 </script>
 
 <script>
@@ -585,11 +624,14 @@ export default {
                     "Admin/discipline/Discipline-Create",
                     "Admin/discipline/Discipline-Edit",
                     "Admin/Profile-View",
+                    "Admin/Settings",
+                    "Admin/Program-Assignment",
                 ],
                 evaluation: [
                     "Evaluation/HEI-Evaluation-Edit",
                     "Evaluation/HEI-Evaluation-View",
                     "Evaluation/HEI-Evaluation-PH-List",
+                    "Evaluation/HEI-Evaluation-PC-List",
                     "Evaluation/HEI-Evaluation-List",
                     "Evaluation/HEI-Evaluation-Monitored",
                     "Evaluation/CHED-Evaluation-List",

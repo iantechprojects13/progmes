@@ -59,8 +59,15 @@
                         value="+ Add discipline">
                 </div>
                 <div class="text-center mt-10">
-                    <button @click="submit" :disabled="processing"
-                        class=" bg-blue-600 hover:bg-blue-800 text-white p-2 px-5 max-w-16 rounded w-full cursor-pointer">
+                    <button
+                    @click="submit"
+                    type="submit" class="bg-blue-600 hover:bg-blue-800 text-white p-2 px-5 rounded-full md:w-64 w-full"
+                        :class="{ processing: 'cursor-not-allowed' }"
+                        :disabled="processing"
+                        >
+                        <span v-if="processing">
+                            <i class="fas fa-spinner animate-spin mr-1"></i>
+                        </span>
                         REGISTER
                     </button>
                 </div>
@@ -72,8 +79,6 @@
 <script setup>
     import { reactive, ref } from 'vue';
     import { router } from '@inertiajs/vue3';
-    import { Inertia } from '@inertiajs/inertia';
-
 
     const form = reactive({
         role: null,

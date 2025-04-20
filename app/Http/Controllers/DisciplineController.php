@@ -15,7 +15,7 @@ class DisciplineController extends Controller
         $canEdit = false;
         $canDelete = false;
         $canAdd = false;
-        $show = $request->query('show') ? $request->query('show') : 25;
+        $show = sanitizePerPage($request->query('show'), Auth::user()->id);
 
         if ($role == 'Super Admin') {
             $canEdit = true;

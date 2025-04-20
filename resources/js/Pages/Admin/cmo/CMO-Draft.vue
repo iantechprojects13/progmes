@@ -89,7 +89,7 @@
                     </tr>
                     <tr v-else v-for="cmo in cmo_list.data" :key="cmo.id">
                         <td>
-                            <div
+                            <!-- <div
                                 v-if="
                                     cmo.number != null &&
                                     cmo.series != null
@@ -100,13 +100,21 @@
                                      - Version {{ cmo.version }}
                                 </span>
                             </div>
-                            <div v-else>-</div>
+                            <div v-else>-</div> -->
+                            <div>
+                                CMO No.{{ cmo.number ? cmo.number : '*' }}, S.{{ cmo.series ? cmo.series : '*' }}
+                            </div>
                         </td>
                         <td>
-                            {{ cmo.program?.program }}
+                            <div v-if="cmo.program">
+                                {{ cmo.program?.program }}
                             <span v-if="cmo.program?.major">
                                 - {{ cmo.program?.major }}
                             </span>
+                            </div>
+                            <div v-else>
+                                -
+                            </div>
                         </td>
                         <td>
                             <div v-if="cmo.created_by?.name == null">-</div>

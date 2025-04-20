@@ -11,6 +11,7 @@ use App\Models\InstitutionModel;
 use App\Models\InstitutionProgramModel;
 use App\Models\RoleModel;
 use App\Models\ProgramModel;
+use App\Models\ProgramAssignmentModel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
@@ -66,9 +67,6 @@ class RegistrationController extends Controller
     
     // register ched account
     public function registerCHED (Request $request) {
-
-
-    
         $rules = [
             'role' => 'required',
             'discipline' => 'required',
@@ -224,13 +222,27 @@ class RegistrationController extends Controller
 
         $acceptedUser = User::where('id', $user->id)->first();
         $roles = RoleModel::where('userId', $acceptedUser->id)->where('isActive', null)->get();
+        $disciplineIds = [];
+        $programIds = [];
 
+        if ($acceptedUser->role == 'Education Supervisor') {
+            $disciplineIds = $roles->pluck('disciplineId')->toArray();
+            $programIds = ProgramModel::whereIn('disciplineId', $disciplineIds)->pluck('id')->toArray();
+        }
+
+        foreach ($programIds as $programId) {
+            ProgramAssignmentModel::create([
+                'userId' => $acceptedUser->id,
+                'programId' => $programId,
+            ]);
+        }
+        
         $acceptedUser->update([
             'isVerified'=> 1,
             'isActive' => 1,
         ]);
         $acceptedUser->save();
-
+        
 
         foreach ($roles as $role) {
             $role->update([
@@ -239,11 +251,11 @@ class RegistrationController extends Controller
             $role->save();
         }
         
-        try {
-            Mail::to($acceptedUser->email)->send(new NotificationEmail($acceptedUser->name));
-        } catch (Throwable $thr) {
-            return redirect()->back()->with('success', $acceptedUser->name . '\'s registration has been approved, but the notification email could not be sent. Daily sending limit exceeded.');
-        }
+        // try {
+        //     Mail::to($acceptedUser->email)->send(new NotificationEmail($acceptedUser->name));
+        // } catch (Throwable $thr) {
+        //     return redirect()->back()->with('success', $acceptedUser->name . '\'s registration has been approved, but the notification email could not be sent. Daily sending limit exceeded.');
+        // }
         
         return redirect()->back()->with('success', $acceptedUser->name .'\'s registration has been approved. Notification email has been sent.');
     }
@@ -275,9 +287,16 @@ class RegistrationController extends Controller
     public function viewMyAccount($id)
     {
         $user = Auth::user();
+        $hasDiscipline = false;
+        $assignedPrograms = [];
         
         if ($id != $user->id) {
             return redirect('/unauthorized');
+        }
+
+        if ($user->role == 'Education Supervisor') {
+            $hasDiscipline = true;
+            $assignedPrograms = ProgramAssignmentModel::where('userId', $user->id)->with('program')->get();
         }
 
         $roleRelations = [
@@ -297,6 +316,8 @@ class RegistrationController extends Controller
         return Inertia::render('Auth/Account', [
             'profile' => $user,
             'roles' => $roles,
+            'hasDiscipline' => $hasDiscipline,
+            'assignedPrograms' => $assignedPrograms,
         ]);
     }
     
@@ -313,7 +334,11 @@ class RegistrationController extends Controller
         $hasDiscipline = false;
         $hasProgram = false;
         $hasInstitution = false;
-
+        $assignedPrograms = [];
+        $assignedProgramIds = [];
+        $disciplineIds = [];
+        $programList = [];
+        
         if ($userRole == 'Super Admin') {
             $canChangeRole = true;
         }
@@ -323,6 +348,11 @@ class RegistrationController extends Controller
             if($roles) {
                 $hasDiscipline = true;
             }
+            
+            $assignedPrograms = ProgramAssignmentModel::where('userId', $user->id)->with('program')->get();
+            $assignedProgramIds = getUserAssignedProgramIds($user->id);
+            $disciplineIds = getUserDisciplineIds($user->id);
+            $programList = ProgramModel::whereIn('disciplineId', $disciplineIds)->orderby('program', 'asc')->orderBy('major', 'asc')->get();
         }
         
         if ($user->role == 'Vice-President for Academic Affairs') {
@@ -357,10 +387,52 @@ class RegistrationController extends Controller
             'hasDiscipline' => $hasDiscipline,
             'hasProgram' => $hasProgram,
             'hasInstitution' => $hasInstitution,
+            'assignedPrograms' => $assignedPrograms,
+            'assignedProgramIds' => $assignedProgramIds,
+            'programList' => $programList,
         ]);
     }
 
-    function changeRole(Request $request) {
+    public function updateAssignedProgram(Request $request)
+    {
+        // Validate the request
+        $validated = $request->validate([
+            'userId' => 'required',
+        ]);
+        
+        $userId = $request->userId;
+        $programIds = $request->programs;
+        
+        try {
+            // Delete assignments that are not in the new list
+            ProgramAssignmentModel::where('userId', $userId)
+                ->whereNotIn('programId', $programIds)
+                ->delete();
+            
+            // For each program ID in the request
+            foreach ($programIds as $programId) {
+                // Check if the assignment already exists
+                $exists = ProgramAssignmentModel::where('userId', $userId)
+                    ->where('programId', $programId)
+                    ->exists();
+                
+                // If it doesn't exist, create it
+                if (!$exists) {
+                    ProgramAssignmentModel::create([
+                        'userId' => $userId,
+                        'programId' => $programId
+                    ]);
+                }
+            }
+            
+            return back()->with('success', 'Program assignments updated successfully');
+        } catch (\Exception $e) {
+            return back()->with('failed', 'Failed to update program assignments');
+        }
+    }
+
+
+    public function changeRole(Request $request) {
         $user = User::where('id', $request->userId)->first();
         
         $roles = RoleModel::where('userId', $user->id)->where('isActive', 1)->get();

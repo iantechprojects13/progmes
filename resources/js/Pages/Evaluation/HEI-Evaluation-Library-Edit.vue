@@ -1,6 +1,6 @@
 <template>
     <Head title="Program Self-Evaluation Tool" />
-    <page-title title="Program Self-Evaluation" />
+    <page-title title="Program Self-Evaluation (CMO No.22, S.2021)" />
     <content-container :hasStickyDiv="true" :hasSearch="true" :hasFilters="true" :hasTopMainContent="true" :hasBackButton="true">
         <template v-slot:content-title>
             <div class="w-full flex flex-col md:flex-row justify-between items-center">

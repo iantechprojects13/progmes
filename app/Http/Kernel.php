@@ -86,6 +86,7 @@ class Kernel extends HttpKernel
         'ched.admin' => \App\Http\Middleware\ProgmesMiddleware\CHEDAdmin::class,
         'ched.es' => \App\Http\Middleware\ProgmesMiddleware\CHEDEducationSupervisor::class,
         'hei.ph' => \App\Http\Middleware\ProgmesMiddleware\HEIProgramHead::class,
+        'hei.pc' => \App\Http\Middleware\ProgmesMiddleware\HEIProgramCoordinator::class,
         'hei.vp.dean' => \App\Http\Middleware\ProgmesMiddleware\HEIVPandDean::class,
         'evaluate' => \App\Http\Middleware\ProgmesMiddleware\CanEvaluate::class,
         'librarian' => \App\Http\Middleware\ProgmesMiddleware\Librarian::class,

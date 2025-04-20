@@ -113,9 +113,9 @@
     
     <div class="max-w-full mx-auto px-4 md:px-3 lg:px-8 py-5">
         <div
-            class="rounded-xl shadow overflow-hidden"
+            class="rounded-xl shadow overflow-hidden border border-gray-300"
         >
-            <div class="flex items-center p-5 border border-gray-200 rounded-t-xl bg-white">
+            <div class="flex items-center p-5 border-b border-gray-300 rounded-t-xl bg-white">
                 <h2 class="text-lg font-semibold text-gray-700">Monthly Overview</h2>
             </div>  
 
@@ -247,9 +247,9 @@
 
     <div class="max-w-full mx-auto px-4 md:px-3 lg:px-8 py-8">
         <div
-            class="rounded-xl shadow overflow-hidden"
+            class="rounded-xl shadow overflow-hidden border border-gray-300"
         >
-            <div class="flex items-center p-5 border border-gray-200 rounded-t-xl bg-white">
+            <div class="flex items-center p-5 border-b border-gray-300 rounded-t-xl bg-white">
                 <h2 class="text-lg font-semibold text-gray-700">Quarterly Overview</h2>
             </div>  
 
@@ -740,11 +740,6 @@ defineOptions({ layout: Layout });
 const props = defineProps([
     "complianceTool",
     "filters",
-    "userCount",
-    "institutionCount",
-    "programCount",
-    "disciplineCount",
-    "usertype",
     "thisYear",
     "lastYear",
     "twoYearsAgo",
@@ -768,7 +763,6 @@ const props = defineProps([
     "isCurrentYear",
     "analyticsLabel",
     "displayAnalyticsData",
-    "totalPrograms",
     "currentQuarter",
     "supervisor",
     "supervisor_name",
@@ -796,7 +790,7 @@ const viewTools = async (academicyear, status) => {
     }
       selectedTools.value = response.data;
       fetchingData.value = false;
-      console.log(selectedTools.value.length);
+    //   console.log(selectedTools.value.length);
       
   } catch (error) {
     console.error("Error fetching data:", error.response?.data || error.message);
@@ -840,7 +834,7 @@ const viewMonitoredTools = async (year, month, quarter) => {
     }
       selectedTools.value = response.data;
       fetchingData.value = false;
-      console.log(selectedTools.value.length);
+    //   console.log(selectedTools.value.length);
   } catch (error) {
     console.error("Error fetching institution:", error.response?.data || error.message);
   } finally {

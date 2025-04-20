@@ -24,8 +24,8 @@
         <div v-show="hasTopMainContent" class="mx-3 md:mx-8 mt-8 ">
             <slot name="top-main-content"></slot>
         </div>
-        <div class="h-auto mx-3 mt-5 md:mx-8 bg-white border border-slate-200 rounded-lg relative" :class="{'mt-8': !pageTitle}">
-            <div class="overflow-x-auto overflow-y-hidden px-5 pt-1 justify-between border-b border-slate-200 whitespace-nowrap"
+        <div class="h-auto mx-3 mt-5 md:mx-8 bg-white border border-slate-300 rounded-lg relative" :class="{'mt-8': !pageTitle}">
+            <div class="overflow-x-auto overflow-y-hidden px-5 pt-1 justify-between border-b border-slate-300 whitespace-nowrap"
                 v-show="hasNavigation">
                 <slot name="navigation"></slot>
             </div>

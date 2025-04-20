@@ -9,7 +9,7 @@ export default {
         './resources/views/**/*.blade.php',
         './resources/js/**/*.vue',
     ],
-
+    // darkMode: 'class',
     theme: { 
         extend: {
             fontFamily: {
@@ -17,6 +17,7 @@ export default {
             },
             height: {
                 'custom-full': '425px',
+                '84': '21rem',
                 '96': '24rem',
                 '100': '25rem',
             },

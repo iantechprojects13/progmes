@@ -9,8 +9,8 @@
                         <div class="font-bold">Self-Evaluate</div>
                     </div>
                 </div>
-                <div class="w-full md:w-fit md:mt-0 mt-3 flex flex-row justify-center">
-                    <div class="w-full flex flex-row gap-2">
+                <div class="w-full md:w-fit md:mt-0 mt-3 flex flex-col md:flex-row justify-center">
+                    <div class="w-full flex flex-col md:flex-row gap-2">
                         <button @click="toggleResubmitModal" v-if="progress[3] == 100 && evaluation.evaluationDate != null"
                             class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
                             <span class="flex items-center">

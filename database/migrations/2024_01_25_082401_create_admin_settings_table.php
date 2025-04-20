@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('admin_settings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('userId')->nullable();
-            $table->string('currentAcademicYear')->nullable();
             $table->string('setting_category')->nullable();
             $table->string('setting_key')->nullable();
             $table->string('setting_value')->nullable();

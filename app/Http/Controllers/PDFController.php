@@ -34,7 +34,7 @@ class PDFController extends Controller
             'notedBy' => $request->notedBy,
             'notedByTitle' => $request->notedByTitle,
         ]);
-
+        
         $complianceTool->save();
 
         return redirect()->back()->with('success', 'Changes saved successfully.');;
@@ -67,7 +67,7 @@ class PDFController extends Controller
         return redirect()->back()->with('success', 'Changes saved successfully.');;
     }
 
-    public function deficiencyReport($tool, $orientation = 'portrait', $type) {
+    public function deficiencyReport($tool, $orientation = 'landscape', $type) {
         
         $complianceTool = EvaluationFormModel::where('id', $tool)
         ->with(['item' => function ($toolQuery) {
@@ -91,7 +91,7 @@ class PDFController extends Controller
         }
     }
 
-    public function deficiencyReportForLibrary($tool, $orientation = 'portrait', $type) {
+    public function deficiencyReportForLibrary($tool, $orientation = 'landscape', $type) {
         
         $complianceTool = LibEvaluationFormModel::where('id', $tool)
         ->with(['item' => function ($toolQuery) {
@@ -115,7 +115,7 @@ class PDFController extends Controller
         }
     }
 
-    public function monitoringReport($tool, $orientation = 'portrait', $type) {
+    public function monitoringReport($tool, $orientation = 'landscape', $type) {
 
         $complianceTool = EvaluationFormModel::where('id', $tool)
         ->with(['item', 'cmo', 'item.criteria', 'institution_program.program', 'institution_program.institution'])
@@ -125,7 +125,7 @@ class PDFController extends Controller
             'tool' => $complianceTool,
         ];
         
-        $fileName = 'Monitoring-Report-'. time() . '.pdf';
+        $fileName = 'Program-Monitoring-Report-'. time() . '.pdf';
         $report = Pdf::loadView('report.monitoring', $data)->setPaper('a4', $orientation);
         
         if ($type == 'view') {
@@ -137,7 +137,7 @@ class PDFController extends Controller
         }
     }
 
-    public function monitoringReportForLibrary($tool, $orientation = 'portrait', $type) {
+    public function monitoringReportForLibrary($tool, $orientation = 'landscape', $type) {
 
         $complianceTool = LibEvaluationFormModel::where('id', $tool)
         ->with(['item', 'item.criteria', 'institution'])
@@ -147,7 +147,7 @@ class PDFController extends Controller
             'tool' => $complianceTool,
         ];
         
-        $fileName = 'Monitoring-Report-'. time() . '.pdf';
+        $fileName = 'Library-Monitoring-Report-'. time() . '.pdf';
         $report = Pdf::loadView('report.monitoring-library', $data)->setPaper('a4', $orientation);
         
         if ($type == 'view') {

@@ -22,13 +22,13 @@
                             >
                                 Save changes
                             </button>
-                            <button
+                            <button v-show="cmo.status != 'Published'"
                                 class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
                                 @click.prevent="saveAsDraft"
                             >
                                 Save as draft
                             </button>
-                            <button
+                            <button v-show="cmo.status != 'Published'"
                                 class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
                                 @click.prevent="publish"
                             >
@@ -41,7 +41,12 @@
         </template>
 
         <template v-slot:main-content>
-            <div class="bg-white rounded-xl shadow-lg p-2 md:p-8 md:m-4 mb-12">
+            <!-- <div class="md:p-4">
+                <div v-if="hasTool" class="p-4 mb-4 md:mb-0 text-sm text-yellow-800 bg-yellow-100 rounded-lg" role="alert">
+                    <strong>Warning:</strong> This CMO is associated with a program compliance tool(s). Making major changes may affect its integration and could have significant implications. Please proceed with caution and ensure all changes are thoroughly reviewed.
+                </div>
+            </div> -->
+            <div class="bg-white rounded-xl shadow-lg border p-2 md:p-8 md:m-4 mb-12">
                 <div class="flex flex-col gap-6">
                     <!-- First Row: Discipline and Program -->
                     <div class="grid md:grid-cols-2 gap-6">
@@ -202,7 +207,7 @@
                                 </td>
                                 <td>
                                     <tip-tap-editor
-                                        :model-value="form.area[index]"
+                                        v-model="form.area[index]"
                                         @input="updateData"
                                     />
                                 </td>
@@ -244,7 +249,8 @@ onUnmounted(() => {
 const props = defineProps([
     "cmo",
     "discipline_list",
-    "program_list"
+    "program_list",
+    // "hasTool",
 ]);
 
 // -------------------------------------------------------------------------------
@@ -294,8 +300,8 @@ const form = reactive({
     number: ref(props.cmo.number),
     series: ref(props.cmo.series),
     version: ref(props.cmo.version),
-    area: areaArray,
-    minReq: minReqArray,
+    area: areaArray.value,
+    minReq: minReqArray.value,
 });
 
 
@@ -304,8 +310,9 @@ function update() {
     router.post("/admin/CMOs/update", form, {
         onSuccess: () => {
             hasUnsavedChanges.value = false;
+            
         },
-        preserveState: true,
+        preserveState: false,
         preserveScroll: true,
         replace: true,
     });

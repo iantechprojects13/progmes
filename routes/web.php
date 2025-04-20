@@ -74,6 +74,7 @@ Route::get('/register/{user}/delete', [RegistrationController::class, 'destroy']
 //Profile
 Route::get('/myaccount/{user?}',[RegistrationController::class, 'viewMyAccount'])->middleware(['auth', 'user.verified'])->name('my.account');
 Route::get('/admin/users/list/profile/{user?}/view',[RegistrationController::class, 'viewUserProfile'])->middleware(['auth', 'user.verified'])->name('profile.view');
+Route::post('/es/program/update',[RegistrationController::class, 'updateAssignedProgram'])->middleware(['auth', 'user.verified'])->name('profile.program.update');
 
 //dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth','registered', 'user.verified', 'active'])->name('dashboard');
@@ -81,18 +82,17 @@ Route::get('/ched/dashboard', [DashboardController::class, 'dashboardForCHED'])-
 Route::get('/ched/dashboard/analytics', [DashboardController::class, 'analytics'])->middleware(['auth', 'type.ched'])->name('analytics');
 Route::get('/ched/dashboard/overview', [DashboardController::class, 'dashboardForCHEDOverview'])->middleware(['auth', 'registered', 'type.ched', 'user.verified', 'ched.admin'])->name('dashboard.admin.overview');
 Route::get('/hei/dashboard', [DashboardController::class, 'dashboardForHEI'])->middleware(['auth', 'type.hei', 'user.verified', 'active'])->name('dashboard.hei');
-Route::post('/set-academic-year', [DashboardController::class, 'setAcademicYear'])->middleware(['auth', 'superadmin'])->name('setacadyear');
-
-
+Route::post('/set-academic-year', [AdminSettingsController::class, 'setAcademicYear'])->middleware(['auth', 'superadmin'])->name('setacadyear');
 
 //evaluation
 Route::get('/evaluation', [EvaluationController::class, 'index'])->middleware(['auth', 'user.verified'])->name('evaluation');
 Route::get('/ched/evaluation', [EvaluationController::class, 'evaluationForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('evaluation.ched');
 Route::get('/ched/evaluation/monitored', [EvaluationController::class, 'monitoredForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('evaluation.ched.monitored');
 Route::get('/hei/ph/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware(['auth','type.hei', 'hei.ph'])->name('evaluation.ph');
+Route::get('/hei/pc/evaluation', [EvaluationController::class, 'evaluationForProgramCoordinator'])->middleware(['auth','type.hei', 'hei.pc'])->name('evaluation.pc');
 Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean'])->name('evaluation.hei');
 Route::get('/hei/evaluation/monitored', [EvaluationController::class, 'monitoredForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean'])->name('evaluation.hei.monitored');
-Route::get('hei/evaluation/{tool}/edit', [HEIFormController::class, 'edit'])->middleware(['auth', 'type.hei', 'hei.ph'])->name('evaluation.hei.edit');
+Route::get('hei/evaluation/{tool}/edit', [HEIFormController::class, 'edit'])->middleware(['auth', 'type.hei'])->name('evaluation.hei.edit');
 Route::get('ched/evaluation/{tool}/view', [CHEDFormController::class, 'view'])->middleware(['auth', 'type.ched'])->name('evaluation.ched.view');
 Route::get('ched/evaluation/{tool}/evaluate/', [CHEDFormController::class, 'evaluate'])->middleware(['auth', 'type.ched', 'evaluate'])->name('form.ched.evaluate');
 Route::get('ched/evaluation/{tool}/report', [CHEDFormController::class, 'report'])->middleware(['auth', 'type.ched'])->name('form.ched.report');
@@ -102,7 +102,7 @@ Route::post('/hei/evaluation/conforme', [HEIFormController::class, 'conforme'])-
 Route::post('/hei/evaluation/update', [HEIFormController::class, 'update'])->name('form.hei.update');
 Route::post('/hei/evaluation/upload', [HEIFormController::class, 'upload'])->name('form.hei.upload');
 Route::post('/hei/evaluation/link', [HEIFormController::class, 'submitLink'])->name('form.hei.link');
-Route::post('/hei/evaluation/submit', [HEIFormController::class, 'readyForVisit'])->name('form.hei.submit');
+Route::post('/hei/evaluation/submit', [HEIFormController::class, 'completed'])->name('form.hei.submit');
 Route::post('/hei/evaluation/link/delete', [HEIFormController::class, 'deleteLink'])->name('form.hei.link.delete');
 
 Route::post('/ched/evaluation/update', [CHEDFormController::class, 'update'])->name('form.ched.update');
@@ -191,6 +191,7 @@ Route::post('/admin/library/CMO/deploy', [LibCriteriaController::class, 'deploy'
 //Evaluation Tool
 Route::get('/admin/tool', [EvaluationFormController::class, 'index'])->middleware('auth', 'type.ched')->name('admin.form.list');
 Route::get('/admin/tool/{evaluation}/view', [EvaluationFormController::class, 'view'])->middleware('auth')->name('admin.form.view');
+Route::get('/admin/tool/{evaluation}/delete', [EvaluationFormController::class, 'destroy'])->middleware('auth', 'superadmin')->name('admin.form.delete');
 Route::post('/admin/form/deploy', [EvaluationFormController::class, 'deploy'])->middleware('auth', 'type.ched')->name('admin.form.deploy');
 Route::post('hei/tool/create', [HEIFormController::class, 'store'])->middleware('auth')->name('hei.tool.store');
 
@@ -212,8 +213,10 @@ Route::get('/admin/discipline/{discipline}/delete', [DisciplineController::class
 
 
 //Admin Settings
-Route::get('/admin/settings', [AdminSettingsController::class, 'index'])->middleware(['auth'])->name('admin.settings');
-
+Route::get('/admin/settings', [AdminSettingsController::class, 'index'])->middleware(['auth', 'superadmin'])->name('admin.settings');
+Route::post('/admin/settings/update', [AdminSettingsController::class, 'update'])->middleware(['auth', 'superadmin'])->name('admin.settings.update');
+Route::get('/admin/settings/{id}/assignment', [AdminSettingsController::class, 'assign'])->middleware(['auth', 'superadmin'])->name('admin.settings.assign');
+Route::post('/admin/settings/assignment/update', [AdminSettingsController::class, 'updateAssignedProgram'])->middleware(['auth', 'superadmin'])->name('admin.settings.assign.update');
 //Email Notification
 Route::post('/evaluation/notify', [EvaluationController::class, 'sendEmail'])->middleware(['auth'])->name('evaluation.notify');
 

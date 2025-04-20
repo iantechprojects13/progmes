@@ -46,5 +46,10 @@ class ProgramModel extends Model
     {
         return $this->hasMany(RoleModel::class, 'programId', 'id');
     }
+
+    public function supervisorPrograms()
+    {
+        return $this->hasMany(ProgramAssignmentModel::class, 'programId', 'id');
+    }
     
 }

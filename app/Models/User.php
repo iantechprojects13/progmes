@@ -73,6 +73,11 @@ class User extends Authenticatable
         return $this->hasManyThrough(DisciplineModel::class, RoleModel::class, 'disciplineId', 'id', 'disciplineId', 'id');
     }
 
+    public function program()
+    {
+        return $this->hasManyThrough(ProgramModel::class, ProgramAssignmentModel::class, 'userId', 'id', 'id', 'programId');
+    }
+
     public static function requestCount($role)
     {
         $query = self::query()

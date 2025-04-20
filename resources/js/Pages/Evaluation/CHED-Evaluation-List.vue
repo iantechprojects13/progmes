@@ -35,6 +35,7 @@
                     <th>Program/HEI</th>
                     <th>Status</th>
                     <th>Progress</th>
+                    <th>Compliance Rate</th>
                     <th>
                         <i class="fas fa-ellipsis-v text-lg"></i>
                     </th>
@@ -63,6 +64,11 @@
                         </td>
                         <td>
                             <evaluation-progress :percentage="item.progress"></evaluation-progress>
+                        </td>
+                        <td>
+                            <div class="text-sm font-semibold">
+                                {{ item.complianceRate }}%
+                            </div>
                         </td>
                         <td>
                             <button 
@@ -135,7 +141,7 @@
             <!-- Active Status Filter -->
             <div class="flex flex-col space-y-2 mb-6">
                 <label for="isActive" class="text-sm font-medium text-gray-700"
-                    >Active Status</label
+                    >Status</label
                 >
                 <select
                     v-model="query.status"
@@ -147,6 +153,31 @@
                     <option value="Submitted">Completed</option>
                     <option value="For Re-evaluation">For Re-evaluation</option>
                 </select>
+            </div>
+
+            <div class="flex flex-col space-y-2 mb-6">
+                <label for="sort" class="text-sm font-medium text-gray-700"
+                    >Sort by</label
+                >
+                <div class="flex flex-row gap-2">
+                    <select
+                    v-model="query.sort"
+                    id="sort"
+                    class="block w-3/5 px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                    <option :value="null">Default</option>
+                    <option value="progress">Progress</option>
+                    <option value="complianceRate">Compliance Rate</option>
+                </select>
+                <select
+                    v-model="query.direction"
+                    id="sort"
+                    class="block w-2/5 px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                    <option value="desc">High to Low</option>
+                    <option value="asc">Low to High</option>
+                </select>
+                </div>
             </div>
 
             <!-- Items per page Filter -->
@@ -269,7 +300,8 @@ const unlockModal = ref(false);
 const unlocking = ref(false);
 
 const monitoredModal = ref(false);
-const markingAsMonitored = ref(false); 
+const markingAsMonitored = ref(false);
+const sort = ref(null);
 
 const showFilterModal = ref(false);
 const processing = ref(false);
@@ -286,9 +318,13 @@ const query = useForm({
     search: props.filters.search,
     academicYear: props.filters.academicYear != null ? props.filters.academicYear : null,
     status: props.filters.status != null ? props.filters.status : null,
+    sort: props.filters.sort != null ? props.filters.sort: null,
+    direction: props.filters.direction != null ? props.filters.direction : 'asc',
 });
 
 // ------------------------------------------------------------
+
+
 function toggleFilterModal() {
     showFilterModal.value = !showFilterModal.value;
 }

@@ -26,10 +26,13 @@ use Carbon\Carbon;
 class HEIFormController extends Controller
 {
     public function store(Request $request) {
-        // sleep(10);
-        // return redirect()->back()->with('success', 'Form created successfully.');
 
-        $tool = EvaluationFormModel::find($request->id);
+        $tool = EvaluationFormModel::where('id', $request->id)->with('item')->first();
+
+        if ($tool->item->isNotEmpty()) {
+            return redirect('/hei/evaluation/'. $request->id . '/edit');
+        }
+
         $cmo = CMOModel::where('id', $tool->cmoId)->with('criteria')->first();
         
         foreach($cmo->criteria as $item) {
@@ -54,15 +57,16 @@ class HEIFormController extends Controller
         $user = Auth::user();
         $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.program', 'institution_program.institution', 'complied', 'not_complied', 'not_applicable', 'item', 'item.criteria', 'item.evidence')->first();
         $showEvaluation = false;
-        
-        if (!$evaluationTool) {
-            return redirect('/hei/evaluation')->with('failed', 'Evaluation tool not found.');
+
+        $role = RoleModel::where('userId', $user->id)->where('isActive', 1)->with('program')->first();
+
+        if ($role->role == 'Program Coordinator' || $role->role == 'Program Head') {
+            $institutionProgram = InstitutionProgramModel::where('institutionId', $role->institutionId)->where('programId', $role->programId)->first();
         }
 
-        $role = RoleModel::where('userId', $user->id)->where('isActive', 1)->first();
-
         if ($role->role == 'Program Head') {
-            $institutionProgram = InstitutionProgramModel::where('institutionId', $role->institutionId)->where('programId', $role->programId)->first();
+            if (!($role->program->program == $evaluationTool->institution_program->program->program));
+        } else if ($role->role == 'Program Coordinator') {
             if (!($evaluationTool->institutionProgramId == $institutionProgram->id)) {
                 return redirect('/unauthorized');
             }
@@ -100,27 +104,36 @@ class HEIFormController extends Controller
             'progress' => $progress,
             'showEvaluation' => $showEvaluation,
         ]);
-        
     }
 
 
     public function edit($evaluation, Request $request) {
         $user = Auth::user();
         $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program')->first();
+        $canEdit = false;
+        $redirectPath = '';
 
-        if(!$tool) {
-            return redirect('/hei/ph/evaluation')->with('failed', 'Evaluation tool not found.');
-        }
-
-        $role = RoleModel::where('userId', $user->id)->where('isActive', 1)->first();
+        $role = RoleModel::where('userId', $user->id)->where('isActive', 1)->with('program')->first();
 
         if ($role) {
             $institutionProgram = InstitutionProgramModel::where('institutionId', $role->institutionId)->where('programId', $role->programId)->first();
         } else {
             return redirect('/unauthorized');
         }
+        
+        if ($role->role == 'Program Coordinator')
+        {
+            $canEdit = $tool->institutionProgramId == $institutionProgram->id;
+            $redirectPath = '/hei/pc/evaluation';
+        }
+        
+        else if ($role->role == 'Program Head')
+        {
+            $canEdit = $role->program->program == $tool->institution_program->program->program;
+            $redirectPath = '/hei/ph/evaluation';
+        }
 
-        if (!($tool->institutionProgramId == $institutionProgram->id)) {
+        if (!$canEdit) {
             return redirect('/unauthorized');
         } else {
             $items = EvaluationItemModel::where('evaluationFormId', $evaluation)->with('criteria', 'evidence')->get();
@@ -184,7 +197,7 @@ class HEIFormController extends Controller
                     'filters' => $request->only(['search', 'selfEvaluationStatus', 'evaluationStatus']),
                 ]);
             } else {
-                return redirect('/hei/ph/evaluation')->with('failed', 'This tool has been locked and can\'t be accessed.');
+                return redirect($redirectPath)->with('failed', 'This tool has been locked and can\'t be accessed.');
             }
         }
         
@@ -351,7 +364,18 @@ class HEIFormController extends Controller
     }
 
 
-    public function readyForVisit(Request $request) {
+    public function completed(Request $request) {
+        $user = Auth::user();
+        $redirectPath = '';
+
+        if($user->role == 'Program Head') {
+            $redirectPath = '/hei/ph/evaluation';
+        } else if ($user->role == 'Program Coordinator') {
+            $redirectPath = '/hei/pc/evaluation';
+        } else {
+            return redirect()->back()->with('failed', "You are not authorized to submit this tool.");
+        }
+
         $evaluation = EvaluationFormModel::find($request->id);
         
         if ($evaluation->evaluationDate != null) {
@@ -370,7 +394,7 @@ class HEIFormController extends Controller
         
         $evaluation->save();
 
-        return redirect('/hei/ph/evaluation')->with('success', "The evaluation tool has been successfully submitted.");
+        return redirect($redirectPath)->with('success', "The evaluation tool has been successfully submitted.");
     }
 
     

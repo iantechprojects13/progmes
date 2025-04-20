@@ -21,7 +21,7 @@ class InstitutionController extends Controller
         $canDelete = false;
         $canAdd = false;
         
-        $show = $request->query('show') ? $request->query('show') : 25;
+        $show = sanitizePerPage($request->query('show'), Auth::user()->id);
 
         if ($role == 'Super Admin') {
             $canEdit = true;
@@ -162,7 +162,7 @@ class InstitutionController extends Controller
                 ]);
             }
         }
-
+        
         return redirect('/admin/higher-education-institutions')->with('success', 'HEI updated successfully.');
     }
 

@@ -5,38 +5,44 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
+use App\Models\ProgramAssignmentModel;
 use App\Models\RoleModel;
 use Auth;
 
 class UserController extends Controller
 {
-    private function getBaseQuery($request, $role, $disciplineList = [])
+    private function getBaseQuery($request, $role, $programList = [])
     {
         return User::query()
             ->when($request->query('search'), function ($query) use ($request) {
                 $query->where(function ($query) use ($request) {
-                    $search = '%' . $request->query('search') . '%';
-                    $query->where('name', 'like', $search)
-                        ->orWhere('type', 'like', $search)
-                        ->orWhere('role', 'like', $search)
-                        ->orWhereHas('userRole.program', function ($q) use ($search) {
-                            $q->where('program', 'like', $search)
-                                ->orWhere('major', 'like', $search);
-                        })
-                        ->orWhereHas('userRole.institution', function ($q) use ($search) {
-                            $q->where('name', 'like', $search);
-                        })
-                        ->orWhereHas('userRole.discipline', function ($q) use ($search) {
-                            $q->where('discipline', 'like', $search);
-                        });
+                    // $search = '%' . $request->query('search') . '%';
+                    // $query->where('name', 'like', $search)
+                    //     ->orWhere('type', 'like', $search)
+                    //     ->orWhere('role', 'like', $search)
+                    //     ->orWhereHas('userRole.program', function ($q) use ($search) {
+                    //         $q->where('program', 'like', $search)
+                    //             ->orWhere('major', 'like', $search);
+                    //     })
+                    //     ->orWhereHas('userRole.institution', function ($q) use ($search) {
+                    //         $q->where('name', 'like', $search);
+                    //     })
+                    //     ->orWhereHas('userRole.discipline', function ($q) use ($search) {
+                    //         $q->where('discipline', 'like', $search);
+                    //     });
+                    
+                    applyUserSearch($query, $request->query('search'));
+                    applyProgramSearch($query, $request->query('search'), 'userRole.program', true);
+                    applyDisciplineSearch($query, $request->query('search'), 'userRole.discipline', true);
+                    applyInstitutionSearch($query, $request->query('search'), 'userRole.institution', true);
                 });
             })
             ->when($request->query('type'), function ($query) use ($request) {
                 $query->where('type', $request->query('type'));
             })
-            ->when($role == 'Education Supervisor', function ($query) use ($disciplineList) {
-                $query->whereHas('userRole.program', function ($q) use ($disciplineList) {
-                    $q->whereIn('disciplineId', $disciplineList);
+            ->when($role == 'Education Supervisor', function ($query) use ($programList) {
+                $query->whereHas('userRole.program', function ($q) use ($programList) {
+                    $q->whereIn('programId', $programList);
                 });
             })
             ->whereNot('role', 'Super Admin');
@@ -49,7 +55,7 @@ class UserController extends Controller
             'canFilter' => false,
             'showRequest' => false,
             'showInactive' => false,
-            'disciplineList' => [],
+            'programList' => [],
         ];
 
         if ($role == 'Super Admin') {
@@ -64,9 +70,8 @@ class UserController extends Controller
         } elseif ($role == 'Education Supervisor') {
             $permissions['canEdit'] = true;
             $permissions['showRequest'] = true;
-            $permissions['disciplineList'] = RoleModel::where('userId', Auth::id())
-                ->where('isActive', 1)
-                ->pluck('disciplineId')
+            $permissions['programList'] = ProgramAssignmentModel::where('userId', Auth::id())
+                ->pluck('programId')
                 ->toArray();
         }
 
@@ -77,9 +82,9 @@ class UserController extends Controller
     {
         $role = Auth::user()->role;
         $permissions = $this->getUserPermissions($role);
-        $show = $request->query('show', 25);
-
-        $userlist = $this->getBaseQuery($request, $role, $permissions['disciplineList'])
+        $show = sanitizePerPage($request->query('show'), Auth::user()->id);
+        
+        $userlist = $this->getBaseQuery($request, $role, $permissions['programList'])
             ->where(['isVerified' => 1, 'isActive' => 1])
             ->with(['userRole' => function ($q) {
                 $q->where('isActive', 1);
@@ -99,9 +104,9 @@ class UserController extends Controller
     {
         $role = Auth::user()->role;
         $permissions = $this->getUserPermissions($role);
-        $show = $request->query('show', 25);
+        $show = sanitizePerPage($request->query('show'), Auth::user()->id);
 
-        $userlist = $this->getBaseQuery($request, $role, $permissions['disciplineList'])
+        $userlist = $this->getBaseQuery($request, $role, $permissions['programList'])
             ->whereNull(['isVerified', 'isActive'])
             ->with(['userRole', 'userRole.discipline', 'userRole.program', 'userRole.institution'])
             ->orderBy('name', 'asc')
@@ -119,7 +124,7 @@ class UserController extends Controller
     {
         $role = Auth::user()->role;
         $permissions = $this->getUserPermissions($role);
-        $show = $request->query('show', 25);
+        $show = sanitizePerPage($request->query('show'), Auth::user()->id);
 
         $userlist = $this->getBaseQuery($request, $role)
             ->where(['isVerified' => 1, 'isActive' => 0])
@@ -137,23 +142,10 @@ class UserController extends Controller
         ] + $permissions);
     }
 
-    // public function userLogin()
-    // {
-    //     $userlist = User::with(['userRole.discipline', 'userRole.program', 'userRole.institution'])
-    //         ->orderBy('name', 'asc')
-    //         ->get();
-
-    //     return Inertia::render('Auth/TestLogin', [
-    //         'super_admin' => User::where('role', 'Super Admin')->get(),
-    //         'user_list' => $userlist,
-    //     ]);
-    // }
-
 
     public function userLogin(Request $request)
     {
         $query = User::query()
-            ->where(['isVerified' => 1, 'isActive' => 1])
             ->with(['userRole' => function ($q) {
                 $q->where('isActive', 1);
             }, 'userRole.discipline', 'userRole.program', 'userRole.institution']);

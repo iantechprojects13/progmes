@@ -12,7 +12,6 @@ class AdminSettingsModel extends Model
     protected $table = 'admin_settings';
 
     protected $fillable = [
-        'currentAcademicYear',
         'setting_category',
         'setting_key',
         'setting_value',

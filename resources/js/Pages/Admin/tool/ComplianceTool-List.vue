@@ -61,6 +61,9 @@
                     <th>Program/Institution</th>
                     <th>CMO</th>
                     <th>Status</th>
+                    <th v-show="canEdit">
+                        <i class="fas fa-ellipsis-v text-lg"></i>
+                    </th>
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="institutionProgramList.data.length == 0">
@@ -89,13 +92,28 @@
                                     program.evaluation_form[0]?.cmo?.number
                                 }},
                                 S.{{ program.evaluation_form[0]?.cmo?.series }}
-                                <!-- Version {{ program.evaluation_form[0]?.cmo?.version }} -->
                             </div>
                         </td>
                         <td>
                             <status
                                 :text="program.evaluation_form[0]?.status"
                             ></status>
+                        </td>
+                        <td v-show="canEdit">
+                            <button
+                                v-show="canEdit"
+                                @click="
+                                    toggleDeleteModal(
+                                        program.evaluation_form[0],
+                                        'deleteEvaluationTool',
+                                        'Delete Compliance Tool'
+                                    )
+                                "
+                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 tooltipForActions"
+                                data-tooltip="Delete"
+                            >
+                                <i class="fas fa-trash text-lg"></i>
+                            </button>
                         </td>
                     </tr>
                 </template>
@@ -249,10 +267,7 @@
                 @click="filter"
                 class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 duration-200 w-20 h-10"
             >
-                <span v-if="processing">
-                    <i class="fas fa-spinner animate-spin"></i>
-                </span>
-                <span v-else>Apply</span>
+                Apply
             </button>
         </template>
     </modal>
@@ -283,6 +298,15 @@
             </button>
         </template>
     </Confirmation>
+
+    <Confirmation
+        :showModal="deleteModal"
+        @close="closeDeleteModel"
+        :title="title"
+        :modaltype="modaltype"
+        :selected="selectedTool"
+        width="md"
+    />
 </template>
 
 <script setup>
@@ -318,6 +342,24 @@ const academicYearDropdown = [
     "2029-2030",
 ];
 
+
+const deleteModal = ref(false);
+const selectedTool = ref("");
+const modaltype = ref("");
+const title = ref("");
+
+function toggleDeleteModal(id, type, titleValue) {
+    deleteModal.value = !deleteModal.value;
+    selectedTool.value = id;
+    modaltype.value = type;
+    title.value = titleValue;
+}
+
+function closeDeleteModel() {
+    deleteModal.value = !deleteModal.value;
+}
+
+
 const deployment = useForm({
     program: null,
     cmo: null,
@@ -325,7 +367,7 @@ const deployment = useForm({
 });
 
 const query = useForm({
-    ay: props.filters.academicYear,
+    ay: props.filters.academicYear ? props.filters.academicYear : null,
     show: props.filters.show != null ? props.filters.show : null,
     search: props.filters.search,
     status: props.filters.status != null ? props.filters.status : null,

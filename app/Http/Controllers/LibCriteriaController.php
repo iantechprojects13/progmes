@@ -16,7 +16,7 @@ class LibCriteriaController extends Controller
 {
     public function index()
     {
-        $acadYear = AdminSettingsModel::where('id', 1)->value('currentAcademicYear');
+        $acadYear = getAcademicYear($request->query('academicyear'), Auth::user()->id);
 
         $libCriteria = LibCriteriaModel::where('isActive', 1)->orderBy('no', 'asc')->get();
         return Inertia::render('Admin/library/Library-CMO-View',

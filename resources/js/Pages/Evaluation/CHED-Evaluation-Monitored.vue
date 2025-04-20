@@ -119,7 +119,6 @@ defineOptions({ layout: Layout });
 const props = defineProps([
     'complianceTools',
     'filters',
-    'canEvaluate',
 ]);
 
 const showFilterModal = ref(false);

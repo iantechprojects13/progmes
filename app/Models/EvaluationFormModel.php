@@ -88,4 +88,18 @@ class EvaluationFormModel extends Model
         ->where('selfEvaluationStatus', '=', 'Not applicable');
     }
 
+    public function compliancePercentage()
+    {
+        $compliedCount = $this->complied()->count();
+        $notCompliedCount = $this->not_complied()->count();
+
+        $total = $compliedCount + $notCompliedCount;
+
+        if ($total === 0) {
+            return 0;
+        }
+
+        return ($compliedCount / $total) * 100;
+    }
+
 }
