@@ -66,7 +66,8 @@ class AdminSettingsController extends Controller
         
         $userId = $request->userId;
         $programIds = $request->programs;
-        
+        $user = User::where('id', $userId)->first();
+
         try {
             // Delete assignments that are not in the new list
             ProgramAssignmentModel::where('userId', $userId)
@@ -89,7 +90,7 @@ class AdminSettingsController extends Controller
                 }
             }
             
-            return redirect('/admin/settings')->with('success', 'Program assignments updated successfully.');
+            return redirect('/admin/settings')->with('success', 'Program assignments for '.$user->name.' have been successfully updated.');
         } catch (\Exception $e) {
             return back()->with('failed', 'Failed to update program assignments');
         }

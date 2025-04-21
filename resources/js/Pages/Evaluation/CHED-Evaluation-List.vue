@@ -48,8 +48,8 @@
                     <tr v-else v-for="item in complianceTools.data"
                     :key="item.id"
                     >
-                        <td>
-                            <div class="flex flex-col">
+                        <td class="flex flex-col">
+                            <div>
                                 {{ item.program }}
                                 <span v-if="item.major != null">
                                     - {{ item.major }}

@@ -243,9 +243,9 @@
         <div style="
                     position: relative;
                     bottom: 15px;
-                    font-size: 10pt;
+                    font-size: 9pt;
                     width: 100%;
-                    text-align: left;
+                    text-align: center;
                 ">
             {{ $tool->institution_program->institution->name }} |
             {{ $tool->institution_program->program->program }}
