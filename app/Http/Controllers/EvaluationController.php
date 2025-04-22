@@ -273,7 +273,7 @@ class EvaluationController extends Controller
         $institutionName = InstitutionModel::where('id', $institution)->value('name');
         $canEdit = false;
 
-        if ($user->role == 'QA Head') {
+        if ($user->role == 'Quality Assurance Officer') {
             $canEdit = true;
         }
 

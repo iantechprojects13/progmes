@@ -133,6 +133,9 @@ Route::get('/ched/program-application/gpr/edit', [GPRController::class, 'edit'])
 Route::post('/ched/program-application/gpr/update', [GPRController::class, 'update'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.gpr.update');
 Route::get('/ched/program-application/gpr/{id}/delete', [GPRController::class, 'delete'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.gpr.delete');
 
+Route::get('/maintenance', function () {
+    abort(503);
+});
 
 //application
 Route::get('/application', [ApplicationController::class, 'index'])->middleware(['auth', 'user.verified'])->name('application');

@@ -35,7 +35,7 @@
                             <option value="">Select role</option>
                             <option class="text-gray-800" value="Vice-President for Academic Affairs">VPAA/Dean of Multiple Discipline/Program</option>
                             <option class="text-gray-800" value="Dean">Dean of Specific Discipline/Program</option>
-                            <option class="text-gray-800" value="QA Head">QA Head</option>
+                            <option class="text-gray-800" value="Quality Assurance Officer">Quality Assurance Officer</option>
                             <option class="text-gray-800" value="Program Head">Program Head</option>
                             <option class="text-gray-800" value="Program Coordinator">Program Coordinator</option>
                             <option class="text-gray-800" value="Librarian">Librarian</option>

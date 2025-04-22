@@ -121,7 +121,7 @@ class HEIFormController extends Controller
             return redirect('/unauthorized');
         }
 
-        if ($role->role == 'QA Head')
+        if ($role->role == 'Quality Assurance Officer')
         {
             $canEdit = $tool->institution_program->institution->id == $role->institutionId;
             $redirectPath = '/hei/evaluation';

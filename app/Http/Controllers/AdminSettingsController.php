@@ -102,7 +102,7 @@ class AdminSettingsController extends Controller
 
         
         return response()->json([
-            'data' => ProgramModel::whereIn('id', $assignedProgramIds)->get(),
+            'data' => ProgramModel::whereIn('id', $assignedProgramIds)->orderBy('program', 'asc')->orderBy('major', 'asc')->get(),
         ]);
     }
 

@@ -16,7 +16,7 @@ class HEIVPDeanQA
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::user()->role == 'Vice-President for Academic Affairs' || Auth::user()->role == 'Dean' || Auth::user()->role == 'QA Head') {
+        if (Auth::user()->role == 'Vice-President for Academic Affairs' || Auth::user()->role == 'Dean' || Auth::user()->role == 'Quality Assurance Officer') {
             return $next($request);
         }
 
