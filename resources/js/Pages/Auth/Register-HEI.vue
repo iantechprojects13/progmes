@@ -33,8 +33,8 @@
                             class="border border-gray-500 rounded block w-full p-2"
                             :class="{ 'text-gray-500': form.role == '' }">
                             <option value="">Select role</option>
-                            <option class="text-gray-800" value="Vice-President for Academic Affairs">VPAA/Dean of Multiple Discipline/Program</option>
-                            <option class="text-gray-800" value="Dean">Dean of Specific Discipline/Program</option>
+                            <option class="text-gray-800" value="Vice-President for Academic Affairs">VPAA/Dean of Multiple Disciplines</option>
+                            <option class="text-gray-800" value="Dean">Dean of a Specific Discipline</option>
                             <option class="text-gray-800" value="Quality Assurance Officer">Quality Assurance Officer</option>
                             <option class="text-gray-800" value="Program Head">Program Head</option>
                             <option class="text-gray-800" value="Program Coordinator">Program Coordinator</option>

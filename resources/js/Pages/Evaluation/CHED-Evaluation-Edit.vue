@@ -2,7 +2,6 @@
     <Head title="Evaluation Compliance Tool" />
     <page-title title="Program Evaluation" />
     <content-container
-        :hasStickyDiv="true"
         :hasTopMainContent="true"
         :hasSearch="true"
         :hasFilters="true"
@@ -32,37 +31,6 @@
                     <button
                         @click="update"
                         ref="saveBtn"
-                        class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <span class="flex items-center">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-5 h-5 mr-2"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path
-                                    d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
-                                />
-                                <polyline points="17 21 17 13 7 13 7 21" />
-                                <polyline points="7 3 7 8 15 8" />
-                            </svg>
-                            Save changes
-                        </span>
-                    </button>
-                </div>
-            </div>
-        </template>
-        <template v-slot:sticky-div>
-            <div class="w-full flex items-end px-3 md:px-5 py-2">
-                <div class="w-full flex flex-row justify-between ml-2"></div>
-                <div class="flex flex-row">
-                    <button
-                        @click="update"
                         class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <span class="flex items-center">
@@ -239,6 +207,7 @@
                                     <tip-tap-editor
                                         v-model="item.findings"
                                         @input="updateData"
+                                        @update="update"
                                         title="Findings"
                                     ></tip-tap-editor>
                                 </td>
@@ -270,6 +239,7 @@
                                     <tip-tap-editor
                                         v-model="item.recommendations"
                                         @input="updateData"
+                                        @update="update"
                                         title="Comments/Recommendations"
                                     />
                                 </td>
@@ -419,6 +389,7 @@ onMounted(() => {
 onUnmounted(() => {
     window.removeEventListener("keydown", handleKeyDown);
     window.removeEventListener("beforeunload", handleBeforeUnload);
+    hasUnsavedChanges.value = false;
 });
 
 function toggleFilterModal() {
@@ -430,7 +401,7 @@ function update() {
         onSuccess: () => {
             hasUnsavedChanges.value = false;
          },
-         preserveState: false,
+         preserveState: true,
          preserveScroll: true,
          replace: true,
      });

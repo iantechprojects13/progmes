@@ -209,12 +209,14 @@
                                     <tip-tap-editor
                                         v-model="form.area[index]"
                                         @input="updateData"
+                                        @update="update"
                                     />
                                 </td>
                                 <td>
                                     <tip-tap-editor
                                         v-model="form.minReq[index]"
                                         @input="updateData"
+                                        @update="update"
                                     />
                                 </td>
                                 <td></td>
@@ -310,9 +312,8 @@ function update() {
     router.post("/admin/CMOs/update", form, {
         onSuccess: () => {
             hasUnsavedChanges.value = false;
-            
         },
-        preserveState: false,
+        preserveState: true,
         preserveScroll: true,
         replace: true,
     });

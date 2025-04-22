@@ -18,16 +18,15 @@
   position: relative;
 }
 
-/* Default padding for all cells */
-:deep(td) {
+/* Default padding for all cells in the main table */
+:deep(> table > tbody > tr > td) {
   padding: 0.75rem 1rem; /* py-3 px-4 */
   border-bottom: 1px solid #d6d8e1;
   vertical-align: top; /* Added vertical alignment top */
-  
 }
 
-/* Styling for all th elements */
-:deep(th) {
+/* Styling for all th elements in the main table */
+:deep(> table > thead > tr > th) {
   padding: 0.75rem 1rem; /* py-3 px-4 */
   text-align: left;
   font-size: 1rem; /* text-base */
@@ -37,25 +36,25 @@
 }
 
 /* Reset specific styles for the last th (action column) */
-:deep(th:last-child) {
+:deep(> table > thead > tr > th:last-child) {
   /* Keep only the padding and position properties */
   font-weight: 700; /* Keep the font-bold */
   /* Other styles will be overridden by the sticky styles below */
 }
 
 /* Striped rows - every even row with more noticeable but still light color */
-:deep(tr:nth-child(even)) {
+:deep(> table > tbody > tr:nth-child(even)) {
   background-color: #f1f5f9; /* slate-100, slightly more visible than gray-50 */
 }
 
 /* Hover effect for all rows */
-:deep(tbody tr:hover) {
+:deep(> table > tbody > tr:hover) {
   background-color: #e5e7eb; /* gray-200 */
 }
 
 /* Style for the fixed action column - align content to the right */
-:deep(th:last-child),
-:deep(td:last-child) {
+:deep(> table > thead > tr > th:last-child),
+:deep(> table > tbody > tr > td:last-child) {
   position: sticky;
   right: 0;
   z-index: 10;
@@ -66,12 +65,12 @@
 }
 
 /* Ensure proper background for striped rows */
-:deep(tr:nth-child(even) td:last-child) {
+:deep(> table > tbody > tr:nth-child(even) > td:last-child) {
   background-color: #f1f5f9; /* Match the striped row background */
 }
 
 /* Hover state background fix */
-:deep(tr:hover td:last-child) {
+:deep(> table > tbody > tr:hover > td:last-child) {
   background-color: #e5e7eb; /* Match the hover background */
 }
 </style>

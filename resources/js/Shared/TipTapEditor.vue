@@ -23,10 +23,10 @@
                     <h3 class="text-lg font-medium">{{ title }}</h3>
                     <button
                         @click="closeEditor"
-                        class="p-2 hover:bg-gray-100 rounded-full transition-colors tooltipForActions"
+                        class="p-2 px-3 bg-gray-100 hover:bg-gray-300 rounded-lg border border-gray-400 transition-colors tooltipForActions"
                         data-tooltip="Close"
                     >
-                        <i class="fas fa-times"></i>
+                        <i class="fas fa-times mr-2"></i> Close
                     </button>
                 </div>
 
@@ -258,15 +258,15 @@
                         </button>
                     </div>
 
-                    <!-- Save & Close -->
-                    <!-- <button 
-            @mousedown.prevent 
-            @click="closeEditor" 
-            class="p-2 hover:bg-gray-200 rounded transition-colors ml-auto"
-            title="Save & Close"
-          >
-            <i class="fas fa-save mr-1"></i> Save
-          </button> -->
+                    <!-- Save Changes -->
+                    <button
+                        @mousedown.prevent 
+                        @click="saveContent"
+                        class="p-2 px-3 md:w-auto w-full text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors ml-auto"
+                        title="Save Changes"
+                    >
+                        <i class="fas fa-save mr-1"></i> Save Changes
+                    </button>
                 </div>
 
                 <!-- Modal Content -->
@@ -302,13 +302,17 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", "update"]);
 const editor = ref(null);
 const showColorPicker = ref(false);
 const editorContainer = ref(null);
 const showRowMenu = ref(false);
 const showColumnMenu = ref(false);
 const isEditorOpen = ref(false);
+
+const saveContent = () => {
+    emit("update", editor.value.getHTML());
+};
 
 function openEditor() {
     isEditorOpen.value = true;
@@ -327,24 +331,6 @@ const toggleColorPicker = () => {
     showColorPicker.value = !showColorPicker.value;
     showRowMenu.value = false;
     showColumnMenu.value = false;
-};
-
-const toggleRowMenu = () => {
-    showRowMenu.value = !showRowMenu.value;
-    showColorPicker.value = false;
-    showColumnMenu.value = false;
-
-    if (editor.value) {
-        setTimeout(() => {
-            editor.value.commands.focus();
-        }, 100);
-    }
-};
-
-const toggleColumnMenu = () => {
-    showColumnMenu.value = !showColumnMenu.value;
-    showColorPicker.value = false;
-    showRowMenu.value = false;
 };
 
 const colors = ["#000000", "#4B5563", "#2563EB", "#DC2626"];

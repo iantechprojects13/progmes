@@ -442,13 +442,13 @@
     </div>
 
     <!-- Saving changes -->
-    <div
+    <!-- <div
         v-if="isUpdating.value"
         class="w-auto h-auto bg-yellow-400 fixed z-[100] bottom-2 left-2 p-2 rounded flex items-center"
     >
         <i class="fas fa-exclamation-triangle mr-2"></i>
         <span>Saving</span>
-    </div>
+    </div> -->
 
     
 </template>

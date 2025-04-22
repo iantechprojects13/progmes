@@ -27,7 +27,7 @@
                             >
                                 <div class="w-full">
                                     <p class="text-sm text-gray-500">
-                                        Institution
+                                        Institutional Code
                                     </p>
                                     <div>
                                         {{ institution.code }}
@@ -39,7 +39,7 @@
                                 class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
                             >
                                 <div class="w-full">
-                                    <p class="text-sm text-gray-500">No.</p>
+                                    <p class="text-sm text-gray-500">Institution Name</p>
                                     <div>
                                         {{ institution.name }}
                                     </div>

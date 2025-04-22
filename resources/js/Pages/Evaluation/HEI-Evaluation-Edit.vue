@@ -60,39 +60,6 @@
                 </div>
             </div>
         </template>
-        <template v-slot:sticky-div>
-            <div class="w-full flex items-end px-3 md:px-5 py-2">
-                <div class="w-full flex flex-row justify-between ml-2">
-                    <div></div>
-                </div>
-                <div class="flex flex-row">
-                    <button
-                        @click="update"
-                        class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <span class="flex items-center">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-5 h-5 mr-2"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path
-                                    d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
-                                />
-                                <polyline points="17 21 17 13 7 13 7 21" />
-                                <polyline points="7 3 7 8 15 8" />
-                            </svg>
-                            Save changes
-                        </span>
-                    </button>
-                </div>
-            </div>
-        </template>
         <template v-slot:search>
             <search-box v-model="query.search" @submit="filter" />
         </template>
@@ -215,7 +182,12 @@
                             </div>
                         </td>
                         <td class="min-w-[16rem]">
-                            <tip-tap-editor v-model="item.actualSituation" @input="updateData()"></tip-tap-editor>
+                            <tip-tap-editor 
+                                v-model="item.actualSituation" 
+                                @input="updateData()"
+                                @update="update"
+                                >
+                            </tip-tap-editor>
                         </td>
                         <td>
                             <div class="text-red-500" v-if="item.selfEvaluationStatus == 'Complied' && item.evidence.length == 0">
@@ -295,10 +267,7 @@
         </div>
         <template v-slot:custom-button>
             <button @click="filter" class="text-white bg-green-600 hover:bg-green-700 w-20 rounded h-10">
-                <span v-if="processing">
-                    <i class="fas fa-spinner animate-spin"></i>
-                </span>
-                <span v-else>Apply</span>
+                Apply
             </button>
         </template>
     </modal>
@@ -415,10 +384,8 @@ const form = reactive({
 });
 
 
-
-
 const handleBeforeUnload = (event) => {
-    if (hasChanges.value) {
+    if (hasUnsavedChanges.value) {
         event.returnValue = true;
     }
 };
@@ -432,6 +399,7 @@ onMounted(() => {
 onUnmounted(() => {
     window.removeEventListener('keydown', handleKeyDown);
     window.removeEventListener('beforeunload', handleBeforeUnload);
+    hasUnsavedChanges.value = false;
 });
 
 // Variables
@@ -465,15 +433,9 @@ const saveBtn = ref(null);
 const saving = ref(false);
 const submitting = ref(false);
 
-const processing = ref(false);
 const showFilterModal = ref(false);
-const hasChanges = ref(false);
 
 const refs = { actualSituationInput, selfEvaluationStatus, actionButtons, evidenceFiles, saveBtn, texteditor, inputEvidenceFile };
-
-function hasInput() {
-    hasChanges.value = true;
-}
 
 
 function toggleDeleteModal() {
@@ -536,12 +498,12 @@ function validateEvidence() {
 
 function update() {
     router.post('/hei/evaluation/update', form, {
-        replace: true,
-        preserveState: true,
-        preserveScroll: true,
         onSuccess: () => {
             hasUnsavedChanges.value = false;
         },
+        replace: true,
+        preserveState: true,
+        preserveScroll: true,
     });
 }
 

@@ -59,10 +59,15 @@
                         :key="item.id"
                     >
                         <td class="max-w-[64]">
-                            {{ item.program }}
-                            <span v-if="item.major">
-                                - {{ item.major }}
-                            </span>
+                            <div>
+                                {{ item.program }}
+                                <span v-if="item.major">
+                                    - {{ item.major }}
+                                </span>
+                            </div>
+                            <div class="text-sm text-gray-700">
+                                {{ item.effectivity }}
+                            </div>
                         </td>
                         <td>
                             <status :text="item.status" />
