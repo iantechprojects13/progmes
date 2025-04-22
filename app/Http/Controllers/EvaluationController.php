@@ -44,8 +44,8 @@ class EvaluationController extends Controller
     public function library()
     {
         $user = Auth::user();
-
-        if ($user->role == 'Librarian' || $user->role == 'Program Head' || $user->role == 'Vice-President for Academic Affairs') {
+        
+        if ($user->type == 'HEI' && $user->role != 'Dean') {
             return redirect()->route('hei.library.evaluation.list');
         }
 
@@ -271,6 +271,11 @@ class EvaluationController extends Controller
         $disciplineIds = $disciplines->pluck('discipline.id')->toArray();
         $institution = RoleModel::where('userId', Auth::user()->id)->where('isActive', 1)->value('institutionId');
         $institutionName = InstitutionModel::where('id', $institution)->value('name');
+        $canEdit = false;
+
+        if ($user->role == 'QA Head') {
+            $canEdit = true;
+        }
 
         $complianceTools = EvaluationFormModel::query()
         ->when($request->query('search'), function ($query) use ($request, $disciplineIds) {
@@ -312,6 +317,7 @@ class EvaluationController extends Controller
             'complianceTools' => $complianceTools,
             'filters' => $request->only(['search', 'status']) + ['show' => $show, 'academicYear' => $acadYear ],
             'institution' => $institutionName,
+            'canEdit' => $canEdit,
         ]);
     }
 

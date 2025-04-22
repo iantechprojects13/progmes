@@ -17,10 +17,12 @@
                 <option value="Chief Education Program Specialist">Chief Education Program Specialist</option>
                 <option value="Supervising Education Program Specialist">Supervising Education Program Specialist</option>
                 <option value="Education Supervisor">Education Supervisor</option>
-                <option value="Vice-President for Academic Affairs">Vice-President for Academic Affairs</option>
-                <option value="Librarian">Librarian</option>
+                <option value="Vice-President for Academic Affairs">VPAA/Dean of Multiple Program/Discipline</option>
+                <option value="QA Head">QA Head</option>
                 <option value="Dean">Dean</option>
                 <option value="Program Head">Program Head</option>
+                <option value="Program Coordinator">Program Coordinator</option>
+                <option value="Librarian">Librarian</option>
             </select>
         </div>
         <div class="flex flex-col w-full lg:w-1/5">

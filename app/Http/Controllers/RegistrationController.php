@@ -146,7 +146,7 @@ class RegistrationController extends Controller
             $rules['discipline'] = 'required';
         }
 
-        if ($request->role == 'Program Head') {
+        if ($request->role == 'Program Head' || $request->role == 'Program Coordinator') {
             $rules['program'] = 'required';
         }
 

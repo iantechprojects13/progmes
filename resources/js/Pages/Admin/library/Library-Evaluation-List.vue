@@ -75,7 +75,9 @@
                 <template v-slot:table-head>
                     <th>HEI</th>
                     <th>Status</th>
-                    <th></th>
+                    <th>
+                        <i class="fas fa-ellipsis-v text-lg"></i>
+                    </th>
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="evaluation_list.data.length == 0">
@@ -93,13 +95,41 @@
                             <status :text="item.status" />
                         </td>
                         <td>
+                            <button
+                                v-show="$page.props.auth.user.role == 'Super Admin'"
+                                @click="
+                                    toggleDeleteModal
+                                "
+                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 tooltipForActions"
+                                data-tooltip="Delete"
+                            >
+                                <i class="fas fa-trash text-lg"></i>
+                            </button>
                         </td>
-                        <td></td>
                     </tr>
                 </template>
             </content-table>
         </template>
     </content-container>
+
+    <Confirmation
+        :showModal="deleteModal"
+        @close="toggleDeleteModal"
+        title="Delete Evaluation Tool"
+        width="md"
+    >
+    <template v-slot:message>
+        Are you sure you want to delete this evaluation tool?
+    </template>
+    <template v-slot:buttons>
+        <button
+            @click="deleteTool"
+            class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 duration-200 w-20 h-10"
+        >
+            Delete
+            </button>
+    </template>
+    </Confirmation>
 
     <modal
         :showModal="showFilterModal"
@@ -151,10 +181,7 @@
                 @click="filter"
                 class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 duration-200 w-20 h-10"
             >
-                <span v-if="processing">
-                    <i class="fas fa-spinner animate-spin"></i>
-                </span>
-                <span v-else>Apply</span>
+                Apply
             </button>
         </template>
     </modal>
@@ -177,6 +204,8 @@ const props = defineProps([
 // -------------------------------------------------------------------------
 const showFilterModal = ref(false);
 const processing = ref(false);
+const deleteModal = ref(false);
+
 const academicYearDropdown = [
     "2022-2023",
     "2023-2024",
@@ -197,6 +226,9 @@ const query = useForm({
 });
 
 // -------------------------------------------------------------------------
+function toggleDeleteModal() {
+    deleteModal.value = !deleteModal.value;
+}
 
 function toggleFilterModal() {
     showFilterModal.value = !showFilterModal.value;

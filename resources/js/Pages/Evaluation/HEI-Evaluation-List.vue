@@ -50,9 +50,13 @@
                             <evaluation-progress :percentage="item.progress"></evaluation-progress>
                         </td>
                         <td>
-                            <button v-show="canEvaluate && item.status == 'Submitted'" @click="edit(item.id)"
+                            <button 
+                                v-show="canEdit"
+                                @click="edit(item.id)"
+                                :disabled="item.status != 'In progress'"
+                                :class="{'text-gray-400 hover:bg-gray-100': item.status != 'In progress', 'text-blue-700 hover:bg-blue-100': item.status == 'In progress'}"
                                 class="inline-flex items-center justify-center rounded-full h-10 w-10 tooltipForActions disabled:cursor-not-allowed"
-                                data-tooltip="Evaluate">
+                                data-tooltip="Edit">
                                 <i class="fas fa-edit text-lg"></i>
                             </button>
                             <button @click="view(item.id)"
@@ -133,6 +137,7 @@ defineOptions({ layout: Layout });
         'complianceTools',
         'filters',
         'institution',
+        'canEdit',
     ]);
 
 const showFilterModal = ref(false);
@@ -150,6 +155,10 @@ function toggleFilterModal() {
 
     function view(tool) {
         router.get('/hei/evaluation/' + tool + '/view');
+}
+
+function edit(tool) {
+        router.get('/hei/evaluation/' + tool + '/edit');
     }
 
     function filter() {

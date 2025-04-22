@@ -90,8 +90,8 @@ Route::get('/ched/evaluation', [EvaluationController::class, 'evaluationForCHED'
 Route::get('/ched/evaluation/monitored', [EvaluationController::class, 'monitoredForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('evaluation.ched.monitored');
 Route::get('/hei/ph/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware(['auth','type.hei', 'hei.ph'])->name('evaluation.ph');
 Route::get('/hei/pc/evaluation', [EvaluationController::class, 'evaluationForProgramCoordinator'])->middleware(['auth','type.hei', 'hei.pc'])->name('evaluation.pc');
-Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean'])->name('evaluation.hei');
-Route::get('/hei/evaluation/monitored', [EvaluationController::class, 'monitoredForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean'])->name('evaluation.hei.monitored');
+Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean.qa'])->name('evaluation.hei');
+Route::get('/hei/evaluation/monitored', [EvaluationController::class, 'monitoredForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean.qa'])->name('evaluation.hei.monitored');
 Route::get('hei/evaluation/{tool}/edit', [HEIFormController::class, 'edit'])->middleware(['auth', 'type.hei'])->name('evaluation.hei.edit');
 Route::get('ched/evaluation/{tool}/view', [CHEDFormController::class, 'view'])->middleware(['auth', 'type.ched'])->name('evaluation.ched.view');
 Route::get('ched/evaluation/{tool}/evaluate/', [CHEDFormController::class, 'evaluate'])->middleware(['auth', 'type.ched', 'evaluate'])->name('form.ched.evaluate');

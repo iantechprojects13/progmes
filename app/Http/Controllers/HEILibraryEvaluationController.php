@@ -70,7 +70,7 @@ class HEILibraryEvaluationController extends Controller
         } else {
             return redirect('/unauthorized');
         }
-
+        
         if (!($tool->institution->id == $institution->id)) {
             return redirect('/unauthorized');
         } else {

@@ -35,7 +35,9 @@
                             <option value="">Select role</option>
                             <option class="text-gray-800" value="Vice-President for Academic Affairs">VPAA/Dean of Multiple Discipline/Program</option>
                             <option class="text-gray-800" value="Dean">Dean of Specific Discipline/Program</option>
+                            <option class="text-gray-800" value="QA Head">QA Head</option>
                             <option class="text-gray-800" value="Program Head">Program Head</option>
+                            <option class="text-gray-800" value="Program Coordinator">Program Coordinator</option>
                             <option class="text-gray-800" value="Librarian">Librarian</option>
                         </select>
                         <form-error-message :message="$page.props.errors.role" theme="dark" />
@@ -165,6 +167,7 @@
                 processing.value = false;
             },
             preserveState: true,
+            preserveScroll: true,
             replace: true,
         });
     }
@@ -175,7 +178,7 @@
             role.isDean = true;
             role.isPH = false;
             form.program = null;
-        } else if (form.role === 'Program Head') {
+        } else if (form.role === 'Program Head' || form.role === 'Program Coordinator') {
             role.isPH = true;
             role.isDean = false;
             form.discipline = null;
