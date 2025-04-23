@@ -78,19 +78,41 @@ class User extends Authenticatable
         return $this->hasManyThrough(ProgramModel::class, ProgramAssignmentModel::class, 'userId', 'id', 'id', 'programId');
     }
 
-    public static function requestCount($role)
+    public static function requestCount($role, $userId)
     {
         $query = self::query()
             ->whereNull('isVerified')
             ->whereNull('isActive')
             ->whereNot('role', 'Super Admin');
-
+        // dd('sasdasd');
         if ($role === 'Education Supervisor') {
-            $query->whereHas('userRole', function ($q) {
-                $q->where('role', 'HEI');
+            $disciplineIds = RoleModel::where('userId', $userId)
+                ->where('isActive', 1)
+                ->pluck('disciplineId')
+                ->toArray();
+            $programIds = ProgramAssignmentModel::where('userId', $userId)
+                ->pluck('programId')
+                ->toArray();
+            
+            $query->where(function ($query) use ($disciplineIds, $programIds) {
+                $query->whereHas('userRole', function ($q) use ($disciplineIds, $programIds) {
+                    if (!empty($programIds)) {
+                        $q->whereHas('program', function ($subQ) use ($programIds) {
+                            $subQ->whereIn('programId', $programIds);
+                        });
+                    }
+                    
+                    if (!empty($disciplineIds)) {
+                        $q->orWhereHas('discipline', function ($subQ) use ($disciplineIds) {
+                            $subQ->whereIn('disciplineId', $disciplineIds);
+                        });
+                    }
+                });
             });
-        }
 
+            $query->with('userRole');
+        }
+        
         return $query->count();
     }
 

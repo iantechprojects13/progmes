@@ -4,16 +4,24 @@
         <template v-slot:content-title>
             <div class="w-full flex flex-col text-left md:flex-row items-center justify-between gap-2">
                 <div class="font-bold w-full text-left">Program Assignment</div>
-                <button
+                <div class="w-full flex flex-col md:flex-row md:w-auto gap-2">
+                    <button
+                        @click="toggleDisciplineModal"
+                        class="w-full md:w-auto h-10 px-4 bg-blue-600 text-white hover:bg-blue-700 rounded-lg shadow-md whitespace-nowrap"
+                    >
+                        <i class="fas fa-edit mr-2"></i> Edit Discipline
+                    </button>
+                    <button
                         @click="update"
                         class="w-full md:w-auto h-10 px-4 bg-blue-600 text-white hover:bg-blue-700 rounded-lg shadow-md whitespace-nowrap"
                     >
-                        <i class="fas fa-save mr-3"></i> Update
+                        <i class="fas fa-save mr-2"></i> Update
                     </button>
+                </div>
             </div>
         </template>
         <template v-slot:main-content>
-            <div class="my-3 font-bold">
+            <div class="my-5 font-bold">
                 {{ supervisor.name }}
             </div>
             <div>
@@ -25,13 +33,13 @@
                     class="mt-1 block w-full md:max-w-[32rem] rounded-md h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                     v-model="search"
                 />
-                <div class="p-3 flex flex-row items-center">
+                <div class="p-3 flex flex-row items-center mt-5">
                     <input
                         type="checkbox"
                         id="selectAllPrograms"
                         class="mr-2 text-blue-500"
                         :checked="allProgramsSelected"
-                        @change="toggleAllPrograms"
+                        @change="toggleAllPrograms" 
                     />
                     <label
                         class="cursor-pointer font-medium"
@@ -75,6 +83,55 @@
             </div>
         </template>
     </content-container>
+    
+    <modal
+        :showModal="disciplineModal"
+        title="Edit Discipline"
+        @close="toggleDisciplineModal"
+        width="4xl"
+        class="antialiased"
+    >
+        <div
+            v-if="disciplineList.length == 0"
+            class="h-[24rem] border border-gray-300 rounded w-full"
+        >
+            <div class="w-auto p-5 text-gray-500">No discipline found</div>
+        </div>
+        <div
+            v-else
+            class="overflow-y-auto h-[24rem] border border-gray-300 rounded w-full mx-auto p-3"
+        >
+            <div
+                v-for="(discipline, index) in disciplineList"
+                :key="discipline.id"
+                class="p-2 border-b border-gray-300"
+            >
+                <div class="mr-2 flex flex-row items-center py-1">
+                    <input
+                        type="checkbox"
+                        :id="'disciplineCheck' + index"
+                        class="mr-2 text-blue-500"
+                        :checked="props.assignedDisciplineIds.includes(discipline.id)"
+                        @change="addDiscipline(discipline.id, index)"
+                        ref="disciplineCheckbox"
+                    />
+                    <label class="cursor-pointer" :for="'disciplineCheck' + index">
+                        {{ discipline.discipline }}
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <template #custom-button>
+            <div class="flex justify-end space-x-2">
+                <button @click="updateDiscipline"
+                    class="px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-lg shadow-sm hover:bg-blue-600"
+                >
+                    Update Discipline
+                </button>
+            </div>
+        </template>
+    </modal>
 </template>
 
 <script setup>
@@ -85,17 +142,22 @@ defineOptions({ layout: Layout });
 
 const props = defineProps([
     "supervisor",
-    "assignedPrograms",
     "programList",
+    "disciplineList",
     "assignedProgramIds",
+    "assignedDisciplineIds",
 ]);
 
 
 const programCheckbox = ref([]);
+const disciplineCheckbox = ref([]);
+const disciplineModal = ref(false);
+
 const search = ref("");
 
 const refs = {
     programCheckbox,
+    disciplineCheckbox,
 };
 
 const program_list = computed(() => {
@@ -110,7 +172,11 @@ const program_list = computed(() => {
     });
 });
 
-// Add these computed property and method to your script setup
+
+function toggleDisciplineModal() {
+    disciplineModal.value = !disciplineModal.value;
+}
+
 const allProgramsSelected = computed(() => {
     return (
         program_list.value.length > 0 &&
@@ -119,6 +185,7 @@ const allProgramsSelected = computed(() => {
         )
     );
 });
+
 
 function toggleAllPrograms() {
     if (allProgramsSelected.value) {
@@ -144,6 +211,11 @@ const form = reactive({
     programs: ref(props.assignedProgramIds),
 });
 
+const form2 = reactive({
+    userId: ref(props.supervisor.id),
+    disciplines: ref(props.assignedDisciplineIds),
+});
+
 
 function addProgram(id, indx) {
     let index = props.assignedProgramIds.indexOf(id);
@@ -155,8 +227,26 @@ function addProgram(id, indx) {
     }
 }
 
+function addDiscipline(id, indx) {
+    let index = props.assignedDisciplineIds.indexOf(id);
+
+    if (index === -1) {
+        props.assignedDisciplineIds.push(id);
+    } else {
+        props.assignedDisciplineIds.splice(index, 1);
+    }
+}
+
 function update() {
     router.post('/admin/settings/assignment/update', form, {
+        preserveState: false,
+        preserveScroll: true,
+        replace: true,
+    })
+}
+
+function updateDiscipline() {
+    router.post('/admin/settings/assignment/update-discipline', form2, {
         preserveState: false,
         preserveScroll: true,
         replace: true,

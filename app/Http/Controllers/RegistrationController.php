@@ -291,7 +291,7 @@ class RegistrationController extends Controller
         $assignedPrograms = [];
         
         if ($id != $user->id) {
-            return redirect('/unauthorized');
+            return redirect('/myaccount/'.$user->id);
         }
 
         if ($user->role == 'Education Supervisor') {
@@ -319,6 +319,33 @@ class RegistrationController extends Controller
             'hasDiscipline' => $hasDiscipline,
             'assignedPrograms' => $assignedPrograms,
         ]);
+    }
+
+    public function rename(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $user = User::where('id', Auth::user()->id)->first();
+        
+        $user->update([
+            'name' => $request->name,
+        ]);
+
+        $user->save();
+
+        return redirect()->back()->with('success', 'Name has been updated.');
+    }
+
+    public function deleteAccount(Request $request)
+    {
+        $user = User::where('id', Auth::user()->id)->first();
+
+        $user->userRole()->delete();
+        $user->delete();
+
+        return redirect('/')->with('success', 'Account has been deleted.');
     }
     
 

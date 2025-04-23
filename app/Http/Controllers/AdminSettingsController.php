@@ -7,7 +7,9 @@ use Inertia\Inertia;
 use App\Models\AdminSettingsModel;
 use App\Models\User;
 use App\Models\ProgramModel;
+use App\Models\DisciplineModel;
 use App\Models\ProgramAssignmentModel;
+use App\Models\RoleModel;
 
 class AdminSettingsController extends Controller
 {
@@ -44,16 +46,17 @@ class AdminSettingsController extends Controller
             return redirect('/admin/settings')->with('failed', 'No user found.');
         }
 
-        $assignedPrograms = ProgramAssignmentModel::where('userId', $supervisor->id)->with('program')->get();
         $assignedProgramIds = getUserAssignedProgramIds($supervisor->id);
-        $disciplineIds = getUserDisciplineIds($supervisor->id);
-        $programList = ProgramModel::whereIn('disciplineId', $disciplineIds)->orderby('program', 'asc')->orderBy('major', 'asc')->get();
+        $assignedDisciplineIds = getUserDisciplineIds($supervisor->id);
+        $programList = ProgramModel::whereIn('disciplineId', $assignedDisciplineIds)->orderby('program', 'asc')->orderBy('major', 'asc')->get();
+        $disciplineList = DisciplineModel::orderBy('discipline', 'asc')->get();
 
         return Inertia::render('Admin/Program-Assignment', [
             'supervisor' => $supervisor,
-            'assignedPrograms' => $assignedPrograms,
             'programList' => $programList,
+            'disciplineList' => $disciplineList,
             'assignedProgramIds' => $assignedProgramIds,
+            'assignedDisciplineIds' => $assignedDisciplineIds,
         ]);
     }
 
@@ -93,6 +96,53 @@ class AdminSettingsController extends Controller
             return redirect('/admin/settings')->with('success', 'Program assignments for '.$user->name.' have been successfully updated.');
         } catch (\Exception $e) {
             return back()->with('failed', 'Failed to update program assignments');
+        }
+    }
+
+    public function updateAssignedDiscipline(Request $request)
+    {
+        // Validate the request
+        $validated = $request->validate([
+            'userId' => 'required',
+        ]);
+        
+        $userId = $request->userId;
+        $disciplineIds = $request->disciplines;
+        $user = User::where('id', $userId)->first();
+
+        try {
+            // Delete assignments in RoleModel that are not in the new list
+            RoleModel::where('userId', $userId)
+            ->whereNotIn('disciplineId', $disciplineIds)
+            ->delete();
+            
+            // Delete assignments in ProgramAssignmentModel where 'programId' belongs to disciplines not included
+            $excludedProgramIds = ProgramModel::whereIn('disciplineId', $disciplineIds)->pluck('id');
+            ProgramAssignmentModel::where('userId', $userId)
+            ->whereNotIn('programId', $excludedProgramIds)
+            ->delete();
+
+            // For each discipline ID in the request
+            foreach ($disciplineIds as $disciplineId) {
+            // Check if the discipline already exists
+            $exists = RoleModel::where('userId', $userId)
+                ->where('disciplineId', $disciplineId)
+                ->exists();
+            
+            // If it doesn't exist, create it
+            if (!$exists) {
+                RoleModel::create([
+                'userId' => $userId,
+                'disciplineId' => $disciplineId,
+                'role' => 'Education Supervisor',
+                'isActive' => 1,
+                ]);
+            }
+            }
+            
+            return redirect()->back()->with('success', 'Discipline successfully updated.');
+        } catch (\Exception $e) {
+            return back()->with('failed', 'Failed to update discipline assignments');
         }
     }
     

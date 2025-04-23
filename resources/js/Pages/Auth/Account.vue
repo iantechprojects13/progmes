@@ -1,17 +1,34 @@
 <template>
     <Head title="My Account" />
     <page-title title="My Account" />
-    <content-container :hideTopBorder="true">
+    <content-container :hasTopButton="true">
+        <template v-slot:content-title>
+            <div class="w-full flex flex-col md:flex-row justify-between items-center">
+                <div class="md:w-full">
+                    
+                </div>
+                <div class="w-full md:w-auto">
+                    <button @click="toggleDeleteAccountModal"
+                        class="bg-blue-600 whitespace-nowrap w-full md:w-auto text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+                    >
+                        Delete Account
+                    </button>
+                </div>
+            </div>
+        </template>
         <template v-slot:main-content>
-            <div class="my-8 mx-3 md:mx-5 p-6 rounded-lg border border-gray-300 shadow-lg">
+            <div class="mb-8 mx-3 md:mx-5 p-6 rounded-lg border border-gray-300 shadow-lg">
                 <div class="flex flex-col items-center">
                     <!-- Profile Avatar -->
                     <img :src="profile.avatar" alt="User Profile" 
                         class="rounded-full border-4 border-gray-300 shadow-lg w-32 h-32">
                     <!-- Name and Email -->
-                    <h1 class="text-gray-800 text-2xl mt-3 flex items-center">
+                    <div class="text-gray-800 text-2xl mt-3 flex items-center">
                         <i class="fas fa-id-card ml-2 mr-4 text-blue-500"></i> {{ profile.name }}
-                    </h1>
+                        <span class="text-base hover:text-blue-500 cursor-pointer tooltipForActions" data-tooltip="Edit Name" @click="toggleUpdateNameModal">
+                            <i class="fas fa-edit ml-3"></i>
+                        </span>
+                    </div>
                     <p class="text-gray-600 flex items-center">
                         <i class="fas fa-envelope ml-2 mr-4 text-blue-500"></i> {{ profile.email }}
                     </p>
@@ -104,10 +121,69 @@
             </div>
         </template>
     </content-container>
+
+    <modal
+        :showModal="updateNameModal"
+        @close="toggleUpdateNameModal"
+        title="Update Name"
+        width="md"
+    >
+        <div>
+            <label for="name" class="block text-sm font-medium text-gray-700">
+                Name
+            </label>
+            <input
+                type="text"
+                id="name"
+                v-model="form.name"
+                class="mt-1 block w-full h-12 border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                placeholder="Enter name"
+            />
+            <form-error-message
+                v-if="$page.props.errors && showError"
+                :message="$page.props.errors.name"
+                theme="dark"
+            />
+        </div>
+        <template #custom-button>
+            <button
+                @click="update"
+                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+            >
+                Update
+            </button>
+        </template>
+    </modal>
+
+    <confirmation
+        :showModal="deleteAccountModal"
+        @close="toggleDeleteAccountModal"
+        title="Delete Account"
+        width="lg"
+    >
+        <template #message>
+            <div class="text-gray-700 space-y-2">
+                <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+                <p class="mt-8 text-sm">
+                    Note: This will not delete any of your submitted inputs or data.
+                </p>
+            </div>
+        </template>
+        <template #buttons>
+            <button
+                @click="deleteAccount"
+                class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
+            >
+                Delete
+            </button>
+        </template>
+    </confirmation>
+
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { reactive, ref, watch } from 'vue';
+import { router } from '@inertiajs/vue3';
 import Layout from '@/Shared/Layout.vue';
 
 defineOptions({
@@ -115,4 +191,51 @@ defineOptions({
 });
 
 const props = defineProps(['profile', 'roles', 'hasDiscipline', 'assignedPrograms']);
+
+const updateNameModal = ref(false);
+const deleteAccountModal = ref(false);
+const showError = ref(false);
+
+const form = reactive({
+    name: props.profile.name,
+});
+
+function toggleUpdateNameModal() {
+    if (updateNameModal.value) {
+        showError.value = false;
+    }
+    updateNameModal.value = !updateNameModal.value;
+}
+
+function toggleDeleteAccountModal() {
+    deleteAccountModal.value = !deleteAccountModal.value;
+}
+
+watch(updateNameModal, (newVal) => {
+    if (!newVal) {
+        form.name = props.profile.name;
+    }
+});
+
+function update() {
+    router.post('/myaccount/update-name', form, {
+        onSuccess: () => {
+            toggleUpdateNameModal();
+        },
+        onError: () => {
+            showError.value = true;
+        },
+        preserveScroll: true,
+        preserveState: true,
+        replace: true,
+    });
+}
+
+function deleteAccount() {
+    router.post('/myaccount/delete', {
+        preserveState: false,
+        replace: true,
+    });
+}
+
 </script>

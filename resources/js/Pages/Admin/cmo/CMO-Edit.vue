@@ -41,11 +41,11 @@
         </template>
 
         <template v-slot:main-content>
-            <!-- <div class="md:p-4">
+            <div class="md:p-4">
                 <div v-if="hasTool" class="p-4 mb-4 md:mb-0 text-sm text-yellow-800 bg-yellow-100 rounded-lg" role="alert">
                     <strong>Warning:</strong> This CMO is associated with a program compliance tool(s). Making major changes may affect its integration and could have significant implications. Please proceed with caution and ensure all changes are thoroughly reviewed.
                 </div>
-            </div> -->
+            </div>
             <div class="bg-white rounded-xl shadow-lg border p-2 md:p-8 md:m-4 mb-12">
                 <div class="flex flex-col gap-6">
                     <!-- First Row: Discipline and Program -->
@@ -252,7 +252,7 @@ const props = defineProps([
     "cmo",
     "discipline_list",
     "program_list",
-    // "hasTool",
+    "hasTool",
 ]);
 
 // -------------------------------------------------------------------------------

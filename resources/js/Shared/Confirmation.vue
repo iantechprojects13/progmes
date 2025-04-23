@@ -1,6 +1,6 @@
 <template>
     <div
-        @click.self="handleBackdropClick"
+        @mousedown.self="handleBackdropClick"
         :class="[
             { 'opacity-100': showModal },
             { 'opacity-0 pointer-events-none': !showModal },
