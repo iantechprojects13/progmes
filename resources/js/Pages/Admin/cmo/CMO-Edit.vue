@@ -22,7 +22,7 @@
                             >
                                 Save changes
                             </button>
-                            <button v-show="cmo.status != 'Published'"
+                            <button v-show="!hasTool"
                                 class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
                                 @click.prevent="saveAsDraft"
                             >

@@ -101,7 +101,7 @@
                         </td>
                         <td v-show="canEdit">
                             <button
-                                v-show="canEdit"
+                                v-show="canDelete"
                                 @click="
                                     toggleDeleteModal(
                                         program.evaluation_form[0],
@@ -323,6 +323,7 @@ const props = defineProps([
     "program_list",
     "academicYear",
     "canEdit",
+    'canDelete',
     "filters",
 ]);
 
