@@ -4,7 +4,9 @@
         <template v-slot:content-title>
             <div class="flex flex-row items-center justify-between w-full">
                 <div class="w-full flex flex-row items-center justify-between">
-                    <div class="font-bold">CMO No.22, S.2021</div>
+                    <div class="font-bold">
+                        {{ library_cmo }}
+                    </div>
                 </div>
                 <div class="flex flex-col md:flex-row items-center gap-2">
                     <button
@@ -149,6 +151,7 @@ defineOptions({ layout: Layout });
 const props = defineProps([
     'items',
     'effectivity',
+    'library_cmo',
 ])
 
 const deployToolModal = ref(false);

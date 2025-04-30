@@ -14,7 +14,7 @@ use Auth;
 
 class LibCriteriaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $acadYear = getAcademicYear($request->query('academicyear'), Auth::user()->id);
 
@@ -23,6 +23,7 @@ class LibCriteriaController extends Controller
         [
             'items' => $libCriteria,
             'effectivity' => $acadYear,
+            'library_cmo' => AdminSettingsModel::where('setting_key', 'library_cmo')->value('setting_value'),
         ]);
     }
 
@@ -31,7 +32,8 @@ class LibCriteriaController extends Controller
         $libCriteria = LibCriteriaModel::where('isActive', 1)->orderBy('no', 'asc')->get();
         return Inertia::render('Admin/library/Library-CMO-Edit',
         [
-            'items' => $libCriteria
+            'items' => $libCriteria,
+            'library_cmo' => AdminSettingsModel::where('setting_key', 'library_cmo')->value('setting_value'),
         ]);
     }
 
@@ -91,6 +93,14 @@ class LibCriteriaController extends Controller
         }
         
         return redirect()->back()->with('success', 'Changes saved successfully.');
+    }
+
+    public function deleteItem($id)
+    {
+        $item = LibCriteriaModel::find($id);
+        $item->delete();
+
+        return redirect()->back()->with('success', 'Item deleted successfully.');
     }
 
     public function deploy(Request $request)
