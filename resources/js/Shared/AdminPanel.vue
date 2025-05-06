@@ -41,7 +41,7 @@
                     </button>
                     </Link>
 
-                    <Link :href="route('admin.library.list')" v-show="$page.props.auth.user.role == 'Super Admin'">
+                    <Link :href="route('admin.library.list')" v-show="$page.props.auth.user.role != 'Education Supervisor'">
                         <button
                             class="select-none h-12 md:w-auto md:px-5 w-full md:hover:bg-blue-700 hover:bg-gray-200  rounded"
                             :class="{ 'md:text-white text-blue-500 md:border-b-blue-400 md:hover:border-blue-500 md:border-b-4 rounded-b-none md:hover:bg-blue-700 font-bold': highlight('library') }">

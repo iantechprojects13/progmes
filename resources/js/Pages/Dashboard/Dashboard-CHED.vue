@@ -1,10 +1,15 @@
 <template>
     <Head title="Dashboard" />
-    <page-title title="Dashboard">
-        <template #buttons>
-            <options  @filter="toggleFilterModal" href="/ched/dashboard" />
-        </template>
-    </page-title>
+    <page-title title="Dashboard" />
+    
+    <div class="w-full mt-1">
+        <div class="mx-3 md:mx-8 flex flex-col md:flex-row items-center justify-end pb-1">
+            <div>
+                <options  @filter="toggleFilterModal" href="/ched/dashboard" />
+            </div>
+        </div>
+    </div>
+
     <div class="mx-3 md:mx-8 mt-2 w-fit" v-if="showFiltersApplied && (supervisor_name != null || heiName != null || programName != null)">
         <div class="flex justify-between items-center bg-gray-100 p-3 rounded-lg text-gray-600">
             <div class="text-sm">
@@ -22,7 +27,8 @@
             </button>
         </div>
     </div>
-    <p class="mx-3 md:mx-8 mt-5 w-fit text-gray-600 font-medium">Compliance tools for academic year {{ academicyear }}</p>
+    
+    <p class="mx-3 md:mx-8 w-fit text-gray-600 font-medium">Compliance tools for academic year {{ academicyear }}</p>
     <!-- Statistics Cards Grid -->
     <div
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mx-3 md:mx-8 rounded-lg mt-2"
@@ -416,119 +422,6 @@
     </div>
 
 
-    <!-- <div class="max-w-full mx-auto px-4 md:px-3 lg:px-8 py-8">
-        <div
-            class="rounded-xl shadow overflow-hidden"
-        >
-            <div class="flex items-center p-5 border border-gray-200 rounded-t-xl bg-white">
-                <h2 class="text-lg font-semibold text-gray-700">Annual Overview</h2>
-            </div>  
-
-            
-            <div class="p-8">
-
-                
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                    
-                    <div
-                        class="p-6 rounded-xl shadow-md border border-gray-300 transition-all duration-300 hover:shadow-lg bg-white cursor-pointer"
-                    >
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="text-2xl font-bold text-gray-800"
-                                    >{{ monthlyAverageResult() }}</span
-                                >
-                                <p
-                                    class="text-sm font-medium text-gray-500 mt-1"
-                                >
-                                    Monthly Average
-                                </p>
-                            </div>
-                            <div class="p-2 bg-blue-100 rounded-lg">
-                                <svg
-                                    class="w-8 h-8"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    
-                                    <rect x="3" y="4" width="18" height="16" rx="2" ry="2" stroke="currentColor"/>
-                                    <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor"/>
-                                    <line x1="7" y1="2" x2="7" y2="6" stroke="currentColor"/>
-                                    <line x1="17" y1="2" x2="17" y2="6" stroke="currentColor"/>
-                                    
-                                    
-                                    <line x1="7" y1="14" x2="7" y2="18" stroke="currentColor"/>
-                                    <line x1="12" y1="12" x2="12" y2="18" stroke="currentColor"/>
-                                    <line x1="17" y1="16" x2="17" y2="18" stroke="currentColor"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    
-                    <div v-show="filters.year === currentYear"
-                        class="p-6 rounded-xl shadow-md border border-gray-300 transition-all duration-300 hover:shadow-lg bg-white cursor-pointer"
-                        @click="viewMonitoredTools(filters.year, monthIndex, null)"
-                    >
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="text-2xl font-bold text-gray-800"
-                                    >{{ byMonthData[monthIndex] }}</span
-                                >
-                                <p
-                                    class="text-sm font-medium text-gray-500 mt-1"
-                                >
-                                    Current Month
-                                </p>
-                            </div>
-                            <div class="p-2 bg-blue-100 rounded-lg">
-                                <svg
-                                    class="w-8 h-8"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    
-                                    <rect x="3" y="4" width="18" height="16" rx="2" ry="2" stroke="currentColor"/>
-                                    <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor"/>
-                                    <line x1="7" y1="2" x2="7" y2="6" stroke="currentColor"/>
-                                    <line x1="17" y1="2" x2="17" y2="6" stroke="currentColor"/>
-                            
-                                    
-                                    <circle cx="12" cy="15" r="2" fill="currentColor"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                
-                <div class="grid grid-cols-1 gap-8 mt-8">
-                    
-                    <div class="border border-gray-300 p-6 rounded-xl shadow-md">
-                        <h3 class="text-lg font-semibold text-gray-700 mb-2">
-                            Annual Distribution
-                        </h3>
-                        <div v-if="evaluatedTotal == 0" class="py-32 w-full text-center text-gray-500">
-                            No data to display
-                        </div>
-                        <analytics-line-chart v-if="displayAnalyticsData" :thisYear="props.thisYear" :lastYear="props.lastYear" :twoYearsAgo="props.twoYearsAgo" :labels="analyticsLabel" :isCurrentYear="isCurrentYear" :currentQuarter="currentQuarter"></analytics-line-chart>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
-
-
     <modal
         :showModal="showFilterModal"
         title="Filters"
@@ -848,9 +741,6 @@ function toggleFilterModal() {
     showFilterModal.value = !showFilterModal.value;
 }
 
-function togglePeriodModal() {
-    showPeriodModal.value = !showPeriodModal.value;
-}
 
 const query = useForm({
     supervisor: ref(props.supervisor) != null ? ref(props.supervisor) : null,

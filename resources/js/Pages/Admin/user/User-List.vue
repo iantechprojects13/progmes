@@ -11,12 +11,20 @@
     >
         <template v-slot:navigation>
             <main-content-nav
+                btnText="Active"
+                routeName="admin.users.list"
+                :isActive="true"
+            />
+            <main-content-nav
+                btnText="Request"
+                routeName="admin.users.request"
                 :requestCount="requestCount"
-                :showInactive="showInactive"
-                page="userlist"
-                managementType="user"
-            >
-            </main-content-nav>
+            />
+            <main-content-nav
+                v-show="showInactive"
+                btnText="Inactive"
+                routeName="admin.users.inactive"
+            />
         </template>
         <template v-slot:search>
             <search-box v-model="query.search" @submit="filter" />
@@ -70,7 +78,12 @@
                             {{ user.type }}
                         </td>
                         <td>
-                            {{ user.role }}
+                            <p v-if="user.role == 'Vice-President for Academic Affairs'">
+                                VPAA/Dean of Multiple Discipline
+                            </p>
+                            <p v-else>
+                                {{ user.role }}
+                            </p>
                         </td>
                         <td>
                             <div v-for="role in user.user_role" :key="role.id">
@@ -155,25 +168,7 @@
                     <option value="CHED">CHED</option>
                 </select>
             </div>
-
-            <!-- Items per page Filter -->
-            <div class="flex flex-col space-y-2">
-                <label for="show" class="text-sm font-medium text-gray-700">
-                    Items per page
-                </label>
-                <select
-                    v-model="query.show"
-                    id="show"
-                    class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="150">150</option>
-                    <option value="200">200</option>
-                    <option value="300">300</option>
-                </select>
-            </div>
+            <filter-page-items v-model="query.show"/>
         </div>
 
         <template #custom-button>

@@ -174,7 +174,7 @@ class CHEDFormController extends Controller
         $tool = EvaluationFormModel::where('id', $request->id)->first();
 
         if (!$tool) {
-            return redirect('/ched/evaluation/')->with('error', 'No compliance evaluation tool found.');
+            return redirect('/ched/evaluation/')->with('failed', 'No compliance evaluation tool found.');
         }
 
         $tool->update([
@@ -190,7 +190,7 @@ class CHEDFormController extends Controller
         $tool = EvaluationFormModel::where('id', $request->id)->first();
 
         if (!$tool) {
-            return redirect('/ched/evaluation/')->with('error', 'No compliance evaluation tool found.');
+            return redirect('/ched/evaluation/')->with('failed', 'No compliance evaluation tool found.');
         }
 
         $tool->update([

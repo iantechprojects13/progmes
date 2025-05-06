@@ -5,7 +5,7 @@
         class="absolute left-0 h-full bg-blue-500 transition-all duration-1000 ease-out"
         :style="{ width: `${animatedPercentage}%` }"
       ></div>
-      <span class="absolute inset-0 flex items-center justify-center text-xs font-bold text-white">
+      <span class="absolute inset-0 flex items-center justify-center text-xs font-bold text-white select-none">
         {{ Math.round(animatedPercentage) }}%
       </span>
     </div>
@@ -15,13 +15,9 @@
 <script setup>
 import { ref, watch, computed, onMounted } from 'vue'
 
-const props = defineProps({
-  percentage: {
-    type: Number,
-    required: true,
-    validator: (value) => !isNaN(value)
-  }
-})
+const props = defineProps([
+  "percentage",
+])
 
 const currentPercentage = ref(0)
 const animatedPercentage = ref(0)

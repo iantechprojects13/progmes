@@ -2,12 +2,12 @@
 
     <Head title="Program Evaluation Monitored List" />
     <page-title title="Program Evaluation" />
-    <content-container hasSearch="true" pageTitle="Monitored" page="monitored" :hasNavigation="true" :hasTopButton="true" :hasFilters="true" :data_list="complianceTools">
+    <content-container hasSearch="true" pageTitle="Monitored Programs" page="monitored" :hasNavigation="true" :hasTopButton="true" :hasFilters="true" :data_list="complianceTools">
         <template v-slot:top-button>
             <select
                     v-model="query.academicYear"
                     @change.prevent="filter"
-                    class="px-4 pr-10 py-2.5 text-sm bg-white border border-slate-200 text-slate-700 rounded-lg hover:border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 focus:outline-none duration-200 cursor-pointer appearance-none whitespace-nowrap"
+                    class="px-4 pr-10 py-2.5 text-sm bg-white border border-gray-300 text-slate-700 rounded-lg hover:border-gray-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 focus:outline-none duration-200 cursor-pointer appearance-none whitespace-nowrap"
                 >
                 <option value="2021-2022">A.Y. 2021-22</option>
                 <option value="2022-2023">A.Y. 2022-23</option>
@@ -21,7 +21,15 @@
             </select>
         </template>
         <template v-slot:navigation>
-            <main-content-nav page="monitored" managementType="evaluation"></main-content-nav>
+            <main-content-nav
+                btnText="Evaluation"
+                routeName="evaluation.ched"
+            />
+            <main-content-nav
+                btnText="Monitored"
+                routeName="evaluation.ched.monitored"
+                :isActive="true"
+            />
         </template>
         <template v-slot:search>
             <search-box v-model="query.search" @submit="filter" />

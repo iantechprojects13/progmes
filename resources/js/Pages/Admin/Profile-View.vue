@@ -73,7 +73,12 @@
                                 <i class="fas fa-user-tag mr-2"></i> Role
                             </th>
                             <td class="px-4 py-3 text-gray-800">
-                                {{ profile.role }}
+                                <span v-if="profile.role == 'Vice-President for Academic Affairs'">
+                                    VPAA/Dean of Multiple Discipline
+                                </span>
+                                <span v-else>
+                                    {{ profile.role }}
+                                </span>
                             </td>
                         </tr>
                         <tr v-show="hasInstitution" class="border-b">

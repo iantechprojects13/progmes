@@ -16,7 +16,15 @@
             </select>
         </template>
         <template v-slot:navigation>
-            <main-content-nav page="monitored" managementType="institution-evaluation"/>
+            <main-content-nav
+                btnText="Evaluation"
+                routeName="evaluation.hei"
+            />
+            <main-content-nav
+                btnText="Monitored"
+                routeName="evaluation.hei.monitored"
+                :isActive="true"
+            />
         </template>
         <template v-slot:search>
             <search-box v-model="query.search" @submit="filter"></search-box>

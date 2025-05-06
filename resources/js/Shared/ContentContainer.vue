@@ -25,13 +25,14 @@
             <slot name="top-main-content"></slot>
         </div>
         <div class="h-auto mx-3 mt-5 md:mx-8 bg-white border border-slate-300 rounded-lg relative" :class="{'mt-8': !pageTitle}">
-            <div class="overflow-x-auto overflow-y-hidden px-5 pt-1 justify-between border-b border-slate-300 whitespace-nowrap"
+            <div class="overflow-x-auto flex flex-row overflow-y-hidden px-5 pt-1 border-b border-slate-300 whitespace-nowrap"
                 v-show="hasNavigation">
                 <slot name="navigation"></slot>
             </div>
             <div v-show="!pageTitle" ref="actionButtons" class="w-full px-5 flex items-center text-gray-700 h-auto" :class="{'border-b border-slate-200 py-4' : !hideTopBorder}">
                 <button v-show="hasBackButton" @click="goBack"
-                class="w-8 h-8 mr-3 rounded-full hover:bg-gray-200 tooltipForActions" data-tooltip="Back"><i class="fas fa-arrow-left text-lg"></i></button>
+                    class="w-8 h-8 mr-3 rounded-full hover:bg-gray-200 tooltipForActions" data-tooltip="Back"><i class="fas fa-arrow-left text-lg"></i>
+                </button>
                 <slot name="content-title"></slot>
             </div>
             <div class="w-full flex lg:flex-row flex-col lg:items-center relative"
@@ -55,7 +56,7 @@
             </div>
 
             <div>
-                <div class="pt-0 md:pt-2 px-5 pb-5 overflow-auto min-h-[16rem]">
+                <div class="pt-0 md:pt-2 px-5 pb-5 overflow-auto">
                     <slot name="main-content"></slot>
                 </div>
             </div>
@@ -112,18 +113,7 @@ onUnmounted(() => {
     window.removeEventListener('scroll', showStickyDiv);
 });
 
-</script>
-
-<script>
-    export default {
-    components: { AdminPanel },
-        methods: {
-            resultCount() {
-                this.$emit('resultCount');
-            },
-            goBack() {
-                window.history.back();
-            }
-        },
-    }
+function goBack() {
+    window.history.back();
+}
 </script>

@@ -52,8 +52,15 @@
             </div>
         </template>
         <template v-slot:navigation>
-            <main-content-nav page="published" managementType="cmo">
-            </main-content-nav>
+            <main-content-nav
+                btnText="Published"
+                routeName="admin.cmo.list"
+                :isActive="true"
+            />
+            <main-content-nav
+                btnText="Draft"
+                routeName="admin.cmo.draft"
+            />
         </template>
 
         <template v-slot:search>

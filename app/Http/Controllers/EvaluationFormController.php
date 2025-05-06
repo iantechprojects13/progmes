@@ -22,17 +22,21 @@ class EvaluationFormController extends Controller
     public function index(Request $request) {
         
         $program_list = ProgramModel::with('active_cmo')->orderBy('program', 'asc')->get();
+        $institution_list = InstitutionModel::orderBy('name', 'asc')->get();
         $role = Auth::user()->role;
         $canEdit = false;
+        $canDelete = false;
         $acadYear = '';
         $assignedProgramIds = [];
 
         $show = sanitizePerPage($request->query('show'), Auth::user()->id);
-
         $acadYear = getAcademicYear($request->query('ay'), Auth::user()->id);
+        $programFilter = $request->query('program') != null ? $request->query('program') : null;
+        $institutionFilter = $request->query('institution') != null ? $request->query('institution') : null;
         
         if ($role == 'Super Admin' || $role == 'Admin') {
             $canEdit = true;
+            $canDelete = true;
         }
         
         if ($role == 'Education Supervisor') {
@@ -46,16 +50,17 @@ class EvaluationFormController extends Controller
 
         $allinstitutionprograms = InstitutionProgramModel::query()
         ->when($request->query('search'), function ($query) use ($request) {
-            // $query->where(function ($query) use ($request) {
-            //     $query->where('id', 'like', '%' . $request->query('search') . '%')
-            //     ->orWhereHas('program', function ($programQuery) use ($request) {
-            //         $programQuery->where('program', 'like', '%' . $request->query('search') . '%');
-            //     })
-            //     ->orWhereHas('institution', function ($programQuery) use ($request) {
-            //         $programQuery->where('name', 'like', '%' . $request->query('search') . '%');
-            //     });
-            // });
             applyProgramAndInstitutionSearch($query, $request->query('search'), 'program', 'institution');
+        })
+        ->when($programFilter, function ($query) use ($programFilter) {
+            $query->whereHas('program', function ($query) use ($programFilter) {
+                $query->where('id', $programFilter);
+            });
+        })
+        ->when($institutionFilter, function ($query) use ($institutionFilter) {
+            $query->whereHas('institution', function ($query) use ($institutionFilter) {
+                $query->where('id', $institutionFilter);
+            });
         })
         ->with(['program', 'institution', 'evaluationForm' => function ($evalFormQuery) use ($acadYear) {
             $evalFormQuery->where('effectivity', $acadYear);
@@ -73,12 +78,13 @@ class EvaluationFormController extends Controller
         
         return Inertia::render('Admin/tool/ComplianceTool-List', [
             'program_list' => $program_list,
+            'institution_list' => $institution_list,
             'effectivity' => $acadYear,
             'academicYear' => $acadYear,
             'institutionProgramList' => $allinstitutionprograms,
             'canEdit' => $canEdit,
-            'filters' => $request->only(['search', 'status']) + ['academicYear' => $acadYear ]
-            + ['show' => $show ],
+            'canDelete' => $canDelete,
+            'filters' => $request->only(['search', 'status']) + ['academicYear' => $acadYear, 'show' => $show, 'program' => $programFilter, 'institution' => $institutionFilter],
         ]);
     }
     
@@ -156,6 +162,10 @@ class EvaluationFormController extends Controller
         $tool = EvaluationFormModel::find($evaluation);
         
         if ($tool) {
+            foreach ($tool->item as $item) {
+                $item->evidence()->delete();
+                $item->delete();
+            }
             $tool->delete();
             return redirect()->back()->with('success', 'Evaluation tool has been deleted successfully.');
         }

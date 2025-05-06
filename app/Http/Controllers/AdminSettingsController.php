@@ -155,24 +155,4 @@ class AdminSettingsController extends Controller
             'data' => ProgramModel::whereIn('id', $assignedProgramIds)->orderBy('program', 'asc')->orderBy('major', 'asc')->get(),
         ]);
     }
-
-    public function setAcademicYear(Request $request) {
-        if ($request[0]) {
-            $setting = AdminSettingsModel::where('id', 1)->first();
-
-            if ($setting) {
-                $setting->update([
-                    'currentAcademicYear' => $request[0],
-                ]);
-
-                $setting->save();
-
-                return redirect()->back()->with('success', $request[0] . ' is set as default academic year.');
-            } else {
-                return redirect()->back()->with('failed', 'Failed to set default academic year.');
-            }
-        } else {
-            return redirect()->back()->with('failed', 'Failed to set default academic year.');
-        }
-    }
 }

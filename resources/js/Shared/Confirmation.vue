@@ -90,25 +90,6 @@
                     Are you sure you want to remove the activation from this
                     CMO?
                 </div>
-                <div v-if="modaltype == 'deleteHEI'">
-                    Are you sure you want to delete <b>{{ selected.name }}</b
-                    >? This action can't be undone.
-                </div>
-                <div v-if="modaltype == 'deleteProgram'">
-                    Are you sure you want to delete
-                    <b
-                        >{{ selected.program
-                        }}<span v-if="selected.major != null">
-                            - {{ selected.major }}</span
-                        ></b
-                    >? This action can't be undone.
-                </div>
-
-                <div v-if="modaltype == 'deleteDiscipline'">
-                    Are you sure you want to delete
-                    <b>{{ selected.discipline }}</b
-                    >? This action can't be undone.
-                </div>
 
                 <div v-if="modaltype == 'confirmDeleteEvidence'">
                     Are you sure you want to delete this evidence file/link?
@@ -120,7 +101,19 @@
                 </div>
 
                 <div v-if="modaltype == 'deleteEvaluationTool'">
-                    Are you sure you want to delete this program compliance evaluation tool?
+                    <div style="display: flex; align-items: center; gap: 10px; color: #b91c1c;">
+                        <!-- Warning Icon SVG -->
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="24" height="24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M12 9v2m0 4h.01M10.29 3.86l-7.09 12.3A1 1 0 004 18h16a1 1 0 00.87-1.5l-7.09-12.3a1 1 0 00-1.74 0z" />
+                        </svg>
+                      
+                        <!-- Warning Message -->
+                        <div>
+                          <strong>Are you sure you want to delete this program compliance evaluation tool?</strong><br>
+                          Any input and evidence will be deleted as well.
+                        </div>
+                      </div>
                 </div>
 
                 <slot name="message"></slot>
@@ -185,43 +178,6 @@
                     Deactivate
                 </button>
 
-                <!-- Delete Program Button -->
-                <button preserve-scroll
-                    :disabled="processing"
-                    v-if="modaltype == 'deleteProgram'"
-                    @click="submit('/admin/program/' + selected.id + '/delete')"
-                    class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200 h-10 w-24"
-                >
-                    Delete
-                </button>
-
-                <!-- Delete Discipline Button -->
-                <button
-                    :disabled="processing"
-                    v-if="modaltype == 'deleteDiscipline'"
-                    @click="
-                        submit('/admin/discipline/' + selected.id + '/delete')
-                    "
-                    class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200 h-10 w-24"
-                >
-                    Delete
-                </button>
-
-                <!-- Delete HEI Button -->
-                <button
-                    :disabled="processing"
-                    v-if="modaltype == 'deleteHEI'"
-                    @click="
-                        submit(
-                            '/admin/higher-education-institutions/' +
-                                selected.id +
-                                '/delete'
-                        )
-                    "
-                    class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200 h-10 w-24"
-                >
-                    Delete
-                </button>
 
                 <!-- Delete CMO Button -->
                 <button
@@ -262,7 +218,7 @@
                 >
                     Confirm
                 </button>
-
+                
                 <button
                     :disabled="processing"
                     v-if="modaltype == 'deleteApplication'"

@@ -3,7 +3,7 @@
     <!-- Filter Button -->
     <button 
       @click="$emit('filter')"
-      class="p-2.5 inline-flex items-center justify-center rounded-lg transition-all duration-200 tooltipForActions
+      class="p-2.5 inline-flex items-center justify-center rounded-lg transition-all duration-200 select-none tooltipForActions
              xl:text-gray-700 xl:hover:bg-gray-100 xl:border xl:border-gray-400
              bg-blue-600 text-white hover:bg-blue-700 xl:bg-white"
       data-tooltip="Filters"
@@ -20,7 +20,7 @@
     <!-- Refresh Button -->
     <Link :href="href">
       <button 
-        class="p-2.5 inline-flex items-center justify-center rounded-lg transition-all duration-200 tooltipForActions
+        class="p-2.5 inline-flex items-center justify-center rounded-lg transition-all duration-200 select-none tooltipForActions
                xl:text-gray-700 xl:hover:bg-gray-100 xl:border xl:border-gray-400
                bg-blue-600 text-white hover:bg-blue-700 xl:bg-white"
         data-tooltip="Refresh page"

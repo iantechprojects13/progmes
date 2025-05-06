@@ -202,6 +202,7 @@
                                     <tip-tap-editor
                                         v-model="item.findings"
                                         @input="updateData"
+                                        @update="update"
                                         title="Findings"
                                     ></tip-tap-editor>
                                 </td>
@@ -233,6 +234,7 @@
                                     <tip-tap-editor
                                         v-model="item.recommendations"
                                         @input="updateData"
+                                        @update="update"
                                         title="Comments/Recommendations"
                                     />
                                 </td>

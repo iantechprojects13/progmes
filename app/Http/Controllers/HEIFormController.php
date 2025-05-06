@@ -91,12 +91,13 @@ class HEIFormController extends Controller
         if ($evaluationTool->status != 'In progress' || $evaluationTool->evaluationDate != null) {
             $showEvaluation = true;
         }
-        
-        $compliedCount = $evaluationTool->complied->count();
-        $notCompliedCount = $evaluationTool->not_complied->count();
-        $notApplicableCount = $evaluationTool->not_applicable->count();
-        $percentage = intval(round((($compliedCount + $notCompliedCount + $notApplicableCount)/$evaluationTool->item->count())*100));
-        $progress = [$compliedCount, $notCompliedCount, $notApplicableCount, $percentage];
+
+        $totalItems = $evaluationTool->item->count();
+        $complied = $evaluationTool->complied->count();
+        $notComplied = $evaluationTool->not_complied->count();
+        $notApplicable = $evaluationTool->not_applicable->count();
+        $percentage = intval(round((($complied + $notComplied + $notApplicable)/$evaluationTool->item->count())*100));
+        $progress = [ $complied, $notComplied, $notApplicable, $percentage];
         
 
         return Inertia::render('Evaluation/HEI-Evaluation-View', [
@@ -109,10 +110,11 @@ class HEIFormController extends Controller
 
     public function edit($evaluation, Request $request) {
         $user = Auth::user();
-        $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program')->first();
+        $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program', 'item', 'complied')->first();
         $canEdit = false;
         $redirectPath = '';
 
+        
         $role = RoleModel::where('userId', $user->id)->where('isActive', 1)->with('program')->first();
 
         if ($role) {
@@ -139,11 +141,13 @@ class HEIFormController extends Controller
             $redirectPath = '/hei/ph/evaluation';
         }
 
+        if ($tool->item->isEmpty()) {
+            return redirect($redirectPath)->with('failed', 'Evaluation tool can\'t be accessed.');
+        }
+
         if (!$canEdit) {
             return redirect('/unauthorized');
         } else {
-            $items = EvaluationItemModel::where('evaluationFormId', $evaluation)->with('criteria', 'evidence')->get();
-
             $complianceTool = EvaluationItemModel::query()
             ->when($request->query('search'), function ($query) use ($request) {
                 $query->where(function ($query) use ($request) {
@@ -185,14 +189,12 @@ class HEIFormController extends Controller
             ->paginate(1000)
             ->withQueryString();
 
-            
 
-            $totalItems = $items->count();
-            $complied = $items->where('selfEvaluationStatus', 'Complied')->count();
-            $notComplied = $items->where('selfEvaluationStatus', 'Not complied')->count();
-            $notApplicable = $items->where('selfEvaluationStatus', 'Not applicable')->count();
-            $totalItems = $totalItems - $notApplicable;
-            $percentage = intval(round((($complied + $notComplied + $notApplicable)/$items->count())*100));
+            $totalItems = $tool->item->count();
+            $complied = $tool->complied->count();
+            $notComplied = $tool->not_complied->count();
+            $notApplicable = $tool->not_applicable->count();
+            $percentage = intval(round((($complied + $notComplied + $notApplicable)/$tool->item->count())*100));
             $progress = [ $complied, $notComplied, $notApplicable, $percentage];
 
             if($tool->status == 'In progress') {

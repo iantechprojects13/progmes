@@ -47,6 +47,9 @@ Route::get('/unauthorized', function () {
     return Inertia::render('Others/Unauthorized');
 })->middleware('auth', 'registered')->name('unauthorized');
 
+Route::get('/maintenance', function () {
+    abort(503);
+});
 
 // google login
 Route::controller(App\Http\Controllers\Auth\GoogleAuthController::class)->group(function () {
@@ -65,7 +68,7 @@ Route::match(['get', 'post'], '/register/higher-education-institution', [Registr
 Route::get('/register/for-verification', [RegistrationController::class, 'pending'])->middleware(['auth', 'toverify'])->name('register.pending');
 
 Route::get('/register/{user}/accept', [RegistrationController::class, 'acceptUser'])->name('register.accept');
-Route::get('/register/{user}/reject', [RegistrationController::class, 'reject'])->name('register.reject');
+Route::post('/register/reject', [RegistrationController::class, 'reject'])->name('register.reject');
 Route::get('/register/{user}/activate', [RegistrationController::class, 'activate'])->name('user.activate');
 Route::get('/register/{user}/deactivate', [RegistrationController::class, 'deactivate'])->name('user.deactivate');
 Route::post('/register/change-role', [RegistrationController::class, 'changeRole'])->name('user.role.change');
@@ -84,8 +87,8 @@ Route::get('/ched/dashboard', [DashboardController::class, 'dashboardForCHED'])-
 Route::get('/ched/dashboard/analytics', [DashboardController::class, 'analytics'])->middleware(['auth', 'type.ched'])->name('analytics');
 Route::get('/ched/dashboard/overview', [DashboardController::class, 'dashboardForCHEDOverview'])->middleware(['auth', 'registered', 'type.ched', 'user.verified', 'ched.admin'])->name('dashboard.admin.overview');
 Route::get('/hei/dashboard', [DashboardController::class, 'dashboardForHEI'])->middleware(['auth', 'type.hei', 'user.verified', 'active'])->name('dashboard.hei');
-Route::get('/ched/dashboard/schedule', [DashboardController::class, 'scheduleForCHED'])->middleware(['auth', 'type.ched', 'user.verified', 'active'])->name('dashboard.admin.schedule');
-Route::post('/ched/dashboard/schedule/set', [DashboardController::class, 'setSchedule'])->middleware(['auth', 'type.ched', 'user.verified', 'active'])->name('dashboard.admin.setSchedule');
+Route::get('/ched/schedule', [DashboardController::class, 'schedule'])->middleware(['auth', 'type.ched', 'user.verified', 'active'])->name('ched.schedule');
+Route::post('/ched/schedule/set', [DashboardController::class, 'setSchedule'])->middleware(['auth', 'type.ched', 'user.verified', 'active'])->name('ched.setSchedule');
 
 //evaluation
 Route::get('/evaluation', [EvaluationController::class, 'index'])->middleware(['auth', 'user.verified'])->name('evaluation');
@@ -110,11 +113,12 @@ Route::post('/hei/evaluation/link/delete', [HEIFormController::class, 'deleteLin
 
 Route::post('/ched/evaluation/update', [CHEDFormController::class, 'update'])->name('form.ched.update');
 Route::post('/ched/evaluation/monitored', [CHEDFormController::class, 'monitored'])->name('form.ched.monitored');
-Route::post('/ched/evaluation/lock', [CHEDFormController::class, 'lock'])->name('form.ched.lock');
-Route::post('/ched/evaluation/unlock', [CHEDFormController::class, 'unlock'])->name('form.ched.unlock');
+Route::post('/ched/evaluation/lock', [CHEDFormController::class, 'lock'])->middleware(['auth', 'type.ched'])->name('form.ched.lock');
+Route::post('/ched/evaluation/unlock', [CHEDFormController::class, 'unlock'])->middleware(['auth', 'type.ched'])->name('form.ched.unlock');
 
 //Library Evaluation
 Route::get('/library', [EvaluationController::class, 'library'])->middleware(['auth', 'user.verified'])->name('library.evaluation');
+Route::get('/library/{tool}/delete', [CHEDLibraryEvaluationController::class, 'delete'])->middleware(['auth', 'type.ched', 'admin'])->name('library.tool.delete');
 Route::get('/hei/library/evaluation', [HEILibraryEvaluationController::class, 'index'])->middleware(['auth', 'user.verified'])->name('hei.library.evaluation.list');
 Route::get('hei/library/{tool}/edit', [HEILibraryEvaluationController::class, 'edit'])->middleware(['auth', 'type.hei', 'librarian'])->name('hei.library.evaluation.edit');
 Route::get('hei/library/{tool}/view', [HEILibraryEvaluationController::class, 'view'])->middleware(['auth', 'type.hei'])->name('hei.library.tool.view');
@@ -125,6 +129,9 @@ Route::post('/hei/library/evaluation/link/delete', [HEILibraryEvaluationControll
 Route::post('hei/library/tool/create', [HEILibraryEvaluationController::class, 'store'])->middleware('auth')->name('hei.library.tool.store');
 Route::get('/ched/library/evaluation', [CHEDLibraryEvaluationController::class, 'libraryEvaluationList'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.library.evaluation.list');
 Route::get('ched/library/evaluation/{tool}/view', [CHEDLibraryEvaluationController::class, 'view'])->middleware(['auth', 'type.ched'])->name('ched.library.tool.view');
+Route::post('ched/library/evaluation/lock', [CHEDLibraryEvaluationController::class, 'lock'])->middleware(['auth', 'type.ched'])->name('ched.library.tool.lock');
+Route::post('ched/library/evaluation/unlock', [CHEDLibraryEvaluationController::class, 'unlock'])->middleware(['auth', 'type.ched'])->name('ched.library.tool.unlock');
+Route::get('ched/library/evaluation/{tool}/delete', [CHEDLibraryEvaluationController::class, 'destroy'])->middleware(['auth', 'type.ched', 'admin'])->name('ched.library.tool.delete');
 Route::get('ched/library/evaluation/{tool}/evaluate/', [CHEDLibraryEvaluationController::class, 'evaluate'])->middleware(['auth', 'type.ched', 'evaluate'])->name('ched.library.tool.evaluate');
 Route::post('ched/library/evaluation/update', [CHEDLibraryEvaluationController::class, 'update'])->middleware(['auth', 'type.ched'])->name('ched.library.tool.update');
 Route::get('ched/library/evaluation/{tool}/report', [CHEDLibraryEvaluationController::class, 'report'])->middleware(['auth', 'type.ched'])->name('ched.library.tool.report');
@@ -134,11 +141,7 @@ Route::get('ched/library/evaluation/{tool}/report', [CHEDLibraryEvaluationContro
 Route::get('/ched/program-application/gpr', [GPRController::class, 'index'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.gpr.view');
 Route::get('/ched/program-application/gpr/edit', [GPRController::class, 'edit'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.gpr.edit');
 Route::post('/ched/program-application/gpr/update', [GPRController::class, 'update'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.gpr.update');
-Route::get('/ched/program-application/gpr/{id}/delete', [GPRController::class, 'delete'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.gpr.delete');
-
-Route::get('/maintenance', function () {
-    abort(503);
-});
+Route::get('/ched/program-application/gpr/{id}/delete', [GPRController::class, 'delete'])->middleware(['auth', 'user.verified', 'type.ched', 'admin'])->name('ched.gpr.delete');
 
 //application
 Route::get('/application', [ApplicationController::class, 'index'])->middleware(['auth', 'user.verified'])->name('application');
@@ -187,12 +190,13 @@ Route::get('/admin/CMOs/deactivate/{id?}', [CMOController::class, 'deactivate'])
 Route::post('/admin/CMOs/create/import', [ExcelController::class, 'importExcel'])->name('admin.cmo.import');
 
 //Librarian CMO
-Route::get('/admin/library', [CHEDLibraryEvaluationController::class, 'index'])->middleware('auth', 'type.ched', 'admin')->name('admin.library.list');
-Route::get('/admin/library/CMO/view', [LibCriteriaController::class, 'index'])->middleware('auth', 'type.ched', 'admin')->name('library.cmo.view');
+Route::get('/admin/library', [CHEDLibraryEvaluationController::class, 'index'])->middleware('auth', 'type.ched')->name('admin.library.list');
+Route::get('/admin/library/CMO/view', [LibCriteriaController::class, 'index'])->middleware('auth', 'type.ched')->name('library.cmo.view');
 Route::get('/admin/library/CMO/edit', [LibCriteriaController::class, 'edit'])->middleware('auth', 'type.ched', 'admin')->name('library.cmo.edit');
 Route::get('/admin/library/CMO/{id}/delete', [LibCriteriaController::class, 'deleteItem'])->middleware('auth', 'type.ched', 'admin')->name('library.cmo.deleteItem');
 Route::post('/admin/library/CMO/update', [LibCriteriaController::class, 'update'])->middleware('auth', 'type.ched', 'admin')->name('library.cmo.update');
 Route::post('/admin/library/CMO/deploy', [LibCriteriaController::class, 'deploy'])->middleware('auth', 'type.ched', 'admin')->name('library.cmo.deploy');
+
 
 //Evaluation Tool
 Route::get('/admin/tool', [EvaluationFormController::class, 'index'])->middleware('auth', 'type.ched')->name('admin.form.list');

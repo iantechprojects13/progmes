@@ -1,14 +1,20 @@
 <template>
     <Head title="GPR" />
-    <content-container :hasAdminPanel="true" :hasBackButton="true">
+    <content-container :hasAdminPanel="true">
         <template v-slot:content-title>
             <div class="flex flex-row items-center justify-between w-full">
-                <div class="w-full flex flex-row items-center justify-between">
+                <div class="w-full flex flex-row items-center">
+                    <Link href="/admin/library/">
+                        <button
+                            class="w-8 h-8 mr-3 rounded-full hover:bg-gray-200 tooltipForActions" data-tooltip="Back">
+                            <i class="fas fa-arrow-left text-lg"></i>
+                        </button>
+                    </Link>
                     <div class="font-bold">
                         {{ library_cmo }}
                     </div>
                 </div>
-                <div class="flex flex-col md:flex-row items-center gap-2">
+                <div class="flex flex-col md:flex-row items-center gap-2" v-show="canEdit">
                     <button
                         @click="toggleDeployModal"
                         class="inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 focus:outline-none duration-200 whitespace-nowrap"
@@ -152,6 +158,7 @@ const props = defineProps([
     'items',
     'effectivity',
     'library_cmo',
+    'canEdit',
 ])
 
 const deployToolModal = ref(false);

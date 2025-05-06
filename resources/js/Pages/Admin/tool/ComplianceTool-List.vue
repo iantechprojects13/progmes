@@ -31,20 +31,6 @@
                     </svg>
                     Deploy Tool
                 </button>
-
-                <select
-                    v-model="query.ay"
-                    @change.prevent="changeAcademicYear"
-                    class="px-4 pr-10 py-2.5 text-sm bg-white border border-slate-200 text-slate-700 rounded-lg hover:border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 focus:outline-none duration-200 cursor-pointer appearance-none whitespace-nowrap"
-                >
-                    <option
-                        v-for="(item, index) in academicYearDropdown"
-                        :key="index"
-                        :value="item"
-                    >
-                        A.Y. {{ item }}
-                    </option>
-                </select>
             </div>
         </template>
 
@@ -123,13 +109,11 @@
             <modal
                 :showModal="deployToolModal"
                 width="md"
-                height="long"
                 @close="toggleDeployModal"
                 @submit="deploy"
-                type="deploy"
                 title="Deploy Compliance Tool"
             >
-                <div class="space-y-6">
+                <div class="space-y-4">
                     <div class="flex flex-col space-y-2">
                         <label class="text-sm font-medium text-gray-700">
                             Program
@@ -198,20 +182,16 @@
                     </div>
                 </div>
                 <template v-slot:custom-button>
-                    <button
-                        :disabled="
-                            deployment.program == null || deployment.cmo == null
-                        "
+                    <modal-button
                         @click="toggleConfirmationModal"
-                        class="px-3 py-2 text-sm font-medium text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:text-sm"
                         :class="[
                             deployment.program == null || deployment.cmo == null
-                                ? 'bg-gray-400 cursor-not-allowed'
+                                ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed'
                                 : 'bg-blue-600 hover:bg-blue-700',
-                        ]"
-                    >
-                        Deploy
-                    </button>
+                            ]"
+                        :disabled="deployment.program == null || deployment.cmo == null"
+                        text="Deploy"
+                    />
                 </template>
             </modal>
         </template>
@@ -224,51 +204,16 @@
         title="Filters"
         class="antialiased"
     >
-        <div>
-            <!-- Status Filter -->
-            <div class="flex flex-col space-y-2 mb-6">
-                <label for="status" class="text-sm font-medium text-gray-700">
-                    Status
-                </label>
-                <select
-                    v-model="query.status"
-                    id="status"
-                    class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                    <option :value="null">All</option>
-                    <option value="In progress">In Progress</option>
-                    <option value="Submitted">Completed</option>
-                    <option value="Monitored">Monitored</option>
-                </select>
-            </div>
-
-            <!-- Items per page Filter -->
-            <div class="flex flex-col space-y-2">
-                <label for="show" class="text-sm font-medium text-gray-700">
-                    Items per page
-                </label>
-                <select
-                    v-model="query.show"
-                    id="show"
-                    class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="150">150</option>
-                    <option value="200">200</option>
-                    <option value="300">300</option>
-                </select>
-            </div>
+        <div class="flex flex-col space-y-5">
+            <filter-form-status v-model="query.status"/>
+            <filter-institution v-model="query.institution" :data="institution_list"/>
+            <filter-program v-model="query.program" :data="program_list"/>
+            <filter-academic-year v-model="query.ay"/>
+            <filter-page-items v-model="query.show"/>
         </div>
 
         <template #custom-button>
-            <button
-                @click="filter"
-                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 duration-200 w-20 h-10"
-            >
-                Apply
-            </button>
+            <modal-button text="Apply" color="green" @click="filter"/>
         </template>
     </modal>
 
@@ -290,22 +235,15 @@
             </div>
         </template>
         <template v-slot:buttons>
-            <button
-                @click="deploy"
-                class="px-3 py-2 text-sm font-medium text-white rounded-md shadow-sm bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:text-sm"
-            >
-                Confirm
-            </button>
+            <modal-button text="Confirm" color="blue" @click="deploy"/>
         </template>
     </Confirmation>
 
     <Confirmation
         :showModal="deleteModal"
-        @close="closeDeleteModel"
-        :title="title"
-        :modaltype="modaltype"
-        :selected="selectedTool"
+        @close="toggleDeleteModal"
         width="md"
+        class="antialiased"
     />
 </template>
 
@@ -321,6 +259,7 @@ const props = defineProps([
     "institutionProgramList",
     "effectivity",
     "program_list",
+    "institution_list",
     "academicYear",
     "canEdit",
     'canDelete',
@@ -346,20 +285,10 @@ const academicYearDropdown = [
 
 const deleteModal = ref(false);
 const selectedTool = ref("");
-const modaltype = ref("");
-const title = ref("");
 
-function toggleDeleteModal(id, type, titleValue) {
-    deleteModal.value = !deleteModal.value;
-    selectedTool.value = id;
-    modaltype.value = type;
-    title.value = titleValue;
-}
-
-function closeDeleteModel() {
+function toggleDeleteModal() {
     deleteModal.value = !deleteModal.value;
 }
-
 
 const deployment = useForm({
     program: null,
@@ -368,10 +297,13 @@ const deployment = useForm({
 });
 
 const query = useForm({
-    ay: props.filters.academicYear ? props.filters.academicYear : null,
+    ay: props.filters.academicYear,
     show: props.filters.show != null ? props.filters.show : null,
     search: props.filters.search,
     status: props.filters.status != null ? props.filters.status : null,
+    program: props.filters.program != null ? props.filters.program : null,
+    institution: props.filters.institution != null ? props.filters.institution : null,
+    
 });
 
 // -------------------------------------------------------------------------
@@ -429,13 +361,8 @@ function filter() {
     });
 }
 
-function changeAcademicYear() {
-    query.search = "";
-    query.get("/admin/tool", {
-        preserveScroll: true,
-        preserveState: false,
-        replace: true,
-    });
+function deleteTool() {
+    router.get("");
 }
 
 watch(

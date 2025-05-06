@@ -23,9 +23,14 @@
         </template>
         <template v-slot:navigation>
             <main-content-nav
-                page="discipline"
-                managementType="program"
-            ></main-content-nav>
+                btnText="Program"
+                routeName="admin.program.list"
+            />
+            <main-content-nav
+                btnText="Discipline"
+                routeName="admin.discipline.list"
+                :isActive="true"
+            />
         </template>
         <template v-slot:search>
             <search-box v-model="query.search" @submit="filter" />
@@ -56,31 +61,8 @@
                             {{ discipline.discipline }}
                         </td>
                         <td>
-                            <div class="flex justify-end gap-0">
-                                <button
-                                    v-if="canEdit"
-                                    @click="edit(discipline.id)"
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-blue-700 hover:bg-blue-100 tooltipForActions"
-                                    data-tooltip="Edit"
-                                >
-                                    <i class="fas fa-edit text-lg"></i>
-                                </button>
-
-                                <button
-                                    v-if="canDelete"
-                                    @click="
-                                        toggleConfirmationModal(
-                                            discipline,
-                                            'deleteDiscipline',
-                                            'Delete'
-                                        )
-                                    "
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 tooltipForActions"
-                                    data-tooltip="Delete"
-                                >
-                                    <i class="fas fa-trash text-lg"></i>
-                                </button>
-                            </div>
+                            <action-button v-show="canEdit" type="edit" @click="edit(discipline.id)"/>
+                            <action-button v-show="canDelete" type="delete" @click="toggleConfirmationModal(); selectedDiscipline = discipline;" />
                         </td>
                     </tr>
                 </template>
@@ -95,44 +77,31 @@
         width="md"
         class="antialiased"
     >
-        <div class="space-y-6">
-            <div class="flex flex-col space-y-2">
-                <label for="show" class="text-sm font-medium text-gray-700">
-                    Items per page
-                </label>
-                <select
-                    v-model="query.show"
-                    id="show"
-                    class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="150">150</option>
-                    <option value="200">200</option>
-                    <option value="300">300</option>
-                </select>
-            </div>
-        </div>
+        <filter-page-items v-model="query.show"/>
 
         <template #custom-button>
-            <button
-                @click="filter"
-                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 duration-200"
-            >
-                Apply
-            </button>
+            <modal-button text="Apply" color="green" @click="filter"/>
         </template>
     </modal>
 
     <Confirmation
         :showModal="confirmationModal"
-        @close="closeModal"
-        :title="title"
-        :modaltype="modaltype"
-        :selected="selectedDiscipline"
+        @close="toggleConfirmationModal"
+        title="Delete Discipline"
         width="md"
-    />
+        class="antialiased"
+    >
+        <template #message>
+            <div>
+                Are you sure you want to delete
+                <b>{{ selectedDiscipline.discipline }}</b
+                >? This action can't be undone.
+            </div>
+        </template>
+        <template #buttons>
+            <modal-button text="Delete" color="red" @click="deleteDiscipline"/>
+        </template>
+    </Confirmation>
 </template>
 
 <script setup>
@@ -154,8 +123,6 @@ const props = defineProps([
 // -----------------------------------------------------------------------------------
 const confirmationModal = ref(false);
 const selectedDiscipline = ref("");
-const modaltype = ref("");
-const title = ref("");
 const showFilterModal = ref(false);
 
 const query = useForm({
@@ -164,15 +131,8 @@ const query = useForm({
 });
 
 // -----------------------------------------------------------------------------------
-function toggleConfirmationModal(id, type, titleValue) {
+function toggleConfirmationModal() {
     confirmationModal.value = !confirmationModal.value;
-    selectedDiscipline.value = id;
-    modaltype.value = type;
-    title.value = titleValue;
-}
-
-function closeModal() {
-    confirmationModal.value = false;
 }
 
 function toggleFilterModal() {
@@ -189,5 +149,9 @@ function filter() {
 
 function edit(id) {
     router.get("/admin/program/discipline/" + id + "/edit");
+}
+
+function deleteDiscipline() {
+    router.get('/admin/discipline/' + selectedDiscipline.value.id + '/delete');
 }
 </script>

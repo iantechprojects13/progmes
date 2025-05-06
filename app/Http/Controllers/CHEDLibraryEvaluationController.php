@@ -43,41 +43,131 @@ class CHEDLibraryEvaluationController extends Controller
         ]);
     }
 
-    public function libraryEvaluationList(Request $request)
-    {
+    public function libraryEvaluationList(Request $request) {
         $user = Auth::user();
-        $show = sanitizePerPage($request->query('show'), Auth::user()->id);
-        $acadYear = getAcademicYear($request->query('ay'),Auth::user()->id);
-        $canEvaluate = $user->role == 'Super Admin' || $user->role == 'Education Supervisor' ? true: false;
+        $show = sanitizePerPage($request->query('show'), $user->id);
+        $acadYear = getAcademicYear($request->query('academicyear'), $user->id);
+        $canEvaluate = false;
         
-
-        $complianceTools = LibEvaluationFormModel::query()
-            ->when($request->query('search'), function ($searchQuery) use ($request) {
-                $searchQuery->whereHas('institution', function ($institutionQuery) use ($request) {
-                    $institutionQuery->where('name', 'like', '%' . $request->query('search') . '%');
-                });
+        if ($user->role == 'Super Admin' || $user->role == 'Education Supervisor') {
+            $canEvaluate = true;
+            $canEmail = true;
+        }
+        
+        $query = LibEvaluationFormModel::query()
+            ->when($request->query('search'), function ($query) use ($request) {
+                applyInstitutionSearch(
+                    $query, 
+                    $request->query('search'), 
+                    'institution',
+                );
             })
             ->where('effectivity', $acadYear)
-            ->whereNot('status', 'Deployed')
+            ->where(function ($query) {
+                $query->whereNot('status', 'Deployed');
+            })
             ->when($request->query('status'), function ($statusQuery) use ($request) {
                 $statusQuery->where('status', $request->query('status'));
             })
-            ->with(['institution' => function($query) {
-                $query->orderBy('name', 'asc');
-            }])
-            ->whereHas('institution')
-            ->join('institution', 'lib_evaluation_form.institutionId', '=', 'institution.id')
-            ->orderBy('institution.name', 'asc')
-            ->select('lib_evaluation_form.*')
-            ->paginate($show)
-            ->withQueryString();
-
+            ->with('institution', 'item', 'complied', 'not_complied', 'not_applicable');
+        
+        // Get all results without pagination first
+        $allResults = $query->get();
+        
+        // Transform and calculate complianceRate for each item
+        $transformedResults = $allResults->map(function($item) {
+            return [
+                'id' => $item->id,
+                'submissionDate' => $item->submissionDate,
+                'status' => $item->status,
+                'institution' => $item->institution->name,
+                'progress' => $item->item->count() > 0 
+                    ? intval(round((($item->complied->count() + $item->not_complied->count() + $item->not_applicable->count()) / $item->item->count()) * 100))
+                    : 0,
+                'complianceRate' => $item->complied->count() + $item->not_complied->count() > 0
+                    ? intval(round(($item->complied->count() / ($item->complied->count() + $item->not_complied->count())) * 100))
+                    : 0,
+                'isLocked' => $item->status == 'Locked' || $item->status == 'For re-evaluation' || $item->status == 'Submitted' ? true : false,
+                'canBeArchived' => $item->status == 'Submitted' ? true : false,
+            ];
+        });
+        
+        // Sort by complianceRate if requested
+        $sortField = $request->query('sort', 'id');
+        $sortDirection = $request->query('direction', 'asc');
+        
+        if ($sortField === 'complianceRate') {
+            $transformedResults = $sortDirection === 'asc' 
+                ? $transformedResults->sortBy('complianceRate')
+                : $transformedResults->sortByDesc('complianceRate');
+        } elseif ($sortField === 'progress') {
+            $transformedResults = $sortDirection === 'asc' 
+                ? $transformedResults->sortBy('progress')
+                : $transformedResults->sortByDesc('progress');
+        } else {
+            $transformedResults = $sortDirection === 'desc' 
+                ? $transformedResults->sortBy('progress')
+                : $transformedResults->sortByDesc('progress');
+        }
+        
+        // Manually paginate the results
+        $page = $request->query('page', 1);
+        $perPage = $show;
+        $total = $transformedResults->count();
+        
+        $paginatedResults = $transformedResults->slice(($page - 1) * $perPage, $perPage)->values();
+        
+        // Create a custom paginator
+        $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
+            $paginatedResults,
+            $total,
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+        
         return Inertia::render('Evaluation/CHED-Evaluation-Library-List', [
-            'evaluation_list' => $complianceTools,
-            'filters' => $request->only(['search', 'status']) + ['show' => $show, 'academicYear' => $acadYear ],
+            'evaluation_list' => $paginator,
+            'filters' => $request->only(['search', 'status', 'sort', 'direction']) + ['show' => $show, 'academicYear' => $acadYear],
             'canEvaluate' => $canEvaluate,
         ]);
     }
+
+    // public function libraryEvaluationList(Request $request)
+    // {
+    //     $user = Auth::user();
+    //     $show = sanitizePerPage($request->query('show'), Auth::user()->id);
+    //     $acadYear = getAcademicYear($request->query('ay'),Auth::user()->id);
+    //     $canEvaluate = $user->role == 'Super Admin' || $user->role == 'Education Supervisor' ? true: false;
+        
+
+    //     $complianceTools = LibEvaluationFormModel::query()
+    //         ->when($request->query('search'), function ($searchQuery) use ($request) {
+    //             $searchQuery->whereHas('institution', function ($institutionQuery) use ($request) {
+    //                 $institutionQuery->where('name', 'like', '%' . $request->query('search') . '%');
+    //             });
+    //         })
+    //         ->where('effectivity', $acadYear)
+    //         ->whereNot('status', 'Deployed')
+    //         ->when($request->query('status'), function ($statusQuery) use ($request) {
+    //             $statusQuery->where('status', $request->query('status'));
+    //         })
+    //         ->with(['institution' => function($query) {
+    //             $query->orderBy('name', 'asc');
+    //         }])
+    //         ->whereHas('institution')
+    //         ->join('institution', 'lib_evaluation_form.institutionId', '=', 'institution.id')
+    //         ->orderBy('institution.name', 'asc')
+    //         ->select('lib_evaluation_form.*')
+    //         ->paginate($show)
+    //         ->withQueryString();
+
+    //     return Inertia::render('Evaluation/CHED-Evaluation-Library-List', [
+    //         'evaluation_list' => $complianceTools,
+    //         'filters' => $request->only(['search', 'status']) + ['show' => $show, 'academicYear' => $acadYear ],
+    //         'canEvaluate' => $canEvaluate,
+    //     ]);
+    // }
 
     public function view($tool) {
         $user = Auth::user();
@@ -105,37 +195,6 @@ class CHEDLibraryEvaluationController extends Controller
             'showEvaluation' => $showEvaluation,
         ]);
     }
-
-    // public function evaluate($tool) {
-    //     $user = Auth::user();
-    //     $showEvaluation = false;
-        
-    //     if (!($user->role == 'Super Admin' || $user->role == 'Education Supervisor')) {
-    //         return redirect('/ched/library/evaluation')->with('failed', 'You are not authorized to evaluate this tool.');
-    //     }
-
-    //     $evaluationTool = LibEvaluationFormModel::where('id', $tool)->with('institution', 'complied', 'not_complied', 'not_applicable', 'item', 'item.criteria', 'item.evidence')->first();
-        
-    //     if (!$evaluationTool) {
-    //         return redirect('/ched/library/evaluation')->with('failed', 'Evaluation tool not found.');
-    //     }
-        
-    //     if ($evaluationTool->status == 'In progress') {
-    //         return redirect('/ched/library/evaluation')->with('failed', 'This tool is not yet ready for evaluation.');
-    //     }
-
-    //     $compliedCount = $evaluationTool->complied->count();
-    //     $notCompliedCount = $evaluationTool->not_complied->count();
-    //     $notApplicableCount = $evaluationTool->not_applicable->count();
-    //     $percentage = intval(round((($compliedCount + $notCompliedCount + $notApplicableCount)/$evaluationTool->item->count())*100));
-    //     $progress = [$compliedCount, $notCompliedCount, $notApplicableCount, $percentage];
-
-    //     return Inertia::render('Evaluation/CHED-Evaluation-Library-Edit', [
-    //         'evaluation' => $evaluationTool,
-    //         'progress' => $progress,
-    //         'showEvaluation' => $showEvaluation,
-    //     ]);
-    // }
 
     public function evaluate($evaluation, Request $request) {
         $user = Auth::user();
@@ -204,6 +263,38 @@ class CHEDLibraryEvaluationController extends Controller
         }
     }
 
+    public function lock(Request $request) {
+        $tool = LibEvaluationFormModel::where('id', $request->id)->first();
+
+        if (!$tool) {
+            return redirect('/ched/library/evaluation')->with('failed', 'No library compliance evaluation tool found.');
+        }
+
+        $tool->update([
+            'status' => 'Locked',
+        ]);
+        $tool->save();
+
+        return redirect()->back()->with('success', 'Library compliance evaluation tool has been locked.');
+
+    }
+
+    public function unlock(Request $request) {
+        $tool = LibEvaluationFormModel::where('id', $request->id)->first();
+
+        if (!$tool) {
+            return redirect('/ched/library/evaluation/')->with('failed', 'No library compliance evaluation tool found.');
+        }
+
+        $tool->update([
+            'status' => 'In progress',
+        ]);
+
+        $tool->save();
+
+        return redirect()->back()->with('success', 'Library compliance evaluation tool has been unlocked.');
+    }
+
 
     public function update(Request $request) {
 
@@ -221,6 +312,23 @@ class CHEDLibraryEvaluationController extends Controller
         }
     
         return redirect()->back()->with('success', 'All changes saved.');
+    }
+
+    public function destroy($id)
+    {
+
+        $tool = LibEvaluationFormModel::find($id);
+        
+        if ($tool) {
+            foreach ($tool->item as $item) {
+                $item->evidence()->delete();
+                $item->delete();
+            }
+            $tool->delete();
+            return redirect()->back()->with('success', 'Evaluation tool has been deleted successfully.');
+        }
+
+        return redirect()->back()->with('failed', 'Evaluation tool not found.');
     }
 
     public function report($tool) {

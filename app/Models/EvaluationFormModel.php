@@ -58,16 +58,40 @@ class EvaluationFormModel extends Model
         return $this->hasMany(EvaluationItemModel::class, 'evaluationFormId', 'id');
     }
 
+    public function totalItems()
+    {
+        return $this->item()->count();
+    }
+
+    // to qualify the item as complied, the selfEvaluationStatus should be complied and the actualSituation should not be null or empty and must have evidence
     public function complied()
     {
         return $this->hasMany(EvaluationItemModel::class, 'evaluationFormId', 'id')
-        ->where('selfEvaluationStatus', '=', 'Complied');
+            ->where('selfEvaluationStatus', '=', 'Complied')
+            ->where(function($query) {
+                $query->whereNotNull('actualSituation')
+                    ->where('actualSituation', '!=', '');
+            })
+            ->whereHas('evidence', function ($query) {
+                $query->whereColumn('itemId', 'evaluation_item.id');
+            });
     }
+
 
     public function not_complied()
     {
         return $this->hasMany(EvaluationItemModel::class, 'evaluationFormId', 'id')
-        ->where('selfEvaluationStatus', '=', 'Not complied');
+        ->where('selfEvaluationStatus', '=', 'Not complied')
+        ->where(function($query) {
+            $query->whereNotNull('actualSituation')
+                ->where('actualSituation', '!=', '');
+        });
+    }
+
+    public function not_applicable()
+    {
+        return $this->hasMany(EvaluationItemModel::class, 'evaluationFormId', 'id')
+        ->where('selfEvaluationStatus', '=', 'Not applicable');
     }
 
     public function no_status()
@@ -82,10 +106,22 @@ class EvaluationFormModel extends Model
         ->where('evaluationStatus', '=', 'Complied');
     }
 
-    public function not_applicable()
+    public function evaluated_notComplied()
     {
         return $this->hasMany(EvaluationItemModel::class, 'evaluationFormId', 'id')
-        ->where('selfEvaluationStatus', '=', 'Not applicable');
+        ->where('evaluationStatus', '=', 'Not complied');
+    }
+
+    public function evaluated_notApplicable()
+    {
+        return $this->hasMany(EvaluationItemModel::class, 'evaluationFormId', 'id')
+        ->where('evaluationStatus', '=', 'Not applicable');
+    }
+
+    public function evaluated_noStatus()
+    {
+        return $this->hasMany(EvaluationItemModel::class, 'evaluationFormId', 'id')
+        ->where('evaluationStatus', '=', null);
     }
 
     public function compliancePercentage()
@@ -101,5 +137,39 @@ class EvaluationFormModel extends Model
 
         return ($compliedCount / $total) * 100;
     }
+
+    public function selfEvaluationProgress()
+    {
+        $compliedCount = $this->complied()->count();
+        $notCompliedCount = $this->not_complied()->count();
+        $notApplicable = $this->not_applicable()->count();
+        $totalItems = $this->item()->count();
+        
+        $totalWithInput = $compliedCount + $notCompliedCount + $notApplicable;
+
+        if ($totalItems === 0) {
+            return 0;
+        }
+
+        return ($totalWithInput / $totalItems) * 100;
+    }
+
+    public function evaluationProgress()
+    {
+        $evaluatedCompliedCount = $this->evaluated_complied()->count();
+        $evaluatedNotCompliedCount = $this->evaluated_notComplied()->count();
+        $evaluatedNotApplicable = $this->evaluated_notApplicable()->count();
+        $totalItems = $this->item()->count();
+        
+        $totalWithInput = $evaluatedCompliedCount + $evaluatedNotCompliedCount + $evaluatedNotApplicable;
+
+        if ($totalItems === 0) {
+            return 0;
+        }
+
+        return ($totalWithInput / $totalItems) * 100;
+    }
+
+    
 
 }

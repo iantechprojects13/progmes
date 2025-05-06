@@ -96,7 +96,7 @@ class UserController extends Controller
             ->orderBy('name', 'asc')
             ->paginate($show)
             ->withQueryString();
-
+        
         return Inertia::render('Admin/user/User-List', [
             'user_list' => $userlist,
             'requestCount' => User::requestCount($role, Auth::user()->id),
@@ -119,6 +119,7 @@ class UserController extends Controller
 
         return Inertia::render('Admin/user/User-Request', [
             'user_list' => $userlist,
+            // 'program_list' => $
             'requestCount' => User::requestCount($role, Auth::user()->id),
             'filters' => $request->only(['search', 'type']) + ['show' => $show],
         ] + $permissions);

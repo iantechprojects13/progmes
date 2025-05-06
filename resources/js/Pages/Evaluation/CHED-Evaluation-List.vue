@@ -21,7 +21,15 @@
                 </select>
         </template>
         <template v-slot:navigation>
-            <main-content-nav page="evaluation" managementType="evaluation"></main-content-nav>
+            <main-content-nav
+                btnText="Evaluation"
+                routeName="evaluation.ched"
+                :isActive="true"
+            />
+            <main-content-nav
+                btnText="Monitored"
+                routeName="evaluation.ched.monitored"
+            />
         </template>
         <template v-slot:search>
             <search-box v-model="query.search" @submit="filter" />
@@ -105,14 +113,6 @@
                                 data-tooltip="Lock">
                                 <i class="fas fa-lock text-lg"></i>
                             </button>
-
-                            <!-- <button 
-                                v-show="canEmail"
-                                @click="setProgress(item.progress); toggleEmailModal(); email.toolId = item.id;"
-                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-orange-700 hover:bg-orange-100 tooltipForActions"
-                                data-tooltip="Send Email">
-                                <i class="fas fa-envelope text-lg"></i>
-                            </button> -->
 
                             <button 
                                 v-show="canEvaluate"

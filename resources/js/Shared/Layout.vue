@@ -58,10 +58,10 @@
                                             <p
                                                 class="text-xs whitespace-nowrap overflow-hidden overflow-ellipsis"
                                             
-                                                :title="$page.props.auth.user.role == 'Vice-President for Academic Affairs' ? 'VPAA/Deans of Multiple Discipline/Program' : $page.props.auth.user.role"
+                                                :title="$page.props.auth.user.role == 'Vice-President for Academic Affairs' ? 'VPAA/Deans of Multiple Discipline' : $page.props.auth.user.role"
                                                 >
                                                 <span v-if="$page.props.auth.user.role == 'Vice-President for Academic Affairs'">
-                                                    VPAA/Dean of Multiple Discipline/Program
+                                                    VPAA/Dean of Multiple Discipline
                                                 </span>
                                                 <span v-else>
                                                     {{ $page.props.auth.user.role }}
@@ -74,7 +74,7 @@
 
                             <!-- Navigation Buttons -->
                             <div class="my-4 px-3" @click="mobileSideBar">
-                                <div class="mt-3 text-xs mb-1 text-gray-300 ">
+                                <div class="mt-3 text-xs mb-1 text-gray-300 select-none">
                                     DASHBOARD
                                 </div>
                                 <Link
@@ -84,7 +84,7 @@
                                         highlight('dashboard')
                                             ? 'bg-blue-600 text-white'
                                             : 'text-gray-300 hover:bg-gray-800',
-                                        { 'pointer-events-none opacity-50': hasUnsavedChanges.value }
+                                        { 'pointer-events-none': hasUnsavedChanges.value }
                                     ]"
                                 >
                                     <svg
@@ -109,8 +109,36 @@
                                     </svg>
                                     Dashboard
                                 </Link>
+                                <Link
+                                    v-if="$page.props.auth.user.type == 'CHED'"
+                                    :href="route('ched.schedule')"
+                                    class="flex items-center select-none w-full px-3 py-2 rounded-lg "
+                                    :class="[
+                                        highlight('schedule')
+                                            ? 'bg-blue-600 text-white'
+                                            : 'text-gray-300 hover:bg-gray-800',
+                                        { 'pointer-events-none': hasUnsavedChanges.value }
+                                    ]"
+                                >
+                                    <svg
+                                        class="w-5 h-5 mr-3"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                        />
+                                    </svg>
+                                    Schedule & Status
+                                </Link>
 
-                                <div class="mt-5 text-xs mb-1 text-gray-300" v-if="$page.props.auth.user.type == 'CHED'">
+
+                                <div class="mt-5 text-xs mb-1 text-gray-300 select-none" v-if="$page.props.auth.user.type == 'CHED'">
                                     ADMIN
                                 </div>
                                 <Link
@@ -120,7 +148,7 @@
                                     :class="[
                                         highlight('adminpanel')
                                             ? 'bg-blue-600 text-white'
-                                            : 'text-gray-300 hover:bg-gray-800', { 'pointer-events-none opacity-50': hasUnsavedChanges.value }
+                                            : 'text-gray-300 hover:bg-gray-800', { 'pointer-events-none': hasUnsavedChanges.value }
                                     ]"
                                 >
                                     <svg
@@ -140,7 +168,7 @@
                                     Admin Panel
                                 </Link>
 
-                                <div class="mt-5 text-xs mb-1 text-gray-300">
+                                <div class="mt-5 text-xs mb-1 text-gray-300 select-none">
                                     <span v-show="$page.props.auth.user.type == 'HEI'">SELF-</span>EVALUATION
                                 </div>
                                 <Link v-show="$page.props.auth.user.role != 'Librarian'"
@@ -149,7 +177,7 @@
                                     :class="[
                                         highlight('evaluation')
                                             ? 'bg-blue-600 text-white'
-                                            : 'text-gray-300 hover:bg-gray-800', { 'pointer-events-none opacity-50': hasUnsavedChanges.value }
+                                            : 'text-gray-300 hover:bg-gray-800', { 'pointer-events-none': hasUnsavedChanges.value }
                                     ]"
                                 >
                                 <svg 
@@ -175,7 +203,7 @@
                                     :class="[
                                         highlight('library')
                                             ? 'bg-blue-600 text-white'
-                                            : 'text-gray-300 hover:bg-gray-800', { 'pointer-events-none opacity-50': hasUnsavedChanges.value }
+                                            : 'text-gray-300 hover:bg-gray-800', { 'pointer-events-none': hasUnsavedChanges.value }
                                     ]"
                                 >
                                 <svg 
@@ -201,7 +229,7 @@
                                     :class="[
                                         highlight('application')
                                             ? 'bg-blue-600 text-white'
-                                            : 'text-gray-300 hover:bg-gray-800', { 'pointer-events-none opacity-50': hasUnsavedChanges.value }
+                                            : 'text-gray-300 hover:bg-gray-800', { 'pointer-events-none': hasUnsavedChanges.value }
                                     ]"
                                 >
                                     <svg
@@ -220,7 +248,7 @@
                                     </svg>
                                     Program Application
                                 </Link>
-                                <div class="mt-5 text-xs mb-1 text-gray-300">
+                                <div class="mt-5 text-xs mb-1 text-gray-300 select-none">
                                     ACCOUNT
                                 </div>
                                 <Link
@@ -231,7 +259,7 @@
                                     :class="[
                                         highlight('myaccount')
                                             ? 'bg-blue-600 text-white'
-                                            : 'text-gray-300 hover:bg-gray-800', { 'pointer-events-none opacity-50': hasUnsavedChanges.value }
+                                            : 'text-gray-300 hover:bg-gray-800', { 'pointer-events-none': hasUnsavedChanges.value }
                                     ]"
                                 >
                                     <svg
@@ -255,7 +283,7 @@
                                     @click="toggleLogoutModal"
                                     :disabled="hasUnsavedChanges.value"
                                     class="flex items-center select-none w-full px-3 py-2 rounded-lg  text-gray-300"
-                                    :class="[{ 'opacity-50': hasUnsavedChanges.value }, { 'hover:text-red-500 hover:bg-gray-800': !hasUnsavedChanges.value }]"
+                                    :class="[{ '': hasUnsavedChanges.value }, { 'hover:text-red-500 hover:bg-gray-800': !hasUnsavedChanges.value }]"
                                 >
                                     <svg
                                         class="w-5 h-5 mr-3"
@@ -433,7 +461,7 @@
     </TransitionGroup>
 
     <!-- warning if user has unsaved changes -->
-    <div
+    <div v-show="$page.props.auth.user.role != 'Librarian'"
         v-if="hasUnsavedChanges.value"
         class="w-auto h-auto bg-yellow-400 fixed z-[100] bottom-2 left-2 p-2 rounded flex items-center"
     >
@@ -580,7 +608,8 @@ defineExpose({
 
 const showLibraryNavBtn = () => {
     return page.props.auth.user.role === 'Librarian' || 
-           page.props.auth.user.role === 'Program Head' || 
+           page.props.auth.user.role === 'Quality Assurance Officer' || 
+           page.props.auth.user.role === 'Program Head' ||
            page.props.auth.user.role === 'Program Coordinator' || 
            page.props.auth.user.role === 'Vice-President for Academic Affairs' || 
            page.props.auth.user.type === 'CHED';
@@ -600,6 +629,9 @@ export default {
                     "Dashboard/Dashboard-HEI",
                     "Dashboard/Dashboard-CHED",
                     "Dashboard/CHED-ES-Dashboard",
+                ],
+                schedule: [
+                    "Dashboard/Schedule",
                 ],
                 adminpanel: [
                     "Admin/user/User-List",
@@ -670,6 +702,8 @@ export default {
         highlight(btn) {
             if (btn == "dashboard") {
                 return this.component.dashboard.includes(this.$page.component);
+            } else if (btn == "schedule") {
+                return this.component.schedule.includes(this.$page.component);
             } else if (btn == "adminpanel") {
                 return this.component.adminpanel.includes(this.$page.component);
             } else if (btn == "evaluation") {

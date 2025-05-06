@@ -15,6 +15,8 @@ use App\Models\EvaluationFormModel;
 use App\Models\EvaluationItemModel;
 use App\Models\LibEvaluationFormModel;
 use App\Models\RoleModel;
+use App\Models\MonitoringScheduleModel;
+use App\Models\ProgramAssignmentModel;
 use Carbon\Carbon;
 use Inertia\Inertia;
 
@@ -452,5 +454,133 @@ class DashboardController extends Controller
         $tools = $query->with('institution_program.institution', 'institution_program.program')->get();
         
         return response()->json($tools);   
+    }
+
+
+    public function schedule(Request $request)
+    {
+        $user = Auth::user();
+        $acadYear = getAcademicYear($request->query('academicyear'), Auth::user()->id);
+        $showFilter = AdminSettingsModel::where('setting_key', 'default_academic_year')->value('setting_value') != $acadYear ? true : false;
+            
+        if ($user->role == 'Education Supervisor') {
+            $assignedProgramIds = getUserAssignedProgramIds($user->id);
+        } else {
+            $assignedProgramIds = [];
+        }
+        if ($user->role != 'Education Supervisor') {
+            $schedulesPerHEI = InstitutionModel::query()
+            ->with(['monitoringSchedule' => function($query) use ($acadYear) {
+                $query->where('academicYear', $acadYear);
+            }])
+            ->get()
+            ->map(fn($item) => [
+                'id' => $item->id,
+                'institution' => $item->name,
+                'totalPrograms' => InstitutionProgramModel::where('institutionId', $item->id)->count(),
+                'programsMonitored' => EvaluationFormModel::query()
+                    ->whereHas('institution_program.institution', function($query) use ($item) {
+                        $query->where('institutionId', $item->id);
+                    })
+                    ->where('effectivity', $acadYear)
+                    ->where('status', 'Monitored')
+                    ->with('institution_program.institution', 'institution_program.institution.monitoringSchedule')
+                    ->count(),
+                'monitoringDate' => $item->monitoringSchedule->where('academicYear', $acadYear)->value('monitoringDate')
+                    ? Carbon::createFromFormat('Y-m-d', $item->monitoringSchedule->where('academicYear', $acadYear)->value('monitoringDate'))->format('M d, Y')
+                    : null,
+            ])
+            ->sortBy(function ($item) {
+                return [
+                    is_null($item['monitoringDate']) ? 1 : 0,
+                    is_null($item['monitoringDate']) ? $item['institution'] : $item['monitoringDate']
+                ];
+            })
+            ->values();
+        }
+            
+        $schedulesPerProgram = InstitutionProgramModel::query()
+            ->whereHas('evaluationForm', function($query) use ($acadYear) {
+                $query->where('effectivity', $acadYear);
+                $query->select('id', 'institutionProgramId', 'status');
+            })
+            ->when($user->role == 'Education Supervisor', function ($query) use ($assignedProgramIds) {
+                $query->whereHas('program', function ($query) use ($assignedProgramIds) {
+                   $query->whereIn('id', $assignedProgramIds); 
+                });
+            })
+            ->with(['institution', 'program', 'monitoringSchedule', 'evaluationForm' => function($query) use ($acadYear) {
+                $query->where('effectivity', $acadYear);
+            },'evaluationForm.item', 'evaluationForm.complied', 'evaluationForm.not_complied', 'evaluationForm.not_applicable', 'evaluationForm.no_status', 'evaluationForm.evaluated_complied', 'evaluationForm.evaluated_notComplied'])
+            ->get()
+            ->map(fn($item) => [
+                'institution' => $item->institution->name,
+                'program' => $item->program->major ? $item->program->program . ' - ' . $item->program->major : $item->program->program,
+                'isMonitored' => $item->evaluationForm->first()->status == 'Monitored' ? 'Yes' : 'No',
+                'monitoringDate' => $item->monitoringSchedule->where('academicYear', $acadYear)->value('monitoringDate')
+                    ? Carbon::createFromFormat('Y-m-d', $item->monitoringSchedule->where('academicYear', $acadYear)->value('monitoringDate'))->format('M d, Y')
+                    : null,
+                'selfEvaluationProgress' => intval(round(
+                    (
+                        $item->evaluationForm->first()->complied->count() +
+                        $item->evaluationForm->first()->not_complied->count() +
+                        $item->evaluationForm->first()->not_applicable->count()
+                    ) / max($item->evaluationForm->first()->item->count(), 1) * 100
+                )),
+                'compliancePercentage' => intval(round(
+                    ($item->evaluationForm->first()->evaluated_complied->count() /
+                    max(
+                        $item->evaluationForm->first()->evaluated_complied->count() +
+                        $item->evaluationForm->first()->evaluated_notComplied->count(),
+                        1
+                    )) * 100)),
+
+            ])
+            ->sortBy(function ($item) {
+                return [
+                    is_null($item['monitoringDate']) ? 1 : 0,
+                    is_null($item['monitoringDate']) ? $item['institution'] : $item['monitoringDate']
+                ];
+            })
+            ->values();
+
+
+        return Inertia::render('Dashboard/Schedule', [
+            "institutions" => InstitutionModel::orderBy('name', 'asc')->get(),
+            'schedulesPerHEI' => $schedulesPerHEI ?? null,
+            'schedulesPerProgram' => $schedulesPerProgram ?? null,
+            'filters' => ['academicyear' => $acadYear],
+            'showFilter' => $showFilter,
+        ]);
+    }
+
+
+    public function setSchedule(Request $request)
+    {
+        $validated = $request->validate([
+            'institution' => 'required|exists:institution,id',
+            'date' => 'required|date',
+            'academicYear' => 'required',
+        ]);
+
+        $schedule = MonitoringScheduleModel::where('institutionId', $validated['institution'])
+            ->where('academicYear', $validated['academicYear'])
+            ->first();
+
+        if ($schedule) {
+            // Update the existing schedule
+            $schedule->update([
+                'monitoringDate' => $validated['date'],
+            ]);
+        } else {
+            // Create a new schedule
+            MonitoringScheduleModel::create([
+                'institutionId' => $validated['institution'],
+                'monitoringDate' => $validated['date'],
+                'academicYear' => $validated['academicYear'],
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Schedule saved successfully.');
     }
 }

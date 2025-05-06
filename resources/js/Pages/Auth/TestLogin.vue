@@ -17,7 +17,7 @@
                 <option value="Chief Education Program Specialist">Chief Education Program Specialist</option>
                 <option value="Supervising Education Program Specialist">Supervising Education Program Specialist</option>
                 <option value="Education Supervisor">Education Supervisor</option>
-                <option value="Vice-President for Academic Affairs">VPAA/Dean of Multiple Program/Discipline</option>
+                <option value="Vice-President for Academic Affairs">VPAA/Dean of Multiple Discipline</option>
                 <option value="Quality Assurance Officer">Quality Assurance Officer</option>
                 <option value="Dean">Dean</option>
                 <option value="Program Head">Program Head</option>

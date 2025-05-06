@@ -138,11 +138,9 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="p-3">
-                <div
-                    class="w-full p-2 md:p-5 my-3 md:shadow-lg md:border rounded-xl"
-                >
+                <div class="w-full p-2 md:p-5 my-3 md:shadow-lg md:border rounded-xl">
                     <content-table>
                         <template v-slot:table-head>
                             <th>

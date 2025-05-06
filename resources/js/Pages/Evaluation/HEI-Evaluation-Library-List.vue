@@ -31,7 +31,7 @@
                 </template>
                 <template v-slot:table-body>
                     <tr v-if="institution?.evaluation_form?.length == 0">
-                        <no-search-result text="compliance evaluation tool" />
+                        <no-search-result text="library compliance evaluation tool" />
                     </tr>
                     <tr
                         v-else
@@ -49,7 +49,7 @@
                                 :disabled="starting"
                                 class="inline-flex items-center justify-center rounded-lg h-10 w-24 text-white bg-blue-600 hover:bg-blue-700 tooltipForActions"
                                 @click="createTool(item.id)"
-                                v-show="item.status === 'Deployed'"
+                                v-show="canEdit && item.status === 'Deployed'"
                             >
                                 Start now
                             </button>

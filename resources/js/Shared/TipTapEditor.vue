@@ -5,7 +5,8 @@
             <!-- Display Content -->
             <div
                 @click="openEditor"
-                class="prose max-w-none min-w-[10rem] p-4 min-h-[5rem] border border-gray-400 rounded-lg bg-white relative overflow-auto cursor-pointer"
+                class="prose max-w-none min-w-[10rem] p-4 min-h-[5rem] border rounded-lg relative overflow-auto cursor-pointer"
+                :class="[{'border-red-400 bg-red-50' : inputRequired}, {'border-gray-400 bg-white' : !inputRequired}]"
             >
                 <div v-html="modelValue || ''"></div>
             </div>
@@ -31,7 +32,7 @@
                 </div>
 
                 <!-- Modal Toolbar -->
-                <div class="flex flex-wrap gap-1 p-2 bg-gray-50 border-b">
+                <div class="flex flex-wrap gap-1 p-2 px-4 bg-gray-50 border-b">
                     <!-- Text Formatting -->
                     <div class="flex gap-1 mr-2 border-r pr-2">
                         <button
@@ -260,6 +261,7 @@
 
                     <!-- Save Changes -->
                     <button
+                        v-show="hasSaveBtn"
                         @mousedown.prevent 
                         @click="saveContent"
                         class="p-2 px-3 md:w-auto w-full text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors ml-auto"
@@ -299,6 +301,14 @@ const props = defineProps({
     title: {
         type: String,
         default: "Text Editor",
+    },
+    inputRequired: {
+        type: Boolean,
+        default: false,
+    },
+    hasSaveBtn: {
+        type: Boolean,
+        default: true,
     }
 });
 

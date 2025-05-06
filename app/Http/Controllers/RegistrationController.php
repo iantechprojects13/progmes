@@ -18,6 +18,7 @@ use Throwable;
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotificationEmail;
+use App\Mail\RejectionNotificationEmail;
 
 
 class RegistrationController extends Controller
@@ -260,14 +261,22 @@ class RegistrationController extends Controller
         return redirect()->back()->with('success', $acceptedUser->name .'\'s registration has been approved. Notification email has been sent.');
     }
 
-    public function reject(User $user) {
+    public function reject(Request $request) {
 
-        $rejectedUser = User::where('id', $user->id)->first();
+        $rejectedUser = User::where('id', $request->id)->first();
 
-        $rejectedUser->userRole()->delete();
-        $rejectedUser->delete();
+        try {
+            Mail::to($rejectedUser->email)->send(new RejectionNotificationEmail($rejectedUser->email, $rejectedUser->name, $request->reason));
+            $rejectedUser->userRole()->delete();
+            $rejectedUser->delete();
+        } catch (Throwable $thr) {
+            return redirect()->back()->with('success', $rejectedUser->name . '\'s registration has been approved, but the notification email could not be sent. Daily sending limit exceeded.');
+        }
+
         
-        return redirect()->back()->with('success', $rejectedUser->name .'\'s registration has been rejected.');
+        
+        
+        return redirect()->back()->with('success', $rejectedUser->name .'\'s registration has been rejected. Notification email has been sent.');
     }
 
     public function destroy(User $user) {

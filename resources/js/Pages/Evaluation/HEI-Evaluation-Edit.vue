@@ -152,93 +152,91 @@
                 </div>
             </div>
             <div class="p-3">
-                <div
-                    class="w-full p-2 md:p-8 my-3 md:shadow-lg md:border rounded-xl"
-                >
-            <content-table>
-                <template v-slot:table-head>
-                    <th>Area</th>
-                    <th>Minimum Requirement</th>
-                    <th>Actual Situation</th>
-                    <th>Evidence</th>
-                    <th>Self-Evaluation Status</th>
-                    <th>
-                        <i class="fas fa-ellipsis-v text-lg"></i>
-                    </th>
-                </template>
-                <template v-slot:table-body>
-                    <tr v-if="items.data.length == 0">
-                        <no-search-result text="items"/>
-                    </tr>
-                    <tr v-else v-for="(item, index) in items.data" :key="item.id">
-                        <td>
-                            <div v-html="item.criteria.area">
+                <div class="w-full p-2 md:p-5 my-3 md:shadow-lg md:border rounded-xl">
+                    <content-table>
+                        <template v-slot:table-head>
+                            <th>Area</th>
+                            <th>Minimum Requirement</th>
+                            <th>Actual Situation</th>
+                            <th>Evidence</th>
+                            <th>Self-Evaluation Status</th>
+                            <th>
+                                <i class="fas fa-ellipsis-v text-lg"></i>
+                            </th>
+                        </template>
+                        <template v-slot:table-body>
+                            <tr v-if="items.data.length == 0">
+                                <no-search-result text="items"/>
+                            </tr>
+                            <tr v-else v-for="(item, index) in items.data" :key="item.id">
+                                <td>
+                                    <div v-html="item.criteria.area">
 
-                            </div>
-                        </td>
-                        <td>
-                            <div v-html="item.criteria.minimumRequirement">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div v-html="item.criteria.minimumRequirement">
 
-                            </div>
-                        </td>
-                        <td class="min-w-[16rem]">
-                            <tip-tap-editor 
-                                v-model="item.actualSituation" 
-                                @input="updateData()"
-                                @update="update"
-                                >
-                            </tip-tap-editor>
-                        </td>
-                        <td>
-                            <div class="text-red-500" v-if="item.selfEvaluationStatus == 'Complied' && item.evidence.length == 0">
-                                *required
-                            </div>
-                            <div class="flex flex-col"
-                                :class="{ 'hidden': item.selfEvaluationStatus == 'Not applicable' }"
-                                ref="evidenceFiles">
-                                <div v-for="link in item.evidence" :key="link.id" class="w-full">
-                                    <a class="px-1 text-blue-600 hover:text-blue-700 hover:underline rounded whitespace-nowrap" :href="link.url"
-                                        target="_blank">
-                                        Link
-                                    </a>
-                                    <button @click="toggleDeleteModal(); toDelete = link.id"
-                                        class="text-gray-500 hover:text-red-500 ml-1 tooltipForActions"
-                                        :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate"
-                                        :class="{ 'grayscale text-gray-500': hasUpdate }"
-                                        data-tooltip="Delete link">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="h-32 p-3">
-                            <div class="w-full h-full">
-                                <select ref="selfEvaluationStatus" v-model="item.selfEvaluationStatus"
-                                    :id="'selfEvaluationStatus' + index" :name="'selfEvaluationStatus' + index"
-                                    @change="updateData"
-                                    class="p-1 rounded w-36 border border-gray-500 select-none">
-                                    <option :value="null">Select status</option>
-                                    <option value="Complied">Complied</option>
-                                    <option value="Not complied">Not complied</option>
-                                    <option value="Not applicable">Not applicable</option>
-                                </select>
-                            </div>
-                        </td>
-                        <td class="p-3 pr-5 text-right whitespace-nowrap">
-                            <div class="w-full text-right text-sm visible" ref="actionButtons"
-                                :class="{ 'invisible': item.selfEvaluationStatus == 'Not applicable' }">
-                                <button @click="toggleLinkModal(); evidenceLink = null; linkItem = item.id"
-                                    class="rounded bg-blue-500  text-gray-100 h-8 px-2 tooltipForActions" data-tooltip="Drop link"
-                                    :disabled="item.selfEvaluationStatus == 'Not applicable'">
-                                    <i class="fas fa-upload mr-2"></i>Link
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </template>
-            </content-table>
-        </div>
-    </div>
+                                    </div>
+                                </td>
+                                <td class="min-w-[16rem]">
+                                    <tip-tap-editor 
+                                        v-model="item.actualSituation" 
+                                        @input="updateData()"
+                                        @update="update"
+                                        >
+                                    </tip-tap-editor>
+                                </td>
+                                <td>
+                                    <div class="text-red-500" v-if="item.selfEvaluationStatus == 'Complied' && item.evidence.length == 0">
+                                        *required
+                                    </div>
+                                    <div class="flex flex-col"
+                                        :class="{ 'hidden': item.selfEvaluationStatus == 'Not applicable' }"
+                                        ref="evidenceFiles">
+                                        <div v-for="link in item.evidence" :key="link.id" class="w-full">
+                                            <a class="px-1 text-blue-600 hover:text-blue-700 hover:underline rounded whitespace-nowrap" :href="link.url"
+                                                target="_blank">
+                                                Link
+                                            </a>
+                                            <button @click="toggleDeleteModal(); toDelete = link.id"
+                                                class="text-gray-500 hover:text-red-500 ml-1 tooltipForActions"
+                                                :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate"
+                                                :class="{ 'grayscale text-gray-500': hasUpdate }"
+                                                data-tooltip="Delete link">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="h-32 p-3">
+                                    <div class="w-full h-full">
+                                        <select ref="selfEvaluationStatus" v-model="item.selfEvaluationStatus"
+                                            :id="'selfEvaluationStatus' + index" :name="'selfEvaluationStatus' + index"
+                                            @change="updateData"
+                                            class="p-1 rounded w-36 border border-gray-500 select-none">
+                                            <option :value="null">Select status</option>
+                                            <option value="Complied">Complied</option>
+                                            <option value="Not complied">Not complied</option>
+                                            <option value="Not applicable">Not applicable</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td class="p-3 pr-5 text-right whitespace-nowrap">
+                                    <div class="w-full text-right text-sm visible" ref="actionButtons"
+                                        :class="{ 'invisible': item.selfEvaluationStatus == 'Not applicable' }">
+                                        <button @click="toggleLinkModal(); evidenceLink = null; linkItem = item.id"
+                                            class="rounded bg-blue-500  text-gray-100 h-8 px-2 tooltipForActions" data-tooltip="Drop link"
+                                            :disabled="item.selfEvaluationStatus == 'Not applicable'">
+                                            <i class="fas fa-upload mr-2"></i>Link
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </content-table>
+                </div>
+            </div>
         </template>
     </content-container>
 
@@ -349,10 +347,10 @@
 </template>
 
 <script setup>
-// Imports
 import { ref, onMounted, onUnmounted, computed, reactive, watch, inject } from 'vue';
 import { useForm, router } from '@inertiajs/vue3';
-
+import Layout from '@/Shared/Layout.vue';
+defineOptions({ layout: Layout });
 
 // Inject the reactive object
 const hasUnsavedChanges = inject("hasUnsavedChanges");
@@ -617,25 +615,4 @@ function filter() {
     });
 }
 
-</script>
-
-<script>
-    import Layout from '@/Shared/Layout.vue'
-    export default {
-        layout: Layout,
-        data() {
-            return {
-                itemsLayout: 'list',
-            }
-        },
-        methods: {
-            listLayout() {
-                this.itemsLayout = 'list';
-            },
-            gridLayout() {
-                this.itemsLayout = 'grid';
-            },
-        },
-
-    }
 </script>

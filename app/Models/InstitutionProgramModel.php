@@ -44,5 +44,8 @@ class InstitutionProgramModel extends Model
         return $this->hasMany(EvaluationFormModel::class, 'institutionProgramId', 'id');
     }
 
-
+    public function monitoringSchedule()
+    {
+        return $this->hasMany(MonitoringScheduleModel::class, 'institutionId', 'institutionId');
+    }
 }

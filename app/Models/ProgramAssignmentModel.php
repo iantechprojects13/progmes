@@ -30,4 +30,9 @@ class ProgramAssignmentModel extends Model
     {
         return $this->belongsTo(ProgramModel::class, 'programId', 'id');
     }
+
+    public function institution_program()
+    {
+        return $this->hasOne(InstitutionProgramModel::class, 'programId', 'programId');
+    }
 }

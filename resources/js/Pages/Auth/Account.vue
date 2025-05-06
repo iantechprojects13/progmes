@@ -46,7 +46,14 @@
                         <i class="fas fa-briefcase text-blue-500 ml-2 mr-4"></i>
                         <div>
                             <h2 class="text-gray-700 font-semibold">Role</h2>
-                            <p class="text-gray-900">{{ profile.role }}</p>
+                            <p class="text-gray-900">
+                                <span v-if="profile.role == 'Vice-President for Academic Affairs'">
+                                    VPAA/Dean of Multiple Discipline
+                                </span>
+                                <span v-else>
+                                    {{ profile.role }}
+                                </span>
+                            </p>
                         </div>
                     </div>
                     <div v-if="roles[0]?.institution" class="bg-gray-100 hover:bg-gray-200 p-4 rounded-lg shadow flex items-center">
@@ -165,7 +172,7 @@
             <div class="text-gray-700 space-y-2">
                 <p>Are you sure you want to delete your account? This action cannot be undone.</p>
                 <p class="mt-8 text-sm">
-                    Note: This will not delete any of your submitted inputs or data.
+                    Note: This will NOT delete any of your submitted inputs or data.
                 </p>
             </div>
         </template>

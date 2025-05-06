@@ -90,13 +90,14 @@ class InstitutionController extends Controller
     public function view(InstitutionModel $institution)
     {
         $institutionModel = InstitutionModel::query()->where('id', $institution->id)
-        ->with('active_program.program')
+        ->with(['active_program.program' => function ($query) {
+            $query->orderBy('program', 'asc');
+        }])
         ->first();
 
         return Inertia::render('Admin/hei/HEI-View', [
             'institution' => $institutionModel,
         ]);
-        
     }
 
     public function edit(InstitutionModel $institution) {

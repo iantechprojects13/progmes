@@ -74,7 +74,6 @@ class HEILibraryEvaluationController extends Controller
         if (!($tool->institution->id == $institution->id)) {
             return redirect('/unauthorized');
         } else {
-            $items = LibEvaluationItemModel::where('libEvaluationFormId', $evaluation)->with('criteria', 'evidence')->get();
 
             $complianceTool = LibEvaluationItemModel::query()
             ->when($request->query('search'), function ($query) use ($request) {
@@ -117,17 +116,13 @@ class HEILibraryEvaluationController extends Controller
             ->paginate(1000)
             ->withQueryString();
 
-            
+            $libEvaluationTool = LibEvaluationFormModel::where('id', $evaluation)->with('institution', 'complied', 'not_complied', 'not_applicable', 'item', 'item.criteria', 'item.evidence')->first();
 
-            $totalItems = $items->count();
-            $complied = $items->where('selfEvaluationStatus', 'Complied')->count();
-            $notComplied = $items->where('selfEvaluationStatus', 'Not complied')->count();
-            $notApplicable = $items->where('selfEvaluationStatus', 'Not applicable')->count();
-            $totalItems = $totalItems - $notApplicable;
-            $totalItems = $items->count();
-            $percentage = $totalItems > 0 
-            ? intval(round((($complied + $notComplied + $notApplicable) / $totalItems) * 100)) 
-            : 0;
+            $totalItems = $libEvaluationTool->item->count();
+            $complied = $libEvaluationTool->complied->count();
+            $notComplied = $libEvaluationTool->not_complied->count();
+            $notApplicable = $libEvaluationTool->not_applicable->count();
+            $percentage = intval(round((($complied + $notComplied + $notApplicable)/$libEvaluationTool->item->count())*100));
             $progress = [ $complied, $notComplied, $notApplicable, $percentage];
 
             if($tool->status == 'In progress') {
@@ -149,7 +144,7 @@ class HEILibraryEvaluationController extends Controller
         foreach ($request->items as $item) {
 
             $evaluationItem = LibEvaluationItemModel::find($item['id']);
-
+            
             if ($evaluationItem) {
                 $evaluationItem->update([
                     'actualSituation' => $item['actualSituation'] ?? null,
@@ -160,6 +155,27 @@ class HEILibraryEvaluationController extends Controller
         
         return redirect()->back()->with('success', 'All changes saved.');
     }
+
+    // public function update(Request $request) {
+
+        
+    //     foreach ($request->items as $item) {
+
+    //         $evaluationItem = LibEvaluationItemModel::find($item['id']);
+
+    //         if ($evaluationItem) {
+    //             $evaluationItem->update([
+    //                 'actualSituation' => $item['actualSituation'] ?? null,
+    //                 'selfEvaluationStatus' => $item['selfEvaluationStatus'] ?? null,
+    //             ]);
+    //         }
+    //     }
+        
+
+    //     return response()->json([
+    //         'status'=> 200,
+    //     ]);
+    // }
 
     public function submitLink(Request $request) {
 
@@ -227,7 +243,7 @@ class HEILibraryEvaluationController extends Controller
         
         if ($evaluation->evaluationDate != null) {
             $evaluation->update([
-                'status' => 'Completed',
+                'status' => 'For re-evaluation',
                 'submissionDate' => now(),
             ]);
 
@@ -263,7 +279,6 @@ class HEILibraryEvaluationController extends Controller
                 return redirect('/unauthorized');
             }
         }
-
 
         if ($evaluationTool->status != 'In progress' || $evaluationTool->evaluationDate != null) {
             $showEvaluation = true;

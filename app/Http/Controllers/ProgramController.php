@@ -40,6 +40,9 @@ class ProgramController extends Controller
                 $programQuery->where('discipline', 'like', '%' . $request->query('search') . '%');
             });
         })
+        ->when($request->query('discipline'), function ($query) use ($request) {
+            $query->where('disciplineId', $request->query('discipline'));
+        })
         ->with('discipline')
         ->orderBy('program')
         ->paginate($show)
@@ -47,10 +50,11 @@ class ProgramController extends Controller
 
         return Inertia::render('Admin/program/Program-List', [
             'program_list' => $programlist,
+            'discipline_list' => DisciplineModel::orderBy('discipline', 'asc')->get(),
             'canEdit' => $canEdit,
             'canAdd' => $canAdd,
             'canDelete' => $canDelete,
-            'filters' => $request->only(['search']) + ['show' => $show ],
+            'filters' => $request->only(['search', 'discipline']) + ['show' => $show ],
         ]);
     }
 

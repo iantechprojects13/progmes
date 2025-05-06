@@ -11,12 +11,20 @@
     >
         <template v-slot:navigation>
             <main-content-nav
+                btnText="Active"
+                routeName="admin.users.list"
+            />
+            <main-content-nav
+                btnText="Request"
+                routeName="admin.users.request"
                 :requestCount="requestCount"
-                :showInactive="showInactive"
-                page="request"
-                managementType="user"
-            >
-            </main-content-nav>
+                :isActive="true"
+            />
+            <main-content-nav
+                v-show="showInactive"
+                btnText="Inactive"
+                routeName="admin.users.inactive"
+            />
         </template>
         <template v-slot:search>
             <search-box v-model="query.search" @submit="filter" />
@@ -69,7 +77,12 @@
                             {{ user.type }}
                         </td>
                         <td>
-                            {{ user.role }}
+                            <p v-if="user.role == 'Vice-President for Academic Affairs'">
+                                VPAA/Dean of Multiple Discipline
+                            </p>
+                            <p v-else>
+                                {{ user.role }}
+                            </p>
                         </td>
                         <td>
                             <div v-for="role in user.user_role" :key="role.id" v-show="role.isActive == null">
@@ -104,19 +117,7 @@
                                 >
                                     <i class="fas fa-check text-lg"></i>
                                 </button>
-                                <button
-                                    @click="
-                                        toggleConfirmationModal(
-                                            user,
-                                            'reject',
-                                            'Reject'
-                                        )
-                                    "
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 tooltipForActions"
-                                    data-tooltip="Reject"
-                                >
-                                    <i class="fas fa-times text-lg"></i>
-                                </button>
+                                <action-button type="reject" @click="toggleRejectConfirmationModal(); selectedUser = user, form.id = user.id" />
                             </div>
                         </td>
                     </tr>
@@ -132,10 +133,10 @@
         title="Filters"
         class="antialiased"
     >
-        <div>
+        <div class="flex flex-col space-y-4">
             <!-- Account Type Filter -->
             <div
-                class="flex flex-col space-y-2 mb-6"
+                class="flex flex-col space-y-1"
                 v-show="$page.props.auth.user.role == 'Super Admin'"
             >
                 <label for="type" class="text-sm font-medium text-gray-700">
@@ -151,25 +152,8 @@
                     <option value="CHED">CHED</option>
                 </select>
             </div>
-
-            <!-- Items per page Filter -->
-            <div class="flex flex-col space-y-2">
-                <label for="show" class="text-sm font-medium text-gray-700">
-                    Items per page
-                </label>
-                <select
-                    v-model="query.show"
-                    id="show"
-                    class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="150">150</option>
-                    <option value="200">200</option>
-                    <option value="300">300</option>
-                </select>
-            </div>
+            
+            <filter-page-items v-model="query.show"/>
         </div>
 
         <template #custom-button>
@@ -191,17 +175,36 @@
         width="md"
     >
     <template #custom-button>
-    button
+
     </template>
     </Confirmation>
+
+    <confirmation
+        :showModal="rejectConfirmationModal"
+        @close="toggleRejectConfirmationModal"
+        title="Reject User"
+        width="md"
+        class="antialiased"
+    >
+        <template #message>
+            <div>
+                Are you sure you want to reject <b>{{ selectedUser.name }} </b>'s registration?
+            </div>
+            <div class="mt-3">
+                <textarea v-model="form.reason" class="w-full h-[8rem] resize-none rounded-lg border-gray-400" placeholder="Enter reason"></textarea>
+            </div>
+        </template>
+        <template #buttons>
+            <modal-button text="Reject" color="red" @click="reject"/>
+        </template>
+    </confirmation>
 </template>
 
 <script setup>
 // --------------------------------------------------------------------
-import { ref } from "vue";
-import { useForm } from "@inertiajs/vue3";
+import { ref, reactive } from "vue";
+import { useForm, router } from "@inertiajs/vue3";
 import Layout from "@/Shared/Layout.vue";
-import axios from "axios";
 defineOptions({ layout: Layout });
 
 // --------------------------------------------------------------------
@@ -220,6 +223,7 @@ const selectedUser = ref("");
 const modaltype = ref("");
 const title = ref("");
 const showFilterModal = ref(false);
+const rejectConfirmationModal = ref(false);
 
 // --------------------------------------------------------------------
 const query = useForm({
@@ -227,6 +231,11 @@ const query = useForm({
     search: props.filters.search,
     type: props.filters.type != null ? props.filters.type : null,
 });
+
+const form = reactive({
+    id: null,
+    reason: null,
+})
 
 // --------------------------------------------------------------------
 function toggleConfirmationModal(id, type, titleValue) {
@@ -244,8 +253,24 @@ function toggleFilterModal() {
     showFilterModal.value = !showFilterModal.value;
 }
 
+function toggleRejectConfirmationModal() {
+    if (rejectConfirmationModal) {
+        form.id = null;
+        form.message = null;
+    }
+    rejectConfirmationModal.value = !rejectConfirmationModal.value;
+}
+
 function filter() {
     query.get("/admin/users/request", {
+        preserveState: false,
+        preserveScroll: true,
+        replace: true,
+    });
+}
+
+function reject() {
+    router.post('/register/reject', form, {
         preserveState: false,
         preserveScroll: true,
         replace: true,

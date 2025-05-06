@@ -200,7 +200,6 @@ class CMOController extends Controller
                 'number' => $request->number,
                 'series' => $request->series,
                 'version' => $request->version,
-                'status' => 'draft',
             ]);
         }
 
@@ -349,7 +348,7 @@ class CMOController extends Controller
             
             return redirect()->back()->with('success', 'CMO deleted successfully.');
         }
-
+        
         return redirect()->back()->with('failed', 'This record cannot be deleted because it is associated with another records.');
     }
 }

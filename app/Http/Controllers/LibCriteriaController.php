@@ -16,6 +16,7 @@ class LibCriteriaController extends Controller
 {
     public function index(Request $request)
     {
+        $canEdit = Auth::user()->role == 'Super Admin';
         $acadYear = getAcademicYear($request->query('academicyear'), Auth::user()->id);
 
         $libCriteria = LibCriteriaModel::where('isActive', 1)->orderBy('no', 'asc')->get();
@@ -24,6 +25,7 @@ class LibCriteriaController extends Controller
             'items' => $libCriteria,
             'effectivity' => $acadYear,
             'library_cmo' => AdminSettingsModel::where('setting_key', 'library_cmo')->value('setting_value'),
+            'canEdit' => $canEdit,
         ]);
     }
 

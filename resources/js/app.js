@@ -12,7 +12,6 @@ import Modal from '../js/Shared/Modal.vue';
 import Notification from '../js/Shared/Notification.vue';
 import Confirmation from '../js/Shared/Confirmation.vue';
 import ConfirmationModal from '../js/Shared/ConfirmationModal.vue';
-import DeleteModal from '../js/Shared/DeleteModal.vue';
 import Pagination from './Shared/Pagination.vue';
 import Paginator from './Shared/Paginator.vue';
 import ContentContainer from './Shared/ContentContainer.vue';
@@ -41,6 +40,15 @@ import EvaluationProgress from './Shared/Component/EvaluationProgress.vue';
 import LoadingScreen from './Shared/Component/LoadingScreen.vue';
 import SearchBox from './Shared/Component/SearchBox.vue';
 import Options from './Shared/Component/Options.vue';
+import ModalButton from './Shared/Component/ModalButton.vue';
+import ActionButton from './Shared/Component/ActionButton.vue';
+import FilterPageItems from './Shared/Component/FilterPageItems.vue';
+import FilterDiscipline from './Shared/Component/FilterDiscipline.vue';
+import FilterAcademicYear from './Shared/Component/FilterAcademicYear.vue';
+import AcademicYear from './Shared/Component/AcademicYear.vue';
+import FilterInstitution from './Shared/Component/FilterInstitution.vue';
+import FilterProgram from './Shared/Component/FilterProgram.vue';
+import FilterFormStatus from './Shared/Component/FilterFormStatus.vue';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -58,7 +66,6 @@ createInertiaApp({
             .component('Notification', Notification)
             .component('Confirmation', Confirmation)
             .component('ConfirmationModal', ConfirmationModal)
-            .component('DeleteModal', DeleteModal)
             .component('Pagination', Pagination)
             .component('Paginator', Paginator)
             .component('ContentContainer', ContentContainer)
@@ -87,6 +94,15 @@ createInertiaApp({
             .component('LoadingScreen', LoadingScreen)
             .component('SearchBox', SearchBox)
             .component('Options', Options)
+            .component('ModalButton', ModalButton)
+            .component('ActionButton', ActionButton)
+            .component('FilterPageItems', FilterPageItems)
+            .component('FilterDiscipline', FilterDiscipline)
+            .component('FilterAcademicYear', FilterAcademicYear)
+            .component('AcademicYear', AcademicYear)
+            .component('FilterInstitution', FilterInstitution)
+            .component('FilterProgram', FilterProgram)
+            .component('FilterFormStatus', FilterFormStatus)
             .mount(el);
     },
     progress: false,

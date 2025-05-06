@@ -11,11 +11,19 @@
     >
         <template v-slot:navigation>
             <main-content-nav
+                btnText="Active"
+                routeName="admin.users.list"
+            />
+            <main-content-nav
+                btnText="Request"
+                routeName="admin.users.request"
                 :requestCount="requestCount"
-                :showInactive="true"
-                page="inactive"
-                managementType="user"
-            ></main-content-nav>
+            />
+            <main-content-nav
+                btnText="Inactive"
+                routeName="admin.users.inactive"
+                :isActive="true"
+            />
         </template>
         <template v-slot:search>
             <search-box v-model="query.search" @submit="filter" />
@@ -68,7 +76,12 @@
                             {{ user.type }}
                         </td>
                         <td>
-                            {{ user.role }}
+                            <p v-if="user.role == 'Vice-President for Academic Affairs'">
+                                VPAA/Dean of Multiple Discipline
+                            </p>
+                            <p v-else>
+                                {{ user.role }}
+                            </p>
                         </td>
                         <td>
                             <div v-for="role in user.user_role" :key="role.id">
