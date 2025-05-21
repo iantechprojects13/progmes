@@ -134,12 +134,21 @@
                         >
                         <i class="fas fa-edit"></i> Edit
                         </button>
-                        <button @click="update" :disabled="!isEditing" v-else
-                            :class="{'opacity-50 cursor-not-allowed': !isEditing}"
-                            class="mt-5 w-full md:w-1/2 md:max-w-8 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline"
-                        >
-                        <i class="fas fa-save"></i> Update
-                        </button>
+                        <div v-else class="w-full whitespace-nowrap space-x-2">
+                            <button @click="update" :disabled="!isEditing"
+                                :class="{'opacity-50 cursor-not-allowed': !isEditing}"
+                                class="mt-5 w-full md:w-1/2 md:max-w-8 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline"
+                            >
+                            <i class="fas fa-save"></i> Update
+                            </button>
+                            <button @click="isEditing = false;" :disabled="!isEditing"
+                                :class="{'opacity-50 cursor-not-allowed': !isEditing}"
+                                class="mt-5 w-full md:w-1/2 md:max-w-8 border border-gray-300 text-gray-600 hover:border-gray-400 hover:text-black hover:bg-gray-100 py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -167,18 +176,8 @@
                             >
                                 <td>{{ supervisor.name }}</td>
                                 <td>
-                                    <button @click="viewPrograms(supervisor.id); modalTitle = supervisor.name"
-                                        class="inline-flex items-center justify-center rounded-full h-10 w-10 text-green-700 hover:bg-green-100 tooltipForActions"
-                                        data-tooltip="View Programs"
-                                    >
-                                        <i class="fas fa-eye text-lg"></i>
-                                    </button>
-                                    <button @click="assign(supervisor.id)"
-                                        class="inline-flex items-center justify-center rounded-full h-10 w-10 text-blue-700 hover:bg-blue-100 tooltipForActions"
-                                        data-tooltip="Assign Programs"
-                                    >
-                                        <i class="fas fa-edit text-lg"></i>
-                                    </button>
+                                    <action-button type="view" @click="viewPrograms(supervisor.id); modalTitle = supervisor.name" />
+                                    <action-button type="edit" @click="assign(supervisor.id)" />
                                 </td>
                             </tr>
                         </template>
@@ -193,7 +192,6 @@
         :title="modalTitle"
         @close="viewProgramsModal = false"
         width="4xl"
-        class="antialiased"
         hasNoCancelButton="true"
     >
         <div class="h-52 flex items-center justify-center" v-if="fetchingData">

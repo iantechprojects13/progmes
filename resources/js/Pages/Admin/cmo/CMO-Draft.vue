@@ -96,18 +96,6 @@
                     </tr>
                     <tr v-else v-for="cmo in cmo_list.data" :key="cmo.id">
                         <td>
-                            <!-- <div
-                                v-if="
-                                    cmo.number != null &&
-                                    cmo.series != null
-                                "
-                            >
-                                CMO No.{{ cmo.number }}, S. {{ cmo.series }}
-                                <span v-if="cmo.version">
-                                     - Version {{ cmo.version }}
-                                </span>
-                            </div>
-                            <div v-else>-</div> -->
                             <div>
                                 CMO No.{{ cmo.number ? cmo.number : '*' }}, S.{{ cmo.series ? cmo.series : '*' }}
                             </div>
@@ -137,46 +125,10 @@
                         </td>
                         <td>
                             <div class="flex justify-end gap-0">
-                                <button
-                                    @click="view(cmo.id)"
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-emerald-700 hover:bg-emerald-100 tooltipForActions"
-                                    data-tooltip="View"
-                                >
-                                    <i class="fas fa-eye text-lg"></i>
-                                </button>
-                                <button
-                                    @click="edit(cmo.id)"
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-blue-700 hover:bg-blue-100 tooltipForActions"
-                                    data-tooltip="Edit"
-                                >
-                                    <i class="fas fa-edit text-lg"></i>
-                                </button>
-                                <button
-                                    @click="
-                                        toggleConfirmationModal(
-                                            cmo,
-                                            'publish',
-                                            'Publish CMO'
-                                        )
-                                    "
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-blue-700 hover:bg-blue-100 tooltipForActions"
-                                    data-tooltip="Publish"
-                                >
-                                    <i class="fas fa-paper-plane text-lg"></i>
-                                </button>
-                                <button
-                                    @click="
-                                        toggleConfirmationModal(
-                                            cmo,
-                                            'deleteCMO',
-                                            'Delete'
-                                        )
-                                    "
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 tooltipForActions"
-                                    data-tooltip="Delete"
-                                >
-                                    <i class="fas fa-trash text-lg"></i>
-                                </button>
+                                <action-button type="view" @click="view(cmo.id)" />
+                                <action-button type="edit" @click="edit(cmo.id)" />
+                                <action-button type="publish" @click="togglePublishModal(); selectedCMO = cmo;"/>
+                                <action-button type="delete" @click="toggleDeleteModal(); selectedCMO = cmo;" />
                             </div>
                         </td>
                     </tr>
@@ -184,53 +136,56 @@
             </content-table>
         </template>
     </content-container>
+
     <modal
         :showModal="showFilterModal"
         @close="toggleFilterModal"
         width="sm"
-        height="long"
         title="Filters"
-        class="antialiased"
     >
-        <div>
-            <!-- Items per page Filter -->
-            <div class="flex flex-col space-y-2">
-                <label for="show" class="text-sm font-medium text-gray-700">
-                    Items per page
-                </label>
-                <select
-                    v-model="query.show"
-                    id="show"
-                    class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="150">150</option>
-                    <option value="200">200</option>
-                    <option value="300">300</option>
-                </select>
-            </div>
+        <div class="flex flex-col space-y-4">
+            <filter-program v-model="query.program" :data="program_list"/>
+            <filter-page-items v-model="query.show"/>
         </div>
 
         <template #custom-button>
-            <button
-                @click="filter"
-                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 duration-200 w-20 h-10"
-            >
-                Apply
-            </button>
+            <modal-button text="Apply" color="green" @click="filter"/>
         </template>
     </modal>
 
-    <Confirmation
-        :showModal="confirmationModal"
-        @close="closeModal"
-        :title="title"
-        :modaltype="modaltype"
-        :selected="selectedCMO"
+    <confirmation
+        :showModal="deleteModal"
+        @close="toggleDeleteModal"
+        title="Delete CMO"
         width="md"
-    />
+    >
+        <template #message>
+            <div>
+                Are you sure you want to delete this CMO? This action can't
+                be undone.
+            </div>
+        </template>
+        <template #buttons>
+            <modal-button text="Delete" color="red" @click="deleteCMO"/>
+        </template>
+    </confirmation>
+
+    <confirmation
+        :showModal="publishModal"
+        @close="togglePublishModal"
+        title="Publish CMO"
+        width="md"
+    >
+        <template #message>
+            <div>
+                Are you sure you want to publish this CMO? Once published, the document cannot be edited further.
+            </div>
+        </template>
+        <template #buttons>
+            <modal-button text="Publish" color="blue" @click="publishCMO"/>
+        </template>
+    </confirmation>
+    
     <notification
         v-if="$page.props.errors.file"
         :message="$page.props.errors.file"
@@ -246,7 +201,7 @@ import Layout from "@/Shared/Layout.vue";
 defineOptions({ layout: Layout });
 
 // -----------------------------------------------------------------------------------------------------------------
-const props = defineProps(["cmo_list", "canEdit", "filters"]);
+const props = defineProps(["cmo_list", "canEdit", "filters", "program_list"]);
 
 // -----------------------------------------------------------------------------------------------------------------
 const confirmationModal = ref(false);
@@ -256,10 +211,13 @@ const title = ref("");
 const cmo_file = ref(null);
 const importing = ref(false);
 const showFilterModal = ref(false);
+const deleteModal = ref(false);
+const publishModal = ref(false);
 
 const query = useForm({
     show: props.filters.show != null ? props.filters.show : null,
     search: props.filters.search,
+    program: props.filters.program != null ? props.filters.program : null,
 });
 
 // ------------------------------------------------------------------------------------------------------------------
@@ -270,8 +228,12 @@ function toggleConfirmationModal(id, type, titleValue) {
     title.value = titleValue;
 }
 
-function closeModal() {
-    confirmationModal.value = false;
+function toggleDeleteModal() {
+    deleteModal.value = !deleteModal.value;
+}
+
+function togglePublishModal() {
+    publishModal.value = !publishModal.value;
 }
 
 function toggleFilterModal() {
@@ -292,6 +254,22 @@ function edit(id) {
 
 function view(id) {
     router.get("/admin/CMOs/draft/" + id + "/view");
+}
+
+function deleteCMO() {
+    router.get(`/admin/CMOs/${selectedCMO.value.id}/delete`, {
+        preserveScroll: true,
+        preserveState: false,
+        replace: true,
+    });
+}
+
+function publishCMO() {
+    router.get(`/admin/CMOs/${selectedCMO.value.id}/publish`, {
+        preserveScroll: true,
+        preserveState: false,
+        replace: true,
+    });
 }
 
 watch(cmo_file, (value) => {

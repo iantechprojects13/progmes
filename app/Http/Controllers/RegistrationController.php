@@ -219,9 +219,9 @@ class RegistrationController extends Controller
     }
 
 
-    public function acceptUser(User $user) {
+    public function accept(Request $request) {
 
-        $acceptedUser = User::where('id', $user->id)->first();
+        $acceptedUser = User::where('id', $request->id)->first();
         $roles = RoleModel::where('userId', $acceptedUser->id)->where('isActive', null)->get();
         $disciplineIds = [];
         $programIds = [];
@@ -273,9 +273,6 @@ class RegistrationController extends Controller
             return redirect()->back()->with('success', $rejectedUser->name . '\'s registration has been approved, but the notification email could not be sent. Daily sending limit exceeded.');
         }
 
-        
-        
-        
         return redirect()->back()->with('success', $rejectedUser->name .'\'s registration has been rejected. Notification email has been sent.');
     }
 
@@ -313,7 +310,9 @@ class RegistrationController extends Controller
             'Vice-President for Academic Affairs' => ['institution'],
             'Dean' => ['discipline', 'institution'],
             'Program Head' => ['program', 'institution'],
+            'Program Coordinator' => ['program', 'institution'],
             'Librarian' => ['institution'],
+            'Quality Assurance Officer' => ['institution'],
         ];
 
         $roles = isset($roleRelations[$user->role]) 
@@ -335,7 +334,7 @@ class RegistrationController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
         ]);
-
+        
         $user = User::where('id', Auth::user()->id)->first();
         
         $user->update([

@@ -55,17 +55,23 @@ class HEIFormController extends Controller
 
     public function view($tool) {
         $user = Auth::user();
-        $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.program', 'institution_program.institution', 'complied', 'not_complied', 'not_applicable', 'item', 'item.criteria', 'item.evidence')->first();
+        $evaluationTool = EvaluationFormModel::where('id', $tool)->with('institution_program.program', 'institution_program.institution', 'cmo', 'complied', 'not_complied', 'not_applicable', 'item', 'item.criteria', 'item.evidence')->first();
         $showEvaluation = false;
 
-        $role = RoleModel::where('userId', $user->id)->where('isActive', 1)->with('program')->first();
+        $role = RoleModel::where('userId', $user->id)->where('isActive', 1)->with('program', 'institution')->first();
 
+        if (!($role->institution->id == $evaluationTool->institution_program->institution->id)) {
+            return redirect('/unauthorized');
+        }
+        
         if ($role->role == 'Program Coordinator' || $role->role == 'Program Head') {
             $institutionProgram = InstitutionProgramModel::where('institutionId', $role->institutionId)->where('programId', $role->programId)->first();
         }
 
         if ($role->role == 'Program Head') {
-            if (!($role->program->program == $evaluationTool->institution_program->program->program));
+            if (!($role->program->program == $evaluationTool->institution_program->program->program)) {
+                return redirect('/unauthorized');
+            }
         } else if ($role->role == 'Program Coordinator') {
             if (!($evaluationTool->institutionProgramId == $institutionProgram->id)) {
                 return redirect('/unauthorized');
@@ -96,7 +102,9 @@ class HEIFormController extends Controller
         $complied = $evaluationTool->complied->count();
         $notComplied = $evaluationTool->not_complied->count();
         $notApplicable = $evaluationTool->not_applicable->count();
-        $percentage = intval(round((($complied + $notComplied + $notApplicable)/$evaluationTool->item->count())*100));
+        $percentage = $evaluationTool->item->count() > 0
+            ? intval(round((($complied + $notComplied + $notApplicable)/$evaluationTool->item->count())*100))
+            : 0;
         $progress = [ $complied, $notComplied, $notApplicable, $percentage];
         
 
@@ -110,12 +118,15 @@ class HEIFormController extends Controller
 
     public function edit($evaluation, Request $request) {
         $user = Auth::user();
-        $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program', 'item', 'complied')->first();
+        $tool = EvaluationFormModel::where('id', $evaluation)->with('institution_program.institution', 'institution_program.program', 'cmo', 'item', 'complied')->first();
         $canEdit = false;
         $redirectPath = '';
 
-        
-        $role = RoleModel::where('userId', $user->id)->where('isActive', 1)->with('program')->first();
+        $role = RoleModel::where('userId', $user->id)->where('isActive', 1)->with('program', 'institution')->first();
+
+        if (!($role->institution->id == $tool->institution_program->institution->id)) {
+            return redirect('/unauthorized');
+        }
 
         if ($role) {
             $institutionProgram = InstitutionProgramModel::where('institutionId', $role->institutionId)->where('programId', $role->programId)->first();
@@ -137,7 +148,7 @@ class HEIFormController extends Controller
         
         else if ($role->role == 'Program Head')
         {
-            $canEdit = $role->program->program == $tool->institution_program->program->program;
+            $canEdit = ($role->program->program == $tool->institution_program->program->program);
             $redirectPath = '/hei/ph/evaluation';
         }
 
@@ -194,7 +205,9 @@ class HEIFormController extends Controller
             $complied = $tool->complied->count();
             $notComplied = $tool->not_complied->count();
             $notApplicable = $tool->not_applicable->count();
-            $percentage = intval(round((($complied + $notComplied + $notApplicable)/$tool->item->count())*100));
+            $percentage = $tool->item->count() > 0
+            ? intval(round((($complied + $notComplied + $notApplicable)/$tool->item->count())*100))
+            : 0;
             $progress = [ $complied, $notComplied, $notApplicable, $percentage];
 
             if($tool->status == 'In progress') {
@@ -212,21 +225,48 @@ class HEIFormController extends Controller
     }
     
 
-    public function update(Request $request) {
+    // public function update(Request $request) {
         
-        foreach ($request->items as $item) {
+    //     foreach ($request->items as $item) {
 
-            $evaluationItem = EvaluationItemModel::find($item['id']);
+    //         $evaluationItem = EvaluationItemModel::find($item['id']);
 
-            if ($evaluationItem) {
-                $evaluationItem->update([
-                    'actualSituation' => $item['actualSituation'] ?? null,
-                    'selfEvaluationStatus' => $item['selfEvaluationStatus'] ?? null,
-                ]);
+    //         if ($evaluationItem) {
+    //             $evaluationItem->update([
+    //                 'actualSituation' => $item['actualSituation'] ?? null,
+    //                 'selfEvaluationStatus' => $item['selfEvaluationStatus'] ?? null,
+    //             ]);
+    //         }
+    //     }
+    
+    //     return redirect()->back()->with('success', 'All changes saved.');
+    // }
+
+    public function update(Request $request) {
+        // Get all items
+        $allItems = $request->items;
+        
+        // Get the IDs of rows that were updated
+        $updatedRowIds = collect($request->rows)->pluck('id')->toArray();
+        
+        // Only update the items that are in the updatedRowIds array
+        foreach ($allItems as $item) {
+            if (in_array($item['id'], $updatedRowIds)) {
+                $evaluationItem = EvaluationItemModel::find($item['id']);
+                
+                if ($evaluationItem) {
+                    $evaluationItem->update([
+                        'actualSituation' => $item['actualSituation'] ?? null,
+                        'selfEvaluationStatus' => $item['selfEvaluationStatus'] ?? null,
+                    ]);
+                }
             }
         }
-    
-        return redirect()->back()->with('success', 'All changes saved.');
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Changes saved successfully',
+        ]);
     }
 
     public function upload(Request $request) {

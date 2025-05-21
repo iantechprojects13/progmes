@@ -171,7 +171,6 @@
         title="Filters"
         @close="toggleFilterModal"
         width="lg"
-        class="antialiased"
     >
         <div class="flex flex-col space-y-2">
             <label for="program" class="text-sm font-medium text-gray-700">

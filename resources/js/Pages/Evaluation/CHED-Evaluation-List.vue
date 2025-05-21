@@ -2,24 +2,7 @@
 
     <Head title="Program Evaluation" />
     <page-title title="Program Evaluation" />
-    <content-container hasSearch="true" pageTitle="Program Monitoring / Evaluation" :hasNavigation="true" page="evaluation" :hasTopButton="true" :hasFilters="true" :data_list="complianceTools">
-        <template v-slot:top-button>
-            <select
-                    v-model="query.academicYear"
-                    @change.prevent="filter"
-                    class="px-4 pr-10 py-2.5 text-sm bg-white border border-gray-300 text-slate-700 rounded-lg hover:border-gray-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 focus:outline-none duration-200 cursor-pointer appearance-none whitespace-nowrap"
-                >
-                    <option value="2021-2022">A.Y. 2021-22</option>
-                    <option value="2022-2023">A.Y. 2022-23</option>
-                    <option value="2023-2024">A.Y. 2023-24</option>
-                    <option value="2024-2025">A.Y. 2024-25</option>
-                    <option value="2025-2026">A.Y. 2025-26</option>
-                    <option value="2026-2027">A.Y. 2026-27</option>
-                    <option value="2027-2028">A.Y. 2027-28</option>
-                    <option value="2028-2029">A.Y. 2028-29</option>
-                    <option value="2029-2030">A.Y. 2029-30</option>
-                </select>
-        </template>
+    <content-container hasSearch="true" pageTitle="Program Monitoring / Evaluation" :hasNavigation="true" page="evaluation" :hasFilters="true" :data_list="complianceTools">
         <template v-slot:navigation>
             <main-content-nav
                 btnText="Evaluation"
@@ -79,50 +62,32 @@
                             </div>
                         </td>
                         <td>
-                            <button 
-                                @click="view(item.id)"
-                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-emerald-700 hover:bg-emerald-100 tooltipForActions"
-                                data-tooltip="View">
-                                <i class="fas fa-eye text-lg"></i>
-                            </button>
-
-                            <button 
+                            <action-button type="view" @click="view(item.id)" />
+                            <action-button 
                                 v-show="canEvaluate"
+                                :isDisabled="item.status === 'In progress'"
+                                type="evaluate"
                                 @click="evaluate(item.id)"
-                                :disabled="item.status === 'In progress'"
-                                :class="{'text-gray-400 hover:bg-gray-100': item.status === 'In progress', 'text-blue-700 hover:bg-blue-100': item.status !== 'In progress'}"
-                                class="inline-flex items-center justify-center rounded-full h-10 w-10 tooltipForActions disabled:cursor-not-allowed"
-                                data-tooltip="Evaluate">
-                                <i class="fas fa-edit text-lg"></i>
-                            </button>
-
-                            <button 
+                            />
+                            <action-button
                                 v-show="canEvaluate" 
                                 v-if="item.isLocked"
+                                type="unlock"
                                 @click="setId(item.id); unlockModal = true;"
-                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-gray-700 hover:bg-gray-100 tooltipForActions"
-                                data-tooltip="Unlock">
-                                <i class="fas fa-unlock text-lg"></i>
-                            </button>
-
-                            <button 
-                                v-show="canEvaluate" 
+                            />
+                            <action-button
                                 v-else
-                                @click="setId(item.id); lockModal = true;"
-                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 tooltipForActions"
-                                data-tooltip="Lock">
-                                <i class="fas fa-lock text-lg"></i>
-                            </button>
-
-                            <button 
                                 v-show="canEvaluate"
+                                type="lock"
+                                @click="setId(item.id); lockModal = true;"
+                            />
+
+                            <action-button 
+                                v-show="canEvaluate"
+                                type="monitored"
                                 @click="setId(item.id); monitoredModal = true;"
-                                :disabled="item.status === 'In progress'"
-                                :class="{'text-gray-400 hover:bg-gray-100': item.status === 'In progress', 'text-blue-700 hover:bg-blue-100': item.status !== 'In progress'}"
-                                class="inline-flex items-center justify-center rounded-full h-10 w-10 tooltipForActions disabled:cursor-not-allowed"
-                                data-tooltip="Mark as monitored">
-                                <i class="fas fa-check text-lg"></i>
-                            </button>
+                                :isDisabled="item.status === 'In progress'"
+                            />
                         </td>
                     </tr>
                 </template>
@@ -135,27 +100,12 @@
         @close="toggleFilterModal"
         width="md"
         title="Filters"
-        class="antialiased"
     >
-        <div>
-            <!-- Active Status Filter -->
-            <div class="flex flex-col space-y-2 mb-6">
-                <label for="isActive" class="text-sm font-medium text-gray-700"
-                    >Status</label
-                >
-                <select
-                    v-model="query.status"
-                    id="isActive"
-                    class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                    <option :value="null">All</option>
-                    <option value="In progress">In Progress</option>
-                    <option value="Submitted">Completed</option>
-                    <option value="For Re-evaluation">For Re-evaluation</option>
-                </select>
-            </div>
-
-            <div class="flex flex-col space-y-2 mb-6">
+        <div class="flex flex-col space-y-4">
+            <filter-form-status v-model="query.status" />
+            <filter-institution v-model="query.institution" :data="institution_list" />
+            <filter-program v-model="query.program" :data="program_list" />
+            <div class="flex flex-col space-y-1">
                 <label for="sort" class="text-sm font-medium text-gray-700"
                     >Sort by</label
                 >
@@ -179,101 +129,46 @@
                 </select>
                 </div>
             </div>
-
-            <!-- Items per page Filter -->
-            <div class="flex flex-col space-y-2">
-                <label for="show" class="text-sm font-medium text-gray-700">
-                    Items per page
-                </label>
-                <select
-                    v-model="query.show"
-                    id="show"
-                    class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="150">150</option>
-                    <option value="200">200</option>
-                    <option value="300">300</option>
-                </select>
-            </div>
+            <filter-academic-year v-model="query.academicYear" />
+            <filter-page-items v-model="query.show"/>
         </div>
 
         <template #custom-button>
-            <button
-                @click="filter"
-                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 duration-200 w-20 h-10"
-            >
-                Apply
-            </button>
+            <modal-button text="Apply" color="green" @click="filter"/>
         </template>
     </modal>
 
-    <modal :showModal="emailModal" title="Compose Email" @close="toggleEmailModal" width="xl" height="long">
-        <div>
-            <label for="emailBody" class="font-bold mb-2">Message</label>
-            <textarea class="w-full h-52 resize-none" placeholder="Compose email here" id="emailBody"
-                v-model="email.body">
-            </textarea>
-            <div class="mt-3">
-                <label for="emailBody" class="font-bold mb-2">Recipient</label>
-                <input type="text" v-model="email.recipient" class="h-10 w-full">
-            </div>
-        </div>
-        <template v-slot:custom-button>
-            <button @click="sendEmail" :disabled="sending || email.body == ''"
-                class="text-white bg-blue-600 hover:bg-blue-700 w-24 py-2 px-3 rounded border"
-                :class="[{'bg-gray-600 hover:bg-gray-700': email.body == ''}]"
-                >
-                <span v-if="sending"><i class="fas fa-spinner animate-spin"></i></span>
-                <span v-else>Send</span>
-            </button>
-        </template>
-    </modal>
-
-    <confirmation :showModal="lockModal" @close="lockModal = false" title="Lock Evaluation Tool" width="md" height="short">
+    <confirmation :showModal="lockModal" @close="lockModal = false" title="Lock Evaluation Tool" width="md">
         <template v-slot:message>
             Are you sure you want to lock this compliance evaluation tool? This action will prevent any further inputs from HEI.
         </template>
         <template v-slot:buttons>
-            <button @click="lock" :disabled="locking"
-                class="select-none text-white h-10 w-20 rounded-lg text-sm bg-red-600 hover:bg-red-700">
-                Lock
-            </button>
+            <modal-button text="Lock" color="red" @click="lock" />
         </template>
     </confirmation>
 
-    <confirmation :showModal="unlockModal" @close="unlockModal = false" title="Unlock Evaluation Tool" width="md" height="short">
+    <confirmation :showModal="unlockModal" @close="unlockModal = false" title="Unlock Evaluation Tool" width="md">
         <template v-slot:message>
             Are you sure you want to unlock this compliance evaluation tool? This action will enable inputs from HEI.
         </template>
         <template v-slot:buttons>
-            <button @click="unlock" :disabled="unlocking"
-                class="select-none text-white h-10 w-20 rounded bg-blue-500">
-                <span v-if="unlocking"><i class="fas fa-spinner animate-spin"></i></span>
-                <span v-else>Unlock</span>
-            </button>
+            <modal-button text="Unlock" color="blue" @click="unlock" />
         </template>
     </confirmation>
 
-    <confirmation :showModal="monitoredModal" @close="monitoredModal = false" title="Mark as Monitored"  width="md" height="short">
+    <confirmation :showModal="monitoredModal" @close="monitoredModal = false" title="Mark as Monitored"  width="md">
         <template v-slot:message>
             Are you sure you want to mark this compliance evaluation tool as monitored? Once marked as monitored, it cannot be edited.
         </template>
         <template v-slot:buttons>
-            <button @click="monitored" :disabled="markingAsMonitored"
-                class="select-none text-white h-10 w-20 rounded bg-blue-500">
-                <span v-if="markingAsMonitored"><i class="fas fa-spinner animate-spin"></i></span>
-                <span v-else>Confirm</span>
-            </button>
+            <modal-button text="Confirm" color="blue" @click="monitored" />
         </template>
     </confirmation>
 </template>
 
 <script setup>
 // ------------------------------------------------------------
-import { reactive, ref, computed } from 'vue';
+import { ref } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
 import Layout from "@/Shared/Layout.vue";
 defineOptions({ layout: Layout });
@@ -281,14 +176,13 @@ defineOptions({ layout: Layout });
 // ------------------------------------------------------------
 const props = defineProps([
     'complianceTools',
+    'institution_list',
+    'program_list',
     'filters',
     'canEvaluate',
-    'canEmail',
-    'programHeadEmail',
 ]);
 
 // ------------------------------------------------------------
-const emailModal = ref(false);
 const sending = ref(false);
 const prog = ref(0);
 
@@ -300,18 +194,8 @@ const unlockModal = ref(false);
 const unlocking = ref(false);
 
 const monitoredModal = ref(false);
-const markingAsMonitored = ref(false);
-const sort = ref(null);
-
 const showFilterModal = ref(false);
-const processing = ref(false);
 
-
-const email = reactive({
-    toolId: null,
-    body: null,
-    recipient: ref(props.programHeadEmail),
-});
 
 const query = useForm({
     show: props.filters.show != null ? props.filters.show : null,
@@ -320,6 +204,9 @@ const query = useForm({
     status: props.filters.status != null ? props.filters.status : null,
     sort: props.filters.sort != null ? props.filters.sort: null,
     direction: props.filters.direction != null ? props.filters.direction : 'asc',
+    institution: props.filters.institution != null ? props.filters.institution: null,
+    program: props.filters.program != null ? props.filters.program: null,
+
 });
 
 // ------------------------------------------------------------
@@ -331,34 +218,13 @@ function toggleFilterModal() {
 
 function filter() {
     query.get("/ched/evaluation", {
-        onStart: () => {
-            processing.value = true;
-        },
         onFinish: () => {
-            processing.value = false;
             toggleFilterModal();
         },
         preserveState: false,
         preserveScroll: true,
         replace: true,
     });
-}
-
-function toggleEmailModal() {
-    emailModal.value = !emailModal.value;
-}
-
-function sendEmail() {
-    router.post('/evaluation/notify', email, {
-        onStart: () => {
-            sending.value = true;
-        },
-        onFinish: () => {
-            sending.value = false;
-        },
-        preserveState: false,
-        preserveScroll: true,
-    })
 }
 
 function evaluate(tool) {
@@ -404,12 +270,6 @@ function unlock() {
 
 function monitored(id) {
     router.post('/ched/evaluation/monitored', { 'id': toolId.value }, {
-        onStart: () => {
-            markingAsMonitored.value = true;
-        },
-        onFinish: () => {
-            markingAsMonitored.value = false;
-        },
         preserveState: false,
         preserveScroll: true,
     });

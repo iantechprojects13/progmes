@@ -28,7 +28,7 @@
                             </span>
                         </button>
                     </Link>
-                    <button
+                    <!-- <button
                         @click="update"
                         ref="saveBtn"
                         class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
@@ -52,7 +52,7 @@
                             </svg>
                             Save changes
                         </span>
-                    </button>
+                    </button> -->
                 </div>
             </div>
         </template>
@@ -253,56 +253,25 @@
     <modal
         :showModal="showFilterModal"
         @close="toggleFilterModal"
-        width="sm"
-        height="long"
+        width="md"
         title="Filters"
     >
-        <div>
-            <div class="flex flex-col">
-                <label for="selfEvalStatus">Self-Evaluation Status</label>
-                <select
-                    v-model="query.selfEvaluationStatus"
-                    id="selfEvalStatus"
-                    class="rounded border-gray-400"
-                >
-                    <option :value="null">All</option>
-                    <option value="Complied">Complied</option>
-                    <option value="Not complied">Not Complied</option>
-                    <option value="Not applicable">Not Applicable</option>
-                    <option value="No Status">No Status</option>
-                </select>
-            </div>
-            <div
-                class="mt-3 flex flex-col"
-                v-show="evaluation.evaluationDate != null"
-            >
-                <label for="evalStatus">Evaluation Status</label>
-                <select
-                    v-model="query.evaluationStatus"
-                    id="evalStatus"
-                    class="rounded border-gray-400"
-                >
-                    <option :value="null">All</option>
-                    <option value="Complied">Complied</option>
-                    <option value="Not complied">Not Complied</option>
-                    <option value="Not applicable">Not Applicable</option>
-                </select>
-            </div>
+        <div class="flex flex-col space-y-4">
+            <filter-compliance-status v-model="query.selfEvaluationStatus" type="HEI"/>
+            <filter-compliance-status
+                v-show="evaluation.status == 'Submitted' || evaluation.status == 'For re-evaluation' || evaluation.status == 'Locked'"
+                v-model="query.evaluationStatus"
+            />
         </div>
         <template v-slot:custom-button>
-            <button
-                @click="filter"
-                class="text-white bg-green-600 hover:bg-green-700 w-20 rounded h-10"
-            >
-                Apply
-            </button>
+            <modal-button text="Apply" color="green" @click="filter"/>
         </template>
     </modal>
 </template>
 
 <script setup>
 // ------------------------------------------------------------------------------------------------------
-import { ref, onMounted, onUnmounted, reactive, computed, inject, watch } from "vue";
+import { ref, onMounted, onUnmounted, onBeforeUnmount, reactive, computed, inject, watch } from "vue";
 import { router, useForm } from "@inertiajs/vue3";
 import axios from "axios";
 import Layout from "@/Shared/Layout.vue";
@@ -312,29 +281,40 @@ defineOptions({ layout: Layout });
 const props = defineProps([
     "evaluation",
     "items",
-    "deficiencyReport",
-    "evaluationDate",
-    "evaluatedBy",
-    "reviewedBy",
-    "notedBy",
-    "auth",
     "filters",
 ]);
 
 // ------------------------------------------------------------------------------------------------------
 const evaluationStatus = ref([]);
-const actionButtons = ref([]);
-const evidenceFiles = ref([]);
 const saveBtn = ref(null);
-const hasUnsavedChanges = inject("hasUnsavedChanges");
-const isUpdating = inject("isUpdating");
 const showFilterModal = ref(false);
 
+// Inject the reactive object
+const hasUnsavedChanges = inject("hasUnsavedChanges");
+const hasChanges = ref(false);
+const autoSaveTimeout = ref(null);
+const allChangesSaved = ref(false);
+const saving = ref(false);
+
+
+// Function to update value
 const updateData = () => {
     hasUnsavedChanges.value = true;
+    hasChanges.value = true;
+    allChangesSaved.value = false;
+    
+    // Clear any existing timeout
+    if (autoSaveTimeout.value) {
+        clearTimeout(autoSaveTimeout.value);
+    }
+    
+    // Set a new timeout for 3 seconds
+    autoSaveTimeout.value = setTimeout(() => {
+        update();
+    }, 3000);
 };
 
-const refs = { evaluationStatus, actionButtons, evidenceFiles, saveBtn };
+const refs = { evaluationStatus, saveBtn };
 
 const itemsArray = computed(() => {
     return props.items.data.map((item) => ({
@@ -369,23 +349,23 @@ const query = useForm({
 });
 
 // CTRL + S function
-const handleKeyDown = (event) => {
-    if (event.ctrlKey || event.metaKey) {
-        if (event.key === "s" || event.key === "S") {
-            event.preventDefault();
-            refs.saveBtn.value.click();
-        }
-    }
-};
+// const handleKeyDown = (event) => {
+//     if (event.ctrlKey || event.metaKey) {
+//         if (event.key === "s" || event.key === "S") {
+//             event.preventDefault();
+//             refs.saveBtn.value.click();
+//         }
+//     }
+// };
 
 // ------------------------------------------------------------------------------------------------------
 onMounted(() => {
-    window.addEventListener("keydown", handleKeyDown);
+    // window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("beforeunload", handleBeforeUnload);
 });
 
 onUnmounted(() => {
-    window.removeEventListener("keydown", handleKeyDown);
+    // window.removeEventListener("keydown", handleKeyDown);
     window.removeEventListener("beforeunload", handleBeforeUnload);
     hasUnsavedChanges.value = false;
 });
@@ -414,17 +394,5 @@ function filter() {
     });
 }
 
-// watch(hasUnsavedChanges, (newValue) => {
-//     if (newValue) {
-//         const debounceUpdate = setTimeout(() => {
-//             update();
-//         }, 2000);
-
-//         // Clear the timeout if hasUnsavedChanges changes again within 2 seconds
-//         watch(hasUnsavedChanges, () => {
-//             clearTimeout(debounceUpdate);
-//         });
-//     }
-// });
 </script>
 

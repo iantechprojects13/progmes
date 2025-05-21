@@ -86,20 +86,12 @@
                             ></status>
                         </td>
                         <td v-show="canEdit">
-                            <button
+                            
+                            <action-button 
                                 v-show="canDelete"
-                                @click="
-                                    toggleDeleteModal(
-                                        program.evaluation_form[0],
-                                        'deleteEvaluationTool',
-                                        'Delete Compliance Tool'
-                                    )
-                                "
-                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 tooltipForActions"
-                                data-tooltip="Delete"
-                            >
-                                <i class="fas fa-trash text-lg"></i>
-                            </button>
+                                type="delete"
+                                @click="selectedTool = program.evaluation_form[0].id; toggleDeleteModal();"
+                            />
                         </td>
                     </tr>
                 </template>
@@ -202,7 +194,6 @@
         @close="toggleFilterModal"
         width="md"
         title="Filters"
-        class="antialiased"
     >
         <div class="flex flex-col space-y-5">
             <filter-form-status v-model="query.status"/>
@@ -239,12 +230,29 @@
         </template>
     </Confirmation>
 
-    <Confirmation
+    <confirmation
         :showModal="deleteModal"
         @close="toggleDeleteModal"
+        title="Delete Compliance Tool"
         width="md"
-        class="antialiased"
-    />
+    >
+        <template #message>
+            <div style="display: flex; align-items: center; gap: 10px; color: #b91c1c;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="50" height="50">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M12 9v2m0 4h.01M10.29 3.86l-7.09 12.3A1 1 0 004 18h16a1 1 0 00.87-1.5l-7.09-12.3a1 1 0 00-1.74 0z" />
+                </svg>
+
+                <div>
+                  <strong>Are you sure you want to delete this program compliance evaluation tool?</strong><br>
+                  Any input and evidence will be deleted as well.
+                </div>
+            </div>
+        </template>
+        <template #buttons>
+            <modal-button text="Delete" color="red" @click="deleteTool"/>
+        </template>
+    </confirmation>
 </template>
 
 <script setup>
@@ -362,7 +370,7 @@ function filter() {
 }
 
 function deleteTool() {
-    router.get("");
+    router.get(`/admin/tool/${selectedTool.value}/delete`);
 }
 
 watch(

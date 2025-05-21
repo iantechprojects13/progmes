@@ -21,12 +21,6 @@
                     >
                         Edit Programs
                     </button>
-                    <button
-                        @click="toggleChangeRoleModal"
-                        class="w-full md:w-auto h-10 px-4 bg-blue-600 text-white hover:bg-blue-700 rounded-lg shadow-md"
-                    >
-                        Change Role
-                    </button>
                 </div>
             </div>
         </template>
@@ -161,34 +155,12 @@
             </div>
         </template>
     </content-container>
-    <modal
-        :showModal="showModal"
-        @close="toggleChangeRoleModal"
-        title="Change User Role"
-        height="short"
-        width="lg"
-    >
-        <div class="text-gray-700">
-            Are you sure you want to change this user's role? This will
-            deactivate their current role, and they will need to register again
-            to apply for a new role.
-        </div>
-        <template v-slot:custom-button>
-            <button
-                @click="changeRole"
-                class="h-10 w-24 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
-            >
-                Confirm
-            </button>
-        </template>
-    </modal>
 
     <modal
         :showModal="programAssignmentModal"
         title="Program Assignment"
         @close="toggleProgramAssignmentModal"
         width="4xl"
-        class="antialiased"
     >
         <div>
             <input
@@ -369,18 +341,10 @@ const getInstitution = computed(() => {
     return institution;
 });
 
-const showModal = ref(false);
 
-function toggleChangeRoleModal() {
-    showModal.value = !showModal.value;
-}
 
 function toggleProgramAssignmentModal() {
     programAssignmentModal.value = !programAssignmentModal.value;
-}
-
-function changeRole() {
-    router.post("/register/change-role", { userId: props.profile.id });
 }
 
 function update() {

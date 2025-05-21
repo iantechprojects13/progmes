@@ -224,11 +224,9 @@ class CHEDFormController extends Controller
      
         if ($evaluationTool->evaluatedBy == null || $evaluationTool->evaluatedBy == '') {
             if ($user->role == 'Education Supervisor') {
-                $supervisor = $user->name;
-                $supervisorTitle = 'Education Supervisor II';
-            } else {
-                $supervisor = '';
-                $supervisorTitle = '';
+                $evaluationTool->evaluatedBy = $user->name;
+                $evaluationTool->evaluatedByTitle = 'Education Supervisor II';
+                $evaluationTool->save();
             }
         }
 

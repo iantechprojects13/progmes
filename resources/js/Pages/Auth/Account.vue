@@ -132,7 +132,7 @@
     <modal
         :showModal="updateNameModal"
         @close="toggleUpdateNameModal"
-        title="Update Name"
+        title="Edit Name"
         width="md"
     >
         <div>

@@ -49,6 +49,9 @@ import AcademicYear from './Shared/Component/AcademicYear.vue';
 import FilterInstitution from './Shared/Component/FilterInstitution.vue';
 import FilterProgram from './Shared/Component/FilterProgram.vue';
 import FilterFormStatus from './Shared/Component/FilterFormStatus.vue';
+import FilterComplianceStatus from './Shared/Component/FilterComplianceStatus.vue';
+import FilterUserType from './Shared/Component/FilterUserType.vue';
+import FilterUserRole from './Shared/Component/FilterUserRole.vue';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -103,6 +106,9 @@ createInertiaApp({
             .component('FilterInstitution', FilterInstitution)
             .component('FilterProgram', FilterProgram)
             .component('FilterFormStatus', FilterFormStatus)
+            .component('FilterComplianceStatus', FilterComplianceStatus)
+            .component('FilterUserType', FilterUserType)
+            .component('FilterUserRole', FilterUserRole)
             .mount(el);
     },
     progress: false,

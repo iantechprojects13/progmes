@@ -78,7 +78,6 @@
         title="Filters"
         @close="toggleFilterModal"
         width="md"
-        class="antialiased"
     >
         <div class="flex flex-col space-y-4">
             <filter-page-items v-model="query.show" />

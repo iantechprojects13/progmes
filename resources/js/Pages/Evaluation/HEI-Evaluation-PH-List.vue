@@ -110,7 +110,6 @@
         @close="toggleFilterModal"
         width="md"
         title="Filters"
-        class="antialiased"
     >
         <div>
             <!-- Active Status Filter -->

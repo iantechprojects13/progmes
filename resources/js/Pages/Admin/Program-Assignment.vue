@@ -89,7 +89,6 @@
         title="Edit Discipline"
         @close="toggleDisciplineModal"
         width="4xl"
-        class="antialiased"
     >
         <div
             v-if="disciplineList.length == 0"

@@ -462,7 +462,16 @@ onMounted(() => {
             handleClickOutside();
         }
     });
+    window.addEventListener('keydown', handleKeyDown);
 });
+
+const handleKeyDown = (event) => {
+    if (event.key === 'Escape') {
+        event.preventDefault();
+        closeEditor();
+    }
+};
+
 
 
 

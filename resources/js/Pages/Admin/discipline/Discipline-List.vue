@@ -75,7 +75,6 @@
         title="Filters"
         @close="toggleFilterModal"
         width="md"
-        class="antialiased"
     >
         <filter-page-items v-model="query.show"/>
 
@@ -89,7 +88,6 @@
         @close="toggleConfirmationModal"
         title="Delete Discipline"
         width="md"
-        class="antialiased"
     >
         <template #message>
             <div>

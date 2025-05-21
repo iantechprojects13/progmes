@@ -1,6 +1,6 @@
 <template>
     <button
-        class="inline-flex items-center min-w-[80px] justify-center px-4 py-2.5 text-sm font-medium text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 duration-200"
+        class="select-none inline-flex items-center min-w-[80px] justify-center px-4 py-2.5 text-sm font-medium text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 duration-200"
         :class="buttonClasses"
     >
         {{ text }}

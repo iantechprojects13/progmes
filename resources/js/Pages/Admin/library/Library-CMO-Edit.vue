@@ -63,12 +63,16 @@
                                     <tip-tap-editor v-model="item.minimumRequirement" @input="updateData" @update="update" />
                                 </td>
                                 <td>
-                                    <button @click="itemId = item.id; toggleDeleteModal()"
-                                        class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 transition-colors tooltipForActions"
-                                        data-tooltip="Delete"
-                                    >
-                                        <i class="fas fa-trash text-lg"></i>
-                                    </button>
+                                    <action-button 
+                                        v-if="!item.id.toString().startsWith('temp-')" 
+                                        type="delete" 
+                                        @click="itemId = item.id; toggleDeleteModal()" 
+                                    />
+                                    <action-button 
+                                        v-else
+                                        type="remove" 
+                                        @click="removeTemporaryRow(item.id)" 
+                                    />
                                 </td>
                             </tr>
                             <!-- Add Row Button -->
@@ -103,9 +107,7 @@
         </template>
         <template v-slot:buttons>
             <Link :href="`/admin/library/CMO/${itemId}/delete`">
-                <button class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 h-10 w-20">
-                    Delete
-                </button>
+                <modal-button text="Delete" color="red" />
             </Link>
         </template>
     </confirmation>
@@ -152,6 +154,11 @@ const addRow = () => {
         minimumRequirement: ''
     });
     
+    updateData();
+};
+
+const removeTemporaryRow = (tempId) => {
+    items.value = items.value.filter(item => item.id !== tempId);
     updateData();
 };
 

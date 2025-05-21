@@ -57,22 +57,18 @@ Route::controller(App\Http\Controllers\Auth\GoogleAuthController::class)->group(
     Route::get('/auth/google/callback', 'callback');
 });
 
-
 // registration
 Route::post('/register/ched', [RegistrationController::class, 'registerCHED']);
 Route::post('/register/hei', [RegistrationController::class, 'registerHEI']);
-
 Route::get('/register', [RegistrationController::class, 'index'])->middleware(['auth', 'unregistered'])->name('register.select');
-Route::get('/register/commission-on-higher-education', [RegistrationController::class, 'accountCHED'])->middleware('unregistered')->name('register.ched');
-Route::match(['get', 'post'], '/register/higher-education-institution', [RegistrationController::class, 'accountHEI'])->middleware('unregistered')->name('register.hei');
+Route::get('/register/commission-on-higher-education', [RegistrationController::class, 'accountCHED'])->middleware('auth', 'unregistered')->name('register.ched');
+Route::match(['get', 'post'], '/register/higher-education-institution', [RegistrationController::class, 'accountHEI'])->middleware('auth', 'unregistered')->name('register.hei');
 Route::get('/register/for-verification', [RegistrationController::class, 'pending'])->middleware(['auth', 'toverify'])->name('register.pending');
-
-Route::get('/register/{user}/accept', [RegistrationController::class, 'acceptUser'])->name('register.accept');
-Route::post('/register/reject', [RegistrationController::class, 'reject'])->name('register.reject');
-Route::get('/register/{user}/activate', [RegistrationController::class, 'activate'])->name('user.activate');
-Route::get('/register/{user}/deactivate', [RegistrationController::class, 'deactivate'])->name('user.deactivate');
-Route::post('/register/change-role', [RegistrationController::class, 'changeRole'])->name('user.role.change');
-Route::get('/register/{user}/delete', [RegistrationController::class, 'destroy'])->name('user.delete');
+Route::post('/register/accept', [RegistrationController::class, 'accept'])->middleware(['auth', 'type.ched'])->name('register.accept');
+Route::post('/register/reject', [RegistrationController::class, 'reject'])->middleware(['auth', 'type.ched'])->name('register.reject');
+Route::get('/register/{user}/activate', [RegistrationController::class, 'activate'])->middleware(['auth', 'type.ched'])->name('user.activate');
+Route::get('/register/{user}/deactivate', [RegistrationController::class, 'deactivate'])->middleware(['auth', 'type.ched'])->name('user.deactivate');
+Route::get('/register/{user}/delete', [RegistrationController::class, 'destroy'])->middleware(['auth'])->name('user.delete');
 
 //Profile
 Route::get('/myaccount/{user?}',[RegistrationController::class, 'viewMyAccount'])->middleware(['auth', 'user.verified'])->name('my.account');
@@ -84,27 +80,24 @@ Route::post('/es/program/update',[RegistrationController::class, 'updateAssigned
 //dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth','registered', 'user.verified', 'active'])->name('dashboard');
 Route::get('/ched/dashboard', [DashboardController::class, 'dashboardForCHED'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('dashboard.admin.ched');
-Route::get('/ched/dashboard/analytics', [DashboardController::class, 'analytics'])->middleware(['auth', 'type.ched'])->name('analytics');
-Route::get('/ched/dashboard/overview', [DashboardController::class, 'dashboardForCHEDOverview'])->middleware(['auth', 'registered', 'type.ched', 'user.verified', 'ched.admin'])->name('dashboard.admin.overview');
 Route::get('/hei/dashboard', [DashboardController::class, 'dashboardForHEI'])->middleware(['auth', 'type.hei', 'user.verified', 'active'])->name('dashboard.hei');
 Route::get('/ched/schedule', [DashboardController::class, 'schedule'])->middleware(['auth', 'type.ched', 'user.verified', 'active'])->name('ched.schedule');
 Route::post('/ched/schedule/set', [DashboardController::class, 'setSchedule'])->middleware(['auth', 'type.ched', 'user.verified', 'active'])->name('ched.setSchedule');
 
 //evaluation
 Route::get('/evaluation', [EvaluationController::class, 'index'])->middleware(['auth', 'user.verified'])->name('evaluation');
-Route::get('/ched/evaluation', [EvaluationController::class, 'evaluationForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('evaluation.ched');
-Route::get('/ched/evaluation/monitored', [EvaluationController::class, 'monitoredForCHED'])->middleware(['auth', 'registered', 'type.ched'])->name('evaluation.ched.monitored');
-Route::get('/hei/ph/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware(['auth','type.hei', 'hei.ph'])->name('evaluation.ph');
-Route::get('/hei/pc/evaluation', [EvaluationController::class, 'evaluationForProgramCoordinator'])->middleware(['auth','type.hei', 'hei.pc'])->name('evaluation.pc');
-Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean.qa'])->name('evaluation.hei');
-Route::get('/hei/evaluation/monitored', [EvaluationController::class, 'monitoredForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean.qa'])->name('evaluation.hei.monitored');
-Route::get('hei/evaluation/{tool}/edit', [HEIFormController::class, 'edit'])->middleware(['auth', 'type.hei'])->name('evaluation.hei.edit');
-Route::get('ched/evaluation/{tool}/view', [CHEDFormController::class, 'view'])->middleware(['auth', 'type.ched'])->name('evaluation.ched.view');
-Route::get('ched/evaluation/{tool}/evaluate/', [CHEDFormController::class, 'evaluate'])->middleware(['auth', 'type.ched', 'evaluate'])->name('form.ched.evaluate');
-Route::get('ched/evaluation/{tool}/report', [CHEDFormController::class, 'report'])->middleware(['auth', 'type.ched'])->name('form.ched.report');
-Route::get('/hei/evaluation/{tool}/view', [HEIFormController::class, 'view'])->middleware(['auth', 'type.hei'])->name('hei.evaluation.view');
+Route::get('/ched/evaluation', [EvaluationController::class, 'evaluationForCHED'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('evaluation.ched');
+Route::get('/ched/evaluation/monitored', [EvaluationController::class, 'monitoredForCHED'])->middleware(['auth', 'registered', 'type.ched', 'user.verified'])->name('evaluation.ched.monitored');
+Route::get('/hei/ph/evaluation', [EvaluationController::class, 'evaluationForProgramHead'])->middleware(['auth','type.hei', 'hei.ph', 'user.verified'])->name('evaluation.ph');
+Route::get('/hei/pc/evaluation', [EvaluationController::class, 'evaluationForProgramCoordinator'])->middleware(['auth','type.hei', 'hei.pc', 'user.verified'])->name('evaluation.pc');
+Route::get('/hei/evaluation', [EvaluationController::class, 'evaluationForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean.qa', 'user.verified'])->name('evaluation.hei');
+Route::get('/hei/evaluation/monitored', [EvaluationController::class, 'monitoredForHEI'])->middleware(['auth','type.hei', 'hei.vp.dean.qa', 'user.verified'])->name('evaluation.hei.monitored');
+Route::get('hei/evaluation/{tool}/edit', [HEIFormController::class, 'edit'])->middleware(['auth', 'type.hei', 'user.verified'])->name('evaluation.hei.edit');
+Route::get('ched/evaluation/{tool}/view', [CHEDFormController::class, 'view'])->middleware(['auth', 'type.ched', 'user.verified'])->name('evaluation.ched.view');
+Route::get('ched/evaluation/{tool}/evaluate/', [CHEDFormController::class, 'evaluate'])->middleware(['auth', 'type.ched', 'evaluate', 'user.verified'])->name('form.ched.evaluate');
+Route::get('ched/evaluation/{tool}/report', [CHEDFormController::class, 'report'])->middleware(['auth', 'type.ched', 'user.verified'])->name('form.ched.report');
+Route::get('/hei/evaluation/{tool}/view', [HEIFormController::class, 'view'])->middleware(['auth', 'type.hei', 'user.verified'])->name('hei.evaluation.view');
 
-Route::post('/hei/evaluation/conforme', [HEIFormController::class, 'conforme'])->name('form.hei.conforme');
 Route::post('/hei/evaluation/update', [HEIFormController::class, 'update'])->name('form.hei.update');
 Route::post('/hei/evaluation/upload', [HEIFormController::class, 'upload'])->name('form.hei.upload');
 Route::post('/hei/evaluation/link', [HEIFormController::class, 'submitLink'])->name('form.hei.link');
@@ -182,8 +175,8 @@ Route::post('/admin/CMOs/store', [CMOController::class, 'store'])->middleware('a
 Route::post('/admin/CMOs/update', [CMOController::class, 'update'])->middleware('auth', 'type.ched')->name('admin.cmo.update');
 Route::post('/admin/CMOs/save-as-draft', [CMOController::class, 'saveAsDraft'])->middleware('auth')->name('admin.cmo.save.draft');
 Route::post('/admin/CMOs/save-and-publish', [CMOController::class, 'saveAndPublish'])->middleware('auth')->name('admin.cmo.save.publish');
-Route::get('/admin/CMOs/publish/{cmo}', [CMOController::class, 'publish'])->middleware('auth')->name('admin.cmo.publish');
-Route::get('/admin/CMOs/delete/{id?}', [CMOController::class, 'destroy'])->middleware('auth')->name('admin.cmo.delete');
+Route::get('/admin/CMOs/{id}/publish', [CMOController::class, 'publish'])->middleware('auth')->name('admin.cmo.publish');
+Route::get('/admin/CMOs/{id}/delete', [CMOController::class, 'destroy'])->middleware('auth', 'type.ched')->name('admin.cmo.delete');
 Route::get('/admin/CMOs/activate/{id?}', [CMOController::class, 'activate'])->middleware('auth')->name('admin.cmo.activate');
 Route::get('/admin/CMOs/deactivate/{id?}', [CMOController::class, 'deactivate'])->middleware('auth')->name('admin.cmo.deactivate');
 

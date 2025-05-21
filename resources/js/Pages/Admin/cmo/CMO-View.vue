@@ -5,7 +5,7 @@
         <template v-slot:content-title>
             <div class="w-full flex flex-row items-center justify-between">
                 <div class="font-bold">CHED Memorandum Order</div>
-                <div v-show="cmo.status == 'draft'">
+                <div v-show="canEdit">
                     <button
                         @click="edit"
                         class="w-full bg-blue-600 text-white py-2 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200"
@@ -129,7 +129,8 @@ defineOptions({ layout: Layout });
 
 // -------------------------------------------------------------------------------
 const props = defineProps([
-    "cmo"
+    "cmo",
+    "canEdit",
 ]);
 
 // -------------------------------------------------------------------------------

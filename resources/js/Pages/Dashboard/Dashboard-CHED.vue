@@ -427,7 +427,6 @@
         title="Filters"
         @close="toggleFilterModal"
         width="lg"
-        class="antialiased"
     >
         <div class="space-y-6">
             <div class="flex flex-col space-y-2" 
@@ -551,7 +550,6 @@
         :title="titleStatus + ' ' + filters.year"
         @close="viewToolModal = false"
         width="4xl"
-        class="antialiased"
         hasNoCancelButton="true"
     >
         <div class="h-52 flex items-center justify-center" v-if="fetchingData">

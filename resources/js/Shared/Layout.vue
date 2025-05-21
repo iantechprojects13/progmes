@@ -83,7 +83,7 @@
                                     :class="[
                                         highlight('dashboard')
                                             ? 'bg-blue-600 text-white'
-                                            : 'text-gray-300 hover:bg-gray-800',
+                                            : 'text-gray-300 hover:bg-gray-800 hover:text-white',
                                         { 'pointer-events-none': hasUnsavedChanges.value }
                                     ]"
                                 >
@@ -116,7 +116,7 @@
                                     :class="[
                                         highlight('schedule')
                                             ? 'bg-blue-600 text-white'
-                                            : 'text-gray-300 hover:bg-gray-800',
+                                            : 'text-gray-300 hover:bg-gray-800 hover:text-white',
                                         { 'pointer-events-none': hasUnsavedChanges.value }
                                     ]"
                                 >
@@ -148,7 +148,7 @@
                                     :class="[
                                         highlight('adminpanel')
                                             ? 'bg-blue-600 text-white'
-                                            : 'text-gray-300 hover:bg-gray-800', { 'pointer-events-none': hasUnsavedChanges.value }
+                                            : 'text-gray-300 hover:bg-gray-800 hover:text-white', { 'pointer-events-none': hasUnsavedChanges.value }
                                     ]"
                                 >
                                     <svg
@@ -177,7 +177,7 @@
                                     :class="[
                                         highlight('evaluation')
                                             ? 'bg-blue-600 text-white'
-                                            : 'text-gray-300 hover:bg-gray-800', { 'pointer-events-none': hasUnsavedChanges.value }
+                                            : 'text-gray-300 hover:bg-gray-800 hover:text-white', { 'pointer-events-none': hasUnsavedChanges.value }
                                     ]"
                                 >
                                 <svg 
@@ -203,7 +203,7 @@
                                     :class="[
                                         highlight('library')
                                             ? 'bg-blue-600 text-white'
-                                            : 'text-gray-300 hover:bg-gray-800', { 'pointer-events-none': hasUnsavedChanges.value }
+                                            : 'text-gray-300 hover:bg-gray-800 hover:text-white', { 'pointer-events-none': hasUnsavedChanges.value }
                                     ]"
                                 >
                                 <svg 
@@ -229,7 +229,7 @@
                                     :class="[
                                         highlight('application')
                                             ? 'bg-blue-600 text-white'
-                                            : 'text-gray-300 hover:bg-gray-800', { 'pointer-events-none': hasUnsavedChanges.value }
+                                            : 'text-gray-300 hover:bg-gray-800 hover:text-white', { 'pointer-events-none': hasUnsavedChanges.value }
                                     ]"
                                 >
                                     <svg
@@ -259,7 +259,7 @@
                                     :class="[
                                         highlight('myaccount')
                                             ? 'bg-blue-600 text-white'
-                                            : 'text-gray-300 hover:bg-gray-800', { 'pointer-events-none': hasUnsavedChanges.value }
+                                            : 'text-gray-300 hover:bg-gray-800 hover:text-white', { 'pointer-events-none': hasUnsavedChanges.value }
                                     ]"
                                 >
                                     <svg
@@ -304,7 +304,7 @@
                             </div>
                             <!-- <button
                                 @click="clearDarkMode()"
-                                class="flex items-center select-none w-full px-3 py-2 rounded-lg text-gray-300 hover:text-blue-500 hover:bg-gray-800"
+                                class="flex items-center select-none w-full px-3 py-2 rounded-lg text-gray-300 hover:text-blue-500 hover:bg-gray-800 hover:text-white"
                             >
                                 {{ isDarkMode ? 'Light Mode' : 'Dark Mode' }}
                             </button> -->
@@ -398,7 +398,7 @@
         <confirmation
             :showModal="logoutModal"
             @close="toggleLogoutModal"
-            title="Confirm Exit"
+            title="Sign out"
             width="md"
             height="short"
         >
@@ -406,11 +406,7 @@
                 <div>Are you sure you want to sign out?</div>
             </template>
             <template v-slot:buttons>
-                <button
-                    @click="logout"
-                    class="select-none text-white bg-red-500 hover:bg-red-600 px-3 py-2.5 rounded-lg text-sm font-medium border"
-                >Sign out
-                </button>
+                <modal-button text="Sign out" color="red" @click="logout" />
             </template>
         </confirmation>
     </div>
@@ -461,7 +457,7 @@
     </TransitionGroup>
 
     <!-- warning if user has unsaved changes -->
-    <div v-show="$page.props.auth.user.role != 'Librarian'"
+    <div v-show="$page.props.auth.user.role != 'Librarian' && false"
         v-if="hasUnsavedChanges.value"
         class="w-auto h-auto bg-yellow-400 fixed z-[100] bottom-2 left-2 p-2 rounded flex items-center"
     >

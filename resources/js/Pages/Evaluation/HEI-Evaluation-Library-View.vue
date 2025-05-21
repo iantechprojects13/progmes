@@ -3,7 +3,42 @@
     <page-title title="Program Self-Evaluation" />
     <content-container :hasBackButton="true">
         <template v-slot:content-title>
-            <div class="font-bold">Self-Evaluation Tool</div>
+            <div class="w-full flex flex-col md:flex-row justify-between items-center">
+                <div class="w-full flex flex-row items-center">
+                    <div class="w-full flex flex-row items-center">
+                        <div class="font-bold">Library Self-Evaluation Tool</div>
+                    </div>
+                </div>
+                <div class="w-full md:w-auto">
+                    <dropdown-option position="right"
+                    v-show="(evaluation_tool.evaluationDate != null || evaluation_tool.status == 'Monitored') &&
+                            ($page.props.auth.user.role == 'Vice-President for Academic Affairs' || $page.props.auth.user.role == 'Librarian')
+                        ">
+                        <template v-slot:button>
+                            <button
+                                class="flex whitespace-nowrap w-full md:w-auto items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg justify-center"
+                            >
+                                Monitoring Report
+                                <i class="fas fa-caret-down ml-2"></i>
+                            </button>
+                        </template>
+                        <template v-slot:options>
+                            <div class="w-48">
+                                <button @click="previewFile"
+                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
+                                >
+                                    Preview
+                                </button>
+                                <button @click="downloadFile"
+                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
+                                >
+                                    Download
+                                </button>
+                            </div>
+                        </template>
+                    </dropdown-option>
+                </div>
+            </div>
         </template>
         <template v-slot:main-content>
             <div class="md:p-3">
@@ -97,7 +132,7 @@
                                 v-for="item in evaluation_tool.item"
                                 :key="item.id"
                             >
-                                <td>
+                                <td class="max-w-[24rem]">
                                     <div
                                         class="font-bold"
                                         v-html="item.criteria.area"
@@ -156,7 +191,24 @@
 </template>
 
 <script setup>
+import { ref, reactive } from 'vue';
 import Layout from '@/Shared/Layout.vue';
 defineOptions({ layout: Layout });
-defineProps(["evaluation_tool", "progress", "showEvaluation"]);
+const props = defineProps(["evaluation_tool", "progress", "showEvaluation"]);
+
+const submitReport = reactive({
+    orientation: "landscape",
+    id: ref(props.tool),
+});
+
+function previewFile() {
+    const url = `/report/library/monitoring/${props.evaluation_tool.id}/${submitReport.orientation}/view`;
+    window.open(url, "_blank");
+}
+
+function downloadFile() {
+    const url = `/report/library/monitoring/${props.evaluation_tool.id}/${submitReport.orientation}/download`;
+    window.open(url, "_blank");
+}
+
 </script>

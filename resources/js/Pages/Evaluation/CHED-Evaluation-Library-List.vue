@@ -71,42 +71,8 @@
                             {{ item.complianceRate }}%
                         </td>
                         <td>
-                            <!-- <button 
-                                @click="view(item.id)"
-                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-emerald-700 hover:bg-emerald-100 tooltipForActions"
-                                data-tooltip="View">
-                                <i class="fas fa-eye text-lg"></i>
-                            </button> -->
                             <action-button type="view" @click="view(item.id) "/>
                             <action-button :isDisabled="item.status === 'In progress'" v-show="canEvaluate" type="evaluate" @click="evaluate(item.id)"/>
-
-                            <!-- <button 
-                                v-show="canEvaluate"
-                                @click="evaluate(item.id)"
-                                :disabled="item.status === 'In progress'"
-                                :class="{'text-gray-400 hover:bg-gray-100': item.status === 'In progress', 'text-blue-700 hover:bg-blue-100': item.status !== 'In progress'}"
-                                class="inline-flex items-center justify-center rounded-full h-10 w-10 tooltipForActions disabled:cursor-not-allowed"
-                                data-tooltip="Evaluate">
-                                <i class="fas fa-edit text-lg"></i>
-                            </button> -->
-
-                            <!-- <button 
-                                v-show="canEvaluate" 
-                                v-if="item.isLocked"
-                                @click="setId(item.id); unlockModal = true;"
-                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-gray-700 hover:bg-gray-100 tooltipForActions"
-                                data-tooltip="Unlock">
-                                <i class="fas fa-unlock text-lg"></i>
-                            </button> -->
-
-                            <!-- <button 
-                                v-show="canEvaluate" 
-                                v-else
-                                @click="setId(item.id); lockModal = true;"
-                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 tooltipForActions"
-                                data-tooltip="Lock">
-                                <i class="fas fa-lock text-lg"></i>
-                            </button> -->
 
                             <action-button 
                                 v-if="item.isLocked"
@@ -142,7 +108,6 @@
         @close="toggleFilterModal"
         width="md"
         title="Filters"
-        class="antialiased"
     >
         <div class="flex flex-col space-y-4">
             <filter-form-status v-model="query.status"/>
@@ -159,14 +124,13 @@
         @close="toggleLockConfirmation"
         :title="title"
         width="md"
-        class="antialiased"
     >
         <template #message>
             <div v-if="lockAction == 'lock'">
                 Are you sure you want to lock this library compliance evaluation tool? This action will prevent any further inputs from HEI.
             </div>
             <div v-else>
-                Are you sure you want to unlock this compliance evaluation tool? This action will enable inputs from HEI.
+                Are you sure you want to unlock this library compliance evaluation tool? This action will enable inputs from HEI.
             </div>
         </template>
         <template #buttons>

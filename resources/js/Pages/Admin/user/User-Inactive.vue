@@ -102,34 +102,8 @@
                             </div>
                         </td>
                         <td v-show="canEdit">
-                            <div class="flex items-center gap-0">
-                                <button
-                                    @click="
-                                        toggleConfirmationModal(
-                                            user,
-                                            'activateUser',
-                                            'Activate'
-                                        )
-                                    "
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-blue-700 hover:bg-blue-100 tooltipForActions"
-                                    data-tooltip="Activate"
-                                >
-                                    <i class="fas fa-unlock text-lg"></i>
-                                </button>
-                                <button
-                                    @click="
-                                        toggleConfirmationModal(
-                                            user,
-                                            'deleteUser',
-                                            'Delete'
-                                        )
-                                    "
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 tooltipForActions"
-                                    data-tooltip="Delete"
-                                >
-                                    <i class="fas fa-trash text-lg"></i>
-                                </button>
-                            </div>
+                            <action-button type="activateUser" @click="toggleActivateModal(); selectedUser = user" />
+                            <action-button type="delete" @click="toggleDeleteModal(); selectedUser = user" />
                         </td>
                     </tr>
                 </template>
@@ -140,79 +114,70 @@
     <modal
         :showModal="showFilterModal"
         @close="toggleFilterModal"
-        width="md"
         title="Filters"
-        class="antialiased"
+        width="md"
     >
-        <div>
-            <!-- Account Type Filter -->
-            <div
-                class="flex flex-col space-y-2 mb-6"
-                v-show="$page.props.auth.user.role == 'Super Admin'"
-            >
-                <label for="type" class="text-sm font-medium text-gray-700">
-                    Account Type
-                </label>
-                <select
-                    v-model="query.type"
-                    id="type"
-                    class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                    <option :value="null">All</option>
-                    <option value="HEI">HEI</option>
-                    <option value="CHED">CHED</option>
-                </select>
-            </div>
-
-            <!-- Items per page Filter -->
-            <div class="flex flex-col space-y-2">
-                <label for="show" class="text-sm font-medium text-gray-700">
-                    Items per page
-                </label>
-                <select
-                    v-model="query.show"
-                    id="show"
-                    class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="150">150</option>
-                    <option value="200">200</option>
-                    <option value="300">300</option>
-                </select>
-            </div>
+        <div class="flex flex-col space-y-4">
+            <filter-user-type v-show="$page.props.auth.user.role == 'Super Admin'" v-model="query.type" />
+            <filter-user-role v-model="query.role" :type="$page.props.auth.user.role == 'Super Admin' ? 'All' : 'HEI' " />
+            <filter-program :data="program_list" v-model="query.program"/>
+            <filter-institution :data="institution_list" v-model="query.institution"/>
+            <filter-page-items v-model="query.show"/>
         </div>
 
         <template #custom-button>
-            <button
-                @click="filter"
-                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 duration-200 w-20 h-10"
-            >
-                Apply
-            </button>
+            <modal-button text="Apply" color="green" @click="filter"/>
         </template>
     </modal>
-    <Confirmation
-        :showModal="confirmationModal"
-        @close="closeModal"
-        :title="title"
-        :modaltype="modaltype"
-        :selected="selectedUser"
+    
+    <confirmation
+        :showModal="activateModal"
+        @close="toggleActivateModal"
+        title="Activate User"
         width="md"
-    />
+    >
+        <template #message>
+            <div>
+                Are you sure you want to activate
+                <b>{{ selectedUser?.name }} </b>'s account?
+            </div>
+        </template>
+        <template #buttons>
+            <modal-button text="Activate" color="blue" @click="activate" />
+        </template>
+    </confirmation>
+
+    <confirmation
+        :showModal="deleteModal"
+        @close="toggleDeleteModal"
+        title="Delete User"
+        width="md"
+    >
+        <template #message>
+            <div>
+                Are you sure you want to delete
+                <b>{{ selectedUser?.name }} </b>'s account?
+            </div>
+        </template>
+        <template #buttons>
+            <modal-button text="Delete" color="red" @click="deleteUser" />
+        </template>
+    </confirmation>
+
 </template>
 
 <script setup>
 // -----------------------------------------------------------------------------
 import { ref } from "vue";
-import { useForm } from "@inertiajs/vue3";
+import { useForm, router } from "@inertiajs/vue3";
 import Layout from "@/Shared/Layout.vue";
 defineOptions({ layout: Layout });
 
 // -----------------------------------------------------------------------------
 const props = defineProps([
     "user_list",
+    "program_list",
+    "institution_list",
     "requestCount",
     "page",
     "canEdit",
@@ -221,32 +186,31 @@ const props = defineProps([
 ]);
 
 // -----------------------------------------------------------------------------
-const confirmationModal = ref(false);
-const selectedUser = ref("");
-const modaltype = ref("");
-const title = ref("");
+const selectedUser = ref(null);
 const showFilterModal = ref(false);
+const activateModal = ref(false);
+const deleteModal = ref(false);
 
 const query = useForm({
-    show: props.filters.show != null ? props.filters.show : null,
     search: props.filters.search,
+    show: props.filters.show != null ? props.filters.show : null,
     type: props.filters.type != null ? props.filters.type : null,
+    role: props.filters.role != null ? props.filters.role : null,
+    program: props.filters.program != null ? props.filters.program : null,
+    institution: props.filters.institution != null ? props.filters.institution : null,
 });
 
 // -----------------------------------------------------------------------------
-function toggleConfirmationModal(id, type, titleValue) {
-    confirmationModal.value = !confirmationModal.value;
-    selectedUser.value = id;
-    modaltype.value = type;
-    title.value = titleValue;
-}
-
-function closeModal() {
-    confirmationModal.value = false;
-}
-
 function toggleFilterModal() {
     showFilterModal.value = !showFilterModal.value;
+}
+
+function toggleActivateModal() {
+    activateModal.value = !activateModal.value;
+}
+
+function toggleDeleteModal() {
+    deleteModal.value = !deleteModal.value;
 }
 
 function filter() {
@@ -256,4 +220,13 @@ function filter() {
         replace: true,
     });
 }
+
+function activate() {
+    router.get(`/register/${selectedUser.value.id}/activate`)
+}
+
+function deleteUser() {
+    router.get(`/register/${selectedUser.value.id}/delete`)
+}
+
 </script>

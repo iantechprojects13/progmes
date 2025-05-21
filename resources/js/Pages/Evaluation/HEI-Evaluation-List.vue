@@ -50,6 +50,9 @@
                     <tr v-else v-for="item in complianceTools.data" :key="item.id">
                         <td>
                             {{ item.program }}
+                            <span v-if="item.major">
+                                - {{ item.major }}
+                            </span>
                         </td>
                         <td>
                             <status :text="item.status" />
@@ -58,15 +61,11 @@
                             <evaluation-progress :percentage="item.progress"></evaluation-progress>
                         </td>
                         <td>
-                            <button 
+                            <action-button
                                 v-show="canEdit"
+                                :isDisabled="item.status != 'In progress'"
                                 @click="edit(item.id)"
-                                :disabled="item.status != 'In progress'"
-                                :class="{'text-gray-400 hover:bg-gray-100': item.status != 'In progress', 'text-blue-700 hover:bg-blue-100': item.status == 'In progress'}"
-                                class="inline-flex items-center justify-center rounded-full h-10 w-10 tooltipForActions disabled:cursor-not-allowed"
-                                data-tooltip="Edit">
-                                <i class="fas fa-edit text-lg"></i>
-                            </button>
+                            />
                             <button @click="view(item.id)"
                                 class="inline-flex items-center justify-center rounded-full h-10 w-10 text-emerald-700 hover:bg-emerald-100 tooltipForActions"
                                 data-tooltip="View">
@@ -84,7 +83,6 @@
         @close="toggleFilterModal"
         width="md"
         title="Filters"
-        class="antialiased"
     >
         <div>
             <!-- Active Status Filter -->

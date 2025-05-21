@@ -99,71 +99,11 @@
                             <status :text="cmo.isActive"></status>
                         </td>
                         <td>
-                            <div class="flex justify-end gap-0">
-                                <button
-                                    @click="view(cmo.id)"
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-emerald-700 hover:bg-emerald-100 tooltipForActions"
-                                    data-tooltip="View"
-                                >
-                                    <i class="fas fa-eye text-lg"></i>
-                                </button>
-
-                                <button
-                                    v-show="canEdit && $page.props.auth.user.role == 'Super Admin'"
-                                    @click="edit(cmo.id)"
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-blue-700 hover:bg-blue-100 tooltipForActions"
-                                    data-tooltip="Edit"
-                                >
-                                    <i class="fas fa-edit text-lg"></i>
-                                </button>
-
-                                <button
-                                    v-show="canEdit"
-                                    v-if="!cmo.isActive"
-                                    @click="
-                                        toggleConfirmationModal(
-                                            cmo,
-                                            'activate',
-                                            'Activate CMO'
-                                        )
-                                    "
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-blue-700 hover:bg-blue-100 tooltipForActions"
-                                    data-tooltip="Activate"
-                                >
-                                    <i class="fas fa-toggle-off text-lg"></i>
-                                </button>
-
-                                <button
-                                    v-show="canEdit"
-                                    v-else
-                                    @click="
-                                        toggleConfirmationModal(
-                                            cmo,
-                                            'deactivate',
-                                            'Deactivate CMO'
-                                        )
-                                    "
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-blue-700 hover:bg-blue-100 tooltipForActions"
-                                    data-tooltip="Deactivate"
-                                >
-                                    <i class="fas fa-toggle-on text-lg"></i>
-                                </button>
-
-                                <button
-                                    v-show="canEdit"
-                                    @click="
-                                        toggleConfirmationModal(
-                                            cmo,
-                                            'deleteCMO',
-                                            'Delete Published CMO'
-                                        )
-                                    "
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 tooltipForActions"
-                                    data-tooltip="Delete"
-                                >
-                                    <i class="fas fa-trash text-lg"></i>
-                                </button>
-                            </div>
+                            <action-button type="view" @click="view(cmo.id)"/>
+                            <action-button v-show="canEdit && $page.props.auth.user.role == 'Super Admin'" type="edit" @click="edit(cmo.id)" />
+                            <action-button v-show="canEdit" v-if="!cmo.isActive" type="activateCMO" @click="toggleActivateModal(); selectedCMO = cmo;"/>
+                            <action-button v-show="canEdit" v-else type="deactivateCMO" @click="toggleDeactivateModal(); selectedCMO = cmo;"/>
+                            <action-button v-show="canEdit" type="delete" @click="toggleConfirmationModal(); selectedCMO = cmo;"/>
                         </td>
                     </tr>
                 </template>
@@ -176,11 +116,10 @@
         @close="toggleFilterModal"
         width="md"
         title="Filters"
-        class="antialiased"
     >
-        <div>
+        <div class="flex flex-col space-y-4">
             <!-- Active Status Filter -->
-            <div class="flex flex-col space-y-2 mb-6">
+            <div class="flex flex-col space-y-2">
                 <label for="isActive" class="text-sm font-medium text-gray-700"
                     >Active Status</label
                 >
@@ -194,45 +133,76 @@
                     <option :value="0">Not Active</option>
                 </select>
             </div>
-
-            <!-- Items per page Filter -->
-            <div class="flex flex-col space-y-2">
-                <label for="show" class="text-sm font-medium text-gray-700">
-                    Items per page
-                </label>
-                <select
-                    v-model="query.show"
-                    id="show"
-                    class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="150">150</option>
-                    <option value="200">200</option>
-                    <option value="300">300</option>
-                </select>
-            </div>
+            <filter-program v-model="query.program" :data="program_list"/>
+            <filter-page-items v-model="query.show" />
         </div>
 
         <template #custom-button>
-            <button
-                @click="filter"
-                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 duration-200 w-20 h-10"
-            >
-                Apply
-            </button>
+            <modal-button text="Apply" color="green" @click="filter"/>
         </template>
     </modal>
 
-    <Confirmation
-        :showModal="confirmationModal"
-        @close="closeModal"
-        :title="title"
-        :modaltype="modaltype"
-        :selected="selectedCMO"
+    <confirmation
+        :showModal="activateModal"
+        @close="toggleActivateModal"
+        title="Activate CMO"
         width="md"
-    />
+    >
+        <template #message>
+            <div>
+                Are you sure you want to make
+                <b
+                    >CMO No.{{ selectedCMO?.number }} - Series of
+                    {{ selectedCMO?.series }} - Version
+                    {{ selectedCMO?.version }}</b
+                >
+                as active CMO for
+                <b
+                    >{{ selectedCMO?.program.program
+                    }}<span v-if="selectedCMO?.program.major != null">
+                        - {{ selectedCMO?.program.major }}</span
+                    ></b
+                >
+                program?
+            </div>
+        </template>
+        <template #buttons>
+            <modal-button text="Activate" color="blue" @click="activate" />
+        </template>
+    </confirmation>
+
+    <confirmation
+        :showModal="deactivateModal"
+        @close="toggleDeactivateModal"
+        title="Deactivate CMO"
+        width="md"
+    >
+        <template #message>
+            <div>
+                Are you sure you want to remove the activation from this CMO?
+            </div>
+        </template>
+        <template #buttons>
+            <modal-button text="Deactivate" color="red" @click="deactivate" />
+        </template>
+    </confirmation>
+
+    <confirmation
+        :showModal="confirmationModal"
+        @close="toggleConfirmationModal"
+        title="Delete CMO"
+        width="md"
+    >
+        <template #message>
+            <div>
+                Are you sure you want to delete this CMO? This action can't be undone.
+            </div>
+        </template>
+        <template #buttons>
+            <modal-button text="Delete" color="red" @click="deleteCMO" />
+        </template>
+    </confirmation>
+    
 
     <notification
         v-if="$page.props.errors.file"
@@ -251,6 +221,7 @@ defineOptions({ layout: Layout });
 // -----------------------------------------------------------
 const props = defineProps([
     "cmo_list",
+    "program_list",
     "canEdit",
     "canImport",
     "canDraft",
@@ -259,29 +230,30 @@ const props = defineProps([
 
 // -----------------------------------------------------------
 const confirmationModal = ref(false);
-const selectedCMO = ref("");
-const modaltype = ref("");
-const title = ref("");
+const selectedCMO = ref(null);
 const cmo_file = ref(null);
 const importing = ref(false);
 const showFilterModal = ref(false);
+const activateModal = ref(false);
+const deactivateModal = ref(false);
 
 const query = useForm({
-    show: props.filters.show != null ? props.filters.show : null,
     search: props.filters.search,
+    show: props.filters.show != null ? props.filters.show : null,
     isActive: props.filters.isActive != null ? props.filters.isActive : null,
+    program: props.filters.program != null ? props.filters.program : null,
 });
 
-// -----------------------------------------------------------
-function toggleConfirmationModal(id, type, titleValue) {
-    confirmationModal.value = !confirmationModal.value;
-    selectedCMO.value = id;
-    modaltype.value = type;
-    title.value = titleValue;
+function toggleActivateModal() {
+    activateModal.value = !activateModal.value;
 }
 
-function closeModal() {
-    confirmationModal.value = false;
+function toggleDeactivateModal() {
+    deactivateModal.value = !deactivateModal.value;
+}
+
+function toggleConfirmationModal() {
+    confirmationModal.value = !confirmationModal.value;
 }
 
 function toggleFilterModal() {
@@ -303,6 +275,19 @@ function view(id) {
 function edit(id) {
     router.get("/admin/CMOs/draft/" + id + "/edit");
 }
+
+function activate() {
+    router.get(`/admin/CMOs/activate/${selectedCMO.value.id}`);
+}
+
+function deactivate() {
+    router.get(`/admin/CMOs/deactivate/${selectedCMO.value.id}`);
+}
+
+function deleteCMO() {
+    router.get(`/admin/CMOs/${selectedCMO.value.id}/delete`);
+}
+
 
 watch(cmo_file, (value) => {
     router.post(

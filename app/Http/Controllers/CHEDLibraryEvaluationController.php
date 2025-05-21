@@ -334,14 +334,26 @@ class CHEDLibraryEvaluationController extends Controller
     public function report($tool) {
         $evaluationTool = LibEvaluationFormModel::where('id', $tool)->with('institution')->first();
         $signatories = AdminSettingsModel::where('setting_category', 'signatories')->get();
+
+        if($evaluationTool->notedBy == null || $evaluationTool->notedBy == '') {
+            $evaluationTool->notedBy = $signatories->where('setting_key', 'notedby')->value('setting_value');
+            $evaluationTool->notedByTitle = $signatories->where('setting_key', 'notedby_title')->value('setting_value');
+            $evaluationTool->save();
+        }
+
+        if($evaluationTool->reviewedBy == null || $evaluationTool->reviewedBy == '') {
+            $evaluationTool->reviewedBy = $signatories->where('setting_key', 'reviewedby')->value('setting_value');
+            $evaluationTool->reviewedByTitle = $signatories->where('setting_key', 'reviewedby_title')->value('setting_value');
+            $evaluationTool->save();
+        }
         
         return Inertia::render('Evaluation/CHED-Evaluation-Library-Report', [
             'tool' => $evaluationTool,
             'signatories' => [
-                'reviewedBy' => $signatories->where('setting_key', 'signatory_default_reviewedby')->value('setting_value'),
-                'reviewedByTitle' => $signatories->where('setting_key', 'signatory_default_reviewedby_title')->value('setting_value'),
-                'notedBy' => $signatories->where('setting_key', 'signatory_default_notedby')->value('setting_value'),
-                'notedByTitle' => $signatories->where('setting_key', 'signatory_default_notedby_title')->value('setting_value'),
+                'reviewedBy' => $signatories->where('setting_key', 'reviewedby')->value('setting_value'),
+                'reviewedByTitle' => $signatories->where('setting_key', 'reviewedby_title')->value('setting_value'),
+                'notedBy' => $signatories->where('setting_key', 'notedby')->value('setting_value'),
+                'notedByTitle' => $signatories->where('setting_key', 'notedby_title')->value('setting_value'),
             ],
         ]);
     }

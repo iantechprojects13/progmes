@@ -72,7 +72,6 @@
         @close="toggleFilterModal"
         width="sm"
         title="Filters"
-        class="antialiased"
     >
         <div>
             <!-- Items per page Filter -->

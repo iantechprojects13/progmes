@@ -103,92 +103,43 @@
                             </div>
                         </td>
                         <td v-show="canEdit">
-                            <div class="flex items-center gap-0">
-                                <button
-                                    @click="
-                                        toggleConfirmationModal(
-                                            user,
-                                            'accept',
-                                            'Accept'
-                                        )
-                                    "
-                                    class="inline-flex items-center justify-center rounded-full h-10 w-10 text-blue-700 hover:bg-blue-100 tooltipForActions"
-                                    data-tooltip="Accept"
-                                >
-                                    <i class="fas fa-check text-lg"></i>
-                                </button>
-                                <action-button type="reject" @click="toggleRejectConfirmationModal(); selectedUser = user, form.id = user.id" />
-                            </div>
+                            <action-button type="accept" @click="toggleAcceptConfirmationModal(); selectedUser = user, form.id = user.id" />
+                            <action-button type="reject" @click="toggleRejectConfirmationModal(); selectedUser = user, form.id = user.id" />
                         </td>
                     </tr>
                 </template>
             </content-table>
         </template>
     </content-container>
+    
     <modal
         :showModal="showFilterModal"
         @close="toggleFilterModal"
         width="md"
-        height="long"
         title="Filters"
-        class="antialiased"
     >
         <div class="flex flex-col space-y-4">
-            <!-- Account Type Filter -->
-            <div
-                class="flex flex-col space-y-1"
-                v-show="$page.props.auth.user.role == 'Super Admin'"
-            >
-                <label for="type" class="text-sm font-medium text-gray-700">
-                    Account Type
-                </label>
-                <select
-                    v-model="query.type"
-                    id="type"
-                    class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                    <option :value="null">All</option>
-                    <option value="HEI">HEI</option>
-                    <option value="CHED">CHED</option>
-                </select>
-            </div>
-            
+            <filter-user-type v-show="$page.props.auth.user.role == 'Super Admin'" v-model="query.type" />
+            <filter-user-role v-model="query.role" :type="$page.props.auth.user.role == 'Super Admin' ? 'All' : 'HEI' " />
+            <filter-program :data="program_list" v-model="query.program"/>
+            <filter-institution :data="institution_list" v-model="query.institution"/>
             <filter-page-items v-model="query.show"/>
         </div>
 
         <template #custom-button>
-            <button
-                @click="filter"
-                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 duration-200 w-20 h-10"
-            >
-                Apply
-            </button>
+            <modal-button text="Apply" color="green" @click="filter"/>
         </template>
     </modal>
-
-    <Confirmation
-        :showModal="confirmationModal"
-        @close="closeModal"
-        :title="title"
-        :modaltype="modaltype"
-        :selected="selectedUser"
-        width="md"
-    >
-    <template #custom-button>
-
-    </template>
-    </Confirmation>
 
     <confirmation
         :showModal="rejectConfirmationModal"
         @close="toggleRejectConfirmationModal"
         title="Reject User"
         width="md"
-        class="antialiased"
     >
         <template #message>
             <div>
-                Are you sure you want to reject <b>{{ selectedUser.name }} </b>'s registration?
+                Are you sure you want to reject <b>{{ selectedUser?.name }} </b>'s registration?
             </div>
             <div class="mt-3">
                 <textarea v-model="form.reason" class="w-full h-[8rem] resize-none rounded-lg border-gray-400" placeholder="Enter reason"></textarea>
@@ -196,6 +147,22 @@
         </template>
         <template #buttons>
             <modal-button text="Reject" color="red" @click="reject"/>
+        </template>
+    </confirmation>
+
+    <confirmation
+        :showModal="acceptConfirmationModal"
+        @close="toggleAcceptConfirmationModal"
+        title="Accept User"
+        width="md"
+    >
+        <template #message>
+            <div>
+                Are you sure you want to accept <b>{{ selectedUser?.name }} </b>'s registration?
+            </div>
+        </template>
+        <template #buttons>
+            <modal-button text="Accept" color="blue" @click="accept"/>
         </template>
     </confirmation>
 </template>
@@ -210,6 +177,8 @@ defineOptions({ layout: Layout });
 // --------------------------------------------------------------------
 const props = defineProps([
     "user_list",
+    "program_list",
+    "institution_list",
     "requestCount",
     "showInactive",
     "canEdit",
@@ -218,18 +187,19 @@ const props = defineProps([
 ]);
 
 // --------------------------------------------------------------------
-const confirmationModal = ref(false);
-const selectedUser = ref("");
-const modaltype = ref("");
-const title = ref("");
+const selectedUser = ref(null);
 const showFilterModal = ref(false);
 const rejectConfirmationModal = ref(false);
+const acceptConfirmationModal = ref(false);
 
 // --------------------------------------------------------------------
 const query = useForm({
-    show: props.filters.show != null ? props.filters.show : null,
     search: props.filters.search,
+    show: props.filters.show != null ? props.filters.show : null,
     type: props.filters.type != null ? props.filters.type : null,
+    role: props.filters.role != null ? props.filters.role : null,
+    program: props.filters.program != null ? props.filters.program : null,
+    institution: props.filters.institution != null ? props.filters.institution : null,
 });
 
 const form = reactive({
@@ -238,16 +208,6 @@ const form = reactive({
 })
 
 // --------------------------------------------------------------------
-function toggleConfirmationModal(id, type, titleValue) {
-    confirmationModal.value = !confirmationModal.value;
-    selectedUser.value = id;
-    modaltype.value = type;
-    title.value = titleValue;
-}
-
-function closeModal() {
-    confirmationModal.value = false;
-}
 
 function toggleFilterModal() {
     showFilterModal.value = !showFilterModal.value;
@@ -261,6 +221,13 @@ function toggleRejectConfirmationModal() {
     rejectConfirmationModal.value = !rejectConfirmationModal.value;
 }
 
+function toggleAcceptConfirmationModal() {
+    if (acceptConfirmationModal) {
+        form.id = null;
+    }
+    acceptConfirmationModal.value = !acceptConfirmationModal.value;
+}
+
 function filter() {
     query.get("/admin/users/request", {
         preserveState: false,
@@ -271,6 +238,14 @@ function filter() {
 
 function reject() {
     router.post('/register/reject', form, {
+        preserveState: false,
+        preserveScroll: true,
+        replace: true,
+    });
+}
+
+function accept() {
+    router.post('/register/accept', form, {
         preserveState: false,
         preserveScroll: true,
         replace: true,

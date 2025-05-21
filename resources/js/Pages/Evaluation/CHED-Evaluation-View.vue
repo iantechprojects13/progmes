@@ -3,7 +3,39 @@
     <page-title title="Program Evaluation" />
     <content-container :hasTopMainContent="true" :hasBackButton="true">
         <template v-slot:content-title>
-            <div class="font-bold">Program Evaluation Tool</div>
+            <div class="w-full flex flex-col md:flex-row justify-between items-center">
+                <div class="w-full flex flex-row items-center">
+                    <div class="w-full flex flex-row items-center">
+                        <div class="font-bold">Program Evaluation Tool</div>
+                    </div>
+                </div>
+                <div class="w-full md:w-auto">
+                    <dropdown-option position="right" v-show="evaluation.evaluationDate != null || evaluation.status == 'Monitored'">
+                        <template v-slot:button>
+                            <button
+                                class="flex whitespace-nowrap w-full md:w-auto items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg justify-center"
+                            >
+                                Monitoring Report
+                                <i class="fas fa-caret-down ml-2"></i>
+                            </button>
+                        </template>
+                        <template v-slot:options>
+                            <div class="w-48">
+                                <button @click="previewFile"
+                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
+                                >
+                                    Preview
+                                </button>
+                                <button @click="downloadFile"
+                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
+                                >
+                                    Download
+                                </button>
+                            </div>
+                        </template>
+                    </dropdown-option>
+                </div>
+            </div>
         </template>
         <template v-slot:main-content>
             <div class="md:p-3">
@@ -181,10 +213,28 @@
 </template>
 
 <script setup>
+import { ref, reactive } from "vue";
 import Layout from "@/Shared/Layout.vue";
 defineOptions({ layout: Layout });
 
 const props = defineProps(["evaluation", "progress", "showEvaluation"]);
+
+//Monitoring Report
+const submitReport = reactive({
+    orientation: "landscape",
+    id: ref(props.tool),
+});
+
+function previewFile() {
+    const url = `/report/monitoring/${props.evaluation.id}/${submitReport.orientation}/view`;
+    window.open(url, "_blank");
+}
+
+function downloadFile() {
+    const url = `/report/monitoring/${props.evaluation.id}/${submitReport.orientation}/download`;
+    window.open(url, "_blank");
+}
+
 </script>
 
 <style scoped>

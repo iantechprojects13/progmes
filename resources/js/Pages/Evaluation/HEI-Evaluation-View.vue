@@ -3,7 +3,35 @@
     <page-title title="Program Self-Evaluation" />
     <content-container :hasBackButton="true">
         <template v-slot:content-title>
-            <div class="font-bold">Self-Evaluation Tool</div>
+            <div class="w-full flex flex-col md:flex-row text-left items-center justify-between">
+                <div class="font-bold w-full">Self-Evaluation Tool</div>
+                <div class="w-full md:w-auto">
+                    <dropdown-option position="right" v-show="evaluation_tool.evaluationDate != null">
+                        <template v-slot:button>
+                            <button
+                                class="flex whitespace-nowrap w-full md:w-auto items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg justify-center"
+                            >
+                                Monitoring Report
+                                <i class="fas fa-caret-down ml-2"></i>
+                            </button>
+                        </template>
+                        <template v-slot:options>
+                            <div class="w-48">
+                                <button @click="previewFile"
+                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
+                                >
+                                    Preview
+                                </button>
+                                <button @click="downloadFile"
+                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
+                                >
+                                    Download
+                                </button>
+                            </div>
+                        </template>
+                    </dropdown-option>
+                </div>
+            </div>
         </template>
         <template v-slot:main-content>
             <div class="md:p-3">
@@ -64,6 +92,16 @@
                                     <div>
                                         AY: {{ evaluation_tool.effectivity }}
                                     </div>
+                                </div>
+                            </div>
+                            <div
+                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
+                            >
+                                <div class="w-full">
+                                    <p class="text-sm text-gray-500">
+                                        CMO
+                                    </p>
+                                    <div>No.{{ evaluation_tool.cmo?.number }}, S.{{ evaluation_tool.cmo?.series }}</div>
                                 </div>
                             </div>
                         </div>
@@ -183,7 +221,23 @@
 </template>
 
 <script setup>
+import { ref, reactive } from 'vue';
 import Layout from '@/Shared/Layout.vue';
 defineOptions({ layout: Layout });
-defineProps(["evaluation_tool", "progress", "showEvaluation"]);
+const props = defineProps(["evaluation_tool", "progress", "showEvaluation"]);
+
+const submitReport = reactive({
+    orientation: "landscape",
+    id: ref(props.tool),
+});
+
+function previewFile() {
+    const url = `/report/monitoring/${props.evaluation_tool.id}/${submitReport.orientation}/view`;
+    window.open(url, "_blank");
+}
+
+function downloadFile() {
+    const url = `/report/monitoring/${props.evaluation_tool.id}/${submitReport.orientation}/download`;
+    window.open(url, "_blank");
+}
 </script>

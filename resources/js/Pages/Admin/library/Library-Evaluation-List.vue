@@ -81,16 +81,11 @@
                             <status :text="item.status" />
                         </td>
                         <td>
-                            <button
+                            <action-button
                                 v-show="$page.props.auth.user.role == 'Super Admin'"
-                                @click="
-                                    toggleDeleteModal(item.id)
-                                "
-                                class="inline-flex items-center justify-center rounded-full h-10 w-10 text-red-700 hover:bg-red-100 tooltipForActions"
-                                data-tooltip="Delete"
-                            >
-                                <i class="fas fa-trash text-lg"></i>
-                            </button>
+                                type="delete"
+                                @click="toggleDeleteModal(item)"
+                            />
                         </td>
                     </tr>
                 </template>
@@ -105,7 +100,20 @@
         width="md"
     >
     <template v-slot:message>
-        Are you sure you want to delete this library compliance evaluation tool?
+        <div v-if="toolStartedAlready" style="display: flex; align-items: center; gap: 10px; color: #b91c1c;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="50" height="50">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M12 9v2m0 4h.01M10.29 3.86l-7.09 12.3A1 1 0 004 18h16a1 1 0 00.87-1.5l-7.09-12.3a1 1 0 00-1.74 0z" />
+            </svg>
+
+            <div>
+              <strong>Are you sure you want to delete this program compliance evaluation tool?</strong><br>
+              Any input and evidence will be deleted as well.
+            </div>
+        </div>
+        <div v-else>
+            Are you sure you want to delete this library compliance evaluation tool?
+        </div>
     </template>
     <template v-slot:buttons>
         <modal-button text="Delete" color="red" @click="deleteTool"/>
@@ -117,26 +125,9 @@
         @close="toggleFilterModal"
         width="md"
         title="Filters"
-        class="antialiased"
     >
         <div class="flex flex-col space-y-4">
-            <!-- Status Filter -->
-            <div class="flex flex-col space-y-1">
-                <label for="status" class="text-sm font-medium text-gray-700">
-                    Status
-                </label>
-                <select
-                    v-model="query.status"
-                    id="status"
-                    class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                    <option :value="null">All</option>
-                    <option value="In progress">In Progress</option>
-                    <option value="Submitted">Completed</option>
-                    <option value="Monitored">Monitored</option>
-                    <option value="Deployed">Deployed</option>
-                </select>
-            </div>
+            <filter-form-status v-model="query.status"/>
             <filter-academic-year v-model="query.ay"/>
             <filter-page-items v-model="query.show"/>
         </div>
@@ -164,6 +155,7 @@ const props = defineProps([
 // -------------------------------------------------------------------------
 const showFilterModal = ref(false);
 const deleteModal = ref(false);
+const toolStartedAlready = ref(false);
 const selectedTool = ref(null);
 
 const query = useForm({
@@ -174,10 +166,18 @@ const query = useForm({
 });
 
 // -------------------------------------------------------------------------
-function toggleDeleteModal(id) {
-    if (id) {
-        selectedTool.value = id;
-    }
+function toggleDeleteModal(tool) {
+    if (tool) {
+        selectedTool.value = tool.id;
+
+        if (tool.status != 'Deployed') {
+            toolStartedAlready.value = true;
+        } else {
+            toolStartedAlready.value = false;
+        }
+
+    } 
+
     deleteModal.value = !deleteModal.value;
 }
 

@@ -26,7 +26,6 @@ class CMOController extends Controller
         $canEdit = false;
         $assignedProgramIds = [];
         $show = sanitizePerPage($request->query('show'), Auth::user()->id);
-        $sort = $request->query('sort');
 
         if ($role == 'Super Admin' || $role == 'Education Supervisor') {
             $canImport = true;
@@ -51,6 +50,11 @@ class CMOController extends Controller
                 applyProgramSearch($query, $request->query('search'), 'program', true);
             });
         })
+        ->when($request->query('program'), function($query) use ($request) {
+            $query->whereHas('program', function($progQuery) use ($request) {
+                $progQuery->where('id', $request->query('program'));
+            });
+        })
         ->when($role == 'Education Supervisor', supervisorAssignedPrograms('program', $assignedProgramIds))
         ->where('status', 'Published')
         ->when($request->query('isActive') != null, function ($query) use ($request) {
@@ -65,10 +69,17 @@ class CMOController extends Controller
 
         return Inertia::render('Admin/cmo/CMO-List', [
             'cmo_list' => $activelist,
+            'program_list' => ProgramModel::query()
+                ->when($role == 'Education Supervisor', function($query) use ($assignedProgramIds) {
+                    $query->whereIn('id', $assignedProgramIds);
+                })
+                ->orderBy('program')
+                ->orderBy('major')
+                ->get(),
             'canImport' => $canImport,
             'canDraft' => $canDraft,
             'canEdit' => $canEdit,
-            'filters' => $request->only(['search', 'status', 'sort']) + ['show' => $show ],
+            'filters' => $request->only(['search', 'status', 'program']) + ['show' => $show ],
         ]);
     }
 
@@ -96,6 +107,11 @@ class CMOController extends Controller
                         applyProgramSearch($query, $request->query('search'), 'program', true);
                 });
             })
+            ->when($request->query('program'), function($query) use ($request) {
+                $query->whereHas('program', function($progQuery) use ($request) {
+                    $progQuery->where('id', $request->query('program'));
+                });
+            })
             ->when($role == 'Education Supervisor', supervisorAssignedPrograms('program', $assignedProgramIds))
             ->where([
                 'status' => 'Draft',
@@ -108,20 +124,47 @@ class CMOController extends Controller
         return Inertia::render('Admin/cmo/CMO-Draft', [
             'cmo_list' => $draftlist,
             'canEdit' => $canEdit,
-            'filters' => $request->only(['search']) + ['show' => $show],
+            'program_list' => ProgramModel::query()
+                ->when($role == 'Education Supervisor', function($query) use ($assignedProgramIds) {
+                    $query->whereIn('id', $assignedProgramIds);
+                })
+                ->orderBy('program')
+                ->orderBy('major')
+                ->get(),
+            'filters' => $request->only(['search', 'program']) + ['show' => $show],
         ]);
     }
 
     public function view(CMOModel $cmo) {
         $cmoModel = CMOModel::where('id', $cmo->id)->with('discipline', 'program', 'criteria')->first();
+        $canEdit = false;
+
+        if (Auth::user()->role == 'Super Admin') {
+            $canEdit = true;
+        }
+
         return Inertia::render('Admin/cmo/CMO-View',[
             'cmo' => $cmoModel,
+            'canEdit' => $canEdit,
         ]);
     }
     
     public function edit(Request $request) {
         $user = Auth::user();
-        $cmo = CMOModel::where('id', $request->id)->with('criteria')->first();
+        $cmo = CMOModel::where('id', $request->id)->with('criteria', 'program')->first();
+
+        if ($user->role == 'Education Supervisor') {
+            if ($cmo->status == 'Published') {
+                return redirect('unauthorized');
+            }
+
+            $programIds = getUserAssignedProgramIds($user->id);
+
+            if (!in_array($cmo->program->id, $programIds)) {
+                return redirect('unauthorized');
+            }
+        }
+
 
         $evaluationFormExists = EvaluationFormModel::where('cmoId', $request->id)->exists();
 
@@ -256,8 +299,8 @@ class CMOController extends Controller
     }
 
 
-    public function publish($cmo) {
-        $cmoModel = CMOModel::find($cmo);
+    public function publish($id) {
+        $cmoModel = CMOModel::find($id);
 
         if (!$cmoModel) {
             return redirect()->back()->with('failed', 'CMO not found.');

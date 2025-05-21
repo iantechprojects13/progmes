@@ -104,7 +104,7 @@ class User extends Authenticatable
                     
                     if (!empty($disciplineIds)) {
                         $q->orWhereHas('discipline', function ($subQ) use ($disciplineIds) {
-                            $subQ->whereIn('disciplineId', $disciplineIds);
+                            $subQ->whereIn('disciplineId', $disciplineIds)->where('type', 'HEI');
                         });
                     }
                 });

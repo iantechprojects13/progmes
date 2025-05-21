@@ -140,29 +140,38 @@ class HEILibraryEvaluationController extends Controller
     }
 
     public function update(Request $request) {
+        // Get all items
+        $allItems = $request->items;
         
-        foreach ($request->items as $item) {
-
-            $evaluationItem = LibEvaluationItemModel::find($item['id']);
-            
-            if ($evaluationItem) {
-                $evaluationItem->update([
-                    'actualSituation' => $item['actualSituation'] ?? null,
-                    'selfEvaluationStatus' => $item['selfEvaluationStatus'] ?? null,
-                ]);
+        // Get the IDs of rows that were updated
+        $updatedRowIds = collect($request->rows)->pluck('id')->toArray();
+        
+        // Only update the items that are in the updatedRowIds array
+        foreach ($allItems as $item) {
+            if (in_array($item['id'], $updatedRowIds)) {
+                $evaluationItem = LibEvaluationItemModel::find($item['id']);
+                
+                if ($evaluationItem) {
+                    $evaluationItem->update([
+                        'actualSituation' => $item['actualSituation'] ?? null,
+                        'selfEvaluationStatus' => $item['selfEvaluationStatus'] ?? null,
+                    ]);
+                }
             }
         }
         
-        return redirect()->back()->with('success', 'All changes saved.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Changes saved successfully',
+        ]);
     }
 
     // public function update(Request $request) {
-
         
     //     foreach ($request->items as $item) {
 
     //         $evaluationItem = LibEvaluationItemModel::find($item['id']);
-
+            
     //         if ($evaluationItem) {
     //             $evaluationItem->update([
     //                 'actualSituation' => $item['actualSituation'] ?? null,
@@ -171,10 +180,7 @@ class HEILibraryEvaluationController extends Controller
     //         }
     //     }
         
-
-    //     return response()->json([
-    //         'status'=> 200,
-    //     ]);
+    //     return redirect()->back()->with('success', 'All changes saved.');
     // }
 
     public function submitLink(Request $request) {

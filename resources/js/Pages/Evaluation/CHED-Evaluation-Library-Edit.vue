@@ -29,8 +29,8 @@
                             </span>
                         </button>
                     </Link>
-                    <button
-                        @click="update"
+                    <!-- <button
+                        @click="updateTool"
                         ref="saveBtn"
                         class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -53,38 +53,7 @@
                             </svg>
                             Save changes
                         </span>
-                    </button>
-                </div>
-            </div>
-        </template>
-        <template v-slot:sticky-div>
-            <div class="w-full flex items-end px-3 md:px-5 py-2">
-                <div class="w-full flex flex-row justify-between ml-2"></div>
-                <div class="flex flex-row">
-                    <button
-                        @click="update"
-                        class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <span class="flex items-center">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-5 h-5 mr-2"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path
-                                    d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
-                                />
-                                <polyline points="17 21 17 13 7 13 7 21" />
-                                <polyline points="7 3 7 8 15 8" />
-                            </svg>
-                            Save changes
-                        </span>
-                    </button>
+                    </button> -->
                 </div>
             </div>
         </template>
@@ -200,6 +169,7 @@
                                 <td
                                 >
                                     <tip-tap-editor
+                                        :hasSaveBtn="false"
                                         v-model="item.findings"
                                         @input="updateData"
                                         @update="update"
@@ -232,6 +202,7 @@
                                 <td
                                 >
                                     <tip-tap-editor
+                                        :hasSaveBtn="false"
                                         v-model="item.recommendations"
                                         @input="updateData"
                                         @update="update"
@@ -294,11 +265,26 @@
             </button>
         </template>
     </modal>
+
+    <div>
+        <div class="w-auto border border-gray-400 h-auto bg-white fixed z-[995] bottom-2 left-2 p-2 px-4 rounded flex items-center" v-if="saving">
+            <i class="fas fa-circle-notch animate-spin mr-3"></i> Saving changes...
+        </div>
+        <div class="w-auto border border-gray-400 h-auto bg-white fixed z-[995] bottom-2 left-2 p-2 px-4 rounded flex items-center" v-else-if="allChangesSaved">
+            <i class="fas fa-check text-green-500 mr-3"></i> All changes saved.
+        </div>
+        <div class="w-auto border border-gray-400 h-auto bg-white fixed z-[995] bottom-2 left-2 p-2 px-4 rounded flex items-center" v-else-if="hasChanges">
+            Changes unsaved!
+        </div>
+        <div v-else>
+
+        </div>
+    </div>
 </template>
 
 <script setup>
 // ------------------------------------------------------------------------------------------------------
-import { ref, onMounted, onUnmounted, reactive, computed, inject, watch } from "vue";
+import { ref, onMounted, onUnmounted, onBeforeUnmount, reactive, computed, inject, watch } from "vue";
 import { router, useForm } from "@inertiajs/vue3";
 import axios from "axios";
 import Layout from "@/Shared/Layout.vue";
@@ -313,18 +299,34 @@ const props = defineProps([
 
 // ------------------------------------------------------------------------------------------------------
 const evaluationStatus = ref([]);
-const actionButtons = ref([]);
-const evidenceFiles = ref([]);
 const saveBtn = ref(null);
-const hasUnsavedChanges = inject("hasUnsavedChanges");
-const isUpdating = inject("isUpdating");
 const showFilterModal = ref(false);
 
+// Inject the reactive object
+const hasUnsavedChanges = inject("hasUnsavedChanges");
+const hasChanges = ref(false);
+const autoSaveTimeout = ref(null);
+const allChangesSaved = ref(false);
+const saving = ref(false);
+
+// Function to update value
 const updateData = () => {
     hasUnsavedChanges.value = true;
+    hasChanges.value = true;
+    allChangesSaved.value = false;
+    
+    // Clear any existing timeout
+    if (autoSaveTimeout.value) {
+        clearTimeout(autoSaveTimeout.value);
+    }
+    
+    // Set a new timeout for 3 seconds
+    autoSaveTimeout.value = setTimeout(() => {
+        update();
+    }, 3000);
 };
 
-const refs = { evaluationStatus, actionButtons, evidenceFiles, saveBtn };
+const refs = { evaluationStatus, saveBtn };
 
 const itemsArray = computed(() => {
     return props.items.data.map((item) => ({
@@ -379,11 +381,17 @@ onUnmounted(() => {
     window.removeEventListener("beforeunload", handleBeforeUnload);
 });
 
+onBeforeUnmount(() => {
+    if (autoSaveTimeout.value) {
+        clearTimeout(autoSaveTimeout.value);
+    }
+});
+
 function toggleFilterModal() {
     showFilterModal.value = !showFilterModal.value;
 }
 
-function update() {
+function updateTool() {
     router.post("/ched/library/evaluation/update", form, {
         onSuccess: () => {
             hasUnsavedChanges.value = false;
@@ -394,6 +402,28 @@ function update() {
      });
 }
 
+const update = async () => {
+    if (hasUnsavedChanges.value) {
+        // Clear the timeout to prevent duplicate saves
+        if (autoSaveTimeout.value) {
+            clearTimeout(autoSaveTimeout.value);
+            autoSaveTimeout.value = null;
+        }
+        
+        saving.value = true;
+        hasChanges.value = false;
+        await axios.post('/ched/library/evaluation/update', form)
+            .then(response => {
+                hasUnsavedChanges.value = false;
+                saving.value = false;
+                allChangesSaved.value = true;
+            })
+            .catch(error => {
+                console.error('Error updating evaluation:', error);
+                saving.value = false;
+            });
+    }
+};
 
 function filter() {
     query.get("/ched/library/evaluation/" + props.evaluation.id + "/evaluate", {
@@ -403,17 +433,5 @@ function filter() {
     });
 }
 
-// watch(hasUnsavedChanges, (newValue) => {
-//     if (newValue) {
-//         const debounceUpdate = setTimeout(() => {
-//             update();
-//         }, 2000);
-
-//         // Clear the timeout if hasUnsavedChanges changes again within 2 seconds
-//         watch(hasUnsavedChanges, () => {
-//             clearTimeout(debounceUpdate);
-//         });
-//     }
-// });
 </script>
 

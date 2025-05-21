@@ -9,7 +9,33 @@
                         <div class="font-bold">Self-Evaluate</div>
                     </div>
                 </div>
-                <div class="w-full md:w-fit md:mt-0 mt-3 flex flex-col md:flex-row justify-center">
+                <div class="w-full md:w-auto">
+                    <dropdown-option position="right" v-show="evaluation.evaluationDate != null">
+                        <template v-slot:button>
+                            <button
+                                class="flex whitespace-nowrap w-full md:w-auto items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg justify-center"
+                            >
+                                Monitoring Report
+                                <i class="fas fa-caret-down ml-2"></i>
+                            </button>
+                        </template>
+                        <template v-slot:options>
+                            <div class="w-48">
+                                <button @click="previewFile"
+                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
+                                >
+                                    Preview
+                                </button>
+                                <button @click="downloadFile"
+                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
+                                >
+                                    Download
+                                </button>
+                            </div>
+                        </template>
+                    </dropdown-option>
+                </div>
+                <div class="w-full md:w-fit md:mt-0 mt-3 md:ml-2 flex flex-col md:flex-row justify-center">
                     <div class="w-full flex flex-col md:flex-row gap-2">
                         <button @click="toggleResubmitModal" v-if="progress[3] == 100 && evaluation.evaluationDate != null"
                             class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
@@ -31,7 +57,7 @@
                                 Completed
                             </span>
                         </button>
-                        <button
+                        <!-- <button
                             @click="update"
                             ref="saveBtn"
                             class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
@@ -55,7 +81,7 @@
                                 </svg>
                                 Save changes
                             </span>
-                        </button>
+                        </button> -->
                     </div>
                 </div>
             </div>
@@ -121,6 +147,17 @@
                                     <div>AY: {{ evaluation.effectivity }}</div>
                                 </div>
                             </div>
+
+                            <div
+                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
+                            >
+                                <div class="w-full">
+                                    <p class="text-sm text-gray-500">
+                                        CMO
+                                    </p>
+                                    <div>No.{{ evaluation.cmo?.number }}, S.{{ evaluation.cmo?.series }}</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -159,7 +196,7 @@
                             <th>Minimum Requirement</th>
                             <th>Actual Situation</th>
                             <th>Evidence</th>
-                            <th>Self-Evaluation Status</th>
+                            <th class="w-[6rem]">Self-Evaluation Status</th>
                             <th>
                                 <i class="fas fa-ellipsis-v text-lg"></i>
                             </th>
@@ -169,23 +206,25 @@
                                 <no-search-result text="items"/>
                             </tr>
                             <tr v-else v-for="(item, index) in items.data" :key="item.id">
-                                <td>
+                                <td class="max-w-[12rem]">
                                     <div v-html="item.criteria.area">
 
                                     </div>
                                 </td>
-                                <td>
+                                <td class="max-w-[16rem]">
                                     <div v-html="item.criteria.minimumRequirement">
 
                                     </div>
                                 </td>
-                                <td class="min-w-[16rem]">
-                                    <tip-tap-editor 
-                                        v-model="item.actualSituation" 
-                                        @input="updateData()"
+                                <td class="max-w-[24rem]">
+                                    <tip-tap-editor
+                                        :hasSaveBtn="false"
+                                        v-model="item.actualSituation"
+                                        @input="updateData(), getUpdatedRowId(item.id)"
                                         @update="update"
-                                        >
-                                    </tip-tap-editor>
+                                        title="Actual Situation"
+                                        :inputRequired="(item.selfEvaluationStatus == 'Complied' || item.selfEvaluationStatus == 'Not complied') && (item.actualSituation == null || item.actualSituation == '' || item.actualSituation == '<p></p>' || item.actualSituation.replace(/<[^>]*>/g, '').trim() === '')"
+                                    />
                                 </td>
                                 <td>
                                     <div class="text-red-500" v-if="item.selfEvaluationStatus == 'Complied' && item.evidence.length == 0">
@@ -209,24 +248,22 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="h-32 p-3">
-                                    <div class="w-full h-full">
-                                        <select ref="selfEvaluationStatus" v-model="item.selfEvaluationStatus"
-                                            :id="'selfEvaluationStatus' + index" :name="'selfEvaluationStatus' + index"
-                                            @change="updateData"
-                                            class="p-1 rounded w-36 border border-gray-500 select-none">
-                                            <option :value="null">Select status</option>
-                                            <option value="Complied">Complied</option>
-                                            <option value="Not complied">Not complied</option>
-                                            <option value="Not applicable">Not applicable</option>
-                                        </select>
-                                    </div>
+                                <td class="w-6">
+                                    <select ref="selfEvaluationStatus" v-model="item.selfEvaluationStatus"
+                                        :id="'selfEvaluationStatus' + index" :name="'selfEvaluationStatus' + index"
+                                        @change="updateData"
+                                        class="rounded w-32 border-gray-400 text-sm pr-6">
+                                        <option :value="null">Select status</option>
+                                        <option value="Complied">Complied</option>
+                                        <option value="Not complied">Not complied</option>
+                                        <option value="Not applicable">Not applicable</option>
+                                    </select>
                                 </td>
-                                <td class="p-3 pr-5 text-right whitespace-nowrap">
-                                    <div class="w-full text-right text-sm visible" ref="actionButtons"
+                                <td class="whitespace-nowrap">
+                                    <div class="text-sm visible" ref="actionButtons"
                                         :class="{ 'invisible': item.selfEvaluationStatus == 'Not applicable' }">
                                         <button @click="toggleLinkModal(); evidenceLink = null; linkItem = item.id"
-                                            class="rounded bg-blue-500  text-gray-100 h-8 px-2 tooltipForActions" data-tooltip="Drop link"
+                                            class="rounded bg-blue-600 hover:bg-blue-700 text-gray-100 h-8 px-2 tooltipForActions" data-tooltip="Drop link"
                                             :disabled="item.selfEvaluationStatus == 'Not applicable'">
                                             <i class="fas fa-upload mr-2"></i>Link
                                         </button>
@@ -241,32 +278,16 @@
     </content-container>
 
     <!-- Filter Modal -->
-    <modal :showModal="showFilterModal" @close="toggleFilterModal" width="sm" height="long" title="Filters">
-        <div>
-            <div class="flex flex-col">
-                <label for="selfEvalStatus">Self-Evaluation Status</label>
-                <select v-model="query.selfEvaluationStatus" id="selfEvalStatus" class="rounded border-gray-400">
-                    <option :value="null">All</option>
-                    <option value="Complied">Complied</option>
-                    <option value="Not complied">Not Complied</option>
-                    <option value="Not applicable">Not Applicable</option>
-                    <option value="No Status">No Status</option>
-                </select>
-            </div>
-            <div class="mt-3 flex flex-col" v-show="evaluation.evaluationDate != null">
-                <label for="evalStatus">Evaluation Status</label>
-                <select v-model="query.evaluationStatus" id="evalStatus" class="rounded border-gray-400">
-                    <option :value="null">All</option>
-                    <option value="Complied">Complied</option>
-                    <option value="Not complied">Not Complied</option>
-                    <option value="Not applicable">Not Applicable</option>
-                </select>
-            </div>
+    <modal :showModal="showFilterModal" @close="toggleFilterModal" width="sm" title="Filters">
+        <div class="flex flex-col space-y-4">
+            <filter-compliance-status v-model="query.selfEvaluationStatus" type="HEI"/>
+            <filter-compliance-status
+                v-show="evaluation.status == 'Submitted' || evaluation.status == 'For re-evaluation' || evaluation.status == 'Locked'"
+                v-model="query.evaluationStatus"
+            />
         </div>
         <template v-slot:custom-button>
-            <button @click="filter" class="text-white bg-green-600 hover:bg-green-700 w-20 rounded h-10">
-                Apply
-            </button>
+            <modal-button text="Apply" color="green" @click="filter"/>
         </template>
     </modal>
 
@@ -309,11 +330,13 @@
     </div>
     
     <!-- Upload link modal -->
-    <modal :showModal="linkModal" title="Evidence Link" @close="toggleLinkModal" width="lg">
-        <div v-if="saving" class="py-10">
-            Saving the latest changes, please wait...
-        </div>
-        <div v-else>
+    <modal
+        :showModal="linkModal"
+        @close="toggleLinkModal"
+        title="Evidence Link"
+        width="lg"
+    >
+        <div>
             <div class="text-center">
                 <textarea maxlength="1000" class="w-full rounded-lg border border-gray-400 h-32 resize-none" placeholder="Input URL/Link here" id="link"
                     v-model="evidenceLink">
@@ -324,40 +347,71 @@
             </div>
         </div>
         <template v-slot:custom-button>
-            <button @click="submitLink" :disabled="uploadingLink"
-                class="text-white bg-blue-600 hover:bg-blue-700 w-24 py-2 px-3 rounded-lg border">
-                Upload
-            </button>
+            <modal-button text="Upload" color="blue" @click="submitLink"/>
         </template>
     </modal>
 
-
-
-    <confirmation @close="toggleDeleteModal" :showModal="deleteModal" title="Delete link" width="md" height="short">
+    <confirmation
+        :showModal="deleteModal"
+        @close="toggleDeleteModal"
+        title="Delete Link"
+        width="md"
+    >
         <template v-slot:message>
             Are you sure you want to delete this link?
         </template>
-        
         <template v-slot:buttons>
-            <button class="select-none text-white h-10 w-20 rounded bg-red-500 hover:bg-red-600"
-                @click="deleteLink">Delete
-            </button>
+            <modal-button text="Delete" color="red" @click="deleteLink"/>
         </template>
     </confirmation>
+
+    <div>
+        <div class="w-auto border border-gray-400 h-auto bg-white fixed z-[995] bottom-2 left-2 p-2 px-4 rounded flex items-center" v-if="saving">
+            <i class="fas fa-circle-notch animate-spin mr-3"></i> Saving changes...
+        </div>
+        <div class="w-auto border border-gray-400 h-auto bg-white fixed z-[995] bottom-2 left-2 p-2 px-4 rounded flex items-center" v-else-if="allChangesSaved">
+            <i class="fas fa-check text-green-500 mr-3"></i> All changes saved.
+        </div>
+        <div class="w-auto border border-gray-400 h-auto bg-white fixed z-[995] bottom-2 left-2 p-2 px-4 rounded flex items-center" v-else-if="hasChanges">
+            Changes unsaved!
+        </div>
+        <div v-else>
+
+        </div>
+    </div>
+
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, reactive, watch, inject } from 'vue';
+import { ref, onMounted, onUnmounted, computed, onBeforeUnmount, reactive, watch, inject } from 'vue';
 import { useForm, router } from '@inertiajs/vue3';
+import axios from 'axios';
 import Layout from '@/Shared/Layout.vue';
 defineOptions({ layout: Layout });
 
 // Inject the reactive object
 const hasUnsavedChanges = inject("hasUnsavedChanges");
 
+const hasChanges = ref(false);
+const allChangesSaved = ref(false);
+const autoSaveTimeout = ref(null);
+const rowsWithUpdates = [];
+
 // Function to update value
 const updateData = () => {
     hasUnsavedChanges.value = true;
+    hasChanges.value = true;
+    allChangesSaved.value = false;
+    
+    // Clear any existing timeout
+    if (autoSaveTimeout.value) {
+        clearTimeout(autoSaveTimeout.value);
+    }
+    
+    // Set a new timeout for 3 seconds
+    autoSaveTimeout.value = setTimeout(() => {
+        update();
+    }, 3000);
 };
 
 // Props
@@ -379,6 +433,7 @@ const itemsArray = computed(() => {
 const form = reactive({
     id: ref(props.evaluation.id),
     items: ref(itemsArray),
+    rows: ref(rowsWithUpdates),
 });
 
 
@@ -390,37 +445,37 @@ const handleBeforeUnload = (event) => {
 
 // Mount, Unmount
 onMounted(() => {
-    window.addEventListener('keydown', handleKeyDown);
+    // window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('beforeunload', handleBeforeUnload);
 });
 
 onUnmounted(() => {
-    window.removeEventListener('keydown', handleKeyDown);
+    // window.removeEventListener('keydown', handleKeyDown);
     window.removeEventListener('beforeunload', handleBeforeUnload);
     hasUnsavedChanges.value = false;
 });
 
+onBeforeUnmount(() => {
+    if (autoSaveTimeout.value) {
+        clearTimeout(autoSaveTimeout.value);
+    }
+});
+
 // Variables
 const deleteModal = ref(false);
-const deleting = ref(false);
 const toDelete = ref(null);
 
 const linkModal = ref(false);
-const uploadingLink = ref(false);
 const linkItem = ref(null);
 const evidenceLink = ref(null);
 
-const fileModal = ref(false);
-const uploadingFile = ref(false);
 const fileItem = ref(null);
 const evidenceFile = ref(null);
 const inputEvidenceFile = ref([]);
 
-const texteditor = ref([]);
 const completedModal = ref(false);
 const resubmitModal = ref(false);
 
-const actualSituationInput = ref([]);
 const selfEvaluationStatus = ref([]);
 const actionButtons = ref([]);
 const evidenceFiles = ref([]);
@@ -429,54 +484,36 @@ const hasUpdate = ref(false);
 const updatedRows = ref([]);
 const saveBtn = ref(null);
 const saving = ref(false);
-const submitting = ref(false);
 
 const showFilterModal = ref(false);
 
-const refs = { actualSituationInput, selfEvaluationStatus, actionButtons, evidenceFiles, saveBtn, texteditor, inputEvidenceFile };
-
+const refs = { selfEvaluationStatus, actionButtons, evidenceFiles, saveBtn, inputEvidenceFile };
 
 function toggleDeleteModal() {
     deleteModal.value = !deleteModal.value;
 }
 
-
 function toggleCompletedModal() {
-completedModal.value = !completedModal.value;
+    completedModal.value = !completedModal.value;
 }
 
 function toggleResubmitModal() {
-resubmitModal.value = !resubmitModal.value;
+    resubmitModal.value = !resubmitModal.value;
 }
 
 function toggleLinkModal() {
-    if (hasUnsavedChanges.value) {
-        saving.value = true;
-        linkModal.value = true;
-        
-        axios.post('/hei/evaluation/update', form)
-            .then(response => {
-                hasUnsavedChanges.value = false;
-                saving.value = false;
-            })
-            .catch(error => {
-                console.error('Error updating evaluation:', error);
-                saving.value = false;
-            });
-    } else {
-        linkModal.value = !linkModal.value;
-    }
+    linkModal.value = !linkModal.value;
 }
 
 // CTRL + S function
-const handleKeyDown = (event) => {
-    if (event.ctrlKey || event.metaKey) {
-        if (event.key === 's' || event.key === 'S') {
-            event.preventDefault();
-            refs.saveBtn.value.click();
-        }
-    }
-};
+// const handleKeyDown = (event) => {
+//     if (event.ctrlKey || event.metaKey) {
+//         if (event.key === 's' || event.key === 'S') {
+//             event.preventDefault();
+//             refs.saveBtn.value.click();
+//         }
+//     }
+// };
 
 function validateEvidence() {
   let isValid = true;
@@ -493,17 +530,38 @@ function validateEvidence() {
   return { isValid, errorMessage };
 }
 
-
-function update() {
-    router.post('/hei/evaluation/update', form, {
-        onSuccess: () => {
-            hasUnsavedChanges.value = false;
-        },
-        replace: true,
-        preserveState: true,
-        preserveScroll: true,
-    });
+function getUpdatedRowId(id) {
+    const index = rowsWithUpdates.findIndex(row => row.id === id);
+    if (index === -1) {
+        rowsWithUpdates.push({ id });
+    }
 }
+
+const update = async () => {
+    if (hasUnsavedChanges.value) {
+        // Clear the timeout to prevent duplicate saves
+        if (autoSaveTimeout.value) {
+            clearTimeout(autoSaveTimeout.value);
+            autoSaveTimeout.value = null;
+        }
+        
+        saving.value = true;
+        hasChanges.value = false;
+        
+        await axios.post('/hei/evaluation/update', form)
+            .then(response => {
+                hasUnsavedChanges.value = false;
+                saving.value = false;
+                allChangesSaved.value = true;
+                // Clear the rowsWithUpdates array after successful save
+                rowsWithUpdates.length = 0;
+            })
+            .catch(error => {
+                console.error('Error updating evaluation:', error);
+                saving.value = false;
+            });
+    }
+};
 
 function submitLink() {
     router.post('/hei/evaluation/link', {
@@ -520,39 +578,22 @@ function submitLink() {
         },
         preserveState: true,
         preserveScroll: true,
+        replace: true,
     });
 }
-
 
 function deleteLink() {
     router.post('/hei/evaluation/link/delete', {
         'id': props.evaluation.id,
         'item': toDelete.value,
     }, {
-        onStart: () => {
-            deleting.value = true;
-        },
         onFinish: () => {
-            deleting.value = false;
             deleteModal.value = false;
         },
         preserveState: true,
         preserveScroll: true,
     });
 }
-
-// function submitTool() {
-//     router.post('/hei/evaluation/submit', props.evaluation, {
-//         onStart: () => {
-//             submitting.value = true;
-//         },
-//         onFinish: () => {
-//             submitting.value = false;
-//         },
-//         preserveState: false,
-//         preserveScroll: true,
-//     });
-// }
 
 function submitTool() {
   const { isValid, errorMessage } = validateEvidence();
@@ -565,13 +606,7 @@ function submitTool() {
     return;
   }
   
-  router.post('/hei/evaluation/submit', props.evaluation, {
-    onStart: () => {
-      submitting.value = true;
-    },
-    onFinish: () => {
-      submitting.value = false;
-    },
+router.post('/hei/evaluation/submit', props.evaluation, {
     preserveState: false,
     preserveScroll: true,
   });
@@ -586,12 +621,6 @@ watch(evidenceFile, value => {
         itemId: fileItem.value,
         file: evidenceFile.value,
     }, {
-        onStart: () => {
-            uploadingFile.value = true;
-        },
-        onFinish: () => {
-            uploadingFile.value = false;
-        },
         preserveState: true,
         preserveScroll: true,
     })
@@ -613,6 +642,22 @@ function filter() {
         preserveScroll: true,
         replace: true,
     });
+}
+
+//Monitoring Report
+const submitReport = reactive({
+    orientation: "landscape",
+    id: ref(props.tool),
+});
+
+function previewFile() {
+    const url = `/report/monitoring/${props.evaluation.id}/${submitReport.orientation}/view`;
+    window.open(url, "_blank");
+}
+
+function downloadFile() {
+    const url = `/report/monitoring/${props.evaluation.id}/${submitReport.orientation}/download`;
+    window.open(url, "_blank");
 }
 
 </script>

@@ -171,8 +171,8 @@
                         <th>AREA</th>
                         <th>MINIMUM REQUIREMENT</th>
                         <th>FINDINGS</th>
-                        <th>RECOMMENDATION</th>
                         <th>EVALUATION STATUS</th>
+                        <th>RECOMMENDATION</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -183,8 +183,8 @@
                             {{ strip_tags($item->criteria->minimumRequirement) }}
                         </td>
                         <td>{{ strip_tags($item->findings) }}</td>
-                        <td>{{ strip_tags($item->recommendations) }}</td>
                         <td>{{ strip_tags($item->evaluationStatus) }}</td>
+                        <td>{{ strip_tags($item->recommendations) }}</td>
                     </tr>
                     @endforeach
                 </tbody>

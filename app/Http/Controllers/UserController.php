@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
 use App\Models\ProgramAssignmentModel;
+use App\Models\ProgramModel;
+use App\Models\InstitutionModel;
 use App\Models\RoleModel;
 use Auth;
 
@@ -24,6 +26,19 @@ class UserController extends Controller
             })
             ->when($request->query('type'), function ($query) use ($request) {
                 $query->where('type', $request->query('type'));
+            })
+            ->when($request->query('role'), function ($query) use ($request) {
+                $query->where('role', $request->query('role'));
+            })
+            ->when($request->query('program'), function ($query) use ($request) {
+                $query->whereHas('userRole.program', function ($programModel) use ($request) {
+                    $programModel->where('id', $request->query('program'));
+                });
+            })
+            ->when($request->query('institution'), function ($query) use ($request) {
+                $query->whereHas('userRole.institution', function ($institutionModel) use ($request) {
+                    $institutionModel->where('id', $request->query('institution'));
+                });
             })
             ->when($role != 'Super Admin', function ($query) use ($disciplineList, $programList) {
                 $query->where('type', 'HEI');
@@ -84,6 +99,7 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
+
         $role = Auth::user()->role;
         $permissions = $this->getUserPermissions($role);
         $show = sanitizePerPage($request->query('show'), Auth::user()->id);
@@ -99,8 +115,10 @@ class UserController extends Controller
         
         return Inertia::render('Admin/user/User-List', [
             'user_list' => $userlist,
+            'program_list' => $this->getPrograms(),
+            'institution_list' => $this->getInstitutions(),
             'requestCount' => User::requestCount($role, Auth::user()->id),
-            'filters' => $request->only(['search', 'type']) + ['show' => $show],
+            'filters' => $request->only(['search', 'type', 'role', 'program', 'institution']) + ['show' => $show],
         ] + $permissions);
     }
 
@@ -119,9 +137,10 @@ class UserController extends Controller
 
         return Inertia::render('Admin/user/User-Request', [
             'user_list' => $userlist,
-            // 'program_list' => $
+            'program_list' => $this->getPrograms(),
+            'institution_list' => $this->getInstitutions(),
             'requestCount' => User::requestCount($role, Auth::user()->id),
-            'filters' => $request->only(['search', 'type']) + ['show' => $show],
+            'filters' => $request->only(['search', 'type', 'role', 'program', 'institution']) + ['show' => $show],
         ] + $permissions);
     }
 
@@ -142,8 +161,10 @@ class UserController extends Controller
 
         return Inertia::render('Admin/user/User-Inactive', [
             'user_list' => $userlist,
+            'program_list' => $this->getPrograms(),
+            'institution_list' => $this->getInstitutions(),
             'requestCount' => User::requestCount($role, Auth::user()->id),
-            'filters' => $request->only(['search', 'type']) + ['show' => $show],
+            'filters' => $request->only(['search', 'type', 'role', 'program', 'institution']) + ['show' => $show],
         ] + $permissions);
     }
 
@@ -199,9 +220,23 @@ class UserController extends Controller
         return redirect('/dashboard');
     }
 
-    public function testUsers($name, $role, $institution, ) {
-        
+    public function getPrograms()
+    {
+        $user = Auth::user();
+
+        $query = ProgramModel::query()
+        ->when($user->role == 'Education Supervisor', function($query) use ($user) {
+            $query->whereIn('id', getUserAssignedProgramIds($user->id));
+        })
+        ->orderBy('program', 'asc')
+        ->orderBy('major', 'asc')
+        ->get();
+
+        return $query;
     }
 
-    
+    public function getInstitutions()
+    {
+        return InstitutionModel::orderBy('name', 'asc')->get();
+    }
 }

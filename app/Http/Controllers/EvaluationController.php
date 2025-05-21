@@ -60,15 +60,9 @@ class EvaluationController extends Controller
         $show = sanitizePerPage($request->query('show'), $user->id);
         $acadYear = getAcademicYear($request->query('academicYear'), $user->id);
         $canEvaluate = false;
-        $canEmail = false;
         
         if ($user->role == 'Super Admin' || $user->role == 'Education Supervisor') {
             $canEvaluate = true;
-            $canEmail = true;
-        }
-        
-        if ($user->role == 'Admin') {
-            $canEmail = true;
         }
         
         $assignedProgramIds = getUserAssignedProgramIds($user->id);
@@ -85,6 +79,16 @@ class EvaluationController extends Controller
             ->when($user->role == 'Education Supervisor', function ($query) use ($assignedProgramIds) {
                 $query->whereHas('institution_program', function ($q) use ($assignedProgramIds) {
                     $q->whereIn('programId', $assignedProgramIds);
+                });
+            })
+            ->when($request->query('institution'), function ($query) use ($request) {
+                $query->whereHas('institution_program.institution', function ($institutionQuery) use ($request) {
+                    $institutionQuery->where('id', $request->query('institution'));
+                });
+            })
+            ->when($request->query('program'), function ($query) use ($request) {
+                $query->whereHas('institution_program.program', function ($programQuery) use ($request) {
+                    $programQuery->where('id', $request->query('program'));
                 });
             })
             ->where('effectivity', $acadYear)
@@ -155,10 +159,13 @@ class EvaluationController extends Controller
         
         return Inertia::render('Evaluation/CHED-Evaluation-List', [
             'complianceTools' => $paginator,
-            'filters' => $request->only(['search', 'status', 'sort', 'direction']) + ['show' => $show, 'academicYear' => $acadYear],
+            'institution_list' => InstitutionModel::orderBy('name', 'asc')->get(),
+            'program_list' => ProgramModel::query()
+                ->when($user->role == 'Education Supervisor', function ($query) use ($assignedProgramIds) {
+                    $query->whereIn('id', $assignedProgramIds);
+                })->orderBy('program', 'asc')->get(),
+            'filters' => $request->only(['search', 'status', 'institution', 'program', 'sort', 'direction']) + ['show' => $show, 'academicYear' => $acadYear],
             'canEvaluate' => $canEvaluate,
-            'canEmail' => $canEmail,
-            'programHeadEmail' => "ian.epidemia13@gmail.com",
         ]);
     }
 
@@ -167,30 +174,48 @@ class EvaluationController extends Controller
         $show = sanitizePerPage($request->query('show'), Auth::user()->id);
         $acadYear = getAcademicYear($request->query('academicYear'),Auth::user()->id);
         $programIds = getUserAssignedProgramIds($user->id);
+        
+        // $programFilter = $request->query('program') != null ? $request->query('program') : null;
+        // $institutionFilter = $request->query('institution') != null ? $request->query('institution') : null;
 
         $complianceTools = EvaluationFormModel::query()
-        ->when($request->query('search'), function ($query) use ($request) {
-            applyProgramAndInstitutionSearch($query, $request->query('search'), 'institution_program.program', 'institution_program.institution');
-        })
-        ->when($user->role == 'Education Supervisor', supervisorAssignedPrograms('institution_program.program', $programIds))
-        ->where('effectivity', $acadYear)
-        ->where('status', 'Monitored')
-        ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable')
-        ->paginate($show)
-        ->through(fn($item) => [
-            'id' => $item->id,
-            'submissionDate' => $item->submissionDate,
-            'archivedDate' => Carbon::createFromFormat('Y-m-d', $item->archivedDate)->format('M d, Y'),
-            'evaluationDate' => Carbon::createFromFormat('Y-m-d', $item->evaluationDate)->format('M d, Y'),
-            'status' => $item->status,
-            'institution' => $item->institution_program->institution->name,
-            'program' => $item->institution_program->program->program,
-        ])
-        ->withQueryString();
+            ->when($request->query('search'), function ($query) use ($request) {
+                applyProgramAndInstitutionSearch($query, $request->query('search'), 'institution_program.program', 'institution_program.institution');
+            })
+            ->when($request->query('institution'), function($query) use ($request) {
+                $query->whereHas('institution_program.institution', function ($institutionQuery) use ($request) {
+                    $institutionQuery->where('id', $request->query('institution'));
+                });
+            })
+            ->when($request->query('program'), function($query) use ($request) {
+                $query->whereHas('institution_program.program', function ($programQuery) use ($request) {
+                    $programQuery->where('id', $request->query('program'));
+                });
+            })
+            ->when($user->role == 'Education Supervisor', supervisorAssignedPrograms('institution_program.program', $programIds))
+            ->where('effectivity', $acadYear)
+            ->where('status', 'Monitored')
+            ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable')
+            ->paginate($show)
+            ->through(fn($item) => [
+                'id' => $item->id,
+                'submissionDate' => $item->submissionDate,
+                'archivedDate' => Carbon::createFromFormat('Y-m-d', $item->archivedDate)->format('M d, Y'),
+                'evaluationDate' => Carbon::createFromFormat('Y-m-d', $item->evaluationDate)->format('M d, Y'),
+                'status' => $item->status,
+                'institution' => $item->institution_program->institution->name,
+                'program' => $item->institution_program->program->program,
+            ])
+            ->withQueryString();
 
         return Inertia::render('Evaluation/CHED-Evaluation-Monitored', [
             'complianceTools' => $complianceTools,
-            'filters' => $request->only(['search']) + ['show' => $show, 'academicYear' => $acadYear ],
+            'institution_list' => InstitutionModel::orderBy('name', 'asc')->get(),
+            'program_list' => ProgramModel::query()
+                ->when($user->role == 'Education Supervisor', function ($query) use ($programIds) {
+                    $query->whereIn('id', $programIds);
+                })->orderBy('program', 'asc')->get(),
+            'filters' => $request->only(['search', 'institution', 'program']) + ['show' => $show, 'academicYear' => $acadYear ],
         ]);
     }
 
@@ -309,6 +334,7 @@ class EvaluationController extends Controller
             'status' => $item->status,
             'institution' => $item->institution_program->institution->name,
             'program' => $item->institution_program->program->program,
+            'major' => $item->institution_program->program->major,
             'progress' => intval(round((($item->complied->count() + $item->not_complied->count() + $item->not_applicable->count())/$item->item->count())*100)),
         ])
         ->withQueryString();
