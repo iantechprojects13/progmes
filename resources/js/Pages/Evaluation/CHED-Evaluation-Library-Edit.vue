@@ -2,7 +2,6 @@
     <Head title="Library Compliance Evaluation Tool" />
     <page-title title="Library Compliance Evaluation" />
     <content-container
-        :hasStickyDiv="true"
         :hasTopMainContent="true"
         :hasSearch="true"
         :hasFilters="true"
@@ -29,31 +28,6 @@
                             </span>
                         </button>
                     </Link>
-                    <!-- <button
-                        @click="updateTool"
-                        ref="saveBtn"
-                        class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <span class="flex items-center">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-5 h-5 mr-2"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path
-                                    d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
-                                />
-                                <polyline points="17 21 17 13 7 13 7 21" />
-                                <polyline points="7 3 7 8 15 8" />
-                            </svg>
-                            Save changes
-                        </span>
-                    </button> -->
                 </div>
             </div>
         </template>
@@ -67,41 +41,12 @@
             />
         </template>
         <template v-slot:main-content>
-            <div class="p-3">
-                <div
-                    class="w-full p-2 md:p-8 my-3 md:shadow-lg md:border rounded-xl"
-                >
-                    <div class="flex flex-col gap-6">
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div
-                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                <div class="w-full">
-                                    <p class="text-sm text-gray-500">
-                                        HEI Name
-                                    </p>
-                                    <div>
-                                        {{
-                                            evaluation.institution?.name
-                                        }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div
-                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                <div class="w-full">
-                                    <p class="text-sm text-gray-500">
-                                        Effectivity
-                                    </p>
-                                    <div>AY: {{ evaluation.effectivity }}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <tool-info 
+                :data="{
+                    'HEI Name': evaluation.institution?.name,
+                    'Effectivity': `A.Y. ${evaluation.effectivity}`,
+                }"
+            />
 
             <div class="p-3">
                 <div
@@ -171,7 +116,7 @@
                                     <tip-tap-editor
                                         :hasSaveBtn="false"
                                         v-model="item.findings"
-                                        @input="updateData"
+                                        @input="updateData(); getUpdatedRowId(item.id)"
                                         @update="update"
                                         title="Findings"
                                     ></tip-tap-editor>
@@ -182,7 +127,7 @@
                                         v-model="item.evaluationStatus"
                                         :id="'evaluationStatus' + index"
                                         :name="'evaluationStatus' + index"
-                                        @change="updateData"
+                                        @change="updateData(); getUpdatedRowId(item.id)"
                                         class="rounded w-32 border-gray-400 text-sm pr-6"
                                     >
                                         <option :value="null">
@@ -204,7 +149,7 @@
                                     <tip-tap-editor
                                         :hasSaveBtn="false"
                                         v-model="item.recommendations"
-                                        @input="updateData"
+                                        @input="updateData(); getUpdatedRowId(item.id)"
                                         @update="update"
                                         title="Comments/Recommendations"
                                     />
@@ -224,45 +169,12 @@
         width="md"
         title="Filters"
     >
-        <div>
-            <div class="flex flex-col">
-                <label for="selfEvalStatus">Self-Evaluation Status</label>
-                <select
-                    v-model="query.selfEvaluationStatus"
-                    id="selfEvalStatus"
-                    class="rounded border-gray-400"
-                >
-                    <option :value="null">All</option>
-                    <option value="Complied">Complied</option>
-                    <option value="Not complied">Not Complied</option>
-                    <option value="Not applicable">Not Applicable</option>
-                    <option value="No Status">No Status</option>
-                </select>
-            </div>
-            <div
-                class="mt-3 flex flex-col"
-                v-show="evaluation.evaluationDate != null"
-            >
-                <label for="evalStatus">Evaluation Status</label>
-                <select
-                    v-model="query.evaluationStatus"
-                    id="evalStatus"
-                    class="rounded border-gray-400"
-                >
-                    <option :value="null">All</option>
-                    <option value="Complied">Complied</option>
-                    <option value="Not complied">Not Complied</option>
-                    <option value="Not applicable">Not Applicable</option>
-                </select>
-            </div>
+        <div class="flex flex-col space-y-4">
+            <filter-compliance-status v-model="query.selfEvaluationStatus" type="HEI"/>
+            <filter-compliance-status v-model="query.evaluationStatus" />
         </div>
         <template v-slot:custom-button>
-            <button
-                @click="filter"
-                class="text-white bg-green-600 hover:bg-green-700 w-20 rounded h-10"
-            >
-                Apply
-            </button>
+            <modal-button text="Apply" color="green" @click="filter"/>
         </template>
     </modal>
 
@@ -284,7 +196,7 @@
 
 <script setup>
 // ------------------------------------------------------------------------------------------------------
-import { ref, onMounted, onUnmounted, onBeforeUnmount, reactive, computed, inject, watch } from "vue";
+import { ref, onMounted, onUnmounted, onBeforeUnmount, reactive, computed, inject } from "vue";
 import { router, useForm } from "@inertiajs/vue3";
 import axios from "axios";
 import Layout from "@/Shared/Layout.vue";
@@ -308,6 +220,7 @@ const hasChanges = ref(false);
 const autoSaveTimeout = ref(null);
 const allChangesSaved = ref(false);
 const saving = ref(false);
+const rowsWithUpdates = [];
 
 // Function to update value
 const updateData = () => {
@@ -326,6 +239,7 @@ const updateData = () => {
     }, 3000);
 };
 
+
 const refs = { evaluationStatus, saveBtn };
 
 const itemsArray = computed(() => {
@@ -340,6 +254,7 @@ const itemsArray = computed(() => {
 const form = reactive({
     id: ref(props.evaluation.id),
     items: ref(itemsArray),
+    rows: ref(rowsWithUpdates),
 });
 
 const handleBeforeUnload = (event) => {
@@ -361,23 +276,23 @@ const query = useForm({
 });
 
 // CTRL + S function
-const handleKeyDown = (event) => {
-    if (event.ctrlKey || event.metaKey) {
-        if (event.key === "s" || event.key === "S") {
-            event.preventDefault();
-            refs.saveBtn.value.click();
-        }
-    }
-};
+// const handleKeyDown = (event) => {
+//     if (event.ctrlKey || event.metaKey) {
+//         if (event.key === "s" || event.key === "S") {
+//             event.preventDefault();
+//             refs.saveBtn.value.click();
+//         }
+//     }
+// };
 
 // ------------------------------------------------------------------------------------------------------
 onMounted(() => {
-    window.addEventListener("keydown", handleKeyDown);
+    // window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("beforeunload", handleBeforeUnload);
 });
 
 onUnmounted(() => {
-    window.removeEventListener("keydown", handleKeyDown);
+    // window.removeEventListener("keydown", handleKeyDown);
     window.removeEventListener("beforeunload", handleBeforeUnload);
 });
 
@@ -391,15 +306,11 @@ function toggleFilterModal() {
     showFilterModal.value = !showFilterModal.value;
 }
 
-function updateTool() {
-    router.post("/ched/library/evaluation/update", form, {
-        onSuccess: () => {
-            hasUnsavedChanges.value = false;
-         },
-         preserveState: false,
-         preserveScroll: true,
-         replace: true,
-     });
+function getUpdatedRowId(id) {
+    const index = rowsWithUpdates.findIndex(row => row.id === id);
+    if (index === -1) {
+        rowsWithUpdates.push({ id });
+    }
 }
 
 const update = async () => {
@@ -412,11 +323,15 @@ const update = async () => {
         
         saving.value = true;
         hasChanges.value = false;
+        
         await axios.post('/ched/library/evaluation/update', form)
             .then(response => {
                 hasUnsavedChanges.value = false;
                 saving.value = false;
                 allChangesSaved.value = true;
+                // Clear the rowsWithUpdates array after successful save
+                rowsWithUpdates.length = 0;
+                
             })
             .catch(error => {
                 console.error('Error updating evaluation:', error);

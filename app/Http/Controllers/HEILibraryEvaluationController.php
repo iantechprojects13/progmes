@@ -10,6 +10,7 @@ use App\Models\LibCriteriaModel;
 use App\Models\LibEvaluationFormModel;
 use App\Models\LibEvaluationItemModel;
 use App\Models\LibEvidenceModel;
+use App\Models\AdminSettingsModel;
 use Auth;
 
 class HEILibraryEvaluationController extends Controller
@@ -61,6 +62,10 @@ class HEILibraryEvaluationController extends Controller
 
         if(!$tool) {
             return redirect('/hei/library/evaluation')->with('failed', 'Evaluation tool not found.');
+        }
+
+        if ($tool->status != 'In progress') {
+            return redirect('/hei/library/evaluation')->with('failed', 'Evaluation tool can\'t be edited.');
         }
 
         $role = RoleModel::where('userId', $user->id)->where('isActive', 1)->first();
@@ -116,20 +121,11 @@ class HEILibraryEvaluationController extends Controller
             ->paginate(1000)
             ->withQueryString();
 
-            $libEvaluationTool = LibEvaluationFormModel::where('id', $evaluation)->with('institution', 'complied', 'not_complied', 'not_applicable', 'item', 'item.criteria', 'item.evidence')->first();
-
-            $totalItems = $libEvaluationTool->item->count();
-            $complied = $libEvaluationTool->complied->count();
-            $notComplied = $libEvaluationTool->not_complied->count();
-            $notApplicable = $libEvaluationTool->not_applicable->count();
-            $percentage = intval(round((($complied + $notComplied + $notApplicable)/$libEvaluationTool->item->count())*100));
-            $progress = [ $complied, $notComplied, $notApplicable, $percentage];
-
             if($tool->status == 'In progress') {
                 return Inertia::render('Evaluation/HEI-Evaluation-Library-Edit', [
                     'evaluation' => $tool,
                     'items' => $complianceTool,
-                    'progress' => $progress,
+                    'cmo' => AdminSettingsModel::where('setting_key', 'library_cmo')->value('setting_value'),
                     'filters' => $request->only(['search', 'selfEvaluationStatus', 'evaluationStatus']),
                 ]);
             } else {
@@ -159,29 +155,11 @@ class HEILibraryEvaluationController extends Controller
                 }
             }
         }
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Changes saved successfully',
-        ]);
+
+        $libEvaluationTool = LibEvaluationFormModel::where('id', $request->id)->with('complied', 'not_complied', 'not_applicable', 'item')->first();
+        $progress = getProgress($libEvaluationTool);
+        return response()->json($progress);
     }
-
-    // public function update(Request $request) {
-        
-    //     foreach ($request->items as $item) {
-
-    //         $evaluationItem = LibEvaluationItemModel::find($item['id']);
-            
-    //         if ($evaluationItem) {
-    //             $evaluationItem->update([
-    //                 'actualSituation' => $item['actualSituation'] ?? null,
-    //                 'selfEvaluationStatus' => $item['selfEvaluationStatus'] ?? null,
-    //             ]);
-    //         }
-    //     }
-        
-    //     return redirect()->back()->with('success', 'All changes saved.');
-    // }
 
     public function submitLink(Request $request) {
 
@@ -275,8 +253,6 @@ class HEILibraryEvaluationController extends Controller
             return redirect('/hei/library/evaluation')->with('failed', 'Evaluation tool not found.');
         }
 
-        // dd($evaluationTool);
-
         $role = RoleModel::where('userId', $user->id)->where('isActive', 1)->first();
 
         if ($role->role == 'Librarian' || $role->role == 'Vice-President for Academic Affairs') {
@@ -290,21 +266,17 @@ class HEILibraryEvaluationController extends Controller
             $showEvaluation = true;
         }
         
-        $compliedCount = $evaluationTool->complied->count();
-        $notCompliedCount = $evaluationTool->not_complied->count();
-        $notApplicableCount = $evaluationTool->not_applicable->count();
-        $totalItems = $evaluationTool->item->count();
-        $percentage = $totalItems > 0 
-            ? intval(round((($compliedCount + $notCompliedCount + $notApplicableCount) / $totalItems) * 100)) 
-            : 0;
-        $progress = [$compliedCount, $notCompliedCount, $notApplicableCount, $percentage];
-        
-
         return Inertia::render('Evaluation/HEI-Evaluation-Library-View', [
-            'evaluation_tool' => $evaluationTool,
-            'progress' => $progress,
+            'evaluation' => $evaluationTool,
+            'cmo' => AdminSettingsModel::where('setting_key', 'library_cmo')->value('setting_value'),
             'showEvaluation' => $showEvaluation,
         ]);
         
+    }
+
+    public function getToolProgress($id) {
+        $evaluationTool = LibEvaluationFormModel::where('id', $id)->with('complied', 'not_complied', 'not_applicable', 'item')->first();
+        $progress = getProgress($evaluationTool);
+        return response()->json($progress);
     }
 }

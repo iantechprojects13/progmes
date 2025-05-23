@@ -51,7 +51,10 @@ class LibEvaluationFormModel extends Model
         ->where('selfEvaluationStatus', '=', 'Complied')
         ->where(function($query) {
             $query->whereNotNull('actualSituation')
-                ->where('actualSituation', '!=', '');
+                ->where('actualSituation', '!=', '')
+                ->where('actualSituation', '!=', '<p></p>')
+                ->whereRaw("TRIM(REPLACE(actualSituation, ' ', '')) != ''")
+                ->whereRaw("TRIM(REPLACE(REGEXP_REPLACE(actualSituation, '<[^>]*>', ''), ' ', '')) != ''");
         })
         ->whereHas('evidence', function ($query) {
             $query->whereColumn('itemId', 'lib_evaluation_item.id');
@@ -64,7 +67,10 @@ class LibEvaluationFormModel extends Model
         ->where('selfEvaluationStatus', '=', 'Not complied')
         ->where(function($query) {
             $query->whereNotNull('actualSituation')
-                ->where('actualSituation', '!=', '');
+                ->where('actualSituation', '!=', '')
+                ->where('actualSituation', '!=', '<p></p>')
+                ->whereRaw("TRIM(REPLACE(actualSituation, ' ', '')) != ''")
+                ->whereRaw("TRIM(REPLACE(REGEXP_REPLACE(actualSituation, '<[^>]*>', ''), ' ', '')) != ''");
         });
     }
 

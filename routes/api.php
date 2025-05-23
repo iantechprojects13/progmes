@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\InstitutionModel;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HEILibraryEvaluationController;
+use App\Http\Controllers\HEIFormController;
 use App\Http\Controllers\AdminSettingsController;
 
 /*
@@ -33,3 +35,5 @@ Route::get('/dashboard/tool/{academicyear}/{status}/{supervisor}/{program}/{inst
 Route::get('/dashboard/tool/{supervisor}/{program}/{institution}/{year}/{month}/{quarter}/view', [DashboardController::class, 'viewMonitoredTools']);
 Route::get('/admin/settings/{id}/assignedprograms', [AdminSettingsController::class, 'getAssignedPrograms']);
 
+Route::get('/hei/library/evaluation/{id}/progress', [HEILibraryEvaluationController::class, 'getToolProgress']);
+Route::get('/hei/evaluation/{id}/progress', [HEIFormController::class, 'getToolProgress']);

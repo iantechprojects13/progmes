@@ -127,13 +127,13 @@
                                     v-show="showEvaluation"
                                     v-html="item.findings"
                                 ></td>
+                                <td v-show="showEvaluation">
+                                    <status :text="item.evaluationStatus" />
+                                </td>
                                 <td
                                     v-show="showEvaluation"
                                     v-html="item.recommendations"
                                 ></td>
-                                <td v-show="showEvaluation">
-                                    <status :text="item.evaluationStatus" />
-                                </td>
                             </tr>
                         </template>
                     </content-table>

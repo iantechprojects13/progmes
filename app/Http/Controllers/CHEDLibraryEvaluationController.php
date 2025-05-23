@@ -133,42 +133,6 @@ class CHEDLibraryEvaluationController extends Controller
         ]);
     }
 
-    // public function libraryEvaluationList(Request $request)
-    // {
-    //     $user = Auth::user();
-    //     $show = sanitizePerPage($request->query('show'), Auth::user()->id);
-    //     $acadYear = getAcademicYear($request->query('ay'),Auth::user()->id);
-    //     $canEvaluate = $user->role == 'Super Admin' || $user->role == 'Education Supervisor' ? true: false;
-        
-
-    //     $complianceTools = LibEvaluationFormModel::query()
-    //         ->when($request->query('search'), function ($searchQuery) use ($request) {
-    //             $searchQuery->whereHas('institution', function ($institutionQuery) use ($request) {
-    //                 $institutionQuery->where('name', 'like', '%' . $request->query('search') . '%');
-    //             });
-    //         })
-    //         ->where('effectivity', $acadYear)
-    //         ->whereNot('status', 'Deployed')
-    //         ->when($request->query('status'), function ($statusQuery) use ($request) {
-    //             $statusQuery->where('status', $request->query('status'));
-    //         })
-    //         ->with(['institution' => function($query) {
-    //             $query->orderBy('name', 'asc');
-    //         }])
-    //         ->whereHas('institution')
-    //         ->join('institution', 'lib_evaluation_form.institutionId', '=', 'institution.id')
-    //         ->orderBy('institution.name', 'asc')
-    //         ->select('lib_evaluation_form.*')
-    //         ->paginate($show)
-    //         ->withQueryString();
-
-    //     return Inertia::render('Evaluation/CHED-Evaluation-Library-List', [
-    //         'evaluation_list' => $complianceTools,
-    //         'filters' => $request->only(['search', 'status']) + ['show' => $show, 'academicYear' => $acadYear ],
-    //         'canEvaluate' => $canEvaluate,
-    //     ]);
-    // }
-
     public function view($tool) {
         $user = Auth::user();
 
@@ -228,7 +192,7 @@ class CHEDLibraryEvaluationController extends Controller
                     });
                 }
                 else {
-                        $query->where(function ($query) use ($request) {
+                    $query->where(function ($query) use ($request) {
                         $query->where('selfEvaluationStatus', $request->query('selfEvaluationStatus'));
                     });
                 }
@@ -240,7 +204,7 @@ class CHEDLibraryEvaluationController extends Controller
                     });
                 }
                 else {
-                        $query->where(function ($query) use ($request) {
+                    $query->where(function ($query) use ($request) {
                         $query->where('evaluationStatus', $request->query('evaluationStatus'));
                     });
                 }
@@ -295,23 +259,31 @@ class CHEDLibraryEvaluationController extends Controller
         return redirect()->back()->with('success', 'Library compliance evaluation tool has been unlocked.');
     }
 
-
     public function update(Request $request) {
-
-        foreach ($request->items as $item) {
-
-            $evaluationItem = LibEvaluationItemModel::find($item['id']);
-
-            if ($evaluationItem) {
-                $evaluationItem->update([
-                    'findings' => $item['findings'] ?? null,
-                    'recommendations' => $item['recommendations'] ?? null,
-                    'evaluationStatus' => $item['evaluationStatus'] ?? null,
-                ]);
+        // Get all items
+        $allItems = $request->items;
+        
+        // Get the IDs of rows that were updated
+        $updatedRowIds = collect($request->rows)->pluck('id')->toArray();
+        
+        // Only update the items that are in the updatedRowIds array
+        foreach ($allItems as $item) {
+            if (in_array($item['id'], $updatedRowIds)) {
+                $evaluationItem = LibEvaluationItemModel::find($item['id']);
+                
+                if ($evaluationItem) {
+                    $evaluationItem->update([
+                        'findings' => $item['findings'] ?? null,
+                        'recommendations' => $item['recommendations'] ?? null,
+                        'evaluationStatus' => $item['evaluationStatus'] ?? null,
+                    ]);
+                }
             }
         }
-    
-        return redirect()->back()->with('success', 'All changes saved.');
+
+        $libEvaluationTool = LibEvaluationFormModel::where('id', $request->id)->with('complied', 'not_complied', 'not_applicable', 'item')->first();
+        $progress = getProgress($libEvaluationTool);
+        return response()->json($progress);
     }
 
     public function destroy($id)

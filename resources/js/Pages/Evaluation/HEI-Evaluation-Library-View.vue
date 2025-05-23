@@ -1,6 +1,6 @@
 <template>
-    <Head title="Program Self-Evaluation" />
-    <page-title title="Program Self-Evaluation" />
+    <Head title="Library Self-Evaluation" />
+    <page-title title="Library Self-Evaluation" />
     <content-container :hasBackButton="true">
         <template v-slot:content-title>
             <div class="w-full flex flex-col md:flex-row justify-between items-center">
@@ -9,31 +9,43 @@
                         <div class="font-bold">Library Self-Evaluation Tool</div>
                     </div>
                 </div>
-                <div class="w-full md:w-auto">
-                    <dropdown-option position="right"
-                    v-show="(evaluation_tool.evaluationDate != null || evaluation_tool.status == 'Monitored') &&
-                            ($page.props.auth.user.role == 'Vice-President for Academic Affairs' || $page.props.auth.user.role == 'Librarian')
-                        ">
+                <div class="w-full md:w-auto" v-show="$page.props.auth.user.role == 'Vice-President for Academic Affairs' || $page.props.auth.user.role == 'Librarian'">
+                    <dropdown-option position="right">
                         <template v-slot:button>
                             <button
                                 class="flex whitespace-nowrap w-full md:w-auto items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg justify-center"
                             >
-                                Monitoring Report
+                                Options
                                 <i class="fas fa-caret-down ml-2"></i>
                             </button>
                         </template>
                         <template v-slot:options>
-                            <div class="w-48">
-                                <button @click="previewFile"
-                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
-                                >
-                                    Preview
-                                </button>
-                                <button @click="downloadFile"
-                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
-                                >
-                                    Download
-                                </button>
+                            <div class="w-64">
+                                <div class="pb-3 border-b">
+                                    <button @click="edit" :disabled="evaluation.status != 'In progress'"
+                                        class="py-1.5 hover:bg-gray-200 w-full text-left indent-8"
+                                        :class="{ 'grayscale text-gray-400 cursor-not-allowed': evaluation.status != 'In progress' }"
+                                    >
+                                        Edit
+                                    </button>
+                                </div>
+                                <div class="pt-3">
+                                    <div class="text-gray-600 font-semibold px-5 py-1">
+                                        Monitoring Report
+                                    </div>
+                                    <button @click="previewFile" :disabled="evaluation.evaluationDate == null"
+                                        class="py-1.5 hover:bg-gray-200 w-full text-left indent-8"
+                                        :class="{ 'grayscale text-gray-400 cursor-not-allowed': evaluation.evaluationDate == null }"
+                                    >
+                                        Preview
+                                    </button>
+                                    <button @click="downloadFile" :disabled="evaluation.evaluationDate == null"
+                                        class="py-1.5 hover:bg-gray-200 w-full text-left indent-8"
+                                        :class="{ 'grayscale text-gray-400 cursor-not-allowed': evaluation.evaluationDate == null }"
+                                    >
+                                        Download
+                                    </button>
+                                </div>
                             </div>
                         </template>
                     </dropdown-option>
@@ -41,69 +53,12 @@
             </div>
         </template>
         <template v-slot:main-content>
-            <div class="md:p-3">
-                <div
-                    class="w-full p-2 md:p-5 my-3 md:shadow-lg md:border rounded-xl"
-                >
-                    <div class="flex flex-col gap-6">
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div
-                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                <div class="w-full">
-                                    <p class="text-sm text-gray-500">
-                                        HEI Name
-                                    </p>
-                                    <div>
-                                        {{
-                                            evaluation_tool.institution?.name
-                                        }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div
-                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                <div class="w-full">
-                                    <p class="text-sm text-gray-500">
-                                        Effectivity
-                                    </p>
-                                    <div>
-                                        AY: {{ evaluation_tool.effectivity }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 p-2 md:px-4">
-                <div class="p-4 rounded-lg shadow-md bg-green-100 text-center">
-                    <p class="text-3xl font-bold text-green-600">
-                        {{ progress[0] }}
-                    </p>
-                    <p class="text-green-700 font-semibold">Complied</p>
-                </div>
-                <div class="p-4 rounded-lg shadow-md bg-red-100 text-center">
-                    <p class="text-3xl font-bold text-red-600">
-                        {{ progress[1] }}
-                    </p>
-                    <p class="text-red-700 font-semibold">Not Complied</p>
-                </div>
-                <div class="p-4 rounded-lg shadow-md bg-gray-100 text-center">
-                    <p class="text-3xl font-bold text-gray-600">
-                        {{ progress[2] }}
-                    </p>
-                    <p class="text-gray-700 font-semibold">Not Applicable</p>
-                </div>
-                <div class="p-4 rounded-lg shadow-md bg-blue-100 text-center">
-                    <p class="text-3xl font-bold text-blue-600">
-                        {{ progress[3] }}%
-                    </p>
-                    <p class="text-blue-700 font-semibold">Progress</p>
-                </div>
-            </div>
+            <tool-info :data="{
+                'HEI Name': evaluation.institution?.name,
+                'Effectivity': evaluation.effectivity,
+                'CMO': cmo,
+            }"/>
+            <tool-progress-display :data="progress" type="HEI" />
             <div class="p-3">
                 <div
                     class="w-full p-2 md:p-5 md:shadow-lg md:border rounded-xl"
@@ -124,12 +79,12 @@
                             </th>
                         </template>
                         <template v-slot:table-body>
-                            <tr v-if="evaluation_tool.item.length == 0">
+                            <tr v-if="evaluation.item.length == 0">
                                 <no-search-result text="items"/>
                             </tr>
                             <tr
                                 v-else
-                                v-for="item in evaluation_tool.item"
+                                v-for="item in evaluation.item"
                                 :key="item.id"
                             >
                                 <td class="max-w-[24rem]">
@@ -172,14 +127,14 @@
                                 <td
                                     v-show="showEvaluation"
                                 >
-                                    <div v-html="item.recommendations">
-
-                                    </div>
+                                    <status :text="item.evaluationStatus" />
                                 </td>
                                 <td
                                     v-show="showEvaluation"
                                 >
-                                    <status :text="item.evaluationStatus" />
+                                    <div v-html="item.recommendations">
+
+                                    </div>
                                 </td>
                             </tr>
                         </template>
@@ -191,23 +146,54 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
+import { router } from '@inertiajs/vue3';
 import Layout from '@/Shared/Layout.vue';
+import axios from 'axios';
 defineOptions({ layout: Layout });
-const props = defineProps(["evaluation_tool", "progress", "showEvaluation"]);
+const props = defineProps([
+    "evaluation",
+    'cmo',
+    "showEvaluation"
+]);
+
+const progress = ref([null]);
+
+onMounted(() => {
+    getProgress();
+});
+
+
+const getProgress = async () => {
+    await axios.get(`/api/hei/library/evaluation/${props.evaluation.id}/progress`)
+        .then(response => {
+            progress.value = response.data;
+        })
+        .catch(error => {
+            console.error('Error updating evaluation:', error);
+        });
+};
 
 const submitReport = reactive({
     orientation: "landscape",
     id: ref(props.tool),
 });
 
+function edit() {
+    router.get(`/hei/library/${props.evaluation.id}/edit`, {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+    });
+}
+
 function previewFile() {
-    const url = `/report/library/monitoring/${props.evaluation_tool.id}/${submitReport.orientation}/view`;
+    const url = `/report/library/monitoring/${props.evaluation.id}/${submitReport.orientation}/view`;
     window.open(url, "_blank");
 }
 
 function downloadFile() {
-    const url = `/report/library/monitoring/${props.evaluation_tool.id}/${submitReport.orientation}/download`;
+    const url = `/report/library/monitoring/${props.evaluation.id}/${submitReport.orientation}/download`;
     window.open(url, "_blank");
 }
 

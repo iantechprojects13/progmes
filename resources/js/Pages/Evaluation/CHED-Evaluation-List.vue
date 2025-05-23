@@ -228,10 +228,7 @@ function filter() {
 }
 
 function evaluate(tool) {
-    router.get('/ched/evaluation/' + tool + '/evaluate', {
-        preserveScroll: true,
-        preserveState: true,
-    });
+    router.get('/ched/evaluation/' + tool + '/evaluate');
 }
 
 function view(tool) {

@@ -16,6 +16,9 @@ class ApplicationController extends Controller
 {
     public function index()
     {
+        //temporary
+        return redirect('/dashboard');
+
         if (auth()->user()->type == 'CHED') {
             return redirect()->route('ched.application.list');
         }

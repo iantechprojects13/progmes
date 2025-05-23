@@ -359,12 +359,8 @@
                 </svg>
                 Download
             </button>
-            <button
-                @click="showOptionsModal = false"
-                class="text-white bg-green-600 hover:bg-green-700 w-20 rounded-lg"
-            >
-                Done
-            </button>
+            <modal-button text="Done" color="green" @click="showOptionsModal = false"/>
+
         </template>
     </modal>
 </template>

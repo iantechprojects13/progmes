@@ -198,3 +198,29 @@ function applyProgramAndInstitutionSearch(Builder $query, string $searchTerm, st
         });
     });
 }
+
+if (!function_exists('getProgress')) {
+    /**
+     * Calculate progress metrics for an evaluation tool
+     * 
+     * @param mixed $evaluationTool The evaluation tool model with relationships loaded
+     * @return array Returns [complied_count, not_complied_count, not_applicable_count, progress_percentage]
+     */
+    function getProgress($evaluationTool)
+    {
+        $totalItems = $evaluationTool->item->count();
+        $complied = $evaluationTool->complied->count();
+        $notComplied = $evaluationTool->not_complied->count();
+        $notApplicable = $evaluationTool->not_applicable->count();
+        
+        $progressPercentage = $totalItems > 0
+            ? intval(round((($complied + $notComplied + $notApplicable) / $totalItems) * 100))
+            : 0;
+
+        // $complianceRate = $evaluationTool->complied->count() + $evaluationTool->not_complied->count() > 0
+        //             ? intval(round(($evaluationTool->complied->count() / ($evaluationTool->complied->count() + $evaluationTool->not_complied->count())) * 100))
+        //             : 0;
+            
+        return [$complied, $notComplied, $notApplicable, $progressPercentage];
+    }
+}

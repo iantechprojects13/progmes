@@ -108,15 +108,19 @@ class PDFController extends Controller
             $toolQuery->where('evaluationStatus', 'Not complied');
         }, 'item.criteria', 'institution'])
         ->first();
-        
 
-        $data = [
-            'tool' => $complianceTool,
-            'cmo' => AdminSettingsModel::where('setting_key', 'library_cmo')->value('setting_value'),
-        ];
-        
-        $fileName = 'Deficiency-Report-'. time() . '.pdf';
-        $report = Pdf::loadView('report.deficiency-library', $data)->setPaper('a4', $orientation);
+        if (!$this->canViewLibraryReport($complianceTool)) {
+            $fileName = 'Report-Access-Denied-'. time() . '.pdf';
+            $report = Pdf::loadView('report.access-denied')->setPaper('a4', $orientation);
+        } else {
+            $data = [
+                'tool' => $complianceTool,
+                'cmo' => AdminSettingsModel::where('setting_key', 'library_cmo')->value('setting_value'),
+            ];
+            
+            $fileName = 'Deficiency-Report-'. time() . '.pdf';
+            $report = Pdf::loadView('report.deficiency-library', $data)->setPaper('a4', $orientation);
+        }
         
         if ($type == 'view') {
             return $report->stream($fileName);
@@ -161,12 +165,6 @@ class PDFController extends Controller
 
     public function monitoringReportForLibrary($tool, $orientation = 'landscape', $type) {
 
-        $user = Auth::user();
-
-        if (!($user->type == 'HEI' && ($user->role == 'Librarian' || $user->role == 'Vice-President for Academic Affairs'))) {
-            return redirect('/unauthorized');
-        }
-
         $complianceTool = LibEvaluationFormModel::where('id', $tool)
         ->with(['item', 'item.criteria', 'institution'])
         ->first();
@@ -175,19 +173,19 @@ class PDFController extends Controller
             return redirect()->back()->with('failed', 'Library compliance evaluation tool not found.');
         }
 
-        $userInstitution = RoleModel::where('userId', $user->id)->where('isActive', 1)->first();
-
-        if(!($userInstitution->institutionId == $complianceTool->institutionId)) {
-            return redirect('/unauthorized');
+        if (!$this->canViewLibraryReport($complianceTool)) {
+            $fileName = 'Report-Access-Denied-'. time() . '.pdf';
+            $report = Pdf::loadView('report.access-denied')->setPaper('a4', $orientation);
+        } else {
+            $data = [
+                'tool' => $complianceTool,
+                'cmo' => AdminSettingsModel::where('setting_key', 'library_cmo')->value('setting_value'),
+            ];
+            
+            $fileName = 'Library-Monitoring-Report-'. time() . '.pdf';
+            $report = Pdf::loadView('report.monitoring-library', $data)->setPaper('a4', $orientation);
         }
 
-        $data = [
-            'tool' => $complianceTool,
-            'cmo' => AdminSettingsModel::where('setting_key', 'library_cmo')->value('setting_value'),
-        ];
-        
-        $fileName = 'Library-Monitoring-Report-'. time() . '.pdf';
-        $report = Pdf::loadView('report.monitoring-library', $data)->setPaper('a4', $orientation);
         
         if ($type == 'view') {
             return $report->stream($fileName);
@@ -220,7 +218,7 @@ class PDFController extends Controller
                 if (!($tool->institution_program->program->disciplineId == $assignedRole->discipline->id)) {
                     return false;
                 }
-            }
+            } 
         } else if ($user->type == 'CHED') {
             if ($user->role == 'Education Supervisor') {
                 $assignedPrograms = getUserAssignedProgramIds($user->id);
@@ -232,5 +230,23 @@ class PDFController extends Controller
         return true;
     }
 
+    public function canViewLibraryReport($tool) {
+        $user = Auth::user();
 
+        if ($user->type == 'HEI') {
+            $assignedRole = RoleModel::where('userId', $user->id)->where('isActive', 1)->with('discipline', 'program', 'institution')->first();
+            
+            if(!($assignedRole->institutionId == $tool->institution->id)) {
+                return false;
+            }
+            
+            if ($user->role == 'Librarian' || $user->role == 'Vice-President for Academic Affairs' || $user->role == 'Quality Assurance Officer') {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

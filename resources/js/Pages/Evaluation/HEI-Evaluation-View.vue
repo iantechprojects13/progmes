@@ -11,22 +11,29 @@
                             <button
                                 class="flex whitespace-nowrap w-full md:w-auto items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg justify-center"
                             >
-                                Monitoring Report
+                                <i class="fas fa-file-pdf text-lg ml-2"></i>
                                 <i class="fas fa-caret-down ml-2"></i>
                             </button>
                         </template>
                         <template v-slot:options>
-                            <div class="w-48">
-                                <button @click="previewFile"
-                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
-                                >
-                                    Preview
-                                </button>
-                                <button @click="downloadFile"
-                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
-                                >
-                                    Download
-                                </button>
+                            <div class="w-64">
+                                <div
+                                        class="text-gray-600 font-semibold px-5 py-1"
+                                    >
+                                        Monitoring Report
+                                    </div>
+                                    <button
+                                        @click="previewFile"
+                                        class="py-1.5 hover:bg-gray-200 w-full text-left indent-8"
+                                    >
+                                        Preview
+                                    </button>
+                                    <button
+                                        @click="downloadFile"
+                                        class="py-1.5 hover:bg-gray-200 w-full text-left indent-8"
+                                    >
+                                        Download
+                                    </button>
                             </div>
                         </template>
                     </dropdown-option>

@@ -201,46 +201,17 @@ class HEIFormController extends Controller
             ->withQueryString();
 
 
-            $totalItems = $tool->item->count();
-            $complied = $tool->complied->count();
-            $notComplied = $tool->not_complied->count();
-            $notApplicable = $tool->not_applicable->count();
-            $percentage = $tool->item->count() > 0
-            ? intval(round((($complied + $notComplied + $notApplicable)/$tool->item->count())*100))
-            : 0;
-            $progress = [ $complied, $notComplied, $notApplicable, $percentage];
-
             if($tool->status == 'In progress') {
                 return Inertia::render('Evaluation/HEI-Evaluation-Edit', [
                     'evaluation' => $tool,
                     'items' => $complianceTool,
-                    'progress' => $progress,
                     'filters' => $request->only(['search', 'selfEvaluationStatus', 'evaluationStatus']),
                 ]);
             } else {
                 return redirect($redirectPath)->with('failed', 'This tool has been locked and can\'t be accessed.');
             }
         }
-        
     }
-    
-
-    // public function update(Request $request) {
-        
-    //     foreach ($request->items as $item) {
-
-    //         $evaluationItem = EvaluationItemModel::find($item['id']);
-
-    //         if ($evaluationItem) {
-    //             $evaluationItem->update([
-    //                 'actualSituation' => $item['actualSituation'] ?? null,
-    //                 'selfEvaluationStatus' => $item['selfEvaluationStatus'] ?? null,
-    //             ]);
-    //         }
-    //     }
-    
-    //     return redirect()->back()->with('success', 'All changes saved.');
-    // }
 
     public function update(Request $request) {
         // Get all items
@@ -263,10 +234,9 @@ class HEIFormController extends Controller
             }
         }
         
-        return response()->json([
-            'success' => true,
-            'message' => 'Changes saved successfully',
-        ]);
+        $evaluationTool = EvaluationFormModel::where('id', $request->id)->with('complied', 'not_complied', 'not_applicable', 'item')->first();
+        $progress = getProgress($evaluationTool);
+        return response()->json($progress);
     }
 
     public function upload(Request $request) {
@@ -446,9 +416,10 @@ class HEIFormController extends Controller
     }
 
     
-    function generateKey($length = 10) {
-        return Str::random($length);
+    public function getToolProgress($id) {
+        $evaluationTool = EvaluationFormModel::where('id', $id)->with('complied', 'not_complied', 'not_applicable', 'item')->first();
+        $progress = getProgress($evaluationTool);
+        return response()->json($progress);
     }
-    
 
 }

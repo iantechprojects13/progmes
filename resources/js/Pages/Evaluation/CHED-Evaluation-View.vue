@@ -15,22 +15,29 @@
                             <button
                                 class="flex whitespace-nowrap w-full md:w-auto items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg justify-center"
                             >
-                                Monitoring Report
+                                <i class="fas fa-file-pdf text-lg ml-2"></i>
                                 <i class="fas fa-caret-down ml-2"></i>
                             </button>
                         </template>
                         <template v-slot:options>
-                            <div class="w-48">
-                                <button @click="previewFile"
-                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
-                                >
-                                    Preview
-                                </button>
-                                <button @click="downloadFile"
-                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
-                                >
-                                    Download
-                                </button>
+                            <div class="w-64">
+                                <div
+                                        class="text-gray-600 font-semibold px-5 py-1"
+                                    >
+                                        Monitoring Report
+                                    </div>
+                                    <button
+                                        @click="previewFileMonitoring"
+                                        class="py-1.5 hover:bg-gray-200 w-full text-left indent-8"
+                                    >
+                                        Preview
+                                    </button>
+                                    <button
+                                        @click="downloadFileMonitoring"
+                                        class="py-1.5 hover:bg-gray-200 w-full text-left indent-8"
+                                    >
+                                        Download
+                                    </button>
                             </div>
                         </template>
                     </dropdown-option>
@@ -38,78 +45,21 @@
             </div>
         </template>
         <template v-slot:main-content>
-            <div class="md:p-3">
-                <div
-                    class="w-full p-2 md:p-5 my-3 md:shadow-lg md:border rounded-xl"
-                >
-                    <div class="flex flex-col gap-6">
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div
-                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                <div class="w-full">
-                                    <p class="text-sm text-gray-500">
-                                        HEI Name
-                                    </p>
-                                    <div>
-                                        {{
-                                            evaluation.institution_program
-                                                .institution.name
-                                        }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div
-                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                <div class="w-full">
-                                    <p class="text-sm text-gray-500">Program</p>
-                                    {{
-                                        evaluation.institution_program.program
-                                            .program
-                                    }}
-                                    <span
-                                        v-if="
-                                            evaluation.institution_program
-                                                .program.major
-                                        "
-                                    >
-                                        -
-                                        {{
-                                            evaluation.institution_program
-                                                .program.major
-                                        }}</span
-                                    >
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div
-                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                <div class="w-full">
-                                    <p class="text-sm text-gray-500">
-                                        Effectivity
-                                    </p>
-                                    <div>AY: {{ evaluation.effectivity }}</div>
-                                </div>
-                            </div>
-                            <div
-                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                <div class="w-full">
-                                    <p class="text-sm text-gray-500">
-                                        CMO
-                                    </p>
-                                    <div>No.{{ evaluation.cmo?.number }}, S.{{ evaluation.cmo?.series }}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <tool-info
+                :data="{
+                    'HEI Name':
+                        evaluation.institution_program?.institution?.name,
+                    Program:
+                        evaluation.institution_program?.program?.program +
+                        (evaluation.institution_program?.program?.major
+                            ? ' - ' +
+                              evaluation.institution_program?.program?.major
+                            : ''),
+                    Effectivity: `A.Y. ${evaluation.effectivity}`,
+                    CMO: `No.${evaluation.cmo?.number}, S.${evaluation.cmo?.series}`,
+                }"
+            />
+            <tool-progress-display :data="progress" type="HEI"/>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 p-2 md:px-4">
                 <div class="p-4 rounded-lg shadow-md bg-green-100 text-center">
                     <p class="text-3xl font-bold text-green-600">
@@ -225,13 +175,23 @@ const submitReport = reactive({
     id: ref(props.tool),
 });
 
-function previewFile() {
+function previewFileMonitoring() {
     const url = `/report/monitoring/${props.evaluation.id}/${submitReport.orientation}/view`;
     window.open(url, "_blank");
 }
 
-function downloadFile() {
+function downloadFileMonitoring() {
     const url = `/report/monitoring/${props.evaluation.id}/${submitReport.orientation}/download`;
+    window.open(url, "_blank");
+}
+
+function previewFileDeficiency() {
+    const url = `/report/deficiency/${props.evaluation.id}/${submitReport.orientation}/view`;
+    window.open(url, "_blank");
+}
+
+function downloadFileDeficiency() {
+    const url = `/report/deficiency/${props.evaluation.id}/${submitReport.orientation}/download`;
     window.open(url, "_blank");
 }
 

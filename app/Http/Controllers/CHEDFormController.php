@@ -126,21 +126,30 @@ class CHEDFormController extends Controller
 
 
     public function update(Request $request) {
-
-        foreach ($request->items as $item) {
-
-            $evaluationItem = EvaluationItemModel::find($item['id']);
-
-            if ($evaluationItem) {
-                $evaluationItem->update([
-                    'findings' => $item['findings'] ?? null,
-                    'recommendations' => $item['recommendations'] ?? null,
-                    'evaluationStatus' => $item['evaluationStatus'] ?? null,
-                ]);
+        // Get all items
+        $allItems = $request->items;
+        
+        // Get the IDs of rows that were updated
+        $updatedRowIds = collect($request->rows)->pluck('id')->toArray();
+        
+        // Only update the items that are in the updatedRowIds array
+        foreach ($allItems as $item) {
+            if (in_array($item['id'], $updatedRowIds)) {
+                $evaluationItem = EvaluationItemModel::find($item['id']);
+                
+                if ($evaluationItem) {
+                    $evaluationItem->update([
+                        'findings' => $item['findings'] ?? null,
+                        'recommendations' => $item['recommendations'] ?? null,
+                        'evaluationStatus' => $item['evaluationStatus'] ?? null,
+                    ]);
+                }
             }
         }
-    
-        return redirect()->back()->with('success', 'All changes saved.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Changes saved successfully.',
+        ]);
     }
     
 

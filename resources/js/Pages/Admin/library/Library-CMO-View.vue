@@ -11,7 +11,7 @@
                         </button>
                     </Link>
                     <div class="font-bold">
-                        {{ library_cmo }}
+                        CMO {{ library_cmo }}
                     </div>
                 </div>
                 <div class="flex flex-col md:flex-row items-center gap-2" v-show="canEdit">

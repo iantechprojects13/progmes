@@ -1,6 +1,6 @@
 <template>
-    <Head title="Program Self-Evaluation Tool" />
-    <page-title title="Program Self-Evaluation (CMO No.22, S.2021)" />
+    <Head title="Library Self-Evaluation Tool" />
+    <page-title title="Library Self-Evaluation" />
     <content-container :hasStickyDiv="true" :hasSearch="true" :hasFilters="true" :hasTopMainContent="true" :hasBackButton="true">
         <template v-slot:content-title>
             <div class="w-full flex flex-col md:flex-row justify-between items-center">
@@ -10,79 +10,45 @@
                     </div>
                 </div>
                 <div class="w-full md:w-auto">
-                    <dropdown-option position="right" v-show="evaluation.evaluationDate != null">
+                    <dropdown-option position="right">
                         <template v-slot:button>
                             <button
                                 class="flex whitespace-nowrap w-full md:w-auto items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg justify-center"
                             >
-                                Monitoring Report
+                                Options
                                 <i class="fas fa-caret-down ml-2"></i>
                             </button>
                         </template>
                         <template v-slot:options>
-                            <div class="w-48">
-                                <button @click="previewFile"
-                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
-                                >
-                                    Preview
-                                </button>
-                                <button @click="downloadFile"
-                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-7"
-                                >
-                                    Download
-                                </button>
+                            <div class="w-64">
+                                <div class="pb-3 border-b">
+                                    <button @click="toggleCompletedModal" :disabled="progress[3] != 100"
+                                        class="py-1.5 hover:bg-gray-200 w-full text-left indent-8"
+                                        :class="{ 'grayscale text-gray-400 cursor-not-allowed': progress[3] != 100 }"
+                                    >
+                                        Completed
+                                    </button>
+                                </div>
+                                <div class="pt-3">
+                                    <div class="text-gray-600 font-semibold px-5 py-1">
+                                        Monitoring Report
+                                    </div>
+                                    <button @click="previewFile" :disabled="evaluation.evaluationDate == null"
+                                        class="py-1.5 hover:bg-gray-200 w-full text-left indent-8"
+                                        :class="{ 'grayscale text-gray-400 cursor-not-allowed': evaluation.evaluationDate == null }"
+                                    >
+                                        Preview
+                                    </button>
+                                    <button @click="downloadFile" :disabled="evaluation.evaluationDate == null"
+                                        class="py-1.5 hover:bg-gray-200 w-full text-left indent-8"
+                                        :class="{ 'grayscale text-gray-400 cursor-not-allowed': evaluation.evaluationDate == null }"
+                                    >
+                                        Download
+                                    </button>
+                                </div>
                             </div>
                         </template>
                     </dropdown-option>
-                </div>
-                <div class="w-full md:w-fit md:mt-0 mt-3 flex flex-row justify-center">
-                    <div class="w-full flex flex-row gap-2">
-                        <button @click="toggleResubmitModal" v-if="progress[3] == 100 && evaluation.evaluationDate != null"
-                            class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
-                            <span class="flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="20 6 9 17 4 12" />
-                                </svg>
-                                Resubmit
-                            </span>
-                        </button>
-                        <button @click="toggleCompletedModal" v-else-if="progress[3] == 100 && evaluation.evaluationDate == null"
-                            class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
-                            <span class="flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="20 6 9 17 4 12" />
-                                </svg>
-                                Completed
-                            </span>
-                        </button>
-                        <!-- <button
-                            @click="updateTool"
-                            ref="saveBtn"
-                            class="whitespace-nowrap w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <span class="flex items-center">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="w-5 h-5 mr-2"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <path
-                                        d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
-                                    />
-                                    <polyline points="17 21 17 13 7 13 7 21" />
-                                    <polyline points="7 3 7 8 15 8" />
-                                </svg>
-                                Save changes
-                            </span>
-                        </button> -->
-                    </div>
                 </div>
             </div>
         </template>
@@ -93,156 +59,105 @@
             <options @filter="toggleFilterModal" :href="'/hei/library/'+evaluation.id+'/edit'"></options>
         </template>
         <template v-slot:main-content>
-            <div class="md:p-3">
-                <div
-                    class="w-full p-2 md:p-5 my-3 md:shadow-lg md:border rounded-xl"
-                >
-                    <div class="flex flex-col gap-6">
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div
-                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                <div class="w-full">
-                                    <p class="text-sm text-gray-500">
-                                        HEI Name
-                                    </p>
-                                    <div>
-                                        {{
-                                            evaluation.institution?.name
-                                        }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div
-                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                <div class="w-full">
-                                    <p class="text-sm text-gray-500">
-                                        Effectivity
-                                    </p>
-                                    <div>AY: {{ evaluation.effectivity }}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 p-2 md:px-4">
-                <div class="p-4 rounded-lg shadow-md bg-green-100 text-center">
-                    <p class="text-3xl font-bold text-green-600">
-                        {{ progress[0] }}
-                    </p>
-                    <p class="text-green-700 font-semibold">Complied</p>
-                </div>
-                <div class="p-4 rounded-lg shadow-md bg-red-100 text-center">
-                    <p class="text-3xl font-bold text-red-600">
-                        {{ progress[1] }}
-                    </p>
-                    <p class="text-red-700 font-semibold">Not Complied</p>
-                </div>
-                <div class="p-4 rounded-lg shadow-md bg-gray-100 text-center">
-                    <p class="text-3xl font-bold text-gray-600">
-                        {{ progress[2] }}
-                    </p>
-                    <p class="text-gray-700 font-semibold">Not Applicable</p>
-                </div>
-                <div class="p-4 rounded-lg shadow-md bg-blue-100 text-center">
-                    <p class="text-3xl font-bold text-blue-600">
-                        {{ progress[3] }}%
-                    </p>
-                    <p class="text-blue-700 font-semibold">Progress</p>
-                </div>
-            </div>
+
+            <tool-info :data="{
+                'HEI Name': evaluation.institution?.name,
+                'Effectivity': evaluation.effectivity,
+                'CMO': cmo,
+            }"/>
+
+            <tool-progress-display :data="progress" type="HEI"/>
+
             <div class="p-3">
                 <div
                     class="w-full p-2 md:p-8 my-3 md:shadow-lg md:border rounded-xl"
                 >
-            <content-table>
-                <template v-slot:table-head>
-                    <th>Area</th>
-                    <th>Minimum Requirement</th>
-                    <th>Actual Situation</th>
-                    <th>Evidence</th>
-                    <th>Self-Evaluation Status</th>
-                    <th>
-                        <i class="fas fa-ellipsis-v text-lg"></i>
-                    </th>
-                </template>
-                <template v-slot:table-body>
-                    <tr v-if="items.data.length == 0">
-                        <no-search-result text="items"/>
-                    </tr>
-                    <tr v-else v-for="(item, index) in items.data" :key="item.id">
-                        <td class="max-w-[32rem]">
-                            <div v-html="item.criteria.area">
+                    <content-table>
+                        <template v-slot:table-head>
+                            <th>Area</th>
+                            <th>Minimum Requirement</th>
+                            <th>Actual Situation</th>
+                            <th>Evidence</th>
+                            <th>Self-Evaluation Status</th>
+                            <th>
+                                <i class="fas fa-ellipsis-v text-lg"></i>
+                            </th>
+                        </template>
+                        <template v-slot:table-body>
+                            <tr v-if="items.data.length == 0">
+                                <no-search-result text="items"/>
+                            </tr>
+                            <tr v-else v-for="(item, index) in items.data" :key="item.id">
+                                <td class="max-w-[32rem]">
+                                    <div v-html="item.criteria.area">
 
-                            </div>
-                        </td>
-                        <td class="max-w-[32rem]">
-                            <div v-html="item.criteria.minimumRequirement">
+                                    </div>
+                                </td>
+                                <td class="max-w-[32rem]">
+                                    <div v-html="item.criteria.minimumRequirement">
 
-                            </div>
-                        </td>
-                        <td class="min-w-[16rem] max-w-[24rem] whitespace-normal">
-                            <tip-tap-editor
-                                :hasSaveBtn="false"
-                                v-model="item.actualSituation"
-                                @input="updateData(), getUpdatedRowId(item.id)"
-                                @update="update"
-                                title="Actual Situation"
-                                :inputRequired="(item.selfEvaluationStatus == 'Complied' || item.selfEvaluationStatus == 'Not complied') && (!item.actualSituation || item.actualSituation.replace(/<[^>]*>/g, '').trim() === '')"
-                            />
-                        </td>
-                        <td>
-                            <div class="text-red-500" v-if="item.selfEvaluationStatus == 'Complied' && item.evidence.length == 0">
-                                *required
-                            </div>
-                            <div class="flex flex-col"
-                                :class="{ 'hidden': item.selfEvaluationStatus == 'Not applicable' }"
-                                ref="evidenceFiles">
-                                <div v-for="link in item.evidence" :key="link.id" class="w-full">
-                                    <a class="px-1 text-blue-600 hover:text-blue-700 hover:underline rounded whitespace-nowrap" :href="link.url"
-                                        target="_blank">
-                                        Link
-                                    </a>
-                                    <button @click="toggleDeleteModal(); toDelete = link.id"
-                                        class="text-gray-500 hover:text-red-500 ml-1 tooltipForActions"
-                                        :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate"
-                                        :class="{ 'grayscale text-gray-500': hasUpdate }"
-                                        data-tooltip="Delete link">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="h-32 p-3">
-                            <div class="w-full h-full">
-                                <select ref="selfEvaluationStatus" v-model="item.selfEvaluationStatus"
-                                    :id="'selfEvaluationStatus' + index" :name="'selfEvaluationStatus' + index"
-                                    @change="updateData(), getUpdatedRowId(item.id)"
-                                    class="p-1 rounded w-36 border border-gray-500 text-sm font-medium select-none">
-                                    <option :value="null">Select status</option>
-                                    <option value="Complied">Complied</option>
-                                    <option value="Not complied">Not complied</option>
-                                    <option value="Not applicable">Not applicable</option>
-                                </select>
-                            </div>
-                        </td>
-                        <td class="p-3 pr-5 text-right whitespace-nowrap">
-                            <div class="w-full text-right text-sm visible" ref="actionButtons"
-                                :class="{ 'invisible': item.selfEvaluationStatus == 'Not applicable' }">
-                                <button @click="toggleLinkModal(); evidenceLink = null; linkItem = item.id"
-                                    class="rounded bg-blue-600 hover:bg-blue-700  text-gray-100 p-2 tooltipForActions" data-tooltip="Drop evidence link"
-                                    :disabled="item.selfEvaluationStatus == 'Not applicable'">
-                                    <i class="fas fa-upload mr-2"></i>Link
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </template>
-            </content-table>
-        </div>
-    </div>
+                                    </div>
+                                </td>
+                                <td class="min-w-[16rem] max-w-[24rem] whitespace-normal">
+                                    <tip-tap-editor
+                                        :hasSaveBtn="false"
+                                        v-model="item.actualSituation"
+                                        @input="updateData(), getUpdatedRowId(item.id)"
+                                        @update="update"
+                                        title="Actual Situation"
+                                        :inputRequired="(item.selfEvaluationStatus == 'Complied' || item.selfEvaluationStatus == 'Not complied') && (!item.actualSituation || item.actualSituation.replace(/<[^>]*>/g, '').trim() === '')"
+                                    />
+                                </td>
+                                <td>
+                                    <div class="text-red-500" v-if="item.selfEvaluationStatus == 'Complied' && item.evidence.length == 0">
+                                        *required
+                                    </div>
+                                    <div class="flex flex-col"
+                                        :class="{ 'hidden': item.selfEvaluationStatus == 'Not applicable' }"
+                                        ref="evidenceFiles">
+                                        <div v-for="link in item.evidence" :key="link.id" class="w-full">
+                                            <a class="px-1 text-blue-600 hover:text-blue-700 hover:underline rounded whitespace-nowrap" :href="link.url"
+                                                target="_blank">
+                                                Link
+                                            </a>
+                                            <button @click="toggleDeleteModal(); toDelete = link.id"
+                                                class="text-gray-500 hover:text-red-500 ml-1 tooltipForActions"
+                                                :disabled="item.selfEvaluationStatus == 'Not applicable' || hasUpdate"
+                                                :class="{ 'grayscale text-gray-500': hasUpdate }"
+                                                data-tooltip="Delete link">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="h-32 p-3">
+                                    <div class="w-full h-full">
+                                        <select ref="selfEvaluationStatus" v-model="item.selfEvaluationStatus"
+                                            :id="'selfEvaluationStatus' + index" :name="'selfEvaluationStatus' + index"
+                                            @change="updateData(), getUpdatedRowId(item.id)"
+                                            class="p-1 rounded w-36 border border-gray-500 text-sm font-medium select-none">
+                                            <option :value="null">Select status</option>
+                                            <option value="Complied">Complied</option>
+                                            <option value="Not complied">Not complied</option>
+                                            <option value="Not applicable">Not applicable</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td class="p-3 pr-5 text-right whitespace-nowrap">
+                                    <div class="w-full text-right text-sm visible" ref="actionButtons"
+                                        :class="{ 'invisible': item.selfEvaluationStatus == 'Not applicable' }">
+                                        <button @click="toggleLinkModal(); evidenceLink = null; linkItem = item.id"
+                                            class="rounded bg-blue-600 hover:bg-blue-700  text-gray-100 p-2 tooltipForActions" data-tooltip="Drop evidence link"
+                                            :disabled="item.selfEvaluationStatus == 'Not applicable'">
+                                            <i class="fas fa-upload mr-2"></i>Link
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </content-table>
+                </div>
+            </div>
         </template>
     </content-container>
 
@@ -264,19 +179,6 @@
             Are you sure you want to mark this library compliance evaluation tool as completed? You won't be able to make changes after marking it as completed.
         </template>
 
-        <template v-slot:buttons>
-            <modal-button text="Submit" @click="submitTool"/>
-        </template>
-    </confirmation>
-
-    <!-- Resubmit confirmation -->
-    <confirmation @close="toggleResubmitModal" :showModal="resubmitModal" title="Resubmit" width="md" height="short">
-
-        <template v-slot:message>
-            Are you sure you want to resubmit this library compliance evaluation tool? You won't be able to make changes after
-            resubmitting.
-        </template>
-        
         <template v-slot:buttons>
             <modal-button text="Submit" @click="submitTool"/>
         </template>
@@ -354,6 +256,7 @@ const hasUnsavedChanges = inject("hasUnsavedChanges");
 const hasChanges = ref(false);
 const allChangesSaved = ref(false);
 const autoSaveTimeout = ref(null);
+const saving = ref(false);
 const rowsWithUpdates = [];
 
 // Function to update value
@@ -379,7 +282,7 @@ const updateData = () => {
 const props = defineProps([
     'evaluation',
     'items',
-    'progress',
+    'cmo',
     'filters',
 ]);
 
@@ -407,6 +310,7 @@ const handleBeforeUnload = (event) => {
 onMounted(() => {
     // window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('beforeunload', handleBeforeUnload);
+    getProgress();
 });
 
 onUnmounted(() => {
@@ -433,7 +337,6 @@ const evidenceFile = ref(null);
 const inputEvidenceFile = ref([]);
 
 const completedModal = ref(false);
-const resubmitModal = ref(false);
 
 const selfEvaluationStatus = ref([]);
 const actionButtons = ref([]);
@@ -442,7 +345,8 @@ const evidenceFiles = ref([]);
 const hasUpdate = ref(false);
 const updatedRows = ref([]);
 const saveBtn = ref(null);
-const saving = ref(false);
+
+const progress = ref([]);
 
 const showFilterModal = ref(false);
 
@@ -454,10 +358,6 @@ function toggleDeleteModal() {
 
 function toggleCompletedModal() {
     completedModal.value = !completedModal.value;
-}
-
-function toggleResubmitModal() {
-    resubmitModal.value = !resubmitModal.value;
 }
 
 function toggleLinkModal() {
@@ -514,12 +414,24 @@ const update = async () => {
                 allChangesSaved.value = true;
                 // Clear the rowsWithUpdates array after successful save
                 rowsWithUpdates.length = 0;
+                progress.value = response.data;
+                
             })
             .catch(error => {
                 console.error('Error updating evaluation:', error);
                 saving.value = false;
             });
     }
+};
+
+const getProgress = async () => {
+    await axios.get(`/api/hei/library/evaluation/${props.evaluation.id}/progress`)
+        .then(response => {
+            progress.value = response.data;
+        })
+        .catch(error => {
+            console.error('Error updating evaluation:', error);
+        });
 };
 
 function submitLink() {
@@ -534,6 +446,7 @@ function submitLink() {
         },
         onSuccess: () => {
             linkModal.value = false;
+            getProgress();
         },
         preserveState: true,
         preserveScroll: true,
@@ -548,9 +461,11 @@ function deleteLink() {
     }, {
         onFinish: () => {
             deleteModal.value = false;
+            getProgress();
         },
         preserveState: true,
         preserveScroll: true,
+        replace: true,
     });
 }
 
@@ -561,13 +476,13 @@ function submitTool() {
     // Show error message
     alert(errorMessage);
     completedModal.value = false;
-    resubmitModal.value = false;
     return;
   }
   
 router.post('/hei/library/evaluation/submit', props.evaluation, {
     preserveState: false,
     preserveScroll: true,
+    replace: true,
   });
 }
 
@@ -583,6 +498,7 @@ watch(evidenceFile, value => {
     }, {
         preserveState: true,
         preserveScroll: true,
+        replace: true,
     })
 });
 
