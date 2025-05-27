@@ -72,8 +72,8 @@
 
     <modal
         :showModal="showFilterModal"
-        title="Filters"
         @close="toggleFilterModal"
+        title="Filters"
         width="md"
     >
         <filter-page-items v-model="query.show"/>

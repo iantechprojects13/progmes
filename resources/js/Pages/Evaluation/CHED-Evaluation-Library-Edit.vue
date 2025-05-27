@@ -41,7 +41,7 @@
             />
         </template>
         <template v-slot:main-content>
-            <tool-info 
+            <info-card 
                 :data="{
                     'HEI Name': evaluation.institution?.name,
                     'Effectivity': `A.Y. ${evaluation.effectivity}`,

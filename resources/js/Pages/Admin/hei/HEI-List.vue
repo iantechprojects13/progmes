@@ -58,8 +58,8 @@
 
     <modal
         :showModal="showFilterModal"
-        title="Filters"
         @close="toggleFilterModal"
+        title="Filters"
         width="md"
     >
         <div class="space-y-4">

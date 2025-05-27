@@ -16,74 +16,13 @@
             </div>
         </template>
         <template v-slot:main-content>
-            <div class="p-5">
-                <div
-                    class="w-full p-2 md:p-8 my-3 md:shadow-lg md:border rounded-xl"
-                >
-                    <div class="flex flex-col gap-6">
-                        <!-- First Row:  Program and Number -->
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <!-- Program Section -->
-                            <div
-                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                <div class="w-full">
-                                    <p class="text-sm text-gray-500">Program</p>
-                                    <div>
-                                        {{ cmo.program?.program || "-" }}
-                                        <span v-if="cmo.program?.major != null">
-                                            - {{ cmo.program?.major }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Number Section -->
-                            <div
-                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                <div class="w-full">
-                                    <p class="text-sm text-gray-500">No.</p>
-                                    <div>
-                                        {{ cmo.number || "-" }}
-                                    </div>
-                                    <FormErrorMessage
-                                        :message="$page.props.errors.program"
-                                        theme="dark"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Series, and Version -->
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <!-- Series Section -->
-                            <div
-                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                <div class="w-full">
-                                    <p class="text-sm text-gray-500">Series</p>
-                                    <div>
-                                        {{ cmo.series || "-" }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Version Section -->
-                            <div
-                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                <div class="w-full">
-                                    <p class="text-sm text-gray-500">Version</p>
-                                    <div>
-                                        {{ cmo.version || "-" }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <info-card :data="{
+                'Program': cmo.program?.program + (cmo.program?.major ? ' - ' + cmo.program?.major : ''),
+                'Number': cmo.number || '-',
+                'Series': cmo.series || '-',
+                'Version': cmo.version || '-',
+            }
+            "/>
             <div class="md:p-5">
                 <div class="p-3 md:p-5 border rounded-xl shadow-lg">
                     <content-table>

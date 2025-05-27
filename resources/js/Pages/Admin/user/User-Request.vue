@@ -3,7 +3,6 @@
     <content-container
         :hasAdminPanel="true"
         pageTitle="Request List"
-        page="user"
         :hasNavigation="true"
         :hasSearch="true"
         :hasFilters="true"

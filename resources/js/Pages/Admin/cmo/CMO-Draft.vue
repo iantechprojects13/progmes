@@ -21,7 +21,6 @@
 
                 <button
                     @click.prevent="$refs.uploadfile.click()"
-                    :disabled="importing"
                     class="whitespace-nowrap inline-flex w-full items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <span class="flex items-center">
@@ -201,15 +200,16 @@ import Layout from "@/Shared/Layout.vue";
 defineOptions({ layout: Layout });
 
 // -----------------------------------------------------------------------------------------------------------------
-const props = defineProps(["cmo_list", "canEdit", "filters", "program_list"]);
+const props = defineProps([
+    "cmo_list",
+    "canEdit",
+    "filters",
+    "program_list"
+]);
 
 // -----------------------------------------------------------------------------------------------------------------
-const confirmationModal = ref(false);
 const selectedCMO = ref("");
-const modaltype = ref("");
-const title = ref("");
 const cmo_file = ref(null);
-const importing = ref(false);
 const showFilterModal = ref(false);
 const deleteModal = ref(false);
 const publishModal = ref(false);
@@ -221,13 +221,6 @@ const query = useForm({
 });
 
 // ------------------------------------------------------------------------------------------------------------------
-function toggleConfirmationModal(id, type, titleValue) {
-    confirmationModal.value = !confirmationModal.value;
-    selectedCMO.value = id;
-    modaltype.value = type;
-    title.value = titleValue;
-}
-
 function toggleDeleteModal() {
     deleteModal.value = !deleteModal.value;
 }
@@ -277,12 +270,6 @@ watch(cmo_file, (value) => {
         "/admin/CMOs/create/import",
         { file: value },
         {
-            onStart: () => {
-                importing.value = true;
-            },
-            onFinish: () => {
-                importing.value = false;
-            },
             preserveScroll: true,
             preserveState: false,
             replace: true,

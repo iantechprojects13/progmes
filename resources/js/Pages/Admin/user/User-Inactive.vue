@@ -3,7 +3,6 @@
     <content-container
         :hasAdminPanel="true"
         pageTitle="Inactive Users List"
-        page="user"
         :hasNavigation="true"
         :hasSearch="true"
         :hasFilters="true"

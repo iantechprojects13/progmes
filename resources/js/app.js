@@ -53,7 +53,7 @@ import FilterComplianceStatus from './Shared/Component/FilterComplianceStatus.vu
 import FilterUserType from './Shared/Component/FilterUserType.vue';
 import FilterUserRole from './Shared/Component/FilterUserRole.vue';
 import ToolProgressDisplay from './Shared/Component/ToolProgressDisplay.vue';
-import ToolInfo from './Shared/Component/ToolInfo.vue';
+import InfoCard from './Shared/Component/InfoCard.vue';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -112,7 +112,7 @@ createInertiaApp({
             .component('FilterUserType', FilterUserType)
             .component('FilterUserRole', FilterUserRole)
             .component('ToolProgressDisplay', ToolProgressDisplay)
-            .component('ToolInfo', ToolInfo)
+            .component('InfoCard', InfoCard)
             .mount(el);
     },
     progress: false,

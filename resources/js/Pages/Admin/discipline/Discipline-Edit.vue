@@ -43,7 +43,6 @@
                     <div>
                         <button
                             @click="submit"
-                            :disabled="processing"
                             class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200"
                         >
                             Update
@@ -66,8 +65,6 @@ defineOptions({ layout: Layout });
 const props = defineProps(["discipline"]);
 
 // -----------------------------------------------------------------------------------
-const processing = ref(false);
-
 const form = reactive({
     id: ref(props.discipline.id),
     discipline: ref(props.discipline.discipline),
@@ -76,12 +73,6 @@ const form = reactive({
 // -----------------------------------------------------------------------------------
 function submit() {
     router.post("/admin/program/discipline/update", form, {
-        onStart: () => {
-            processing.value = true;
-        },
-        onFinish: () => {
-            processing.value = false;
-        },
         preserveScroll: true,
         preserveState: true,
         replace: true,

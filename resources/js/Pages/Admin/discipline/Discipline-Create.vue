@@ -43,7 +43,6 @@
                     <div>
                         <button
                             @click="submit"
-                            :disabled="processing"
                             class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200"
                         >
                             Add
@@ -57,14 +56,12 @@
 
 <script setup>
 // -------------------------------------------------------------------------
-import { ref, reactive } from "vue";
+import { reactive } from "vue";
 import { router } from "@inertiajs/vue3";
 import Layout from "@/Shared/Layout.vue";
 defineOptions({ layout: Layout });
 
 // -------------------------------------------------------------------------
-const processing = ref(false);
-
 const form = reactive({
     discipline: null,
 });
@@ -72,12 +69,6 @@ const form = reactive({
 // -------------------------------------------------------------------------
 function submit() {
     router.post("/admin/program/discipline/store", form, {
-        onStart: () => {
-            processing.value = true;
-        },
-        onFinish: () => {
-            processing.value = false;
-        },
         preserveScroll: true,
         preserveState: true,
         replace: true,

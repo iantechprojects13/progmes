@@ -123,8 +123,8 @@
     <modal
         :showModal="showFilterModal"
         @close="toggleFilterModal"
-        width="md"
         title="Filters"
+        width="md"
     >
         <div class="flex flex-col space-y-4">
             <filter-form-status v-model="query.status"/>
@@ -186,15 +186,6 @@ function toggleFilterModal() {
 }
 
 function filter() {
-    query.get("/admin/library", {
-        preserveState: false,
-        preserveScroll: true,
-        replace: true,
-    });
-}
-
-function changeAcademicYear() {
-    query.search = "";
     query.get("/admin/library", {
         preserveState: false,
         preserveScroll: true,

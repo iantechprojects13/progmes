@@ -19,7 +19,6 @@
                     <!-- Discipline -->
                     <div>
                         <label
-                            for="discipline"
                             class="block font-medium text-gray-700"
                         >
                             Discipline
@@ -27,7 +26,6 @@
                         </label>
                         <select
                             v-model="form.discipline"
-                            id="discipline"
                             class="mt-1 block w-full rounded-md h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                             :class="[
                                 { 'text-gray-500': form.discipline == null },
@@ -53,7 +51,6 @@
                     <!-- Program -->
                     <div>
                         <label
-                            for="program"
                             class="block font-medium text-gray-700"
                         >
                             Program
@@ -65,7 +62,6 @@
                             maxlength="255"
                             v-model="form.program"
                             type="text"
-                            id="program"
                             placeholder="Enter program"
                             class="mt-1 block w-full rounded-md h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                         />
@@ -78,8 +74,7 @@
                     <!-- Major -->
                     <div>
                         <label
-                            for="major"
-                            class="block font-medium text-gray-700"
+                            class="block font-medium text-sm text-gray-700"
                         >
                             Major
                         </label>
@@ -89,7 +84,6 @@
                             maxlength="255"
                             v-model="form.major"
                             type="text"
-                            id="major"
                             placeholder="Enter discipline"
                             class="mt-1 block w-full rounded-md h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                         />
@@ -103,7 +97,6 @@
                     <div>
                         <button
                             @click="submit"
-                            :disabled="processing"
                             class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200"
                         >
                             Add
@@ -117,7 +110,7 @@
 
 <script setup>
 // -------------------------------------------------------------------------
-import { ref, reactive } from "vue";
+import { reactive } from "vue";
 import { router } from "@inertiajs/vue3";
 import Layout from "@/Shared/Layout.vue";
 defineOptions({ layout: Layout });
@@ -128,8 +121,6 @@ const props = defineProps({
 });
 
 // -------------------------------------------------------------------------
-const processing = ref(false);
-
 const form = reactive({
     discipline: null,
     program: null,
@@ -139,12 +130,6 @@ const form = reactive({
 // -------------------------------------------------------------------------
 function submit() {
     router.post("/admin/program/store", form, {
-        onStart: () => {
-            processing.value = true;
-        },
-        onFinish: () => {
-            processing.value = false;
-        },
         preserveState: true,
         preserveScroll: true,
         replace: true,

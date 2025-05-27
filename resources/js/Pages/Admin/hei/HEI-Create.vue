@@ -20,8 +20,7 @@
                         <!-- Code -->
                         <div class="lg:w-1/2 w-full">
                             <label
-                                for="name"
-                                class="block font-medium text-gray-700"
+                                class="block font-medium text-sm text-gray-700"
                             >
                                 HEI Name
                                 <span class="text-red-500">*</span>
@@ -31,7 +30,6 @@
                                 maxlength="255"
                                 v-model="form.name"
                                 type="text"
-                                id="name"
                                 placeholder="Enter name"
                                 class="mt-1 block w-full rounded-md h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                             />
@@ -44,8 +42,7 @@
                         <!-- Name -->
                         <div class="lg:ml-5 lg:w-1/2 w-full">
                             <label
-                                for="code"
-                                class="block font-medium text-gray-700"
+                                class="block font-medium text-sm text-gray-700"
                             >
                                 HEI Code
                                 <span class="text-red-500">*</span>
@@ -55,7 +52,6 @@
                                 maxlength="255"
                                 v-model="form.code"
                                 type="text"
-                                id="code"
                                 placeholder="Enter code"
                                 class="mt-1 block w-full rounded-md h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                             />
@@ -123,7 +119,6 @@
                     <div>
                         <button
                             @click="submit"
-                            :disabled="processing"
                             class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200"
                         >
                             Add
@@ -149,7 +144,6 @@ const props = defineProps(["program_list"]);
 const search = ref("");
 const selectedPrograms = ref(new Set());
 const programChecked = [];
-const processing = ref(false);
 
 const form = reactive({
     code: null,
@@ -172,12 +166,6 @@ const program_list = computed(() => {
 // -------------------------------------------------------------------------
 function submit() {
     router.post("/admin/higher-education-institutions/register", form, {
-        onStart: () => {
-            processing.value = true;
-        },
-        onFinish: () => {
-            processing.value = false;
-        },
         preserveScroll: false,
         preserveState: true,
         replace: true,

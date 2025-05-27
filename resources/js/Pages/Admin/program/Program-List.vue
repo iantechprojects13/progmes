@@ -3,7 +3,6 @@
     <content-container
         :hasAdminPanel="true"
         pageTitle="Program List"
-        page="program"
         :hasTopButton="canAdd"
         :hasNavigation="true"
         :hasSearch="true"
@@ -75,8 +74,8 @@
 
     <modal
         :showModal="showFilterModal"
-        title="Filters"
         @close="toggleFilterModal"
+        title="Filters"
         width="md"
     >
         <div class="flex flex-col space-y-4">

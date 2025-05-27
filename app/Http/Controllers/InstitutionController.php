@@ -132,11 +132,19 @@ class InstitutionController extends Controller
         
         $institutionModel = InstitutionModel::where('id', $validated['id'])->with('institution_program')->first();
 
-        $currentProgramList = [];
-
         if (!$institutionModel) {
             return redirect()->back()->with('failed', 'Update failed.');
         }
+
+        if ($validated) {
+            $institutionModel->update([
+                'code' => $validated['code'],
+                'name' => $validated['name'],
+            ]);
+        }
+
+
+        $currentProgramList = []; 
 
         foreach($institutionModel->institution_program as $program) {
             array_push($currentProgramList, $program->programId);

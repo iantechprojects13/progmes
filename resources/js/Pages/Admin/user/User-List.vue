@@ -3,7 +3,6 @@
     <content-container
         :hasAdminPanel="true"
         :pageTitle="canEdit ? 'Users List' : 'Users List'"
-        page="user"
         :hasNavigation="canEdit"
         :hasSearch="true"
         :hasFilters="true"
@@ -116,8 +115,8 @@
     <modal
         :showModal="showFilterModal"
         @close="toggleFilterModal"
-        width="md"
         title="Filters"
+        width="md"
     >
         <div class="flex flex-col space-y-4">
             <filter-user-type v-show="$page.props.auth.user.role == 'Super Admin'" v-model="query.type" />

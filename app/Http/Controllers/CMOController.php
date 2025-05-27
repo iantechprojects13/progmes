@@ -232,10 +232,9 @@ class CMOController extends Controller
     // Updates the changes in the CMO edit
     public function update(Request $request) 
     {
-        
+        $rowsIndexes = $request->rows;
         $cmo = CMOModel::find($request->id);
 
-        
         if ($cmo) {
             $cmo->update([
                 'disciplineId' => $request->discipline,
@@ -246,23 +245,24 @@ class CMOController extends Controller
             ]);
         }
 
-        
         $criteria = CriteriaModel::where('cmoId', $request->id)->get();
 
         foreach ($criteria as $index => $item) {
-            $criteriaModel = CriteriaModel::where('cmoId', $request->id)
-                ->where('itemNo', $index + 1)
-                ->first();
+            if (in_array($index, $rowsIndexes)) {
+                $criteriaModel = CriteriaModel::where('cmoId', $request->id)
+                    ->where('itemNo', $index + 1)
+                    ->first();
 
-            if ($criteriaModel) {
-                $criteriaModel->update([
-                    'area' => $request->area[$index],
-                    'minimumRequirement' => $request->minReq[$index],
-                ]);
+                if ($criteriaModel) {
+                    $criteriaModel->update([
+                        'area' => $request->area[$index],
+                        'minimumRequirement' => $request->minReq[$index],
+                    ]);
+                }
             }
         }
 
-        return redirect()->back()->with('success', 'All changes saved.');
+        return response()->json(['success' => true]);
     }
 
 

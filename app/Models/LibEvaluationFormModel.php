@@ -45,6 +45,7 @@ class LibEvaluationFormModel extends Model
         return $this->hasMany(LibEvaluationItemModel::class, 'libEvaluationFormId', 'id');
     }
 
+    // to qualify the item as complied, the selfEvaluationStatus should be complied and the actualSituation should not be null or empty and must have evidence
     public function complied()
     {
         return $this->hasMany(LibEvaluationItemModel::class, 'libEvaluationFormId', 'id')

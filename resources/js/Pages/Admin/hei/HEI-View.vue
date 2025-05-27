@@ -16,39 +16,12 @@
         </template>
 
         <template v-slot:main-content>
-            <div class="md:p-5">
-                <div
-                    class="w-full p-2 md:p-8 my-3 md:shadow-lg md:border rounded-xl"
-                >
-                    <div class="flex flex-col gap-6">
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div
-                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                <div class="w-full">
-                                    <p class="text-sm text-gray-500">
-                                        Institutional Code
-                                    </p>
-                                    <div>
-                                        {{ institution.code }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div
-                                class="flex items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                <div class="w-full">
-                                    <p class="text-sm text-gray-500">Institution Name</p>
-                                    <div>
-                                        {{ institution.name }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <info-card
+                :data="{
+                    'Institution Name': institution.name,
+                    'Institutional Code': institution.code,
+                }"
+            />
             <div
                 class="text-gray-800 border-b border-gray-300 mx-8 mb-2"
             >
@@ -100,7 +73,9 @@ import Layout from "@/Shared/Layout.vue";
 defineOptions({layout: Layout});
 
 // ------------------------------------------------------------
-const props = defineProps(["institution"]);
+const props = defineProps([
+    "institution"
+]);
 
 // ------------------------------------------------------------
 function edit(id) {

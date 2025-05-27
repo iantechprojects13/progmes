@@ -53,7 +53,7 @@
             </div>
         </template>
         <template v-slot:main-content>
-            <tool-info :data="{
+            <info-card :data="{
                 'HEI Name': evaluation.institution?.name,
                 'Effectivity': evaluation.effectivity,
                 'CMO': cmo,

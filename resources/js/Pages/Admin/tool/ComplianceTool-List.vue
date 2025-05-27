@@ -192,10 +192,10 @@
     <modal
         :showModal="showFilterModal"
         @close="toggleFilterModal"
-        width="md"
         title="Filters"
+        width="md"
     >
-        <div class="flex flex-col space-y-5">
+        <div class="flex flex-col space-y-4">
             <filter-form-status v-model="query.status"/>
             <filter-institution v-model="query.institution" :data="institution_list"/>
             <filter-program v-model="query.program" :data="program_list"/>
@@ -210,9 +210,9 @@
 
     <Confirmation
         :showModal="confirmationModal"
-        width="md"
         @close="toggleConfirmationModal"
         title="Deploy Compliance Tool"
+        width="md"
     >
         <template v-slot:message>
             <div>
@@ -278,7 +278,6 @@ const props = defineProps([
 const deployToolModal = ref(false);
 const confirmationModal = ref(false);
 const showFilterModal = ref(false);
-const processing = ref(false);
 const academicYearDropdown = [
     "2022-2023",
     "2023-2024",
@@ -356,11 +355,7 @@ function toggleFilterModal() {
 
 function filter() {
     query.get("/admin/tool", {
-        onStart: () => {
-            processing.value = true;
-        },
         onFinish: () => {
-            processing.value = false;
             toggleFilterModal();
         },
         preserveState: false,

@@ -67,14 +67,17 @@ class EvaluationFormModel extends Model
     public function complied()
     {
         return $this->hasMany(EvaluationItemModel::class, 'evaluationFormId', 'id')
-            ->where('selfEvaluationStatus', '=', 'Complied')
-            ->where(function($query) {
-                $query->whereNotNull('actualSituation')
-                    ->where('actualSituation', '!=', '');
-            })
-            ->whereHas('evidence', function ($query) {
-                $query->whereColumn('itemId', 'evaluation_item.id');
-            });
+        ->where('selfEvaluationStatus', '=', 'Complied')
+        ->where(function($query) {
+            $query->whereNotNull('actualSituation')
+                ->where('actualSituation', '!=', '')
+                ->where('actualSituation', '!=', '<p></p>')
+                ->whereRaw("TRIM(REPLACE(actualSituation, ' ', '')) != ''")
+                ->whereRaw("TRIM(REPLACE(REGEXP_REPLACE(actualSituation, '<[^>]*>', ''), ' ', '')) != ''");
+        })
+        ->whereHas('evidence', function ($query) {
+            $query->whereColumn('itemId', 'evaluation_item.id');
+        });
     }
 
 
@@ -84,7 +87,10 @@ class EvaluationFormModel extends Model
         ->where('selfEvaluationStatus', '=', 'Not complied')
         ->where(function($query) {
             $query->whereNotNull('actualSituation')
-                ->where('actualSituation', '!=', '');
+                ->where('actualSituation', '!=', '')
+                ->where('actualSituation', '!=', '<p></p>')
+                ->whereRaw("TRIM(REPLACE(actualSituation, ' ', '')) != ''")
+                ->whereRaw("TRIM(REPLACE(REGEXP_REPLACE(actualSituation, '<[^>]*>', ''), ' ', '')) != ''");
         });
     }
 

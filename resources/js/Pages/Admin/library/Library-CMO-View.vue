@@ -33,10 +33,10 @@
                         Deploy Tool
                     </button>
                     <button
-                            @click="edit"
-                            class="w-full bg-blue-600 text-white py-2 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200"
-                        >
-                            Edit
+                        @click="edit"
+                        class="w-full bg-blue-600 text-white py-2 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200"
+                    >
+                        Edit
                     </button>
                 </div>
             </div>
@@ -127,9 +127,9 @@
 
     <Confirmation
         :showModal="confirmationModal"
-        width="md"
         @close="toggleConfirmationModal"
         title="Deploy Compliance Tool"
+        width="md"
     >
         <template v-slot:message>
             <div>
@@ -163,7 +163,6 @@ const props = defineProps([
 
 const deployToolModal = ref(false);
 const confirmationModal = ref(false);
-const showFilterModal = ref(false);
 const academicYearDropdown = [
     "2022-2023",
     "2023-2024",
@@ -207,10 +206,6 @@ function deploy() {
         preserveScroll: true,
         replace: true,
     });
-}
-
-function toggleFilterModal() {
-    showFilterModal.value = !showFilterModal.value;
 }
 
 function edit() {

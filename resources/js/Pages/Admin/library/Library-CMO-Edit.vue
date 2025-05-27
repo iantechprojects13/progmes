@@ -205,5 +205,4 @@ function update() {
         preserveScroll: true,
     });
 }
-
 </script>
