@@ -4,32 +4,11 @@
     <content-container
         :hasModal="true"
         pageTitle="Library Compliance Evaluation"
-        page="library"
         :hasTopButton="true"
         :hasSearch="true"
         :hasFilters="true"
         :data_list="evaluation_list"
     >
-        <!-- <template v-slot:top-button>
-            <div
-                class="flex flex-col md:flex-row gap-3 w-full whitespace-nowrap"
-            >
-
-                <select
-                    v-model="query.academicyear"
-                    @change.prevent="changeAcademicYear"
-                    class="px-4 pr-10 py-2.5 text-sm bg-white border border-slate-200 text-slate-700 rounded-lg hover:border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 focus:outline-none duration-200 cursor-pointer appearance-none whitespace-nowrap"
-                >
-                    <option
-                        v-for="(item, index) in academicYearDropdown"
-                        :key="index"
-                        :value="item"
-                    >
-                        A.Y. {{ item }}
-                    </option>
-                </select>
-            </div>
-        </template> -->
         
         <template v-slot:search>
             <search-box v-model="query.search" @submit="filter" />
@@ -72,30 +51,28 @@
                         </td>
                         <td>
                             <action-button type="view" @click="view(item.id) "/>
-                            <action-button :isDisabled="item.status === 'In progress'" v-show="canEvaluate" type="evaluate" @click="evaluate(item.id)"/>
+                            <action-button :isDisabled="item.status === 'Monitored' || item.status === 'In progress'" v-show="canEvaluate" type="evaluate" @click="evaluate(item.id)"/>
 
                             <action-button 
                                 v-if="item.isLocked"
                                 v-show="canEvaluate"
+                                :isDisabled="item.status === 'Monitored'"
                                 type="unlock"
                                 @click="selectedTool = item.id; toggleLockConfirmation(); lockAction = 'unlock'; title = 'Unlock Tool'"
                             />
                             <action-button 
                                 v-else
                                 v-show="canEvaluate"
+                                :isDisabled="item.status === 'Monitored'"
                                 type="lock"
                                 @click="selectedTool = item.id; toggleLockConfirmation(); lockAction = 'lock'; title = 'Lock Tool'"
                             />
-
-                            <!-- <button 
+                            <action-button
                                 v-show="canEvaluate"
-                                @click="setId(item.id); monitoredModal = true;"
-                                :disabled="item.status === 'In progress'"
-                                :class="{'text-gray-400 hover:bg-gray-100': item.status === 'In progress', 'text-blue-700 hover:bg-blue-100': item.status !== 'In progress'}"
-                                class="inline-flex items-center justify-center rounded-full h-10 w-10 tooltipForActions disabled:cursor-not-allowed"
-                                data-tooltip="Mark as monitored">
-                                <i class="fas fa-check text-lg"></i>
-                            </button> -->
+                                :isDisabled="item.status === 'Monitored' || item.status === 'In progress'"
+                                type="monitored"
+                                @click="selectedTool = item.id; toggleMonitoredModal();"
+                            />
                         </td>
                     </tr>
                 </template>
@@ -106,8 +83,8 @@
     <modal
         :showModal="showFilterModal"
         @close="toggleFilterModal"
-        width="md"
         title="Filters"
+        width="md"
     >
         <div class="flex flex-col space-y-4">
             <filter-form-status v-model="query.status"/>
@@ -138,6 +115,15 @@
             <modal-button v-else text="Unlock" color="blue" @click="unlock"/>
         </template>
     </confirmation>
+
+    <confirmation :showModal="monitoredModal" @close="toggleMonitoredModal" title="Mark as Monitored"  width="md">
+        <template v-slot:message>
+            Are you sure you want to mark this library compliance evaluation tool as monitored? Once marked as monitored, it cannot be edited.
+        </template>
+        <template v-slot:buttons>
+            <modal-button text="Confirm" color="blue" @click="monitored" />
+        </template>
+    </confirmation>
 </template>
 
 <script setup>
@@ -157,21 +143,11 @@ const props = defineProps([
 
 // -------------------------------------------------------------------------
 const showFilterModal = ref(false);
+const monitoredModal = ref(false);
 const lockModal = ref(false);
 const selectedTool = ref(null);
 const lockAction = ref('');
 const title = ref('');
-
-// const academicYearDropdown = [
-//     "2022-2023",
-//     "2023-2024",
-//     "2024-2025",
-//     "2025-2026",
-//     "2026-2027",
-//     "2027-2028",
-//     "2028-2029",
-//     "2029-2030",
-// ];
 
 const query = useForm({
     academicyear: props.filters.academicYear,
@@ -192,6 +168,10 @@ function toggleLockConfirmation() {
     lockModal.value = !lockModal.value;
 }
 
+function toggleMonitoredModal() {
+    monitoredModal.value = !monitoredModal.value;
+}
+
 function filter() {
     query.get("/ched/library/evaluation", {
         preserveState: false,
@@ -199,15 +179,6 @@ function filter() {
         replace: true,
     });
 }
-
-// function changeAcademicYear() {
-//     query.search = "";
-//     query.get("/ched/library/evaluation", {
-//         preserveState: false,
-//         preserveScroll: true,
-//         replace: true,
-//     });
-// }
 
 function evaluate(tool) {
     router.get('/ched/library/evaluation/' + tool + '/evaluate', {
@@ -234,5 +205,13 @@ function unlock() {
         preserveScroll: true,
         preserveState: false,
     })
+}
+
+function monitored() {
+    router.post('/ched/library/evaluation/monitored', { id: selectedTool.value }, {
+        replace: true,
+        preserveScroll: true,
+        preserveState: false,
+    });
 }
 </script>

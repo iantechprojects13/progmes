@@ -318,7 +318,16 @@ class DashboardController extends Controller
             'program' => $program,
             'programName' => ProgramModel::where('id', $program)->value('program'),
             'major' => ProgramModel::where('id', $program)->value('major'),
-            'discipline_list' => DisciplineModel::orderBy('discipline', 'asc')->get(),
+            'discipline_list' => DisciplineModel::query()
+                ->when($user->role == 'Dean', function ($query) use ($disciplineIds) {
+                    $query->whereIn('id', $disciplineIds);
+                })
+                ->whereHas('institution_program', function ($q) use ($institution) {
+                    $q->where('institutionId', $institution);
+                })
+                ->orderBy('discipline', 'asc')
+                ->with('institution_program')
+                ->get(),
             'discipline' => $discipline,
             'disciplineName' => DisciplineModel::where('id', $discipline)->value('discipline'),
             'heiName' => InstitutionModel::where('id', $institution)->value('name'),

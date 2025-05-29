@@ -9,7 +9,7 @@
         <div class="flex flex-row gap-2 mt-2 md:mt-0">
             
             <button
-            v-if="$page.props.auth.user.role == 'Super Admin'"
+            v-if="$page.props.auth.user.role == 'Super Admin' || $page.props.auth.user.role == 'Supervising Education Program Specialist'"
             @click="toggleScheduleModal"
                 class="inline-flex w-full items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none duration-200 ease-in-out shadow-sm"
             >
@@ -18,7 +18,7 @@
         </div>
     </div>
 
-    <div class="mx-3 md:mx-8 mb-10" v-if="$page.props.auth.user.role == 'Super Admin'">
+    <div class="mx-3 md:mx-8 mb-10" v-if="$page.props.auth.user.role != 'Education Supervisor'">
         <div class="p-3 md:p-5 border border-gray-300 rounded-xl shadow-lg">
             <content-table>
                 <template v-slot:table-head>

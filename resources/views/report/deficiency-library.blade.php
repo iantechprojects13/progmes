@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="{{ asset('assets/ched_logo.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('assets/ched-logo.png') }}" type="image/x-icon">
     <title>Deficiency Report</title>
     <style>
         @page {
@@ -122,7 +122,7 @@
                 <br>
 
                 <div style="display: inline-block; margin-top: 5px"><b>Monitoring/Evaluation Reference:</b></div>
-                <div style="display: inline-block;">{{ $cmo }}</div>
+                <div style="display: inline-block;">CMO {{ $cmo }}</div>
                 <br>
 
                 <div style="display: inline-block; margin-top: 5px"><b>Monitoring/Evaluation Date:</b></div>
@@ -191,7 +191,7 @@
                     text-align: center;
                 ">
             {{ $tool->institution->name }} |
-            {{ $cmo }} |
+            CMO {{ $cmo }} |
             {{ date('F j, Y', strtotime($tool->evaluationDate)) }}
         </div>
     </footer>

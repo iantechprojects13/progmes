@@ -141,12 +141,32 @@ class PDFController extends Controller
             return redirect()->back()->with('failed', 'Compliance evaluation tool not found.');
         }
 
+        $userType = Auth::user()->type;
+        $preparedBy = null;
+
+        if ($userType == 'HEI') {
+            $result = EvaluationFormModel::query()
+                ->where('id', $complianceTool->id)
+                ->selectRaw("
+                    CASE 
+                        WHEN LOWER(conforme1Title) LIKE '%program head%' OR LOWER(conforme1Title) LIKE '%ph%' THEN conforme1
+                        WHEN LOWER(conforme2Title) LIKE '%program head%' OR LOWER(conforme2Title) LIKE '%ph%' THEN conforme2
+                        ELSE NULL
+                    END as prepared_by
+                ")
+                ->first();
+            $preparedBy = $result ? $result->prepared_by : null;
+        }
+
         if (!$this->canViewReport($complianceTool)) {
             $fileName = 'Report-Access-Denied-'. time() . '.pdf';
             $report = Pdf::loadView('report.access-denied')->setPaper('a4', $orientation);
         } else {
             $data = [
                 'tool' => $complianceTool,
+                'userType' => $userType,
+                'preparedBy' => $preparedBy,
+                'preparedByTitle' => 'Program Head',
             ];
             
             $fileName = 'Program-Monitoring-Report-'. time() . '.pdf';
@@ -168,9 +188,26 @@ class PDFController extends Controller
         $complianceTool = LibEvaluationFormModel::where('id', $tool)
         ->with(['item', 'item.criteria', 'institution'])
         ->first();
-
+        
         if (!$complianceTool) {
             return redirect()->back()->with('failed', 'Library compliance evaluation tool not found.');
+        }
+        
+        $userType = Auth::user()->type;
+        $preparedBy = null;
+
+        if ($userType == 'HEI') {
+            $result = LibEvaluationFormModel::query()
+                ->where('id', $complianceTool->id)
+                ->selectRaw("
+                    CASE 
+                        WHEN LOWER(conforme1Title) LIKE '%librarian%' OR LOWER(conforme1Title) LIKE '%lib%' THEN conforme1
+                        WHEN LOWER(conforme2Title) LIKE '%librarian%' OR LOWER(conforme2Title) LIKE '%lib%' THEN conforme2
+                        ELSE NULL
+                    END as prepared_by
+                ")
+                ->first();
+            $preparedBy = $result ? $result->prepared_by : null;
         }
 
         if (!$this->canViewLibraryReport($complianceTool)) {
@@ -179,6 +216,9 @@ class PDFController extends Controller
         } else {
             $data = [
                 'tool' => $complianceTool,
+                'userType' => $userType,
+                'preparedBy' => $preparedBy,
+                'preparedByTitle' => 'Librarian',
                 'cmo' => AdminSettingsModel::where('setting_key', 'library_cmo')->value('setting_value'),
             ];
             

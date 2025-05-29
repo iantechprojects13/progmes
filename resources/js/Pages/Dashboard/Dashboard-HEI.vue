@@ -30,7 +30,7 @@
         </div>
         <div class="flex flex-col lg:flex-row w-full lg:w-auto">
             <div
-                v-show="role != 'Program Head' && role != 'Librarian'"
+                v-show="role != 'Program Head' && role != 'Program Coordinator' && role != 'Librarian'"
                 class="flex flex-col lg:flex-row items-center lg:whitespace-nowrap w-full lg:w-auto"
             >
                 <div class="lg:mr-2 w-full lg:w-auto">

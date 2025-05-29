@@ -128,6 +128,7 @@ Route::get('ched/library/evaluation/{tool}/delete', [CHEDLibraryEvaluationContro
 Route::get('ched/library/evaluation/{tool}/evaluate/', [CHEDLibraryEvaluationController::class, 'evaluate'])->middleware(['auth', 'type.ched', 'evaluate'])->name('ched.library.tool.evaluate');
 Route::post('ched/library/evaluation/update', [CHEDLibraryEvaluationController::class, 'update'])->middleware(['auth', 'type.ched'])->name('ched.library.tool.update');
 Route::get('ched/library/evaluation/{tool}/report', [CHEDLibraryEvaluationController::class, 'report'])->middleware(['auth', 'type.ched'])->name('ched.library.tool.report');
+Route::post('/ched/library/evaluation/monitored', [CHEDLibraryEvaluationController::class, 'monitored'])->name('form.ched.library.monitored');
 
 // PROGRAM APPLICATION
 // gpr
@@ -148,7 +149,6 @@ Route::post('/application/submit', [ApplicationController::class, 'submit'])->mi
 Route::post('/application/link', [ApplicationController::class, 'uploadLink'])->middleware(['auth', 'user.verified', 'type.hei'])->name('hei.application.link');
 Route::get('/application/{id}/delete', [ApplicationController::class, 'destroy'])->middleware(['auth', 'user.verified'])->name('hei.application.delete');
 Route::post('/application/remark', [ApplicationController::class, 'remark'])->middleware(['auth', 'user.verified', 'type.ched'])->name('ched.application.remark');
-
 
 //admin-panel
 //USERS

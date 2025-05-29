@@ -169,11 +169,16 @@
         width="lg"
     >
         <template #message>
-            <div class="text-gray-700 space-y-2">
-                <p>Are you sure you want to delete your account? This action cannot be undone.</p>
-                <p class="mt-8 text-sm">
-                    Note: This will NOT delete any of your submitted inputs or data.
-                </p>
+            <div style="display: flex; align-items: center; gap: 10px; color: #b91c1c;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="75" height="75">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M12 9v2m0 4h.01M10.29 3.86l-7.09 12.3A1 1 0 004 18h16a1 1 0 00.87-1.5l-7.09-12.3a1 1 0 00-1.74 0z" />
+                </svg>
+
+                <div>
+                  Are you sure you want to delete your account? This action cannot be undone.<br><br>
+                  Note: This will NOT delete any of your submitted inputs or data.
+                </div>
             </div>
         </template>
         <template #buttons>

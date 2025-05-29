@@ -66,7 +66,6 @@
 <script setup>
 import { ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
-import { router } from '@inertiajs/vue3';
 
 const isLoggingIn = ref(false);
 

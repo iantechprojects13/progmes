@@ -45,7 +45,7 @@ class EvaluationController extends Controller
     {
         $user = Auth::user();
         
-        if ($user->type == 'HEI' && $user->role != 'Dean') {
+        if ($user->type == 'HEI') {
             return redirect()->route('hei.library.evaluation.list');
         }
 
@@ -195,6 +195,7 @@ class EvaluationController extends Controller
             ->when($user->role == 'Education Supervisor', supervisorAssignedPrograms('institution_program.program', $programIds))
             ->where('effectivity', $acadYear)
             ->where('status', 'Monitored')
+            ->orderBy('evaluationDate', 'desc')
             ->with('institution_program.program', 'institution_program.institution', 'item', 'complied', 'not_complied', 'not_applicable')
             ->paginate($show)
             ->through(fn($item) => [

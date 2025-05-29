@@ -22,22 +22,39 @@
                         <template v-slot:options>
                             <div class="w-64">
                                 <div
-                                        class="text-gray-600 font-semibold px-5 py-1"
-                                    >
-                                        Monitoring Report
-                                    </div>
-                                    <button
-                                        @click="previewFileMonitoring"
-                                        class="py-1.5 hover:bg-gray-200 w-full text-left indent-8"
-                                    >
-                                        Preview
-                                    </button>
-                                    <button
-                                        @click="downloadFileMonitoring"
-                                        class="py-1.5 hover:bg-gray-200 w-full text-left indent-8"
-                                    >
-                                        Download
-                                    </button>
+                                    class="text-gray-600 font-semibold px-5 py-1"
+                                >
+                                    Monitoring Report
+                                </div>
+                                <button
+                                    @click="previewFileMonitoring"
+                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-8"
+                                >
+                                    Preview
+                                </button>
+                                <button
+                                    @click="downloadFileMonitoring"
+                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-8"
+                                >
+                                    Download
+                                </button>
+                                <div
+                                    class="text-gray-600 font-semibold px-5 py-1"
+                                >
+                                    Deficiency Report
+                                </div>
+                                <button
+                                    @click="previewFileDeficiency"
+                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-8"
+                                >
+                                    Preview
+                                </button>
+                                <button
+                                    @click="downloadFileDeficiency"
+                                    class="py-1.5 hover:bg-gray-200 w-full text-left indent-8"
+                                >
+                                    Download
+                                </button>
                             </div>
                         </template>
                     </dropdown-option>
@@ -60,32 +77,6 @@
                 }"
             />
             <tool-progress-display :data="progress" type="HEI"/>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 p-2 md:px-4">
-                <div class="p-4 rounded-lg shadow-md bg-green-100 text-center">
-                    <p class="text-3xl font-bold text-green-600">
-                        {{ progress[0] }}
-                    </p>
-                    <p class="text-green-700 font-semibold">Complied</p>
-                </div>
-                <div class="p-4 rounded-lg shadow-md bg-red-100 text-center">
-                    <p class="text-3xl font-bold text-red-600">
-                        {{ progress[1] }}
-                    </p>
-                    <p class="text-red-700 font-semibold">Not Complied</p>
-                </div>
-                <div class="p-4 rounded-lg shadow-md bg-gray-100 text-center">
-                    <p class="text-3xl font-bold text-gray-600">
-                        {{ progress[2] }}
-                    </p>
-                    <p class="text-gray-700 font-semibold">Not Applicable</p>
-                </div>
-                <div class="p-4 rounded-lg shadow-md bg-blue-100 text-center">
-                    <p class="text-3xl font-bold text-blue-600">
-                        {{ progress[3] }}%
-                    </p>
-                    <p class="text-blue-700 font-semibold">Progress</p>
-                </div>
-            </div>
             <div class="p-3">
                 <div
                     class="w-full p-2 md:p-5 md:shadow-lg md:border rounded-xl"

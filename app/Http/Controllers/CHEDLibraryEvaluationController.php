@@ -286,6 +286,22 @@ class CHEDLibraryEvaluationController extends Controller
         return response()->json($progress);
     }
 
+    public function monitored(Request $request)
+    {
+        $tool = LibEvaluationFormModel::where('id', $request->id)->first();
+
+        if (!$tool) {
+            return redirect('/ched/library/evaluation')->with('failed', 'No library compliance evaluation tool found.');
+        }
+
+        $tool->update([
+            'status' => 'Monitored',
+        ]);
+        $tool->save();
+
+        return redirect()->back()->with('success', 'Library compliance evaluation tool has been marked as monitored.');
+    }
+
     public function destroy($id)
     {
 

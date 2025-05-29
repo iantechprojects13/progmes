@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="{{ asset('assets/cropped-ched_logo.png') }}" type="image/x-icon" />
+    <link rel="icon" href="{{ asset('assets/ched-logo.png') }}" type="image/x-icon" />
     <title>Program Monitoring Report</title>
     <style>
         @page {
@@ -199,6 +199,19 @@
                             margin-bottom: 40px;
                             margin-top: 30px;
                         ">
+                    @if ($userType === 'HEI')
+                    <div style="
+                                float: left;
+                                width: 33%;
+                                page-break-inside: avoid;
+                            ">
+                        <div>Prepared by:</div>
+                        <div style="margin: 8px 15px">
+                            <div>{{ $preparedBy }}</div>
+                            <div>{{ $preparedByTitle }}</div>
+                        </div>
+                    </div>
+                    @else
                     <div style="
                                 float: left;
                                 width: 33%;
@@ -232,6 +245,7 @@
                             <div>{{ $tool->evaluatedByTitle }}</div>
                         </div>
                     </div>
+                    @endif
                     <div style="clear: both"></div>
                 </div>
             </div>
