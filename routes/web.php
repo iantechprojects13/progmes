@@ -83,6 +83,7 @@ Route::get('/ched/dashboard', [DashboardController::class, 'dashboardForCHED'])-
 Route::get('/hei/dashboard', [DashboardController::class, 'dashboardForHEI'])->middleware(['auth', 'type.hei', 'user.verified', 'active'])->name('dashboard.hei');
 Route::get('/ched/schedule', [DashboardController::class, 'schedule'])->middleware(['auth', 'type.ched', 'user.verified', 'active'])->name('ched.schedule');
 Route::post('/ched/schedule/set', [DashboardController::class, 'setSchedule'])->middleware(['auth', 'type.ched', 'user.verified', 'active'])->name('ched.setSchedule');
+Route::post('/ched/schedule/delete', [DashboardController::class, 'deleteSchedule'])->middleware(['auth', 'type.ched', 'user.verified', 'active'])->name('ched.deleteSchedule');
 
 //evaluation
 Route::get('/evaluation', [EvaluationController::class, 'index'])->middleware(['auth', 'user.verified'])->name('evaluation');

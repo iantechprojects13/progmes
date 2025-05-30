@@ -3,7 +3,6 @@
     <content-container
         :hasAdminPanel="true"
         pageTitle="Higher Education Institution List"
-        page="hei"
         :hasTopButton="canAdd"
         :hasSearch="true"
         :hasFilters="true"

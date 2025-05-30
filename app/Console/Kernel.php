@@ -18,12 +18,16 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('update:lock-compliance-tools')
-                ->dailyAt('14:08')
-                ->timezone('Asia/Manila')
-                ->when(function() {
-                    $now = Carbon::now('Asia/Manila');
-                    return $now->year == 2025 && $now->month == 5 && $now->day == 16;
-                });
+               ->everyTenMinutes()->withoutOverlapping();
+        // $schedule->command('update:lock-compliance-tools')
+        //         ->dailyAt('14:08')
+        //         ->timezone('Asia/Manila')
+        //         ->when(function() {
+        //             $now = Carbon::now('Asia/Manila');
+        //             return $now->year == 2025 && $now->month == 5 && $now->day == 16;
+        //         });
+
+        
     }
 
 

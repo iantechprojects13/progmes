@@ -3,6 +3,9 @@
 use App\Models\ProgramAssignmentModel;
 use App\Models\RoleModel;
 use App\Models\AdminSettingsModel;
+use App\Models\ProgramModel;
+use App\Models\InstitutionModel;
+use App\Models\InstitutionProgramModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -222,5 +225,18 @@ if (!function_exists('getProgress')) {
         //             : 0;
             
         return [$complied, $notComplied, $notApplicable, $progressPercentage];
+    }
+
+    function getSupervisorInstitutionIds($userId = null)
+    {
+        $userId = $userId ?? Auth::id();
+        
+        $assignedProgramIds = getUserAssignedProgramIds($userId);
+        $institutionIds = InstitutionProgramModel::whereIn('programId', $assignedProgramIds)
+            ->pluck('institutionId')
+            ->toArray();
+        return InstitutionModel::whereIn('id', $institutionIds)
+            ->pluck('id')
+            ->toArray();
     }
 }

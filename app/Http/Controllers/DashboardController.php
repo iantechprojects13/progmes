@@ -471,20 +471,26 @@ class DashboardController extends Controller
         $user = Auth::user();
         $acadYear = getAcademicYear($request->query('academicyear'), Auth::user()->id);
         $showFilter = AdminSettingsModel::where('setting_key', 'default_academic_year')->value('setting_value') != $acadYear ? true : false;
-            
+        $show = sanitizePerPage($request->query('show'), Auth::user()->id);
+
         if ($user->role == 'Education Supervisor') {
             $assignedProgramIds = getUserAssignedProgramIds($user->id);
+            $assignedInstitutionIds = getSupervisorInstitutionIds($user->id);
         } else {
             $assignedProgramIds = [];
+            $assignedInstitutionIds = [];
         }
-        if ($user->role != 'Education Supervisor') {
+        // if ($user->role != 'Education Supervisor') {
             $schedulesPerHEI = InstitutionModel::query()
+            ->when($user->role == 'Education Supervisor', function ($query) use ($assignedInstitutionIds) {
+                $query->whereIn('id', $assignedInstitutionIds);
+            })
             ->with(['monitoringSchedule' => function($query) use ($acadYear) {
                 $query->where('academicYear', $acadYear);
             }])
             ->get()
             ->map(fn($item) => [
-                'id' => $item->id,
+                'id' => $item->monitoringSchedule->where('academicYear', $acadYear)->value('id'),
                 'institution' => $item->name,
                 'totalPrograms' => InstitutionProgramModel::where('institutionId', $item->id)->count(),
                 'programsMonitored' => EvaluationFormModel::query()
@@ -492,7 +498,9 @@ class DashboardController extends Controller
                         $query->where('institutionId', $item->id);
                     })
                     ->where('effectivity', $acadYear)
-                    ->where('status', 'Monitored')
+                    ->where(function ($q) {
+                        $q->where('status', 'Monitored')->orWhereNotNull('evaluationDate');
+                    })
                     ->with('institution_program.institution', 'institution_program.institution.monitoringSchedule')
                     ->count(),
                 'monitoringDate' => $item->monitoringSchedule->where('academicYear', $acadYear)->value('monitoringDate')
@@ -501,28 +509,42 @@ class DashboardController extends Controller
             ])
             ->sortBy(function ($item) {
                 return [
-                    is_null($item['monitoringDate']) ? 1 : 0,
+                    is_null($item['monitoringDate']) ? 0 : 1,
                     is_null($item['monitoringDate']) ? $item['institution'] : $item['monitoringDate']
                 ];
             })
             ->values();
-        }
+        // }
             
         $schedulesPerProgram = InstitutionProgramModel::query()
             ->whereHas('evaluationForm', function($query) use ($acadYear) {
                 $query->where('effectivity', $acadYear);
                 $query->select('id', 'institutionProgramId', 'status');
             })
+            ->when($request->query('institution'), function($query) use ($request) {
+                $query->whereHas('institution', function($q) use ($request) {
+                    $q->where('id', $request->query('institution'));
+                });
+            })
+            ->when($request->query('program'), function($query) use ($request) {
+                $query->whereHas('program', function($q) use ($request) {
+                    $q->where('id', $request->query('program'));
+                });
+            })
             ->when($user->role == 'Education Supervisor', function ($query) use ($assignedProgramIds) {
                 $query->whereHas('program', function ($query) use ($assignedProgramIds) {
-                   $query->whereIn('id', $assignedProgramIds); 
+                $query->whereIn('id', $assignedProgramIds);
                 });
             })
             ->with(['institution', 'program', 'monitoringSchedule', 'evaluationForm' => function($query) use ($acadYear) {
                 $query->where('effectivity', $acadYear);
             },'evaluationForm.item', 'evaluationForm.complied', 'evaluationForm.not_complied', 'evaluationForm.not_applicable', 'evaluationForm.no_status', 'evaluationForm.evaluated_complied', 'evaluationForm.evaluated_notComplied'])
-            ->get()
-            ->map(fn($item) => [
+            ->paginate($show)
+            ->withQueryString();
+
+        // Transform the items within the paginated result
+        $schedulesPerProgram->getCollection()->transform(function($item) use ($acadYear) {
+            return [
                 'institution' => $item->institution->name,
                 'program' => $item->program->major ? $item->program->program . ' - ' . $item->program->major : $item->program->program,
                 'isMonitored' => $item->evaluationForm->first()->status == 'Monitored' ? 'Yes' : 'No',
@@ -543,23 +565,34 @@ class DashboardController extends Controller
                         $item->evaluationForm->first()->evaluated_notComplied->count(),
                         1
                     )) * 100)),
+            ];
+        });
 
-            ])
-            ->sortBy(function ($item) {
-                return [
-                    is_null($item['monitoringDate']) ? 1 : 0,
-                    is_null($item['monitoringDate']) ? $item['institution'] : $item['monitoringDate']
-                ];
-            })
-            ->values();
+        // Sort the collection within the paginated result
+        $sortedCollection = $schedulesPerProgram->getCollection()->sortBy(function ($item) {
+            return [
+                is_null($item['monitoringDate']) ? 1 : 0,
+                is_null($item['monitoringDate']) ? $item['institution'] : $item['monitoringDate']
+            ];
+        })->values();
+
+        $schedulesPerProgram->setCollection($sortedCollection);
+
 
 
         return Inertia::render('Dashboard/Schedule', [
             "institutions" => InstitutionModel::orderBy('name', 'asc')->get(),
             'schedulesPerHEI' => $schedulesPerHEI ?? null,
             'schedulesPerProgram' => $schedulesPerProgram ?? null,
-            'filters' => ['academicyear' => $acadYear],
+            'filters' => $request->only(['institution', 'program']) + ['academicyear' => $acadYear] + ['show' => $show],
             'showFilter' => $showFilter,
+            "academicYear" => AdminSettingsModel::where('setting_key', 'default_academic_year')->value('setting_value'),
+            "institution_list" => InstitutionModel::orderBy('name', 'asc')->get(),
+            "program_list" => ProgramModel::orderBy('program', 'asc')->orderBy('major', 'asc')
+                ->when($user->role == 'Education Supervisor', function ($query) use ($assignedProgramIds) {
+                    $query->whereIn('id', $assignedProgramIds);
+                })
+                ->get(),
         ]);
     }
 
@@ -568,13 +601,21 @@ class DashboardController extends Controller
     {
         $validated = $request->validate([
             'institution' => 'required|exists:institution,id',
-            'date' => 'required|date',
+            'date' => 'nullable|date',
             'academicYear' => 'required',
         ]);
 
         $schedule = MonitoringScheduleModel::where('institutionId', $validated['institution'])
             ->where('academicYear', $validated['academicYear'])
             ->first();
+
+        if (is_null($validated['date'])) {
+            // If date is null and schedule exists, delete it
+            if ($schedule) {
+                $schedule->delete();
+            }
+            return redirect()->back()->with('success', 'Schedule removed successfully.');
+        }
 
         if ($schedule) {
             // Update the existing schedule
@@ -592,4 +633,17 @@ class DashboardController extends Controller
 
         return redirect()->back()->with('success', 'Schedule saved successfully.');
     }
+
+    public function deleteSchedule(Request $request) {
+
+        $schedule = MonitoringScheduleModel::find($request->id);
+        
+        if ($schedule) {
+            $schedule->delete();
+            return redirect()->back()->with('success', 'Schedule deleted successfully.');
+        } else {
+            return redirect()->back()->with('failed', 'Schedule not found.');
+        }
+    }
 }
+
