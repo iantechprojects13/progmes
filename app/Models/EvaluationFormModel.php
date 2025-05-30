@@ -67,31 +67,36 @@ class EvaluationFormModel extends Model
     public function complied()
     {
         return $this->hasMany(EvaluationItemModel::class, 'evaluationFormId', 'id')
-        ->where('selfEvaluationStatus', '=', 'Complied')
-        ->where(function($query) {
-            $query->whereNotNull('actualSituation')
-                ->where('actualSituation', '!=', '')
-                ->where('actualSituation', '!=', '<p></p>')
-                ->whereRaw("TRIM(REPLACE(actualSituation, ' ', '')) != ''")
-                ->whereRaw("TRIM(REPLACE(REGEXP_REPLACE(actualSituation, '<[^>]*>', ''), ' ', '')) != ''");
-        })
-        ->whereHas('evidence', function ($query) {
-            $query->whereColumn('itemId', 'evaluation_item.id');
-        });
+            ->where('selfEvaluationStatus', '=', 'Complied')
+            ->where(function($query) {
+                $query->whereNotNull('actualSituation')
+                    ->where('actualSituation', '!=', '')
+                    ->where('actualSituation', '!=', '<p></p>')
+                    ->where('actualSituation', '!=', '<p>&nbsp;</p>')
+                    ->where('actualSituation', '!=', '<br>')
+                    ->where('actualSituation', '!=', '<br/>')
+                    ->whereRaw("TRIM(actualSituation) != ''")
+                    ->whereRaw("LENGTH(TRIM(REPLACE(REPLACE(actualSituation, '<p></p>', ''), '&nbsp;', ''))) > 0");
+            })
+            ->whereHas('evidence', function ($query) {
+                $query->whereColumn('itemId', 'evaluation_item.id');
+            });
     }
-
 
     public function not_complied()
     {
         return $this->hasMany(EvaluationItemModel::class, 'evaluationFormId', 'id')
-        ->where('selfEvaluationStatus', '=', 'Not complied')
-        ->where(function($query) {
-            $query->whereNotNull('actualSituation')
-                ->where('actualSituation', '!=', '')
-                ->where('actualSituation', '!=', '<p></p>')
-                ->whereRaw("TRIM(REPLACE(actualSituation, ' ', '')) != ''")
-                ->whereRaw("TRIM(REPLACE(REGEXP_REPLACE(actualSituation, '<[^>]*>', ''), ' ', '')) != ''");
-        });
+            ->where('selfEvaluationStatus', '=', 'Not complied')
+            ->where(function($query) {
+                $query->whereNotNull('actualSituation')
+                    ->where('actualSituation', '!=', '')
+                    ->where('actualSituation', '!=', '<p></p>')
+                    ->where('actualSituation', '!=', '<p>&nbsp;</p>')
+                    ->where('actualSituation', '!=', '<br>')
+                    ->where('actualSituation', '!=', '<br/>')
+                    ->whereRaw("TRIM(actualSituation) != ''")
+                    ->whereRaw("LENGTH(TRIM(REPLACE(REPLACE(actualSituation, '<p></p>', ''), '&nbsp;', ''))) > 0");
+            });
     }
 
     public function not_applicable()

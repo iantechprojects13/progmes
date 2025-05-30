@@ -54,8 +54,11 @@ class LibEvaluationFormModel extends Model
             $query->whereNotNull('actualSituation')
                 ->where('actualSituation', '!=', '')
                 ->where('actualSituation', '!=', '<p></p>')
-                ->whereRaw("TRIM(REPLACE(actualSituation, ' ', '')) != ''")
-                ->whereRaw("TRIM(REPLACE(REGEXP_REPLACE(actualSituation, '<[^>]*>', ''), ' ', '')) != ''");
+                ->where('actualSituation', '!=', '<p>&nbsp;</p>')
+                ->where('actualSituation', '!=', '<br>')
+                ->where('actualSituation', '!=', '<br/>')
+                ->whereRaw("TRIM(actualSituation) != ''")
+                ->whereRaw("LENGTH(TRIM(REPLACE(REPLACE(actualSituation, '<p></p>', ''), '&nbsp;', ''))) > 0");
         })
         ->whereHas('evidence', function ($query) {
             $query->whereColumn('itemId', 'lib_evaluation_item.id');
@@ -70,8 +73,11 @@ class LibEvaluationFormModel extends Model
             $query->whereNotNull('actualSituation')
                 ->where('actualSituation', '!=', '')
                 ->where('actualSituation', '!=', '<p></p>')
-                ->whereRaw("TRIM(REPLACE(actualSituation, ' ', '')) != ''")
-                ->whereRaw("TRIM(REPLACE(REGEXP_REPLACE(actualSituation, '<[^>]*>', ''), ' ', '')) != ''");
+                ->where('actualSituation', '!=', '<p>&nbsp;</p>')
+                ->where('actualSituation', '!=', '<br>')
+                ->where('actualSituation', '!=', '<br/>')
+                ->whereRaw("TRIM(actualSituation) != ''")
+                ->whereRaw("LENGTH(TRIM(REPLACE(REPLACE(actualSituation, '<p></p>', ''), '&nbsp;', ''))) > 0");
         });
     }
 
