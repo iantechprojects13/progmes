@@ -395,7 +395,7 @@
                 />
             </div>
         </div>
-        <template #buttons>
+        <template #custom-button>
             <modal-button text="Done" color="blue" @click="submit" />
         </template>
     </modal>

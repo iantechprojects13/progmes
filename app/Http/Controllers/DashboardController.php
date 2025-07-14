@@ -509,7 +509,7 @@ class DashboardController extends Controller
             ])
             ->sortBy(function ($item) {
                 return [
-                    is_null($item['monitoringDate']) ? 0 : 1,
+                    is_null($item['monitoringDate']) ? 1 : 0,
                     is_null($item['monitoringDate']) ? $item['institution'] : $item['monitoringDate']
                 ];
             })
